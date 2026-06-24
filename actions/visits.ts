@@ -67,4 +67,3 @@ export async function deleteVisit(id: string) {
 }
 
 // Re-export type for callers that imported from here
-export type { VisitInput };
