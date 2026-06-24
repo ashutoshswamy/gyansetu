@@ -11,29 +11,40 @@ async function resolveUserWithRole() {
   const clerkRole = (sessionClaims?.metadata as { role?: UserRole })?.role ?? null;
   const db = createServerClient();
 
-  let { data: dbUser } = await db
+  let { data: dbUser, error: selectError } = await db
     .from("users")
     .select("id, role")
     .eq("clerk_id", userId)
     .maybeSingle();
 
+  if (selectError) throw new Error(`DB error: ${selectError.code} ${selectError.message}`);
+
   // User missing from Supabase (webhook missed) — backfill from Clerk profile
   if (!dbUser) {
     const clerk = await clerkClient();
     const clerkUser = await clerk.users.getUser(userId);
-    const { data: inserted } = await db
+    const { data: upserted, error: upsertError } = await db
       .from("users")
-      .insert({
-        clerk_id: userId,
-        email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
-        name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim(),
-        avatar_url: clerkUser.imageUrl,
-        role: clerkRole,
-      })
+      .upsert(
+        {
+          clerk_id: userId,
+          email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
+          name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim(),
+          avatar_url: clerkUser.imageUrl,
+          role: clerkRole,
+        },
+        { onConflict: "clerk_id" }
+      )
       .select("id, role")
       .single();
-    if (!inserted) throw new Error("Unauthorized");
-    dbUser = inserted;
+
+    if (!upserted) {
+      console.error(
+        `[action-auth] backfill upsert failed: code=${upsertError?.code} message=${upsertError?.message} details=${upsertError?.details} hint=${upsertError?.hint}`
+      );
+      throw new Error("Unauthorized");
+    }
+    dbUser = upserted;
   }
 
   // Supabase has role — use it as source of truth
