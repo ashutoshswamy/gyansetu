@@ -3,27 +3,43 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { submitCareerInquiry } from "@/actions/public-forms";
+import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
 
 export default function CareersPage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    qualification: "",
-    experience_years: "",
+    age: "",
+    standard: "",
+    state: "",
+    city: "",
     area_of_interest: "",
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const stateCities = form.state ? (STATE_CITIES[form.state] ?? []) : [];
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+      // reset city when state changes
+      ...(name === "state" ? { city: "" } : {}),
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim()) return;
+    const age = parseInt(form.age, 10);
+    if (isNaN(age) || age < 18) {
+      setErrorMsg("You must be 18 or older to apply.");
+      setStatus("error");
+      return;
+    }
     setStatus("loading");
     setErrorMsg("");
     try {
@@ -31,8 +47,10 @@ export default function CareersPage() {
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || undefined,
-        qualification: form.qualification.trim() || undefined,
-        experience_years: form.experience_years || undefined,
+        age,
+        standard: form.standard.trim() || undefined,
+        state: form.state || undefined,
+        city: form.city.trim() || undefined,
         area_of_interest: form.area_of_interest || undefined,
         message: form.message.trim() || undefined,
       });
@@ -44,29 +62,14 @@ export default function CareersPage() {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 14px",
-    fontSize: 14,
-    color: "#19140F",
-    background: "#FAFAF7",
-    border: "1.5px solid #E4DFD1",
-    borderRadius: 8,
-    outline: "none",
-    fontFamily: "Poppins, sans-serif",
-    boxSizing: "border-box",
+    width: "100%", padding: "10px 14px", fontSize: 14,
+    color: "#19140F", background: "#FAFAF7", border: "1.5px solid #E4DFD1",
+    borderRadius: 8, outline: "none", fontFamily: "Poppins, sans-serif", boxSizing: "border-box",
   };
 
   const labelStyle: React.CSSProperties = {
-    display: "block",
-    fontSize: 12,
-    fontWeight: 600,
-    color: "#5A5247",
-    marginBottom: 6,
-    letterSpacing: "0.02em",
-  };
-
-  const fieldStyle: React.CSSProperties = {
-    marginBottom: 18,
+    display: "block", fontSize: 12, fontWeight: 600, color: "#5A5247",
+    marginBottom: 6, letterSpacing: "0.02em",
   };
 
   if (status === "success") {
@@ -119,85 +122,33 @@ export default function CareersPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
               <div>
                 <label htmlFor="name" style={labelStyle}>Full Name <span style={{ color: "#C0392B" }}>*</span></label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Your full name"
-                  style={inputStyle}
-                />
+                <input id="name" name="name" type="text" required value={form.name} onChange={handleChange} placeholder="Your full name" style={inputStyle} />
               </div>
               <div>
                 <label htmlFor="email" style={labelStyle}>Email <span style={{ color: "#C0392B" }}>*</span></label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  style={inputStyle}
-                />
+                <input id="email" name="email" type="email" required value={form.email} onChange={handleChange} placeholder="you@example.com" style={inputStyle} />
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
               <div>
                 <label htmlFor="phone" style={labelStyle}>Phone</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={form.phone}
-                  onChange={handleChange}
-                  placeholder="+91 98765 43210"
-                  style={inputStyle}
-                />
+                <input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 98765 43210" style={inputStyle} />
               </div>
               <div>
-                <label htmlFor="qualification" style={labelStyle}>Qualification</label>
-                <input
-                  id="qualification"
-                  name="qualification"
-                  type="text"
-                  value={form.qualification}
-                  onChange={handleChange}
-                  placeholder="e.g. B.Sc., M.A. Education"
-                  style={inputStyle}
-                />
+                <label htmlFor="age" style={labelStyle}>Age <span style={{ color: "#C0392B" }}>*</span></label>
+                <input id="age" name="age" type="number" required min={1} max={120} value={form.age} onChange={handleChange} placeholder="e.g. 21" style={inputStyle} />
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
               <div>
-                <label htmlFor="experience_years" style={labelStyle}>Years of Experience</label>
-                <select
-                  id="experience_years"
-                  name="experience_years"
-                  value={form.experience_years}
-                  onChange={handleChange}
-                  style={{ ...inputStyle, appearance: "none" }}
-                >
-                  <option value="">Select</option>
-                  <option value="Fresher">Fresher</option>
-                  <option value="1–2 years">1–2 years</option>
-                  <option value="3–5 years">3–5 years</option>
-                  <option value="5+ years">5+ years</option>
-                </select>
+                <label htmlFor="standard" style={labelStyle}>Standard / Class</label>
+                <input id="standard" name="standard" type="text" value={form.standard} onChange={handleChange} placeholder="e.g. 12th, B.Sc. 2nd Year" style={inputStyle} />
               </div>
               <div>
                 <label htmlFor="area_of_interest" style={labelStyle}>Area of Interest</label>
-                <select
-                  id="area_of_interest"
-                  name="area_of_interest"
-                  value={form.area_of_interest}
-                  onChange={handleChange}
-                  style={{ ...inputStyle, appearance: "none" }}
-                >
+                <select id="area_of_interest" name="area_of_interest" value={form.area_of_interest} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
                   <option value="">Select</option>
                   <option value="Teaching & Education">Teaching &amp; Education</option>
                   <option value="Science Communication">Science Communication</option>
@@ -209,17 +160,30 @@ export default function CareersPage() {
               </div>
             </div>
 
-            <div style={fieldStyle}>
-              <label htmlFor="message" style={labelStyle}>Why do you want to join?</label>
-              <textarea
-                id="message"
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                placeholder="Tell us what motivates you to join Gyan Setu..."
-                rows={4}
-                style={{ ...inputStyle, resize: "vertical", minHeight: 100 }}
-              />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+              <div>
+                <label htmlFor="state" style={labelStyle}>State</label>
+                <select id="state" name="state" value={form.state} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
+                  <option value="">Select state</option>
+                  {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="city" style={labelStyle}>City</label>
+                {stateCities.length > 0 ? (
+                  <select id="city" name="city" value={form.city} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
+                    <option value="">Select city</option>
+                    {stateCities.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                ) : (
+                  <input id="city" name="city" type="text" value={form.city} onChange={handleChange} placeholder="Your city" style={inputStyle} disabled={!form.state} />
+                )}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 18 }}>
+              <label htmlFor="message" style={labelStyle}>Why do you want to join? <span style={{ color: "#C0392B" }}>*</span></label>
+              <textarea id="message" name="message" required value={form.message} onChange={handleChange} placeholder="Tell us what motivates you to join Gyan Setu..." rows={4} style={{ ...inputStyle, resize: "vertical", minHeight: 100 }} />
             </div>
 
             {status === "error" && (
@@ -231,19 +195,7 @@ export default function CareersPage() {
             <button
               type="submit"
               disabled={status === "loading"}
-              style={{
-                width: "100%",
-                background: status === "loading" ? "#9B9188" : "#4A55BE",
-                color: "white",
-                fontSize: 14,
-                fontWeight: 600,
-                padding: "12px 24px",
-                borderRadius: 8,
-                border: "none",
-                cursor: status === "loading" ? "not-allowed" : "pointer",
-                fontFamily: "Poppins, sans-serif",
-                transition: "background 0.15s",
-              }}
+              style={{ width: "100%", background: status === "loading" ? "#9B9188" : "#4A55BE", color: "white", fontSize: 14, fontWeight: 600, padding: "12px 24px", borderRadius: 8, border: "none", cursor: status === "loading" ? "not-allowed" : "pointer", fontFamily: "Poppins, sans-serif", transition: "background 0.15s" }}
             >
               {status === "loading" ? "Submitting..." : "Submit Application"}
             </button>

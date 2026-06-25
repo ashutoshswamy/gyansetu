@@ -5,7 +5,7 @@ import { getUserRole } from "@/lib/clerk/roles";
 import { redirect } from "next/navigation";
 import type { UserRole } from "@/types";
 
-const EARC_ALLOWED: UserRole[] = ["earc_staff", "admin", "super_admin"];
+const EARC_ALLOWED: UserRole[] = ["earc_staff", "admin"];
 
 export default async function EarcLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth();

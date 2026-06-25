@@ -2,14 +2,17 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { submitSponsorInquiry } from "@/actions/public-forms";
+import { submitInstitutionInquiry } from "@/actions/public-forms";
 
-export default function SponsorPage() {
+export default function InstitutionPage() {
   const [form, setForm] = useState({
-    organization_name: "",
+    institution_name: "",
     contact_name: "",
     email: "",
     phone: "",
+    institution_type: "",
+    city: "",
+    student_count: "",
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -21,15 +24,18 @@ export default function SponsorPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.organization_name.trim() || !form.contact_name.trim() || !form.email.trim()) return;
+    if (!form.institution_name.trim() || !form.contact_name.trim() || !form.email.trim()) return;
     setStatus("loading");
     setErrorMsg("");
     try {
-      await submitSponsorInquiry({
-        organization_name: form.organization_name.trim(),
+      await submitInstitutionInquiry({
+        institution_name: form.institution_name.trim(),
         contact_name: form.contact_name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || undefined,
+        institution_type: form.institution_type || undefined,
+        city: form.city.trim() || undefined,
+        student_count: form.student_count || undefined,
         message: form.message.trim() || undefined,
       });
       setStatus("success");
@@ -74,9 +80,9 @@ export default function SponsorPage() {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: "#19140F", margin: "0 0 10px" }}>Inquiry Received</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: "#19140F", margin: "0 0 10px" }}>Application Received</h2>
           <p style={{ fontSize: 14, color: "#5A5247", lineHeight: 1.6, margin: "0 0 28px" }}>
-            Thank you for your interest in sponsoring Gyan Setu. We&apos;ll be in touch shortly.
+            Thank you for your interest in partnering with Gyan Setu. Our team will review your application and be in touch shortly.
           </p>
           <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE", textDecoration: "none" }}>
             Back to Home
@@ -101,27 +107,27 @@ export default function SponsorPage() {
         <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "36px 32px" }}>
           <div style={{ marginBottom: 28 }}>
             <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", margin: "0 0 6px" }}>
-              Partner With Us
+              Institutional Partnership
             </p>
             <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: "0 0 6px", fontFamily: "var(--font-cormorant), serif" }}>
-              Sponsor Gyan Setu
+              Apply as an Institution
             </h1>
             <p style={{ fontSize: 13, color: "#5A5247", margin: 0 }}>
-              Help us create meaningful learning experiences for students across India.
+              Partner with Gyan Setu to bring Jnana Pravas tours and science enrichment programmes to your students.
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div style={fieldStyle}>
-              <label htmlFor="organization_name" style={labelStyle}>Organization Name <span style={{ color: "#C0392B" }}>*</span></label>
+              <label htmlFor="institution_name" style={labelStyle}>Institution Name <span style={{ color: "#C0392B" }}>*</span></label>
               <input
-                id="organization_name"
-                name="organization_name"
+                id="institution_name"
+                name="institution_name"
                 type="text"
                 required
-                value={form.organization_name}
+                value={form.institution_name}
                 onChange={handleChange}
-                placeholder="Your organization's name"
+                placeholder="e.g. Kendriya Vidyalaya, IIT Bombay"
                 style={inputStyle}
               />
             </div>
@@ -150,7 +156,7 @@ export default function SponsorPage() {
                   required
                   value={form.email}
                   onChange={handleChange}
-                  placeholder="email@organization.com"
+                  placeholder="contact@institution.edu"
                   style={inputStyle}
                 />
               </div>
@@ -168,14 +174,65 @@ export default function SponsorPage() {
               </div>
             </div>
 
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+              <div>
+                <label htmlFor="institution_type" style={labelStyle}>Institution Type</label>
+                <select
+                  id="institution_type"
+                  name="institution_type"
+                  value={form.institution_type}
+                  onChange={handleChange}
+                  style={{ ...inputStyle, appearance: "none" }}
+                >
+                  <option value="">Select</option>
+                  <option value="School">School</option>
+                  <option value="Junior College">Junior College</option>
+                  <option value="Degree College">Degree College</option>
+                  <option value="University">University</option>
+                  <option value="Research Institute">Research Institute</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="city" style={labelStyle}>City</label>
+                <input
+                  id="city"
+                  name="city"
+                  type="text"
+                  value={form.city}
+                  onChange={handleChange}
+                  placeholder="e.g. Pune"
+                  style={inputStyle}
+                />
+              </div>
+            </div>
+
             <div style={fieldStyle}>
-              <label htmlFor="message" style={labelStyle}>Message</label>
+              <label htmlFor="student_count" style={labelStyle}>Approximate Number of Students</label>
+              <select
+                id="student_count"
+                name="student_count"
+                value={form.student_count}
+                onChange={handleChange}
+                style={{ ...inputStyle, appearance: "none" }}
+              >
+                <option value="">Select</option>
+                <option value="Under 100">Under 100</option>
+                <option value="100–500">100–500</option>
+                <option value="500–1000">500–1,000</option>
+                <option value="1000–5000">1,000–5,000</option>
+                <option value="5000+">5,000+</option>
+              </select>
+            </div>
+
+            <div style={fieldStyle}>
+              <label htmlFor="message" style={labelStyle}>How do you want to collaborate?</label>
               <textarea
                 id="message"
                 name="message"
                 value={form.message}
                 onChange={handleChange}
-                placeholder="Tell us more about your sponsorship interest..."
+                placeholder="Tell us about your institution's goals and how you'd like to work with Gyan Setu..."
                 rows={4}
                 style={{ ...inputStyle, resize: "vertical", minHeight: 100 }}
               />
@@ -204,7 +261,7 @@ export default function SponsorPage() {
                 transition: "background 0.15s",
               }}
             >
-              {status === "loading" ? "Submitting..." : "Submit Inquiry"}
+              {status === "loading" ? "Submitting..." : "Submit Application"}
             </button>
           </form>
         </div>

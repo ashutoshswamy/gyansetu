@@ -115,23 +115,72 @@ export async function approveTestResult(attemptId: string) {
   const student = attempt.users as any;
   if (!student?.clerk_id) throw new Error("Student Clerk ID missing");
 
+  // 1. Promote in Supabase first (source of truth)
+  const { error: dbError } = await db.from("users").update({ role: "volunteer" }).eq("id", student.id);
+  if (dbError) throw new Error("Failed to promote role in database");
+
+  // 2. Sync Clerk; rollback Supabase if Clerk fails
   const clerk = await clerkClient();
+  try {
+    await clerk.users.updateUserMetadata(student.clerk_id, { publicMetadata: { role: "volunteer" } });
+  } catch (err) {
+    await db.from("users").update({ role: student.role ?? null }).eq("id", student.id);
+    throw new Error("Failed to update auth provider; role change rolled back");
+  }
 
-  // Promote role in both Supabase and Clerk
-  await Promise.all([
-    db.from("users").update({ role: "volunteer" }).eq("id", student.id),
-    clerk.users.updateUserMetadata(student.clerk_id, {
-      publicMetadata: { role: "volunteer" },
-    }),
-  ]);
+  // 3. Mark attempt approved
+  await db.from("test_attempts").update({ status: "approved" }).eq("id", attemptId);
 
-  // Update attempt status
+  // 4. Force re-auth (best-effort — stale JWT expires naturally if this fails)
+  try {
+    await revokeAllUserSessions(student.clerk_id);
+  } catch {
+    console.error("[approveTestResult] session revoke failed; user will re-auth on next expiry");
+  }
+
+  revalidatePath("/admin/tests");
+  revalidatePath("/admin/students");
+}
+
+export async function demoteVolunteer(userId: string) {
+  const { db } = await requireAdminUser();
+
+  const { data: student, error: fetchError } = await db
+    .from("users")
+    .select("id, clerk_id, role")
+    .eq("id", userId)
+    .single();
+
+  if (fetchError || !student) throw new Error("User not found");
+  if (student.role !== "volunteer") throw new Error("User is not a volunteer");
+  if (!student.clerk_id) throw new Error("User Clerk ID missing");
+
+  // 1. Reset Supabase role
+  const { error: dbError } = await db.from("users").update({ role: null }).eq("id", userId);
+  if (dbError) throw new Error("Failed to demote role in database");
+
+  // 2. Sync Clerk; rollback if it fails
+  const clerk = await clerkClient();
+  try {
+    await clerk.users.updateUserMetadata(student.clerk_id, { publicMetadata: { role: null } });
+  } catch {
+    await db.from("users").update({ role: "volunteer" }).eq("id", userId);
+    throw new Error("Failed to update auth provider; demotion rolled back");
+  }
+
+  // 3. Revert any approved test attempts for this user back to pending_approval
   await db
     .from("test_attempts")
-    .update({ status: "approved" })
-    .eq("id", attemptId);
+    .update({ status: "pending_approval" })
+    .eq("student_id", userId)
+    .eq("status", "approved");
 
-  await revokeAllUserSessions(student.clerk_id);
+  // 4. Force re-auth
+  try {
+    await revokeAllUserSessions(student.clerk_id);
+  } catch {
+    console.error("[demoteVolunteer] session revoke failed");
+  }
 
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");

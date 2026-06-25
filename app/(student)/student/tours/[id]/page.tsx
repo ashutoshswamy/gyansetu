@@ -23,12 +23,18 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
 
   if (error || !tour) notFound();
 
-  const { data: application } = await db
-    .from("tour_applications")
-    .select("id, status")
-    .eq("tour_id", id)
-    .eq("student_id", user?.id ?? "")
-    .single();
+  const [{ data: application }, { data: profile }] = await Promise.all([
+    db.from("tour_applications").select("id, status").eq("tour_id", id).eq("student_id", user?.id ?? "").single(),
+    db.from("volunteer_profiles").select("date_of_birth").eq("user_id", user?.id ?? "").maybeSingle(),
+  ]);
+
+  let ageBlock: string | null = null;
+  if (!profile?.date_of_birth) {
+    ageBlock = "Complete your profile with your date of birth before applying.";
+  } else {
+    const age = Math.floor((Date.now() - new Date(profile.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    if (age < 18) ageBlock = `You must be 18 or older to apply (your age: ${age}).`;
+  }
 
   const s = statusStyles[tour.status ?? "draft"] ?? statusStyles.draft;
 
@@ -66,6 +72,13 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
               Already applied. Status:{" "}
               <span style={{ fontWeight: 600, textTransform: "capitalize" }}>{application.status}</span>
             </p>
+          </div>
+        ) : ageBlock ? (
+          <div style={{ background: "rgba(184,56,30,0.06)", border: "1px solid rgba(184,56,30,0.2)", borderRadius: 10, padding: "16px 20px" }}>
+            <p style={{ fontSize: 14, color: "#B8381E", margin: 0, fontWeight: 500 }}>{ageBlock}</p>
+            <a href="/student/profile" style={{ display: "inline-block", marginTop: 10, fontSize: 13, color: "#B8381E", textDecoration: "underline" }}>
+              Go to My Profile →
+            </a>
           </div>
         ) : tour.status === "open" ? (
           <ApplyButton tourId={tour.id} />

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createForm } from "@/actions/forms";
+import { createForm, updateForm } from "@/actions/forms";
 
 type Tour = { id: string; title: string };
 type FieldType = "text" | "textarea" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "image";
@@ -15,6 +15,16 @@ interface Field {
   required: boolean;
   options: string[];
   accept?: string;
+}
+
+interface InitialData {
+  id: string;
+  title: string;
+  description?: string;
+  tour_id?: string;
+  target_role: "enrollee" | "volunteer" | "all";
+  status: "draft" | "active" | "closed";
+  fields: Field[];
 }
 
 const FIELD_TYPES: { value: FieldType; label: string }[] = [
@@ -39,17 +49,18 @@ function blankField(): Field {
   return { id: uid(), type: "text", label: "", placeholder: "", required: false, options: [] };
 }
 
-export function NewFormBuilder({ tours }: { tours: Tour[] }) {
+export function NewFormBuilder({ tours, initialData }: { tours: Tour[]; initialData?: InitialData }) {
   const router = useRouter();
+  const isEdit = !!initialData;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tourId, setTourId] = useState("");
-  const [targetRole, setTargetRole] = useState<"enrollment_user" | "volunteer" | "all">("enrollment_user");
-  const [status, setStatus] = useState<"draft" | "active" | "closed">("draft");
-  const [fields, setFields] = useState<Field[]>([blankField()]);
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [description, setDescription] = useState(initialData?.description ?? "");
+  const [tourId, setTourId] = useState(initialData?.tour_id ?? "");
+  const [targetRole, setTargetRole] = useState<"enrollee" | "volunteer" | "all">(initialData?.target_role ?? "enrollee");
+  const [status, setStatus] = useState<"draft" | "active" | "closed">(initialData?.status ?? "draft");
+  const [fields, setFields] = useState<Field[]>(initialData?.fields ?? [blankField()]);
 
   function updateField(idx: number, patch: Partial<Field>) {
     setFields(fs => fs.map((f, i) => i === idx ? { ...f, ...patch } : f));
@@ -76,26 +87,31 @@ export function NewFormBuilder({ tours }: { tours: Tour[] }) {
     e.preventDefault();
     setSaving(true);
     setError("");
+    const payload = {
+      title,
+      description: description || undefined,
+      tour_id: tourId || undefined,
+      target_role: targetRole,
+      status,
+      fields: fields.map(f => ({
+        id: f.id,
+        type: f.type,
+        label: f.label,
+        placeholder: f.placeholder || undefined,
+        required: f.required || undefined,
+        options: NEEDS_OPTIONS.includes(f.type) ? f.options.filter(Boolean) : undefined,
+        accept: (f.type === "file" || f.type === "image") ? f.accept || undefined : undefined,
+      })),
+    };
     try {
-      await createForm({
-        title,
-        description: description || undefined,
-        tour_id: tourId || undefined,
-        target_role: targetRole,
-        status,
-        fields: fields.map(f => ({
-          id: f.id,
-          type: f.type,
-          label: f.label,
-          placeholder: f.placeholder || undefined,
-          required: f.required || undefined,
-          options: NEEDS_OPTIONS.includes(f.type) ? f.options.filter(Boolean) : undefined,
-          accept: (f.type === "file" || f.type === "image") ? f.accept || undefined : undefined,
-        })),
-      });
+      if (isEdit) {
+        await updateForm(initialData.id, payload);
+      } else {
+        await createForm(payload);
+      }
       router.push("/admin/forms");
     } catch (err: any) {
-      setError(err.message ?? "Failed to create form");
+      setError(err.message ?? "Failed to save form");
       setSaving(false);
     }
   }
@@ -128,7 +144,7 @@ export function NewFormBuilder({ tours }: { tours: Tour[] }) {
             <div>
               <label style={labelStyle}>Target Role *</label>
               <select required style={inputStyle} value={targetRole} onChange={e => setTargetRole(e.target.value as any)}>
-                <option value="enrollment_user">Students</option>
+                <option value="enrollee">Enrollees</option>
                 <option value="volunteer">Volunteers</option>
                 <option value="all">All</option>
               </select>
@@ -225,11 +241,11 @@ export function NewFormBuilder({ tours }: { tours: Tour[] }) {
       {error && <p style={{ fontSize: 13, color: "#B8381E", marginBottom: 12 }}>{error}</p>}
 
       <div className="flex gap-3 justify-end">
-        <button type="button" onClick={() => router.back()} style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}>
+        <button type="button" onClick={() => router.push("/admin/forms")} style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}>
           Cancel
         </button>
         <button type="submit" disabled={saving} style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: saving ? "#C8C4BC" : "#19140F", color: "white", cursor: saving ? "not-allowed" : "pointer" }}>
-          {saving ? "Creating..." : "Create Form"}
+          {saving ? "Saving..." : isEdit ? "Save Changes" : "Create Form"}
         </button>
       </div>
     </form>

@@ -13,7 +13,7 @@ export default async function VolunteerLayout({
   if (!userId) redirect("/sign-in");
 
   const role = await getUserRole();
-  if (role !== "volunteer" && role !== "admin" && role !== "super_admin") redirect("/dashboard");
+  if (role !== "volunteer" && role !== "admin") redirect("/dashboard");
 
   return (
     <div className="flex min-h-screen" style={{ background: "#FAFAF7" }}>

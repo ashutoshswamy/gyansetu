@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
   "/testimonial(.*)",
   "/sponsor(.*)",
   "/careers(.*)",
+  "/institution(.*)",
 ]);
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
@@ -33,27 +34,25 @@ export default clerkMiddleware(async (auth, req) => {
 
   const role = (sessionClaims?.metadata as { role?: UserRole })?.role;
 
-  // Admin routes: only admin/super_admin pass. Null role → redirect (admin layout syncs from Supabase).
-  // Exception: null role may be a manually assigned admin not yet in Clerk JWT — admin layout handles fallback.
-  if (isAdminRoute(req) && role !== "admin" && role !== "super_admin") {
-    // Allow null-role through only if no other role is set (new users who may have been manually promoted)
+  // Admin routes: only admin passes. Null role may be manually promoted admin — admin layout handles fallback.
+  if (isAdminRoute(req) && role !== "admin") {
     if (role !== null && role !== undefined) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 
-  // Volunteer routes: only volunteer/admin/super_admin pass. Block null-role users.
-  if (isVolunteerRoute(req) && role !== "volunteer" && role !== "admin" && role !== "super_admin") {
+  // Volunteer routes: only volunteer/admin pass. Block null-role users.
+  if (isVolunteerRoute(req) && role !== "volunteer" && role !== "admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Student routes: block admins/super_admins (their Clerk role IS set once synced).
-  if (isStudentRoute(req) && (role === "admin" || role === "super_admin")) {
+  // Student routes: block admins.
+  if (isStudentRoute(req) && role === "admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // EARC routes: only earc_staff/admin/super_admin pass.
-  if (isEarcRoute(req) && role !== "earc_staff" && role !== "admin" && role !== "super_admin") {
+  // EARC routes: only earc_staff/admin pass.
+  if (isEarcRoute(req) && role !== "earc_staff" && role !== "admin") {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 });

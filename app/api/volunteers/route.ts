@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase/server";
-import { auth } from "@clerk/nextjs/server";
+import { requireAdminUser } from "@/lib/clerk/action-auth";
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const db = createServerClient();
-  const { data: requestingUser } = await db.from("users").select("role").eq("clerk_id", userId).single();
-  if (!requestingUser || !["admin", "super_admin"].includes(requestingUser.role)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  const { db } = await requireAdminUser();
 
   const { data, error } = await db
     .from("users")

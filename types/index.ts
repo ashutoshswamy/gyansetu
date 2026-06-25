@@ -1,5 +1,4 @@
-// enrollment_user kept for DB compat; new signups get null role and are routed to /student
-export type UserRole = "enrollment_user" | "volunteer" | "admin" | "super_admin" | "earc_staff";
+export type UserRole = "volunteer" | "admin" | "earc_staff";
 
 export interface UserProfile {
   id: string;
@@ -69,7 +68,7 @@ export interface TestAttempt {
   student_id: string;
   answers: Record<string, string | string[]>;
   score?: number;
-  status: "in_progress" | "submitted" | "evaluated";
+  status: "in_progress" | "submitted" | "evaluated" | "pending_approval" | "approved" | "rejected";
   started_at: string;
   submitted_at?: string;
 }
@@ -101,7 +100,7 @@ export interface DynamicForm {
   description?: string;
   fields: FormField[];
   tour_id?: string;
-  target_role: UserRole | "all";
+  target_role: UserRole | "enrollee" | "all";
   status: "draft" | "active" | "closed";
   created_by: string;
   created_at: string;
@@ -128,7 +127,7 @@ export interface Notification {
 export interface DashboardStats {
   total_tours: number;
   active_tours: number;
-  total_enrollment_users: number;
+  total_enrollees: number;
   total_volunteers: number;
   pending_applications: number;
   completed_tests: number;
@@ -145,6 +144,7 @@ export interface Event {
   event_type: EventType;
   tour_id?: string;
   event_date: string;
+  event_time?: string;
   location?: string;
   status: "upcoming" | "ongoing" | "completed" | "cancelled";
   created_by: string;
@@ -219,6 +219,8 @@ export interface VolunteerProfile {
   phone?: string;
   address?: string;
   date_of_birth?: string;
+  state?: string;
+  city?: string;
   institution?: string;
   course_year?: string;
   skills?: string[];

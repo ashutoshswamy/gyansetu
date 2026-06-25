@@ -35,10 +35,12 @@ end $$;
 -- ============================================================
 -- DROP TABLES (cascade handles FK order)
 -- ============================================================
-drop table if exists public.earc_files           cascade;
-drop table if exists public.career_inquiries     cascade;
-drop table if exists public.sponsor_inquiries    cascade;
-drop table if exists public.testimonials         cascade;
+drop table if exists public.earc_files              cascade;
+drop table if exists public.institution_inquiries   cascade;
+drop table if exists public.alumni_registrations    cascade;
+drop table if exists public.career_inquiries        cascade;
+drop table if exists public.sponsor_inquiries       cascade;
+drop table if exists public.testimonials            cascade;
 drop table if exists public.newsletters          cascade;
 drop table if exists public.blog_posts           cascade;
 drop table if exists public.gallery_images       cascade;

@@ -6,7 +6,7 @@ export default async function StudentFormsPage() {
   const { data: forms } = await db
     .from("dynamic_forms")
     .select("*")
-    .in("target_role", ["enrollment_user", "all"])
+    .in("target_role", ["enrollee", "all"])
     .eq("status", "active")
     .order("created_at", { ascending: false });
 

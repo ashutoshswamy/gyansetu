@@ -18,6 +18,7 @@ import {
   Users,
   ChevronRight,
 } from "lucide-react";
+import { AlumniSection } from "./alumni-section";
 
 interface Testimonial {
   id: string;
@@ -678,6 +679,9 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
         </div>
       </section>
 
+      {/* ── ALUMNI NETWORK ── */}
+      <AlumniSection />
+
       {/* ── UPGRADE YOUR CAREER ── */}
       <section id="careers" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
@@ -708,12 +712,20 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                   </div>
                 ))}
               </div>
-              <Link
-                href="/careers"
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-green)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
-              >
-                Apply Now <ChevronRight size={15} />
-              </Link>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                <Link
+                  href="/careers"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-green)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
+                >
+                  Apply Now <ChevronRight size={15} />
+                </Link>
+                <Link
+                  href="/institution"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: "var(--lp-navy)", border: "1.5px solid var(--lp-navy)", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
+                >
+                  Apply as an Institution <ChevronRight size={15} />
+                </Link>
+              </div>
             </motion.div>
 
             <motion.div

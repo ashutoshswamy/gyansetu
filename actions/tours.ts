@@ -1,8 +1,8 @@
 "use server";
 
 import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
+import { isEnrolleeRole } from "@/lib/clerk/roles";
 import { auth } from "@clerk/nextjs/server";
-import { createServerClient } from "@/lib/supabase/server";
 import { tourSchema, type TourInput } from "@/lib/validations";
 import { invalidateCache, CACHE_KEYS, redis } from "@/lib/redis/client";
 import { revalidatePath } from "next/cache";
@@ -70,16 +70,25 @@ export async function applyForTour(tourId: string) {
   const { success } = await applyRatelimit.limit(`apply:${userId}`);
   if (!success) throw new Error("Too many applications. Please wait before trying again.");
 
-  const db = createServerClient();
+  const { db, user } = await getAuthenticatedUser();
 
-  const { data: user } = await db
-    .from("users")
-    .select("id, role")
-    .eq("clerk_id", userId)
-    .single();
+  if (!isEnrolleeRole(user.role)) throw new Error("Only unenrolled users can apply for tours");
 
-  // Allow users with no role (new signups) or legacy enrollment_user to apply
-  if (!user || (user.role !== null && user.role !== "enrollment_user")) throw new Error("Only unenrolled users can apply for tours");
+  const { data: profile } = await db
+    .from("volunteer_profiles")
+    .select("date_of_birth")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!profile?.date_of_birth) {
+    throw new Error("Please complete your profile with your date of birth before applying.");
+  }
+
+  const ageMs = Date.now() - new Date(profile.date_of_birth).getTime();
+  const age = Math.floor(ageMs / (365.25 * 24 * 60 * 60 * 1000));
+  if (age < 18) {
+    throw new Error("You must be 18 or older to apply for a tour.");
+  }
 
   const { data, error } = await db
     .from("tour_applications")

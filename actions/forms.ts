@@ -29,6 +29,34 @@ export async function createForm(input: DynamicFormInput) {
   return form;
 }
 
+export async function updateForm(id: string, input: DynamicFormInput) {
+  const { db } = await requireAdminUser();
+  const data = dynamicFormSchema.parse(input);
+
+  const { data: form, error } = await db
+    .from("dynamic_forms")
+    .update({ ...data, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) { console.error("[updateForm]", error); throw new Error("Failed to update form"); }
+
+  revalidatePath("/admin/forms");
+  revalidatePath(`/admin/forms/${id}/edit`);
+
+  return form;
+}
+
+export async function deleteForm(id: string) {
+  const { db } = await requireAdminUser();
+
+  const { error } = await db.from("dynamic_forms").delete().eq("id", id);
+  if (error) { console.error("[deleteForm]", error); throw new Error("Failed to delete form"); }
+
+  revalidatePath("/admin/forms");
+}
+
 const submissionSchema = z.object({
   form_id: z.string().uuid(),
   data: z.record(z.string(), z.unknown()),

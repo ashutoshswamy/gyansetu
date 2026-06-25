@@ -1,17 +1,13 @@
 "use server";
 
-import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
-import { auth } from "@clerk/nextjs/server";
-import { createServerClient } from "@/lib/supabase/server";
+import { requireAdminUser, requireVolunteerUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { dailyLogSchema, type DailyLogInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
-const getUser = getAuthenticatedUser;
 const requireAdmin = requireAdminUser;
 
 export async function createDailyLog(input: DailyLogInput) {
-  const { db, user } = await getUser();
-  if (!["volunteer", "admin", "super_admin"].includes(user.role)) throw new Error("Only volunteers can submit daily logs");
+  const { db, user } = await requireVolunteerUser();
   const data = dailyLogSchema.parse(input);
   const { data: log, error } = await db
     .from("daily_logs")
@@ -24,7 +20,7 @@ export async function createDailyLog(input: DailyLogInput) {
 }
 
 export async function updateDailyLog(id: string, input: Partial<DailyLogInput>) {
-  const { db, user } = await getUser();
+  const { db, user } = await requireVolunteerUser();
   const data = dailyLogSchema.partial().parse(input);
   const { data: log, error } = await db
     .from("daily_logs")
@@ -39,7 +35,7 @@ export async function updateDailyLog(id: string, input: Partial<DailyLogInput>) 
 }
 
 export async function deleteDailyLog(id: string) {
-  const { db, user } = await getUser();
+  const { db, user } = await requireVolunteerUser();
   const { error } = await db
     .from("daily_logs")
     .delete()
@@ -50,7 +46,7 @@ export async function deleteDailyLog(id: string) {
 }
 
 export async function getMyDailyLogs(tourId?: string) {
-  const { db, user } = await getUser();
+  const { db, user } = await requireVolunteerUser();
   let query = db
     .from("daily_logs")
     .select("*, tours(id, title)")
@@ -75,9 +71,7 @@ export async function getAllDailyLogs(tourId?: string) {
 }
 
 export async function getMediaByTour(tourId: string) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  const db = createServerClient();
+  const { db } = await getAuthenticatedUser();
   const { data, error } = await db
     .from("media_gallery")
     .select("*, users!media_gallery_uploaded_by_fkey(id, name)")
@@ -93,8 +87,7 @@ export async function uploadMedia(
   caption?: string,
   mediaType: "photo" | "document" | "video" = "photo"
 ) {
-  const { db, user } = await getUser();
-  if (!["volunteer", "admin", "super_admin"].includes(user.role)) throw new Error("Unauthorized");
+  const { db, user } = await requireVolunteerUser();
 
   let parsed: URL;
   try {

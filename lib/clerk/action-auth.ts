@@ -2,7 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/types";
 
-const ADMIN_ROLES: UserRole[] = ["admin", "super_admin"];
+const ADMIN_ROLES: UserRole[] = ["admin"];
 
 async function resolveUserWithRole() {
   const { userId, sessionClaims } = await auth();
@@ -23,28 +23,40 @@ async function resolveUserWithRole() {
   if (!dbUser) {
     const clerk = await clerkClient();
     const clerkUser = await clerk.users.getUser(userId);
-    const { data: upserted, error: upsertError } = await db
+    const email = clerkUser.emailAddresses[0]?.emailAddress ?? "";
+
+    // Email may already exist under a different row (e.g. webhook created row without clerk_id).
+    // Link clerk_id to that row instead of inserting a duplicate.
+    const { data: emailMatch } = await db
       .from("users")
-      .upsert(
-        {
+      .select("id, role")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (emailMatch) {
+      await db.from("users").update({ clerk_id: userId }).eq("id", emailMatch.id);
+      dbUser = emailMatch;
+    } else {
+      const { data: inserted, error: insertError } = await db
+        .from("users")
+        .insert({
           clerk_id: userId,
-          email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
+          email,
           name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim(),
           avatar_url: clerkUser.imageUrl,
           role: clerkRole,
-        },
-        { onConflict: "clerk_id" }
-      )
-      .select("id, role")
-      .single();
+        })
+        .select("id, role")
+        .single();
 
-    if (!upserted) {
-      console.error(
-        `[action-auth] backfill upsert failed: code=${upsertError?.code} message=${upsertError?.message} details=${upsertError?.details} hint=${upsertError?.hint}`
-      );
-      throw new Error("Unauthorized");
+      if (!inserted) {
+        console.error(
+          `[action-auth] backfill insert failed: code=${insertError?.code} message=${insertError?.message} details=${insertError?.details} hint=${insertError?.hint}`
+        );
+        throw new Error("Unauthorized");
+      }
+      dbUser = inserted;
     }
-    dbUser = upserted;
   }
 
   // Supabase has role — use it as source of truth
@@ -72,7 +84,7 @@ export async function requireAdminUser() {
 export async function requireVolunteerUser() {
   const { db, user } = await resolveUserWithRole();
 
-  const allowed: string[] = ["volunteer", "admin", "super_admin"];
+  const allowed: string[] = ["volunteer", "admin"];
   if (!user.role || !allowed.includes(user.role)) {
     throw new Error("Unauthorized");
   }
@@ -83,7 +95,7 @@ export async function requireVolunteerUser() {
 export async function requireEarcUser() {
   const { db, user, userId } = await resolveUserWithRole();
 
-  const allowed: string[] = ["earc_staff", "admin", "super_admin"];
+  const allowed: string[] = ["earc_staff", "admin"];
   if (!user.role || !allowed.includes(user.role)) {
     throw new Error("Unauthorized");
   }

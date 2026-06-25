@@ -1,10 +1,8 @@
 -- Gyan Setu — complete Supabase schema
 -- Run fresh in Supabase SQL editor (idempotent: uses IF NOT EXISTS / OR REPLACE)
 --
--- To apply test_attempts status constraint to an EXISTING database without reset:
---   alter table public.test_attempts drop constraint if exists test_attempts_status_check;
---   alter table public.test_attempts add constraint test_attempts_status_check
---     check (status in ('in_progress','submitted','evaluated','pending_approval','approved','rejected'));
+-- Roles: volunteer | admin | earc_staff  (null = new signup / enrollee)
+-- No super_admin, no enrollment_user.
 
 -- ============================================================
 -- EXTENSIONS
@@ -26,13 +24,13 @@ $$ language plpgsql;
 -- TABLES
 -- ============================================================
 
--- Users (synced from Clerk via webhook; role null = new signup)
+-- Users (synced from Clerk via webhook; role null = new signup / enrollee)
 create table if not exists public.users (
   id          uuid primary key default gen_random_uuid(),
   clerk_id    text unique not null,
   email       text unique not null,
   name        text not null,
-  role        text check (role in ('enrollment_user', 'volunteer', 'admin', 'super_admin', 'earc_staff')),
+  role        text check (role in ('volunteer', 'admin', 'earc_staff')),
   avatar_url  text,
   created_at  timestamptz default now(),
   updated_at  timestamptz default now()
@@ -107,7 +105,7 @@ create table if not exists public.dynamic_forms (
   description text,
   fields      jsonb not null default '[]',
   tour_id     uuid references public.tours(id) on delete set null,
-  target_role text not null default 'all' check (target_role in ('enrollment_user', 'volunteer', 'admin', 'super_admin', 'all')),
+  target_role text not null default 'all' check (target_role in ('enrollee', 'volunteer', 'admin', 'all')),
   status      text not null default 'draft' check (status in ('draft', 'active', 'closed')),
   created_by  uuid references public.users(id) on delete set null,
   created_at  timestamptz default now()
@@ -132,13 +130,15 @@ create table if not exists public.volunteer_assignments (
   unique (tour_id, volunteer_id)
 );
 
--- Volunteer Profiles
+-- Volunteer Profiles (also used by enrollees; promoted users keep same row)
 create table if not exists public.volunteer_profiles (
   id                          uuid primary key default gen_random_uuid(),
   user_id                     uuid references public.users(id) on delete cascade unique,
   phone                       text,
   address                     text,
   date_of_birth               date,
+  state                       text,
+  city                        text,
   institution                 text,
   course_year                 text,
   skills                      text[],
@@ -185,6 +185,7 @@ create table if not exists public.events (
   event_type  text not null check (event_type in ('katta', 'training', 'workshop', 'meeting', 'demo', 'presentation', 'celebration', 'other')),
   tour_id     uuid references public.tours(id) on delete set null,
   event_date  date not null,
+  event_time  text,
   location    text,
   status      text not null default 'upcoming' check (status in ('upcoming', 'ongoing', 'completed', 'cancelled')),
   created_by  uuid references public.users(id) on delete set null,
@@ -432,19 +433,19 @@ create policy "users_read_own"       on public.users for select using (clerk_id 
 create policy "users_insert_own"     on public.users for insert with check (clerk_id = auth.uid()::text);
 create policy "users_update_own"     on public.users for update using (clerk_id = auth.uid()::text);
 create policy "admins_read_users"    on public.users for select using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- tours
 create policy "tours_read_open"      on public.tours for select using (status = 'open');
 create policy "admins_manage_tours"  on public.tours for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- eligibility_tests
 create policy "tests_read_active"    on public.eligibility_tests for select using (status = 'active');
 create policy "admins_manage_tests"  on public.eligibility_tests for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- tour_applications
@@ -452,7 +453,7 @@ create policy "students_manage_own_applications" on public.tour_applications for
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = student_id)
 );
 create policy "admins_manage_applications" on public.tour_applications for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- test_attempts
@@ -460,13 +461,13 @@ create policy "students_manage_own_attempts" on public.test_attempts for all usi
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = student_id)
 );
 create policy "admins_manage_attempts" on public.test_attempts for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- dynamic_forms
 create policy "forms_read_active"    on public.dynamic_forms for select using (status = 'active');
 create policy "admins_manage_forms"  on public.dynamic_forms for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- form_submissions
@@ -474,7 +475,7 @@ create policy "users_manage_own_submissions" on public.form_submissions for all 
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = submitted_by)
 );
 create policy "admins_manage_submissions" on public.form_submissions for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- volunteer_assignments
@@ -482,7 +483,7 @@ create policy "volunteers_read_own_assignments" on public.volunteer_assignments 
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
 );
 create policy "admins_manage_assignments" on public.volunteer_assignments for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- volunteer_profiles
@@ -490,7 +491,7 @@ create policy "volunteer_profiles_own" on public.volunteer_profiles for all usin
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = user_id)
 );
 create policy "admins_manage_volunteer_profiles" on public.volunteer_profiles for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- alumni_profiles
@@ -499,13 +500,13 @@ create policy "alumni_profiles_own"      on public.alumni_profiles for all using
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = user_id)
 );
 create policy "admins_manage_alumni_profiles" on public.alumni_profiles for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- events
 create policy "events_read_all"      on public.events for select using (true);
 create policy "admins_manage_events" on public.events for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- event_attendees
@@ -513,34 +514,34 @@ create policy "event_attendees_manage_own" on public.event_attendees for all usi
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = user_id)
 );
 create policy "admins_manage_event_attendees" on public.event_attendees for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- tour_groups
 create policy "tour_groups_read_all"      on public.tour_groups for select using (true);
 create policy "admins_manage_tour_groups" on public.tour_groups for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- tour_group_members
 create policy "group_members_read_all"      on public.tour_group_members for select using (true);
 create policy "admins_manage_group_members" on public.tour_group_members for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- logistics
 create policy "logistics_read_all"      on public.logistics for select using (true);
 create policy "admins_manage_logistics" on public.logistics for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- media_gallery
 create policy "media_read_all"        on public.media_gallery for select using (true);
 create policy "volunteers_insert_media" on public.media_gallery for insert with check (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('volunteer', 'admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('volunteer', 'admin'))
 );
 create policy "admins_manage_media"   on public.media_gallery for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- certificates
@@ -548,7 +549,7 @@ create policy "certificates_read_own"      on public.certificates for select usi
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = user_id)
 );
 create policy "admins_manage_certificates" on public.certificates for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- daily_logs
@@ -556,7 +557,7 @@ create policy "daily_logs_own"          on public.daily_logs for all using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
 );
 create policy "admins_manage_daily_logs" on public.daily_logs for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- notifications
@@ -567,40 +568,52 @@ create policy "notifications_own" on public.notifications for all using (
 -- visits
 create policy "visits_read_all"      on public.visits for select using (true);
 create policy "admins_manage_visits" on public.visits for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- gallery_categories
 create policy "gallery_categories_read_all"      on public.gallery_categories for select using (true);
 create policy "admins_manage_gallery_categories" on public.gallery_categories for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- gallery_images
 create policy "gallery_images_read_all"      on public.gallery_images for select using (true);
 create policy "admins_manage_gallery_images" on public.gallery_images for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- blog_posts
 create policy "blog_posts_read_published"  on public.blog_posts for select using (status = 'published');
 create policy "admins_read_all_blog_posts" on public.blog_posts for select using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 create policy "admins_manage_blog_posts"   on public.blog_posts for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- newsletters
 create policy "newsletters_read_published"  on public.newsletters for select using (status = 'published');
 create policy "admins_read_all_newsletters" on public.newsletters for select using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 create policy "admins_manage_newsletters"   on public.newsletters for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- ── PUBLIC OUTREACH TABLES ────────────────────────────────────────────────────
+
+create table if not exists public.alumni_registrations (
+  id               uuid        primary key default gen_random_uuid(),
+  name             text        not null,
+  email            text        not null,
+  batch_year       text,
+  tour_destination text,
+  role_during_tour text,
+  highlights       text,
+  willing_to_mentor boolean    not null default false,
+  created_at       timestamptz not null default now()
+);
 
 create table if not exists public.testimonials (
   id          uuid        primary key default gen_random_uuid(),
@@ -628,38 +641,67 @@ create table if not exists public.career_inquiries (
   name             text        not null,
   email            text        not null,
   phone            text,
-  qualification    text,
-  experience_years text,
+  age              integer,
+  standard         text,
+  state            text,
+  city             text,
   area_of_interest text,
   message          text,
   created_at       timestamptz not null default now()
 );
 
+create table if not exists public.institution_inquiries (
+  id               uuid        primary key default gen_random_uuid(),
+  institution_name text        not null,
+  contact_name     text        not null,
+  email            text        not null,
+  phone            text,
+  institution_type text,
+  city             text,
+  student_count    text,
+  message          text,
+  created_at       timestamptz not null default now()
+);
+
 -- RLS
-alter table public.testimonials      enable row level security;
-alter table public.sponsor_inquiries enable row level security;
-alter table public.career_inquiries  enable row level security;
+alter table public.alumni_registrations   enable row level security;
+alter table public.testimonials           enable row level security;
+alter table public.sponsor_inquiries      enable row level security;
+alter table public.career_inquiries       enable row level security;
+alter table public.institution_inquiries  enable row level security;
+
+-- alumni_registrations: anyone can insert, only admins read
+create policy "alumni_registrations_insert_public" on public.alumni_registrations for insert with check (true);
+create policy "admins_manage_alumni_registrations" on public.alumni_registrations for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
 
 -- testimonials: anyone can insert (public form), only admins read all / manage
 create policy "testimonials_insert_public" on public.testimonials for insert with check (true);
 create policy "testimonials_read_approved" on public.testimonials for select using (is_approved = true);
 create policy "admins_read_all_testimonials"  on public.testimonials for select using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 create policy "admins_manage_testimonials" on public.testimonials for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- sponsor_inquiries: anyone can insert, only admins read
 create policy "sponsor_inquiries_insert_public" on public.sponsor_inquiries for insert with check (true);
 create policy "admins_manage_sponsor_inquiries" on public.sponsor_inquiries for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- career_inquiries: anyone can insert, only admins read
 create policy "career_inquiries_insert_public" on public.career_inquiries for insert with check (true);
 create policy "admins_manage_career_inquiries" on public.career_inquiries for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- institution_inquiries: anyone can insert, only admins read
+create policy "institution_inquiries_insert_public" on public.institution_inquiries for insert with check (true);
+create policy "admins_manage_institution_inquiries" on public.institution_inquiries for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
 );
 
 -- ── EARC FILES ────────────────────────────────────────────────────────────────
@@ -677,9 +719,9 @@ create table if not exists public.earc_files (
 
 alter table public.earc_files enable row level security;
 
--- earc_staff, admin, super_admin can do everything
+-- earc_staff and admin can do everything
 create policy "earc_manage_files" on public.earc_files for all using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('earc_staff', 'admin', 'super_admin'))
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('earc_staff', 'admin'))
 );
 
 -- Storage bucket for EARC files (private — access via signed URLs or service key)
@@ -687,7 +729,3 @@ insert into storage.buckets (id, name, public)
   values ('earc-files', 'earc-files', true)
   on conflict (id) do nothing;
 
--- To update existing DB role constraint without full reset:
--- alter table public.users drop constraint if exists users_role_check;
--- alter table public.users add constraint users_role_check
---   check (role in ('enrollment_user', 'volunteer', 'admin', 'super_admin', 'earc_staff'));

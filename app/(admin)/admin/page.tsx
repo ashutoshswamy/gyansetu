@@ -13,7 +13,7 @@ async function getStats(): Promise<DashboardStats> {
 
   const [tours, enrollmentUsers, volunteers, applications, tests] = await Promise.all([
     db.from("tours").select("id, status"),
-    db.from("users").select("id").eq("role", "enrollment_user"),
+    db.from("users").select("id").is("role", null),
     db.from("users").select("id").eq("role", "volunteer"),
     db.from("tour_applications").select("id, status").eq("status", "pending"),
     db.from("test_attempts").select("id").eq("status", "pending_approval"),
@@ -22,7 +22,7 @@ async function getStats(): Promise<DashboardStats> {
   const stats: DashboardStats = {
     total_tours: tours.data?.length ?? 0,
     active_tours: tours.data?.filter((t) => t.status === "open").length ?? 0,
-    total_enrollment_users: enrollmentUsers.data?.length ?? 0,
+    total_enrollees: enrollmentUsers.data?.length ?? 0,
     total_volunteers: volunteers.data?.length ?? 0,
     pending_applications: applications.data?.length ?? 0,
     completed_tests: tests.data?.length ?? 0,  // count of pending_approval attempts
@@ -105,7 +105,7 @@ export default async function AdminDashboard() {
           />
           <StatCard
             label="Enrolled Users"
-            value={stats.total_enrollment_users}
+            value={stats.total_enrollees}
             icon={<UserCheck size={18} />}
             accent="sky"
           />

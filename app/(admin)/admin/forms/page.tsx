@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { DeleteFormButton } from "@/components/features/forms/delete-form-button";
 
 export default async function AdminFormsPage() {
   const db = createServerClient();
@@ -22,18 +23,11 @@ export default async function AdminFormsPage() {
               {forms?.length ?? 0} forms total
             </p>
           </div>
-          <div className="flex gap-2">
-            <Link href="/admin/forms/templates">
-              <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.3)", cursor: "pointer" }}>
-                Import Templates
-              </button>
-            </Link>
-            <Link href="/admin/forms/new">
-              <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-                + New Form
-              </button>
-            </Link>
-          </div>
+          <Link href="/admin/forms/new">
+            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
+              + New Form
+            </button>
+          </Link>
         </div>
 
         <div className="space-y-3">
@@ -81,6 +75,7 @@ export default async function AdminFormsPage() {
                     Edit
                   </button>
                 </Link>
+                <DeleteFormButton formId={form.id} />
               </div>
             </div>
           ))}

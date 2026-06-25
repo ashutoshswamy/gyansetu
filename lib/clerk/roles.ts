@@ -18,11 +18,15 @@ export async function requireRole(
 
 export async function isAdmin(): Promise<boolean> {
   const role = await getUserRole();
-  return role === "admin" || role === "super_admin";
+  return role === "admin";
 }
 
 export async function getAuthUser() {
   const user = await currentUser();
   if (!user) throw new Error("Not authenticated");
   return user;
+}
+
+export function isEnrolleeRole(role: UserRole | null): boolean {
+  return role === null;
 }

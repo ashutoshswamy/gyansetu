@@ -55,7 +55,7 @@ export const dynamicFormSchema = z.object({
   description: z.string().optional(),
   fields: z.array(formFieldSchema).min(1),
   tour_id: z.string().uuid().optional(),
-  target_role: z.enum(["enrollment_user", "volunteer", "admin", "super_admin", "all"]),
+  target_role: z.enum(["enrollee", "volunteer", "admin", "all"]),
   status: z.enum(["draft", "active", "closed"]),
 });
 
@@ -79,6 +79,7 @@ export const eventSchema = z.object({
   event_type: z.enum(["katta", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"]),
   tour_id: z.string().uuid().optional(),
   event_date: z.string(),
+  event_time: z.string().optional(),
   location: z.string().optional(),
   status: z.enum(["upcoming", "ongoing", "completed", "cancelled"]).default("upcoming"),
 });
@@ -135,6 +136,8 @@ export const volunteerProfileSchema = z.object({
   phone: z.string().max(20).optional(),
   address: z.string().max(500).optional(),
   date_of_birth: z.string().optional(),
+  state: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
   institution: z.string().max(200).optional(),
   course_year: z.string().max(50).optional(),
   skills: z.array(z.string()).optional(),
@@ -162,7 +165,6 @@ export const sponsorInquirySchema = z.object({
   contact_name: z.string().min(2).max(100),
   email: z.string().email(),
   phone: z.string().max(20).optional(),
-  sponsorship_type: z.string().max(100).optional(),
   message: z.string().max(2000).optional(),
 });
 
@@ -170,9 +172,32 @@ export const careerInquirySchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
   phone: z.string().max(20).optional(),
-  qualification: z.string().max(200).optional(),
-  experience_years: z.string().max(50).optional(),
+  age: z.number().int().min(1).max(120),
+  standard: z.string().max(100).optional(),
+  state: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
   area_of_interest: z.string().max(200).optional(),
+  message: z.string().max(2000).optional(),
+});
+
+export const alumniRegistrationSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  batch_year: z.string().max(10).optional(),
+  tour_destination: z.string().max(200).optional(),
+  role_during_tour: z.string().max(100).optional(),
+  highlights: z.string().max(2000).optional(),
+  willing_to_mentor: z.boolean().optional(),
+});
+
+export const institutionInquirySchema = z.object({
+  institution_name: z.string().min(2).max(200),
+  contact_name: z.string().min(2).max(100),
+  email: z.string().email(),
+  phone: z.string().max(20).optional(),
+  institution_type: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
+  student_count: z.string().max(50).optional(),
   message: z.string().max(2000).optional(),
 });
 

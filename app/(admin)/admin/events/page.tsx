@@ -1,7 +1,8 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Calendar, MapPin, Tag } from "lucide-react";
+import { Calendar, MapPin, Tag, Clock } from "lucide-react";
 import type { Event } from "@/types";
+import { DeleteEventButton } from "@/components/features/events/delete-event-button";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
@@ -101,6 +102,7 @@ function EventRow({ event }: { event: any }) {
         </div>
         <div className="flex gap-4" style={{ fontSize: 12, color: "#9B9188" }}>
           <span className="flex items-center gap-1"><Calendar size={11} /> {event.event_date}</span>
+          {event.event_time && <span className="flex items-center gap-1"><Clock size={11} /> {event.event_time}</span>}
           {event.location && <span className="flex items-center gap-1"><MapPin size={11} /> {event.location}</span>}
           {event.tours?.title && <span className="flex items-center gap-1"><Tag size={11} /> {event.tours.title}</span>}
         </div>
@@ -111,6 +113,7 @@ function EventRow({ event }: { event: any }) {
             Edit
           </button>
         </Link>
+        <DeleteEventButton eventId={event.id} />
       </div>
     </div>
   );

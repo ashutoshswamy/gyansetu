@@ -109,12 +109,13 @@ const earcNavItems: NavItem[] = [
   { label: "Documents",      href: "/earc/documents",         Icon: FolderOpen },
 ];
 
-const flatNavItems: Record<"enrollment_user" | "volunteer", NavItem[]> = {
-  enrollment_user: [
-    { label: "Dashboard",  href: "/student",       Icon: LayoutDashboard },
-    { label: "Open Tours", href: "/student/tours", Icon: Plane },
-    { label: "My Tests",   href: "/student/tests", Icon: ClipboardList },
-    { label: "My Forms",   href: "/student/forms", Icon: FileText },
+const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
+  enrollee: [
+    { label: "Dashboard",  href: "/student",         Icon: LayoutDashboard },
+    { label: "Open Tours", href: "/student/tours",   Icon: Plane },
+    { label: "My Tests",   href: "/student/tests",   Icon: ClipboardList },
+    { label: "My Forms",   href: "/student/forms",   Icon: FileText },
+    { label: "My Profile", href: "/student/profile", Icon: UserCircle },
   ],
   volunteer: [
     { label: "Dashboard",     href: "/volunteer",              Icon: LayoutDashboard },
@@ -129,8 +130,10 @@ const flatNavItems: Record<"enrollment_user" | "volunteer", NavItem[]> = {
   ],
 };
 
+type SidebarRole = UserRole | "enrollee";
+
 const roleConfig: Record<
-  UserRole,
+  SidebarRole,
   { label: string; dotColor: string; bgColor: string; textColor: string }
 > = {
   admin: {
@@ -139,14 +142,8 @@ const roleConfig: Record<
     bgColor: "rgba(74,85,190,0.08)",
     textColor: "#4A55BE",
   },
-  super_admin: {
-    label: "Super Admin",
-    dotColor: "#6B21A8",
-    bgColor: "rgba(107,33,168,0.08)",
-    textColor: "#6B21A8",
-  },
-  enrollment_user: {
-    label: "Enrollment",
+  enrollee: {
+    label: "Enrollee",
     dotColor: "#1E5A8A",
     bgColor: "rgba(30,90,138,0.08)",
     textColor: "#1E5A8A",
@@ -165,10 +162,9 @@ const roleConfig: Record<
   },
 };
 
-const iconAccentColor: Record<UserRole, string> = {
+const iconAccentColor: Record<SidebarRole, string> = {
   admin: "#4A55BE",
-  super_admin: "#6B21A8",
-  enrollment_user: "#1E5A8A",
+  enrollee: "#1E5A8A",
   volunteer: "#2A5E3A",
   earc_staff: "#B8381E",
 };
@@ -256,11 +252,11 @@ function CollapsibleGroup({
   );
 }
 
-export function Sidebar({ role }: { role: UserRole }) {
+export function Sidebar({ role }: { role: SidebarRole }) {
   const pathname = usePathname();
   const config = roleConfig[role];
   const accentColor = iconAccentColor[role];
-  const isAdmin = role === "admin" || role === "super_admin";
+  const isAdmin = role === "admin";
   const isEarc = role === "earc_staff";
 
   const initialOpen = (group: NavGroup) =>
@@ -268,7 +264,7 @@ export function Sidebar({ role }: { role: UserRole }) {
 
   const flatItems = isEarc
     ? earcNavItems
-    : (flatNavItems[role as "enrollment_user" | "volunteer"] ?? []);
+    : (flatNavItems[role as "enrollee" | "volunteer"] ?? []);
 
   return (
     <aside

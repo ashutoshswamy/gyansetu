@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { upsertVolunteerProfile, getMyVolunteerProfile } from "@/actions/profiles";
-import { User, Phone, AlertCircle, CheckCircle } from "lucide-react";
+import { UserCircle, AlertCircle, CheckCircle, Info } from "lucide-react";
 import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
 
 const inputStyle: React.CSSProperties = {
@@ -11,19 +11,25 @@ const inputStyle: React.CSSProperties = {
   background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
 };
 
-export default function VolunteerProfilePage() {
+function getAge(dob: string): number {
+  return Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+}
+
+export default function EnrolleeProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"personal" | "emergency">("personal");
+  const [dob, setDob] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
   useEffect(() => {
     getMyVolunteerProfile().then(d => {
       setProfile(d);
+      if (d?.date_of_birth) setDob(d.date_of_birth);
       if (d?.state) setSelectedState(d.state);
       if (d?.city) setSelectedCity(d.city);
       setLoading(false);
@@ -59,6 +65,7 @@ export default function VolunteerProfilePage() {
         availability_notes: fd.get("availability_notes") as string || undefined,
       });
       setProfile(p);
+      if (p?.date_of_birth) setDob(p.date_of_birth);
       setSaved(true);
     } catch (err: any) {
       setError(err.message);
@@ -69,6 +76,9 @@ export default function VolunteerProfilePage() {
 
   if (loading) return <div className="p-8" style={{ color: "#9B9188" }}>Loading...</div>;
 
+  const age = dob ? getAge(dob) : null;
+  const underAge = age !== null && age < 18;
+
   const tabs = [
     { id: "personal" as const, label: "Personal Info" },
     { id: "emergency" as const, label: "Emergency & Consent" },
@@ -78,15 +88,27 @@ export default function VolunteerProfilePage() {
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Enrollee Portal</p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>My Profile</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Volunteer database entry, skills, and emergency contacts</p>
+          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Your profile is retained if you are promoted to volunteer.</p>
         </div>
 
-        {profile?.consent_given && (
+        <div style={{ background: "rgba(74,85,190,0.06)", border: "1px solid rgba(74,85,190,0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13, color: "#4A55BE" }}>
+          <Info size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+          <span>You must be <strong>18 or older</strong> to apply for a tour. Set your date of birth to enable tour applications.</span>
+        </div>
+
+        {underAge && (
+          <div style={{ background: "rgba(184,56,30,0.06)", border: "1px solid rgba(184,56,30,0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "#B8381E" }}>
+            <AlertCircle size={15} />
+            Your age ({age}) does not meet the minimum requirement of 18 to apply for tours.
+          </div>
+        )}
+
+        {age !== null && !underAge && (
           <div style={{ background: "rgba(42,94,58,0.07)", border: "1px solid rgba(42,94,58,0.2)", borderRadius: 8, padding: "10px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#2A5E3A" }}>
             <CheckCircle size={15} />
-            Consent given on {new Date(profile.consent_given_at).toLocaleDateString()}
+            Age verified ({age} years) — you are eligible to apply for tours.
           </div>
         )}
 
@@ -96,7 +118,7 @@ export default function VolunteerProfilePage() {
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id)}
-              style={{ flex: 1, padding: "8px 0", fontSize: 13, fontWeight: 600, borderRadius: 6, border: "none", cursor: "pointer", background: activeTab === t.id ? "#2A5E3A" : "transparent", color: activeTab === t.id ? "white" : "#5A5247" }}
+              style={{ flex: 1, padding: "8px 0", fontSize: 13, fontWeight: 600, borderRadius: 6, border: "none", cursor: "pointer", background: activeTab === t.id ? "#1E5A8A" : "transparent", color: activeTab === t.id ? "white" : "#5A5247" }}
             >
               {t.label}
             </button>
@@ -111,7 +133,7 @@ export default function VolunteerProfilePage() {
           )}
           {saved && (
             <div style={{ background: "rgba(42,94,58,0.07)", border: "1px solid rgba(42,94,58,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#2A5E3A", display: "flex", gap: 8, alignItems: "center" }}>
-              <CheckCircle size={14} /> Profile saved successfully.
+              <CheckCircle size={14} /> Profile saved.
             </div>
           )}
 
@@ -119,7 +141,16 @@ export default function VolunteerProfilePage() {
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <F label="Phone"><input name="phone" defaultValue={profile?.phone ?? ""} style={inputStyle} /></F>
-                <F label="Date of Birth"><input name="date_of_birth" type="date" defaultValue={profile?.date_of_birth ?? ""} style={inputStyle} /></F>
+                <F label="Date of Birth" required>
+                  <input
+                    name="date_of_birth"
+                    type="date"
+                    required
+                    defaultValue={profile?.date_of_birth ?? ""}
+                    onChange={e => setDob(e.target.value)}
+                    style={inputStyle}
+                  />
+                </F>
               </div>
               <F label="Address"><textarea name="address" rows={2} defaultValue={profile?.address ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <div className="grid grid-cols-2 gap-4">
@@ -147,16 +178,6 @@ export default function VolunteerProfilePage() {
               <F label="Bio" hint="Brief introduction about yourself"><textarea name="bio" rows={3} defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Skills" hint="Comma-separated: Teaching, Photography, Music..."><input name="skills" defaultValue={(profile?.skills ?? []).join(", ")} style={inputStyle} /></F>
               <F label="Languages Known" hint="Comma-separated"><input name="languages" defaultValue={(profile?.languages ?? []).join(", ")} style={inputStyle} /></F>
-              <F label="States Visited (previous Gyan Setu)">
-                <div className="grid grid-cols-3 gap-1 mt-1">
-                  {INDIAN_STATES.map(s => (
-                    <label key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#5A5247", cursor: "pointer" }}>
-                      <input type="checkbox" name="states_visited" value={s} defaultChecked={(profile?.states_visited ?? []).includes(s)} />
-                      {s}
-                    </label>
-                  ))}
-                </div>
-              </F>
               <F label="Availability Notes"><textarea name="availability_notes" rows={2} placeholder="When are you typically available? Any constraints?" defaultValue={profile?.availability_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
             </div>
           )}
@@ -173,19 +194,19 @@ export default function VolunteerProfilePage() {
                 <F label="Relationship"><input name="emergency_contact_relation" placeholder="e.g. Parent, Sibling" defaultValue={profile?.emergency_contact_relation ?? ""} style={inputStyle} /></F>
               </div>
               <F label="Emergency Contact Phone" required><input name="emergency_contact_phone" required defaultValue={profile?.emergency_contact_phone ?? ""} style={inputStyle} /></F>
-              <F label="Medical Notes / Allergies / Dietary Requirements"><textarea name="medical_notes" rows={3} placeholder="Any medical conditions, allergies, dietary restrictions the team should be aware of..." defaultValue={profile?.medical_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Medical Notes / Allergies / Dietary Requirements"><textarea name="medical_notes" rows={3} placeholder="Any medical conditions, allergies, or dietary restrictions..." defaultValue={profile?.medical_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
                 <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
                   <input type="checkbox" name="consent_given" defaultChecked={profile?.consent_given ?? false} style={{ marginTop: 2 }} />
                   <span style={{ fontSize: 13, color: "#19140F", lineHeight: 1.5 }}>
-                    I give my consent to participate in the Gyan Setu visit and acknowledge that my emergency contact details may be accessed by team coordinators in case of need. I understand the nature of the visit and voluntarily choose to participate.
+                    I give my consent to participate in the Gyan Setu visit and acknowledge that my emergency contact details may be accessed by team coordinators in case of need.
                   </span>
                 </label>
               </div>
             </div>
           )}
 
-          <button type="submit" disabled={saving} style={{ marginTop: 20, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+          <button type="submit" disabled={saving} style={{ marginTop: 20, background: "#1E5A8A", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
             {saving ? "Saving..." : "Save Profile"}
           </button>
         </form>
