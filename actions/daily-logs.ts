@@ -81,6 +81,25 @@ export async function getMediaByTour(tourId: string) {
   return data ?? [];
 }
 
+export async function getTodayUploadCount() {
+  const { db, user } = await requireVolunteerUser();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startOfDay = today.toISOString();
+
+  const { count, error } = await db
+    .from("media_gallery")
+    .select("id", { count: "exact", head: true })
+    .eq("uploaded_by", user.id)
+    .gte("created_at", startOfDay);
+
+  if (error) {
+    console.error("[getTodayUploadCount]", error);
+    throw new Error("Failed to fetch today's upload count");
+  }
+  return count ?? 0;
+}
+
 export async function uploadMedia(
   tourId: string,
   fileUrl: string,
@@ -88,6 +107,25 @@ export async function uploadMedia(
   mediaType: "photo" | "document" | "video" = "photo"
 ) {
   const { db, user } = await requireVolunteerUser();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startOfDay = today.toISOString();
+
+  const { count, error: countError } = await db
+    .from("media_gallery")
+    .select("id", { count: "exact", head: true })
+    .eq("uploaded_by", user.id)
+    .gte("created_at", startOfDay);
+
+  if (countError) {
+    console.error("[uploadMedia check]", countError);
+    throw new Error("Could not verify daily upload limit");
+  }
+
+  if (count !== null && count >= 2) {
+    throw new Error("Daily upload limit reached. You can only upload 2 media files per day.");
+  }
 
   let parsed: URL;
   try {

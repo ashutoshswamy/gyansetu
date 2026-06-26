@@ -113,8 +113,40 @@ export async function uploadEarcFile(
 ): Promise<void> {
   const { db, user } = await requireEarcUser();
 
+  const directUrl = formData.get("file_url") as string | null;
+  const description = formData.get("description") as string | null;
+
+  if (directUrl && directUrl.trim()) {
+    const url = directUrl.trim();
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      throw new Error("Invalid file URL. Must start with http:// or https://");
+    }
+    const name = url.split("/").pop() || "linked-file";
+    const ext = name.split(".").pop()?.toLowerCase() ?? "";
+    let fileType = "application/octet-stream";
+    if (ext === "pdf") fileType = "application/pdf";
+    else if (ext === "doc") fileType = "application/msword";
+    else if (ext === "docx") fileType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    else if (ext === "xls") fileType = "application/vnd.ms-excel";
+    else if (ext === "xlsx") fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    else if (ext === "csv") fileType = "text/csv";
+    else if (ext === "jpg" || ext === "jpeg") fileType = "image/jpeg";
+    else if (ext === "png") fileType = "image/png";
+    else if (ext === "webp") fileType = "image/webp";
+
+    await db.from("earc_files").insert({
+      name,
+      file_url: url,
+      file_type: fileType,
+      category,
+      description: description?.trim() || null,
+      uploaded_by: user.id,
+    });
+    return;
+  }
+
   const file = formData.get("file") as File | null;
-  if (!file || file.size === 0) throw new Error("No file provided");
+  if (!file || file.size === 0) throw new Error("No file or direct link provided");
   if (file.size > 20 * 1024 * 1024) throw new Error("File exceeds 20 MB");
   if (!ALLOWED_EARC_MIME_TYPES.has(file.type)) throw new Error("File type not allowed");
 
@@ -129,8 +161,6 @@ export async function uploadEarcFile(
   if (uploadError) throw new Error("Upload failed");
 
   const { data: urlData } = db.storage.from("earc-files").getPublicUrl(safeName);
-
-  const description = formData.get("description") as string | null;
 
   await db.from("earc_files").insert({
     name: file.name,

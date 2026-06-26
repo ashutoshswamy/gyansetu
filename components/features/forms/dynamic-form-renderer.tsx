@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import type { DynamicForm, FormField } from "@/types";
 import { submitForm } from "@/actions/forms";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -26,7 +26,95 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: "0.03em",
 };
 
-function FieldRenderer({ field, register }: { field: FormField; register: any }) {
+function FileImageInput({
+  field,
+  value,
+  onChange,
+}: {
+  field: FormField;
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const [mode, setMode] = useState<"upload" | "link">("upload");
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const { createClientClient } = await import("@/lib/supabase/client");
+      const sb = createClientClient();
+      const path = `forms/${field.id}/${Date.now()}-${file.name}`;
+      const { error: uploadError } = await sb.storage.from("media").upload(path, file);
+      if (uploadError) throw new Error(uploadError.message);
+      const { data: urlData } = sb.storage.from("media").getPublicUrl(path);
+      onChange(urlData.publicUrl);
+    } catch (err: any) {
+      setError(err.message ?? "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-4 mb-2">
+        <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "#4A55BE" : "#5A5247", fontWeight: 600 }}>
+          <input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "#4A55BE" }} />
+          Upload File
+        </label>
+        <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "#4A55BE" : "#5A5247", fontWeight: 600 }}>
+          <input type="radio" checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "#4A55BE" }} />
+          Direct Link
+        </label>
+      </div>
+
+      {mode === "upload" ? (
+        <div className="flex gap-2">
+          <input
+            ref={fileRef}
+            type="file"
+            accept={field.accept ?? (field.type === "image" ? "image/*" : undefined)}
+            onChange={handleFileChange}
+            style={{ ...inputStyle, padding: "7px 12px", flex: 1 }}
+          />
+          {uploading && <span className="text-xs text-[#9B9188] self-center">Uploading...</span>}
+        </div>
+      ) : (
+        <input
+          type="url"
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://example.com/file.pdf"
+          style={inputStyle}
+        />
+      )}
+
+      {value && (
+        <p style={{ fontSize: 11, color: "#2A5E3A", margin: "4px 0 0" }}>
+          ✓ Selected: <a href={value} target="_blank" rel="noopener noreferrer" style={{ color: "#4A55BE", textDecoration: "underline" }}>View File</a>
+        </p>
+      )}
+      {error && <p style={{ fontSize: 11, color: "#B8381E", margin: "4px 0 0" }}>{error}</p>}
+    </div>
+  );
+}
+
+function FieldRenderer({
+  field,
+  register,
+  value,
+  onChange,
+}: {
+  field: FormField;
+  register: any;
+  value: string;
+  onChange: (url: string) => void;
+}) {
   switch (field.type) {
     case "textarea":
       return (
@@ -87,14 +175,7 @@ function FieldRenderer({ field, register }: { field: FormField; register: any })
 
     case "file":
     case "image":
-      return (
-        <input
-          type="file"
-          {...register(field.id)}
-          accept={field.accept ?? (field.type === "image" ? "image/*" : undefined)}
-          style={{ ...inputStyle, padding: "7px 12px" }}
-        />
-      );
+      return <FileImageInput field={field} value={value} onChange={onChange} />;
 
     default:
       return (
@@ -108,10 +189,18 @@ function FieldRenderer({ field, register }: { field: FormField; register: any })
 }
 
 export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm();
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    form.fields.forEach((field) => {
+      if (field.type === "file" || field.type === "image") {
+        register(field.id, { required: field.required });
+      }
+    });
+  }, [form.fields, register]);
 
   async function onSubmit(data: Record<string, unknown>) {
     setSaving(true);
@@ -145,7 +234,12 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
                 {field.label}
                 {field.required && <span style={{ color: "#B8381E", marginLeft: 3 }}>*</span>}
               </label>
-              <FieldRenderer field={field} register={register} />
+              <FieldRenderer
+                field={field}
+                register={register}
+                value={watch(field.id)}
+                onChange={(url) => setValue(field.id, url, { shouldValidate: true })}
+              />
             </div>
           ))}
         </div>

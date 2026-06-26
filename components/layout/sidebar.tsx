@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import type { UserRole } from "@/types";
+import { createClientClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard,
   Plane,
@@ -259,12 +260,84 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   const isAdmin = role === "admin";
   const isEarc = role === "earc_staff";
 
+  const { user } = useUser();
+  const [progress, setProgress] = useState<{ completed: number; total: number } | null>(null);
+
   const initialOpen = (group: NavGroup) =>
     group.items.some((item) => isItemActive(item.href, pathname));
 
   const flatItems = isEarc
     ? earcNavItems
     : (flatNavItems[role as "enrollee" | "volunteer"] ?? []);
+
+  useEffect(() => {
+    if (role !== "volunteer" || !user?.id) return;
+
+    const clientDb = createClientClient();
+    let isMounted = true;
+
+    async function fetchProgress() {
+      try {
+        const { data: suUser } = await clientDb
+          .from("users")
+          .select("id")
+          .eq("clerk_id", user!.id)
+          .single();
+
+        if (!suUser || !isMounted) return;
+
+        const { data: activeForms } = await clientDb
+          .from("dynamic_forms")
+          .select("id")
+          .in("target_role", ["volunteer", "all"])
+          .eq("status", "active")
+          .eq("is_template", false);
+
+        if (!activeForms || !isMounted) return;
+
+        if (activeForms.length === 0) {
+          setProgress({ completed: 0, total: 0 });
+          return;
+        }
+
+        const formIds = activeForms.map((f) => f.id);
+        const { data: submissions } = await clientDb
+          .from("form_submissions")
+          .select("form_id")
+          .eq("submitted_by", suUser.id)
+          .in("form_id", formIds);
+
+        if (!isMounted) return;
+
+        const completedIds = new Set(submissions?.map((s) => s.form_id) ?? []);
+        setProgress({
+          completed: completedIds.size,
+          total: activeForms.length,
+        });
+      } catch (err) {
+        console.error("Error fetching progress:", err);
+      }
+    }
+
+    fetchProgress();
+
+    // Subscribe to form submissions changes to auto-refresh the progress bar
+    const channel = clientDb
+      .channel("sidebar-progress-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "form_submissions" },
+        () => {
+          fetchProgress();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      isMounted = false;
+      clientDb.removeChannel(channel);
+    };
+  }, [role, user?.id]);
 
   return (
     <aside
@@ -312,6 +385,28 @@ export function Sidebar({ role }: { role: SidebarRole }) {
           </div>
         )}
       </nav>
+
+      {/* Progress Bar */}
+      {role === "volunteer" && progress && (
+        <div className="px-4 py-3.5" style={{ borderTop: "1px solid #E4DFD1" }}>
+          <div className="flex justify-between items-center mb-1.5" style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", fontFamily: "var(--font-poppins), sans-serif" }}>
+            <span className="flex items-center gap-1.5">
+              <CheckSquare className="w-3.5 h-3.5 text-[#2A5E3A]" /> Tasks & Forms
+            </span>
+            <span className="font-mono text-[#2A5E3A] text-[10px]">
+              {progress.completed}/{progress.total}
+            </span>
+          </div>
+          <div className="w-full bg-[#F3F0E8] rounded-full h-1.5 overflow-hidden">
+            <div
+              className="bg-[#2A5E3A] h-1.5 transition-all duration-300 rounded-full"
+              style={{
+                width: `${progress.total > 0 ? (progress.completed / progress.total) * 100 : 0}%`,
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* User */}
       <div className="px-4 py-4" style={{ borderTop: "1px solid #E4DFD1" }}>

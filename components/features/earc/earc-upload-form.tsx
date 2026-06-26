@@ -15,6 +15,7 @@ export function EarcUploadForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [mode, setMode] = useState<"upload" | "link">("upload");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,20 +49,46 @@ export function EarcUploadForm({
 
       <div className="space-y-4">
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>
-            File <span style={{ color: "#B8381E" }}>*</span>
-          </label>
-          <input
-            type="file"
-            name="file"
-            required
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png,.webp"
-            className="block w-full text-sm"
-            style={{ color: "#19140F" }}
-          />
-          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>
-            PDF, Word, Excel, CSV, or image — max 20 MB
-          </p>
+          <div className="flex gap-4 mb-3">
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "#4A55BE" : "#5A5247", fontWeight: 600 }}>
+              <input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "#4A55BE" }} />
+              Upload File
+            </label>
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "#4A55BE" : "#5A5247", fontWeight: 600 }}>
+              <input type="radio" checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "#4A55BE" }} />
+              Direct Link
+            </label>
+          </div>
+
+          {mode === "upload" ? (
+            <div>
+              <input
+                type="file"
+                name="file"
+                required
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png,.webp"
+                className="block w-full text-sm"
+                style={{ color: "#19140F" }}
+              />
+              <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>
+                PDF, Word, Excel, CSV, or image — max 20 MB
+              </p>
+            </div>
+          ) : (
+            <div>
+              <input
+                type="url"
+                name="file_url"
+                required
+                placeholder="https://example.com/document.pdf"
+                className="w-full px-3 py-2 rounded text-sm outline-none"
+                style={{ border: "1px solid #E4DFD1", color: "#19140F", background: "#FAFAF7" }}
+              />
+              <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>
+                Enter the direct web link (URL) of the file
+              </p>
+            </div>
+          )}
         </div>
 
         <div>
