@@ -107,6 +107,7 @@ create table if not exists public.dynamic_forms (
   tour_id     uuid references public.tours(id) on delete set null,
   target_role text not null default 'all' check (target_role in ('enrollee', 'volunteer', 'admin', 'all')),
   status      text not null default 'draft' check (status in ('draft', 'active', 'closed')),
+  is_template boolean not null default false,
   created_by  uuid references public.users(id) on delete set null,
   created_at  timestamptz default now()
 );

@@ -54,9 +54,10 @@ export const dynamicFormSchema = z.object({
   title: z.string().min(3),
   description: z.string().optional(),
   fields: z.array(formFieldSchema).min(1),
-  tour_id: z.string().uuid().optional(),
+  tour_id: z.string().uuid().optional().nullable(),
   target_role: z.enum(["enrollee", "volunteer", "admin", "all"]),
   status: z.enum(["draft", "active", "closed"]),
+  is_template: z.boolean().default(false),
 });
 
 export const applicationSchema = z.object({

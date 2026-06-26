@@ -16,7 +16,7 @@ export default async function StudentFormPage({ params }: { params: Promise<{ id
     .eq("status", "active")
     .single();
 
-  if (error || !form) notFound();
+  if (error || !form || form.is_template) notFound();
 
   return (
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>

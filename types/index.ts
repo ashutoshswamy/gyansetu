@@ -102,6 +102,7 @@ export interface DynamicForm {
   tour_id?: string;
   target_role: UserRole | "enrollee" | "all";
   status: "draft" | "active" | "closed";
+  is_template: boolean;
   created_by: string;
   created_at: string;
 }

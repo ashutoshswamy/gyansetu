@@ -24,6 +24,7 @@ interface InitialData {
   tour_id?: string;
   target_role: "enrollee" | "volunteer" | "all";
   status: "draft" | "active" | "closed";
+  is_template: boolean;
   fields: Field[];
 }
 
@@ -49,7 +50,7 @@ function blankField(): Field {
   return { id: uid(), type: "text", label: "", placeholder: "", required: false, options: [] };
 }
 
-export function NewFormBuilder({ tours, initialData }: { tours: Tour[]; initialData?: InitialData }) {
+export function NewFormBuilder({ tours, templates = [], initialData }: { tours: Tour[]; templates?: any[]; initialData?: InitialData }) {
   const router = useRouter();
   const isEdit = !!initialData;
   const [saving, setSaving] = useState(false);
@@ -60,6 +61,7 @@ export function NewFormBuilder({ tours, initialData }: { tours: Tour[]; initialD
   const [tourId, setTourId] = useState(initialData?.tour_id ?? "");
   const [targetRole, setTargetRole] = useState<"enrollee" | "volunteer" | "all">(initialData?.target_role ?? "enrollee");
   const [status, setStatus] = useState<"draft" | "active" | "closed">(initialData?.status ?? "draft");
+  const [isTemplate, setIsTemplate] = useState(initialData?.is_template ?? false);
   const [fields, setFields] = useState<Field[]>(initialData?.fields ?? [blankField()]);
 
   function updateField(idx: number, patch: Partial<Field>) {
@@ -90,9 +92,10 @@ export function NewFormBuilder({ tours, initialData }: { tours: Tour[]; initialD
     const payload = {
       title,
       description: description || undefined,
-      tour_id: tourId || undefined,
+      tour_id: isTemplate ? null : (tourId || null),
       target_role: targetRole,
       status,
+      is_template: isTemplate,
       fields: fields.map(f => ({
         id: f.id,
         type: f.type,
@@ -109,7 +112,11 @@ export function NewFormBuilder({ tours, initialData }: { tours: Tour[]; initialD
       } else {
         await createForm(payload);
       }
-      router.push("/admin/forms");
+      if (isTemplate) {
+        router.push("/admin/forms/templates");
+      } else {
+        router.push("/admin/forms");
+      }
     } catch (err: any) {
       setError(err.message ?? "Failed to save form");
       setSaving(false);
@@ -121,6 +128,50 @@ export function NewFormBuilder({ tours, initialData }: { tours: Tour[]; initialD
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Template Importer */}
+      {!isEdit && templates.length > 0 && (
+        <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1.5px dashed #4A55BE", color: "#4A55BE" }}>
+          <label style={{ ...labelStyle, color: "#4A55BE" }}>Import from existing Template</label>
+          <div className="flex gap-3 items-center mt-1">
+            <select
+              style={{ ...inputStyle, borderColor: "rgba(74,85,190,0.3)" }}
+              defaultValue=""
+              onChange={e => {
+                const tId = e.target.value;
+                if (!tId) return;
+                const selected = templates.find(t => t.id === tId);
+                if (selected) {
+                  setTitle(selected.title);
+                  setDescription(selected.description ?? "");
+                  setTargetRole(selected.target_role);
+                  setStatus(selected.status);
+                  setIsTemplate(false); // Default to saving as new linked form
+                  setFields(selected.fields.map((f: any) => ({
+                    id: uid(),
+                    type: f.type,
+                    label: f.label,
+                    placeholder: f.placeholder ?? "",
+                    required: !!f.required,
+                    options: f.options ?? [],
+                    accept: f.accept ?? "",
+                  })));
+                }
+              }}
+            >
+              <option value="">Select a template to import...</option>
+              {templates.map(t => (
+                <option key={t.id} value={t.id}>
+                  {t.title} ({t.fields?.length ?? 0} fields)
+                </option>
+              ))}
+            </select>
+          </div>
+          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6, margin: "6px 0 0 0" }}>
+            * Selecting a template will overwrite the title, description, and fields in the builder below.
+          </p>
+        </div>
+      )}
+
       {/* Meta */}
       <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1px solid #E4DFD1" }}>
         <p style={{ fontSize: 12, fontWeight: 600, color: "#9B9188", marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Form Details</p>
@@ -133,10 +184,23 @@ export function NewFormBuilder({ tours, initialData }: { tours: Tour[]; initialD
             <label style={labelStyle}>Description</label>
             <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 56 }} value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional description" />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
+            <div>
+              <label style={labelStyle}>Form Type *</label>
+              <select style={inputStyle} value={isTemplate ? "template" : "link"} onChange={e => {
+                const val = e.target.value === "template";
+                setIsTemplate(val);
+                if (val) {
+                  setTourId("");
+                }
+              }}>
+                <option value="link">Standard Form</option>
+                <option value="template">Template</option>
+              </select>
+            </div>
             <div>
               <label style={labelStyle}>Linked Tour</label>
-              <select style={inputStyle} value={tourId} onChange={e => setTourId(e.target.value)}>
+              <select disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourId} onChange={e => setTourId(e.target.value)}>
                 <option value="">No tour</option>
                 {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
               </select>

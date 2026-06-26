@@ -72,11 +72,11 @@ export async function submitForm(input: z.infer<typeof submissionSchema>) {
 
   const { data: form } = await db
     .from("dynamic_forms")
-    .select("status, fields")
+    .select("status, fields, is_template")
     .eq("id", form_id)
     .maybeSingle();
 
-  if (!form || form.status !== "active") throw new Error("Form not available");
+  if (!form || form.status !== "active" || form.is_template) throw new Error("Form not available");
 
   // Strip file fields — files must be uploaded to storage separately, not stored as raw values
   const fields: Array<{ id: string; type: string }> = form.fields ?? [];

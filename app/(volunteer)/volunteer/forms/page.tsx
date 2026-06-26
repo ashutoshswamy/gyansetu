@@ -8,6 +8,7 @@ export default async function VolunteerFormsPage() {
     .select("*")
     .in("target_role", ["volunteer", "all"])
     .eq("status", "active")
+    .eq("is_template", false)
     .order("created_at", { ascending: false });
 
   return (

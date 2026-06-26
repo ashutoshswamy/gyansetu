@@ -29,7 +29,7 @@ export default async function VolunteerDashboard() {
     { data: groupMembership },
   ] = await Promise.all([
     db.from("volunteer_assignments").select("*, tours(id, title, destination, start_date, end_date, status)").eq("volunteer_id", uid),
-    db.from("dynamic_forms").select("id, title, fields, tour_id, tours(title)").eq("target_role", "volunteer").eq("status", "active"),
+    db.from("dynamic_forms").select("id, title, fields, tour_id, tours(title)").eq("target_role", "volunteer").eq("status", "active").eq("is_template", false),
     db.from("tour_group_members").select("*, tour_groups(id, name, state_allocated, tour_id)").eq("user_id", uid).limit(1).maybeSingle(),
   ]);
 

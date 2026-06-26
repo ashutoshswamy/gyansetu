@@ -8,6 +8,7 @@ export default async function StudentFormsPage() {
     .select("*")
     .in("target_role", ["enrollee", "all"])
     .eq("status", "active")
+    .eq("is_template", false)
     .order("created_at", { ascending: false });
 
   return (
