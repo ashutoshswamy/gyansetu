@@ -89,8 +89,8 @@ export function NewTestForm({ tours }: { tours: Tour[] }) {
         status,
       });
       router.push("/admin/tests");
-    } catch (err: any) {
-      setError(err.message ?? "Failed to create test");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create test");
       setSaving(false);
     }
   }
@@ -122,7 +122,7 @@ export function NewTestForm({ tours }: { tours: Tour[] }) {
             </div>
             <div>
               <label style={labelStyle}>Status</label>
-              <select style={inputStyle} value={status} onChange={e => setStatus(e.target.value as any)}>
+              <select style={inputStyle} value={status} onChange={e => setStatus(e.target.value as "draft" | "active" | "closed")}>
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
                 <option value="closed">Closed</option>

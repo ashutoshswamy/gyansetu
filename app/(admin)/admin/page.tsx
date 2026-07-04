@@ -49,7 +49,13 @@ async function getActiveTours(): Promise<Tour[]> {
   return tours;
 }
 
-async function getRecentApplications() {
+interface RecentApplication {
+  id: string;
+  users?: { name: string; email: string };
+  tours?: { title: string };
+}
+
+async function getRecentApplications(): Promise<RecentApplication[]> {
   const db = createServerClient();
   const { data } = await db
     .from("tour_applications")
@@ -196,7 +202,7 @@ export default async function AdminDashboard() {
               </p>
             ) : (
               <div className="space-y-2">
-                {recentApplications.map((app: any) => (
+                {recentApplications.map((app) => (
                   <div
                     key={app.id}
                     className="flex items-center justify-between"
@@ -204,10 +210,10 @@ export default async function AdminDashboard() {
                   >
                     <div className="min-w-0">
                       <p style={{ fontSize: 14, fontWeight: 500, color: "#19140F" }} className="truncate">
-                        {(app as any).users?.name ?? "Unknown"}
+                        {app.users?.name ?? "Unknown"}
                       </p>
                       <p style={{ fontSize: 12, color: "#9B9188", marginTop: 2 }}>
-                        {(app as any).tours?.title ?? "-"}
+                        {app.tours?.title ?? "-"}
                       </p>
                     </div>
                     <span

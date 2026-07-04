@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import type { DynamicForm } from "@/types";
 
 export default async function VolunteerFormsPage() {
   const db = createServerClient();
@@ -24,7 +25,7 @@ export default async function VolunteerFormsPage() {
           {(forms ?? []).length === 0 && (
             <p style={{ fontSize: 14, color: "#9B9188", textAlign: "center", padding: "48px 0" }}>No active forms right now.</p>
           )}
-          {(forms ?? []).map((form: any) => (
+          {(forms ?? []).map((form: DynamicForm) => (
             <div key={form.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: "0 0 4px" }}>{form.title}</h3>

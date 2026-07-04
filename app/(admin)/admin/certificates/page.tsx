@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Award } from "lucide-react";
+import type { Certificate } from "@/types";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   participation: { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
@@ -58,7 +59,11 @@ export default async function AdminCertificatesPage() {
           {(certs ?? []).length === 0 && (
             <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No certificates issued yet.</p>
           )}
-          {(certs ?? []).map((cert: any) => {
+          {(certs ?? []).map((cert: Omit<Certificate, "user" | "tour"> & {
+            users?: { name: string; email: string };
+            tours?: { title: string };
+            issuer?: { name: string };
+          }) => {
             const c = typeColors[cert.certificate_type] ?? typeColors.participation;
             return (
               <div key={cert.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>

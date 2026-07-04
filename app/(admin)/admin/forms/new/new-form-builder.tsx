@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createForm, updateForm } from "@/actions/forms";
+import type { DynamicForm, FormField } from "@/types";
 
 type Tour = { id: string; title: string };
 type FieldType = "text" | "textarea" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "image";
@@ -50,7 +51,7 @@ function blankField(): Field {
   return { id: uid(), type: "text", label: "", placeholder: "", required: false, options: [] };
 }
 
-export function NewFormBuilder({ tours, templates = [], initialData }: { tours: Tour[]; templates?: any[]; initialData?: InitialData }) {
+export function NewFormBuilder({ tours, templates = [], initialData }: { tours: Tour[]; templates?: DynamicForm[]; initialData?: InitialData }) {
   const router = useRouter();
   const isEdit = !!initialData;
   const [saving, setSaving] = useState(false);
@@ -117,8 +118,8 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
       } else {
         router.push("/admin/forms");
       }
-    } catch (err: any) {
-      setError(err.message ?? "Failed to save form");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save form");
       setSaving(false);
     }
   }
@@ -143,10 +144,10 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                 if (selected) {
                   setTitle(selected.title);
                   setDescription(selected.description ?? "");
-                  setTargetRole(selected.target_role);
+                  setTargetRole(selected.target_role as "enrollee" | "volunteer" | "all");
                   setStatus(selected.status);
                   setIsTemplate(false); // Default to saving as new linked form
-                  setFields(selected.fields.map((f: any) => ({
+                  setFields(selected.fields.map((f: FormField) => ({
                     id: uid(),
                     type: f.type,
                     label: f.label,
@@ -207,7 +208,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             </div>
             <div>
               <label style={labelStyle}>Target Role *</label>
-              <select required style={inputStyle} value={targetRole} onChange={e => setTargetRole(e.target.value as any)}>
+              <select required style={inputStyle} value={targetRole} onChange={e => setTargetRole(e.target.value as "enrollee" | "volunteer" | "all")}>
                 <option value="enrollee">Enrollees</option>
                 <option value="volunteer">Volunteers</option>
                 <option value="all">All</option>
@@ -215,7 +216,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             </div>
             <div>
               <label style={labelStyle}>Status</label>
-              <select style={inputStyle} value={status} onChange={e => setStatus(e.target.value as any)}>
+              <select style={inputStyle} value={status} onChange={e => setStatus(e.target.value as "draft" | "active" | "closed")}>
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
                 <option value="closed">Closed</option>

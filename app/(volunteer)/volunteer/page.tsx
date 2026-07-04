@@ -3,6 +3,14 @@ import { createServerClient } from "@/lib/supabase/server";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import Link from "next/link";
 import { Plane, CheckSquare, ArrowRight, Calendar, MapPin } from "lucide-react";
+import type { DynamicForm } from "@/types";
+
+type AssignmentRow = {
+  id: string;
+  role_description?: string;
+  tours?: { title: string; destination: string; start_date: string; end_date: string; status: string } | null;
+};
+type FormRow = Pick<DynamicForm, "id" | "title" | "fields"> & { tours?: { title: string } | null };
 
 const tourStatusStyles: Record<string, { color: string; bg: string }> = {
   open:      { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
@@ -26,14 +34,12 @@ export default async function VolunteerDashboard() {
   const [
     { data: assignments },
     { data: forms },
-    { data: groupMembership },
   ] = await Promise.all([
     db.from("volunteer_assignments").select("*, tours(id, title, destination, start_date, end_date, status)").eq("volunteer_id", uid),
     db.from("dynamic_forms").select("id, title, fields, tour_id, tours(title)").eq("target_role", "volunteer").eq("status", "active").eq("is_template", false),
-    db.from("tour_group_members").select("*, tour_groups(id, name, state_allocated, tour_id)").eq("user_id", uid).limit(1).maybeSingle(),
   ]);
 
-  const activeTours = (assignments ?? []).filter((a: any) => a.tours?.status === "open");
+  const activeTours = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open");
 
   return (
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
@@ -74,7 +80,7 @@ export default async function VolunteerDashboard() {
               </div>
             ) : (
               <div className="space-y-3">
-                {(assignments ?? []).map((a: any) => {
+                {(assignments ?? []).map((a: AssignmentRow) => {
                   const s = tourStatusStyles[a.tours?.status ?? "draft"] ?? tourStatusStyles.draft;
                   return (
                     <div key={a.id} style={{ background: "#F3F0E8", borderRadius: 8, padding: "12px 14px" }}>
@@ -125,7 +131,7 @@ export default async function VolunteerDashboard() {
               </div>
             ) : (
               <div className="space-y-2">
-                {(forms ?? []).map((form: any) => (
+                {((forms ?? []) as unknown as FormRow[]).map((form) => (
                   <div key={form.id} style={{ background: "#F3F0E8", borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontSize: 14, fontWeight: 500, color: "#19140F", margin: "0 0 3px" }} className="truncate">

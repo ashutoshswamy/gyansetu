@@ -3,6 +3,13 @@ import { createServerClient } from "@/lib/supabase/server";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import Link from "next/link";
 import { Plane, ClipboardList, ArrowRight, CheckCircle, Clock } from "lucide-react";
+import type { TourApplication, Tour, EligibilityTest } from "@/types";
+
+type ApplicationRow = TourApplication & {
+  tours: Pick<Tour, "title" | "destination" | "start_date" | "end_date"> | null;
+};
+type OpenTourRow = Pick<Tour, "id" | "title" | "destination" | "start_date" | "capacity" | "status">;
+type AvailableTestRow = Pick<EligibilityTest, "id" | "title" | "duration_minutes" | "passing_score" | "tour_id">;
 
 const statusStyles: Record<string, { label: string; color: string; bg: string }> = {
   pending:     { label: "Pending",     color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
@@ -40,8 +47,8 @@ export default async function EnrollmentDashboard() {
         .eq("status", "active"),
     ]);
 
-  const appliedTourIds = new Set((applications ?? []).map((a: any) => a.tour_id));
-  const unappliedTours = (openTours ?? []).filter((t: any) => !appliedTourIds.has(t.id));
+  const appliedTourIds = new Set((applications ?? []).map((a: ApplicationRow) => a.tour_id));
+  const unappliedTours = (openTours ?? []).filter((t: OpenTourRow) => !appliedTourIds.has(t.id));
 
   return (
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
@@ -69,13 +76,13 @@ export default async function EnrollmentDashboard() {
           />
           <StatCard
             label="Shortlisted"
-            value={applications?.filter((a: any) => a.status === "shortlisted").length ?? 0}
+            value={applications?.filter((a: ApplicationRow) => a.status === "shortlisted").length ?? 0}
             icon={<Clock size={18} />}
             accent="sky"
           />
           <StatCard
             label="Selected"
-            value={applications?.filter((a: any) => a.status === "selected").length ?? 0}
+            value={applications?.filter((a: ApplicationRow) => a.status === "selected").length ?? 0}
             icon={<CheckCircle size={18} />}
             accent="emerald"
           />
@@ -110,7 +117,7 @@ export default async function EnrollmentDashboard() {
               </div>
             ) : (
               <div className="space-y-2">
-                {(applications ?? []).slice(0, 5).map((app: any) => {
+                {(applications ?? []).slice(0, 5).map((app: ApplicationRow) => {
                   const s = statusStyles[app.status] ?? statusStyles.pending;
                   return (
                     <div
@@ -160,7 +167,7 @@ export default async function EnrollmentDashboard() {
               </div>
             ) : (
               <div className="space-y-2">
-                {(availableTests ?? []).slice(0, 5).map((test: any) => (
+                {(availableTests ?? []).slice(0, 5).map((test: AvailableTestRow) => (
                   <div
                     key={test.id}
                     style={{ background: "#F3F0E8", borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}
@@ -206,7 +213,7 @@ export default async function EnrollmentDashboard() {
             </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {unappliedTours.map((tour: any) => (
+              {unappliedTours.map((tour: OpenTourRow) => (
                 <div
                   key={tour.id}
                   style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: 16 }}

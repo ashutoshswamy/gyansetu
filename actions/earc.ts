@@ -3,6 +3,7 @@
 import { requireAdminUser, requireEarcUser } from "@/lib/clerk/action-auth";
 import { createServerClient } from "@/lib/supabase/server";
 import { clerkClient } from "@clerk/nextjs/server";
+import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
 import { z } from "zod";
 
@@ -37,8 +38,8 @@ export async function createEarcStaff(formData: FormData) {
       lastName,
       publicMetadata: { role: "earc_staff" },
     });
-  } catch (err: any) {
-    const clerkErr = err?.errors?.[0];
+  } catch (err: unknown) {
+    const clerkErr = isClerkAPIResponseError(err) ? err.errors?.[0] : undefined;
     if (clerkErr?.code === "form_identifier_exists") {
       // User already exists in Clerk — find them and promote to earc_staff
       const existing = await clerk.users.getUserList({ emailAddress: [email] });
@@ -173,18 +174,22 @@ export async function uploadEarcFile(
 }
 
 export async function deleteEarcFile(fileId: string) {
-  await requireEarcUser();
+  const { db, user } = await requireEarcUser();
 
   if (!fileId) throw new Error("Invalid id");
 
-  const db = createServerClient();
   const { data } = await db
     .from("earc_files")
-    .select("file_url")
+    .select("file_url, uploaded_by")
     .eq("id", fileId)
     .maybeSingle();
 
-  if (data?.file_url) {
+  if (!data) throw new Error("File not found");
+  if (data.uploaded_by !== user.id && user.role !== "admin") {
+    throw new Error("You can only delete files you uploaded");
+  }
+
+  if (data.file_url) {
     const path = data.file_url.split("/earc-files/")[1];
     if (path) await db.storage.from("earc-files").remove([path]);
   }

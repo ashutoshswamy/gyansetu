@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { createDailyLog, getMyDailyLogs } from "@/actions/daily-logs";
 import { BookOpen, Plus, X } from "lucide-react";
+import type { DailyLog } from "@/types";
+
+type DailyLogRow = DailyLog & { tours?: { id: string; title: string } | null };
 
 export default function VolunteerDailyLogPage() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<DailyLogRow[]>([]);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -45,8 +48,8 @@ export default function VolunteerDailyLogPage() {
       setLogs(prev => [log, ...prev]);
       setShowForm(false);
       (e.target as HTMLFormElement).reset();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create daily log");
     } finally {
       setSaving(false);
     }
@@ -121,7 +124,7 @@ export default function VolunteerDailyLogPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {logs.map((log: any) => (
+            {logs.map((log: DailyLogRow) => (
               <div key={log.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "18px 22px" }}>
                 <div className="flex items-center justify-between mb-3">
                   <div>

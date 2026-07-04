@@ -83,6 +83,7 @@ export default async function BlogPage() {
                 {/* Cover */}
                 {post.cover_image_url ? (
                   <div style={{ height: 180, overflow: "hidden" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-supplied URL, not a same-origin/whitelisted host for next/image */}
                     <img
                       src={post.cover_image_url}
                       alt={post.title}

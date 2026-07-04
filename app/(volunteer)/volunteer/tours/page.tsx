@@ -2,6 +2,20 @@ import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { Plane, MapPin, Calendar, Users } from "lucide-react";
 
+type AssignmentRow = {
+  id: string;
+  role_description?: string;
+  tours?: {
+    title: string;
+    destination: string;
+    start_date: string;
+    end_date: string;
+    capacity: number;
+    status: string;
+    description?: string;
+  } | null;
+};
+
 const statusStyles: Record<string, { color: string; bg: string; label: string }> = {
   open:      { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)",     label: "Open" },
   closed:    { color: "#9B9188", bg: "rgba(90,82,71,0.08)",     label: "Closed" },
@@ -25,9 +39,9 @@ export default async function VolunteerToursPage() {
     .eq("volunteer_id", user?.id ?? "")
     .order("created_at", { ascending: false });
 
-  const active   = (assignments ?? []).filter((a: any) => a.tours?.status === "open");
-  const past     = (assignments ?? []).filter((a: any) => ["completed", "closed"].includes(a.tours?.status));
-  const upcoming = (assignments ?? []).filter((a: any) => a.tours?.status === "draft");
+  const active   = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open");
+  const past     = (assignments ?? []).filter((a: AssignmentRow) => ["completed", "closed"].includes(a.tours?.status ?? ""));
+  const upcoming = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "draft");
 
   return (
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
@@ -64,12 +78,12 @@ export default async function VolunteerToursPage() {
   );
 }
 
-function Section({ title, assignments }: { title: string; assignments: any[] }) {
+function Section({ title, assignments }: { title: string; assignments: AssignmentRow[] }) {
   return (
     <div>
       <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#9B9188", marginBottom: 12 }}>{title}</p>
       <div className="space-y-3">
-        {assignments.map((a: any) => {
+        {assignments.map((a: AssignmentRow) => {
           const s = statusStyles[a.tours?.status ?? "draft"] ?? statusStyles.draft;
           return (
             <div key={a.id} className="rounded-xl p-5" style={{ background: "white", border: "1px solid #E4DFD1" }}>

@@ -11,6 +11,20 @@ const tourStatusStyles: Record<string, { color: string; bg: string }> = {
   draft:     { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
 };
 
+interface VolunteerAssignment {
+  id: string;
+  role_description?: string;
+  tours?: { id: string; title: string; destination: string; start_date: string; end_date: string; status: string };
+}
+
+interface VolunteerRow {
+  id: string;
+  name: string;
+  email: string;
+  avatar_url?: string;
+  volunteer_assignments?: VolunteerAssignment[];
+}
+
 export default async function AdminVolunteersPage() {
   const db = createServerClient();
 
@@ -20,12 +34,12 @@ export default async function AdminVolunteersPage() {
     .eq("role", "volunteer")
     .order("created_at", { ascending: false });
 
-  const exportData = (volunteers ?? []).flatMap((v: any) => {
+  const exportData = ((volunteers ?? []) as VolunteerRow[]).flatMap((v) => {
     const assignments = v.volunteer_assignments ?? [];
     if (assignments.length === 0) {
       return [{ name: v.name, email: v.email, tour: "-", destination: "-", role: "-", tour_status: "-" }];
     }
-    return assignments.map((a: any) => ({
+    return assignments.map((a) => ({
       name: v.name,
       email: v.email,
       tour: a.tours?.title ?? "-",
@@ -38,8 +52,8 @@ export default async function AdminVolunteersPage() {
 
   const summaryItems = [
     { label: "Total Volunteers", value: volunteers?.length ?? 0 },
-    { label: "Assigned to Tours", value: (volunteers ?? []).filter((v: any) => (v.volunteer_assignments?.length ?? 0) > 0).length },
-    { label: "Unassigned", value: (volunteers ?? []).filter((v: any) => (v.volunteer_assignments?.length ?? 0) === 0).length },
+    { label: "Assigned to Tours", value: ((volunteers ?? []) as VolunteerRow[]).filter((v) => (v.volunteer_assignments?.length ?? 0) > 0).length },
+    { label: "Unassigned", value: ((volunteers ?? []) as VolunteerRow[]).filter((v) => (v.volunteer_assignments?.length ?? 0) === 0).length },
   ];
 
   return (
@@ -74,7 +88,7 @@ export default async function AdminVolunteersPage() {
             </div>
           )}
 
-          {(volunteers ?? []).map((v: any) => {
+          {((volunteers ?? []) as VolunteerRow[]).map((v) => {
             const assignments = v.volunteer_assignments ?? [];
             return (
               <div key={v.id} className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid #E4DFD1" }}>
@@ -113,7 +127,7 @@ export default async function AdminVolunteersPage() {
                       Tour Assignments
                     </p>
                     <div className="space-y-1.5">
-                      {assignments.map((a: any) => {
+                      {assignments.map((a) => {
                         const s = tourStatusStyles[a.tours?.status ?? "draft"] ?? tourStatusStyles.draft;
                         return (
                           <div key={a.id} className="flex items-center justify-between py-2.5 px-3 rounded" style={{ background: "#F3F0E8" }}>

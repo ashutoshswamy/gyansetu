@@ -11,11 +11,12 @@ async function resolveUserWithRole() {
   const clerkRole = (sessionClaims?.metadata as { role?: UserRole })?.role ?? null;
   const db = createServerClient();
 
-  let { data: dbUser, error: selectError } = await db
+  const { data: selectData, error: selectError } = await db
     .from("users")
     .select("id, role")
     .eq("clerk_id", userId)
     .maybeSingle();
+  let dbUser = selectData;
 
   if (selectError) throw new Error(`DB error: ${selectError.code} ${selectError.message}`);
 

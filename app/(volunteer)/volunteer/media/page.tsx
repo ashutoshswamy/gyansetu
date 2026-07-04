@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { uploadMedia, getMediaByTour, getTodayUploadCount } from "@/actions/daily-logs";
-import { Image as ImageIcon, Upload, X } from "lucide-react";
+import { Image as ImageIcon, Upload } from "lucide-react";
+import type { MediaGalleryItem } from "@/types";
 
 export default function VolunteerMediaPage() {
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
   const [selectedTour, setSelectedTour] = useState("");
-  const [media, setMedia] = useState<any[]>([]);
+  const [media, setMedia] = useState<MediaGalleryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [caption, setCaption] = useState("");
@@ -28,8 +29,13 @@ export default function VolunteerMediaPage() {
 
   useEffect(() => {
     if (!selectedTour) return;
+    let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loading flag for the fetch kicked off right below
     setLoading(true);
-    getMediaByTour(selectedTour).then(d => { setMedia(d); setLoading(false); }).catch(() => setLoading(false));
+    getMediaByTour(selectedTour)
+      .then(d => { if (!cancelled) { setMedia(d); setLoading(false); } })
+      .catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [selectedTour]);
 
   async function handleUpload(e: React.FormEvent<HTMLFormElement>) {
@@ -72,8 +78,8 @@ export default function VolunteerMediaPage() {
       setDirectUrl("");
       setTodayCount(prev => prev + 1);
       if (fileRef.current) fileRef.current.value = "";
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
     }
@@ -170,7 +176,7 @@ export default function VolunteerMediaPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {media.map((item: any) => (
+            {media.map((item) => (
               <a
                 key={item.id}
                 href={item.file_url}

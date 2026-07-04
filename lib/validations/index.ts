@@ -11,7 +11,7 @@ export const tourSchema = z.object({
   eligibility_test_id: z.string().uuid().optional(),
 });
 
-export const testQuestionSchema = z.object({
+const testQuestionSchema = z.object({
   id: z.string(),
   type: z.enum(["mcq", "multi_select", "subjective"]),
   question: z.string().min(5),
@@ -30,7 +30,7 @@ export const eligibilityTestSchema = z.object({
   status: z.enum(["draft", "active", "closed"]).default("draft"),
 });
 
-export const formFieldSchema = z.object({
+const formFieldSchema = z.object({
   id: z.string(),
   type: z.enum([
     "text",
@@ -58,10 +58,6 @@ export const dynamicFormSchema = z.object({
   target_role: z.enum(["enrollee", "volunteer", "admin", "all"]),
   status: z.enum(["draft", "active", "closed"]),
   is_template: z.boolean().default(false),
-});
-
-export const applicationSchema = z.object({
-  tour_id: z.string().uuid(),
 });
 
 export const testAttemptSchema = z.object({

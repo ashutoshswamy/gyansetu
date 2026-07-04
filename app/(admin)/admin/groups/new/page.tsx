@@ -27,8 +27,8 @@ export default function NewGroupPage() {
         notes: fd.get("notes") as string || undefined,
       });
       router.push("/admin/groups");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create group");
     } finally {
       setLoading(false);
     }

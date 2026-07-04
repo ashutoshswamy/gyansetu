@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { DeleteFormButton } from "@/components/features/forms/delete-form-button";
+import type { DynamicForm } from "@/types";
 
 export default async function AdminFormsPage() {
   const db = createServerClient();
@@ -44,7 +45,7 @@ export default async function AdminFormsPage() {
               No forms yet.
             </p>
           )}
-          {(forms ?? []).map((form: any) => (
+          {(forms ?? []).map((form: DynamicForm) => (
             <div
               key={form.id}
               className="flex items-center justify-between"

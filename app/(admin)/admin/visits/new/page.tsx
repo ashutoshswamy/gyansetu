@@ -225,7 +225,7 @@ export default function NewVisitPage() {
                 onChange={(e) => set("timetable_url", e.target.value)}
               />
               <p style={{ fontSize: 11.5, color: "#9B9188", margin: "5px 0 0" }}>
-                Direct link to a PDF, Google Doc, or any public document. Shown as "View Timetable" on the public page.
+                Direct link to a PDF, Google Doc, or any public document. Shown as &quot;View Timetable&quot; on the public page.
               </p>
             </div>
 

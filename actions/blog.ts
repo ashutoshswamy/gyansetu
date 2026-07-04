@@ -17,22 +17,25 @@ create table blog_posts (
 
 import { requireAdminUser } from "@/lib/clerk/action-auth";
 import { revalidatePath } from "next/cache";
-
-interface CreatePostData {
-  title: string;
-  slug: string;
-  excerpt?: string;
-  content: string;
-  cover_image_url?: string;
-  status: "draft" | "published";
-}
+import { z } from "zod";
 
 const getAdminUser = requireAdminUser;
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-export async function createPost(data: CreatePostData) {
-  if (!SLUG_RE.test(data.slug)) throw new Error("Slug must be lowercase alphanumeric with hyphens only");
+const createPostSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  slug: z.string().regex(SLUG_RE, "Slug must be lowercase alphanumeric with hyphens only"),
+  excerpt: z.string().trim().max(500).optional(),
+  content: z.string().trim().min(1),
+  cover_image_url: z.string().url().optional(),
+  status: z.enum(["draft", "published"]),
+});
+
+type CreatePostData = z.infer<typeof createPostSchema>;
+
+export async function createPost(input: CreatePostData) {
+  const data = createPostSchema.parse(input);
   const { db, user } = await getAdminUser();
 
   const insertData: Record<string, unknown> = {

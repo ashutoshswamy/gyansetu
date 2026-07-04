@@ -9,6 +9,22 @@ const appStatusStyles: Record<string, { color: string; background: string }> = {
   rejected:    { color: "#B8381E", background: "rgba(184,56,30,0.08)" },
 };
 
+interface EnrollmentApplication {
+  id: string;
+  status: string;
+  test_score?: number;
+  submitted_at: string;
+  tours?: { title: string; destination: string };
+}
+
+interface EnrollmentUser {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string;
+  tour_applications?: EnrollmentApplication[];
+}
+
 export default async function AdminEnrollmentsPage() {
   const db = createServerClient();
 
@@ -18,14 +34,14 @@ export default async function AdminEnrollmentsPage() {
     .is("role", null)
     .order("created_at", { ascending: false });
 
-  const exportData = (enrollmentUsers ?? []).map((u: any) => ({
+  const exportData = ((enrollmentUsers ?? []) as EnrollmentUser[]).map((u) => ({
     name: u.name,
     email: u.email,
     applications: u.tour_applications?.length ?? 0,
-    shortlisted: u.tour_applications?.filter((a: any) => a.status === "shortlisted").length ?? 0,
-    selected: u.tour_applications?.filter((a: any) => a.status === "selected").length ?? 0,
+    shortlisted: u.tour_applications?.filter((a) => a.status === "shortlisted").length ?? 0,
+    selected: u.tour_applications?.filter((a) => a.status === "selected").length ?? 0,
     best_score: u.tour_applications?.reduce(
-      (max: number, a: any) => Math.max(max, a.test_score ?? 0),
+      (max: number, a) => Math.max(max, a.test_score ?? 0),
       0
     ),
     registered: new Date(u.created_at).toLocaleDateString(),
@@ -38,20 +54,20 @@ export default async function AdminEnrollmentsPage() {
     },
     {
       label: "Applied to Tours",
-      value: (enrollmentUsers ?? []).filter(
-        (u: any) => (u.tour_applications?.length ?? 0) > 0
+      value: ((enrollmentUsers ?? []) as EnrollmentUser[]).filter(
+        (u) => (u.tour_applications?.length ?? 0) > 0
       ).length,
     },
     {
       label: "Shortlisted",
-      value: (enrollmentUsers ?? []).filter((u: any) =>
-        u.tour_applications?.some((a: any) => a.status === "shortlisted")
+      value: ((enrollmentUsers ?? []) as EnrollmentUser[]).filter((u) =>
+        u.tour_applications?.some((a) => a.status === "shortlisted")
       ).length,
     },
     {
       label: "Selected",
-      value: (enrollmentUsers ?? []).filter((u: any) =>
-        u.tour_applications?.some((a: any) => a.status === "selected")
+      value: ((enrollmentUsers ?? []) as EnrollmentUser[]).filter((u) =>
+        u.tour_applications?.some((a) => a.status === "selected")
       ).length,
     },
   ];
@@ -112,10 +128,10 @@ export default async function AdminEnrollmentsPage() {
             </div>
           )}
 
-          {(enrollmentUsers ?? []).map((u: any) => {
+          {((enrollmentUsers ?? []) as EnrollmentUser[]).map((u) => {
             const apps = u.tour_applications ?? [];
             const bestScore = apps.reduce(
-              (max: number, a: any) => Math.max(max, a.test_score ?? 0),
+              (max: number, a) => Math.max(max, a.test_score ?? 0),
               0
             );
 
@@ -175,7 +191,7 @@ export default async function AdminEnrollmentsPage() {
                       Applications
                     </p>
                     <div className="space-y-1.5">
-                      {apps.map((app: any) => {
+                      {apps.map((app) => {
                         const s = appStatusStyles[app.status] ?? appStatusStyles.pending;
                         return (
                           <div

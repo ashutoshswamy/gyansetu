@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, type UseFormRegister, type FieldValues } from "react-hook-form";
 import type { DynamicForm, FormField } from "@/types";
 import { submitForm } from "@/actions/forms";
 import { useState, useEffect, useRef } from "react";
@@ -53,8 +53,8 @@ function FileImageInput({
       if (uploadError) throw new Error(uploadError.message);
       const { data: urlData } = sb.storage.from("media").getPublicUrl(path);
       onChange(urlData.publicUrl);
-    } catch (err: any) {
-      setError(err.message ?? "Upload failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
     }
@@ -111,7 +111,7 @@ function FieldRenderer({
   onChange,
 }: {
   field: FormField;
-  register: any;
+  register: UseFormRegister<FieldValues>;
   value: string;
   onChange: (url: string) => void;
 }) {
@@ -237,6 +237,7 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
               <FieldRenderer
                 field={field}
                 register={register}
+                // eslint-disable-next-line react-hooks/incompatible-library -- react-hook-form's watch() is inherently non-memoizable
                 value={watch(field.id)}
                 onChange={(url) => setValue(field.id, url, { shouldValidate: true })}
               />

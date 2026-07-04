@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
-import { clerkClient } from "@clerk/nextjs/server";
+import type { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { Webhook } from "svix";
 
@@ -17,19 +17,18 @@ export async function POST(req: Request) {
   const body = await req.text();
   const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET ?? "");
 
-  let event: any;
+  let event: WebhookEvent;
   try {
     event = wh.verify(body, {
       "svix-id": svixId,
       "svix-timestamp": svixTimestamp,
       "svix-signature": svixSignature,
-    });
+    }) as WebhookEvent;
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   const db = createServerClient();
-  const clerk = await clerkClient();
 
   if (event.type === "user.created") {
     const { id, email_addresses, first_name, last_name, image_url } = event.data;

@@ -22,6 +22,8 @@ const statusColors: Record<string, { color: string; bg: string }> = {
   cancelled: { color: "#DC2626", bg: "rgba(220,38,38,0.08)" },
 };
 
+type EventWithTour = Omit<Event, "tour"> & { tours?: { id: string; title: string } };
+
 export default async function AdminEventsPage() {
   const db = createServerClient();
   const { data: events } = await db
@@ -29,8 +31,8 @@ export default async function AdminEventsPage() {
     .select("*, tours(id, title)")
     .order("event_date", { ascending: true });
 
-  const upcoming = (events ?? []).filter((e: any) => e.status === "upcoming");
-  const past = (events ?? []).filter((e: any) => e.status !== "upcoming");
+  const upcoming = (events ?? []).filter((e: EventWithTour) => e.status === "upcoming");
+  const past = (events ?? []).filter((e: EventWithTour) => e.status !== "upcoming");
 
   return (
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
@@ -61,7 +63,7 @@ export default async function AdminEventsPage() {
             {upcoming.length === 0 && (
               <p style={{ color: "#9B9188", fontSize: 14, padding: "24px 0" }}>No upcoming events.</p>
             )}
-            {upcoming.map((event: any) => <EventRow key={event.id} event={event} />)}
+            {upcoming.map((event: EventWithTour) => <EventRow key={event.id} event={event} />)}
           </div>
         </div>
 
@@ -74,7 +76,7 @@ export default async function AdminEventsPage() {
             {past.length === 0 && (
               <p style={{ color: "#9B9188", fontSize: 14, padding: "24px 0" }}>No past events.</p>
             )}
-            {past.map((event: any) => <EventRow key={event.id} event={event} />)}
+            {past.map((event: EventWithTour) => <EventRow key={event.id} event={event} />)}
           </div>
         </div>
       </div>
@@ -82,7 +84,7 @@ export default async function AdminEventsPage() {
   );
 }
 
-function EventRow({ event }: { event: any }) {
+function EventRow({ event }: { event: EventWithTour }) {
   const t = typeColors[event.event_type] ?? typeColors.other;
   const s = statusColors[event.status] ?? statusColors.upcoming;
   return (

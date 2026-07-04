@@ -65,6 +65,7 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Cover image */}
       {typedPost.cover_image_url && (
         <div style={{ width: "100%", maxHeight: 420, overflow: "hidden" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-supplied URL, not a same-origin/whitelisted host for next/image */}
           <img
             src={typedPost.cover_image_url}
             alt={typedPost.title}

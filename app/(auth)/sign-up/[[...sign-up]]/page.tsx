@@ -1,4 +1,5 @@
 import { SignUp } from "@clerk/nextjs";
+import Image from "next/image";
 
 export default function SignUpPage() {
   return (
@@ -26,7 +27,7 @@ export default function SignUpPage() {
       >
         {/* Logo + wordmark */}
         <div className="flex flex-col items-center gap-3">
-          <img src="/logo_wide.png" alt="Gyan Setu" style={{ height: 48, width: "auto", objectFit: "contain" }} />
+          <Image src="/logo_wide.png" alt="Gyan Setu" width={160} height={48} style={{ height: 48, width: "auto", objectFit: "contain" }} />
           <p
             className="text-sm mt-1"
             style={{

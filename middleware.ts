@@ -34,7 +34,9 @@ export default clerkMiddleware(async (auth, req) => {
 
   const role = (sessionClaims?.metadata as { role?: UserRole })?.role;
 
-  // Admin routes: only admin passes. Null role may be manually promoted admin — admin layout handles fallback.
+  // Admin routes: only admin passes. Null role bypasses here on purpose —
+  // (admin)/layout.tsx re-verifies against Supabase for manually-promoted
+  // admins whose Clerk JWT hasn't synced yet, and redirects otherwise.
   if (isAdminRoute(req) && role !== "admin") {
     if (role !== null && role !== undefined) {
       return NextResponse.redirect(new URL("/dashboard", req.url));

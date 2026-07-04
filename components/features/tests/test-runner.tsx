@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { submitTestAttempt } from "@/actions/tests";
 import type { TestQuestion } from "@/types";
@@ -32,8 +32,13 @@ export function TestRunner({ test }: { test: Test }) {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null);
 
+  const handleSubmitRef = useRef(handleSubmit);
   useEffect(() => {
-    if (timeLeft <= 0) handleSubmit();
+    handleSubmitRef.current = handleSubmit;
+  });
+
+  useEffect(() => {
+    if (timeLeft <= 0) handleSubmitRef.current();
     const t = setInterval(() => setTimeLeft((s) => s - 1), 1000);
     return () => clearInterval(t);
   }, [timeLeft]);

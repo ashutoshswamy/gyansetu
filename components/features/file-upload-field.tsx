@@ -140,6 +140,7 @@ export function FileUploadField({
           justifyContent: "center",
           background: "#F3F0E8",
         }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary user-typed URL, not a whitelisted host for next/image */}
           <img
             src={value}
             alt="Preview"

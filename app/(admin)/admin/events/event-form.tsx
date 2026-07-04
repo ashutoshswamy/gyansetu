@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createEvent, updateEvent } from "@/actions/events";
+import type { EventType } from "@/types";
 
 const EVENT_TYPES = ["katta", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"] as const;
 const EVENT_STATUSES = ["upcoming", "ongoing", "completed", "cancelled"] as const;
@@ -52,22 +53,22 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
     const payload = {
       title: fd.get("title") as string,
       description: (fd.get("description") as string) || undefined,
-      event_type: fd.get("event_type") as any,
+      event_type: fd.get("event_type") as EventType,
       tour_id: (fd.get("tour_id") as string) || undefined,
       event_date: fd.get("event_date") as string,
       event_time: (fd.get("event_time") as string) || undefined,
       location: (fd.get("location") as string) || undefined,
-      status: fd.get("status") as any,
+      status: fd.get("status") as "upcoming" | "ongoing" | "completed" | "cancelled",
     };
     try {
       if (isEdit) {
-        await updateEvent(initialData.id, payload);
+        await updateEvent(initialData!.id, payload);
       } else {
         await createEvent(payload);
       }
       router.push("/admin/events");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save event");
       setLoading(false);
     }
   }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { issueCertificate } from "@/actions/certificates";
+import type { CertificateType } from "@/types";
 
 const CERT_TYPES = ["participation", "excellence", "leadership", "mentor"] as const;
 
@@ -38,12 +39,12 @@ export default function NewCertificatePage() {
       await issueCertificate({
         user_id: fd.get("user_id") as string,
         tour_id: fd.get("tour_id") as string || undefined,
-        certificate_type: fd.get("certificate_type") as any,
+        certificate_type: fd.get("certificate_type") as CertificateType,
         notes: fd.get("notes") as string || undefined,
       });
       router.push("/admin/certificates");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to issue certificate");
     } finally {
       setLoading(false);
     }

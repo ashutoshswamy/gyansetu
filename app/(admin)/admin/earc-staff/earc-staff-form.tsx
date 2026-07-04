@@ -26,8 +26,8 @@ export function EarcStaffForm() {
           setSuccess(false);
           window.location.reload();
         }, 1500);
-      } catch (err: any) {
-        setError(err.message ?? "Failed to create staff member");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to create staff member");
       }
     });
   }

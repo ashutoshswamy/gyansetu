@@ -1,6 +1,12 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ArrowLeft, Phone, AlertCircle, CheckCircle, Star, MapPin } from "lucide-react";
+import { ArrowLeft, Phone, AlertCircle, CheckCircle, MapPin } from "lucide-react";
+
+interface VolunteerAssignment {
+  id: string;
+  role_description?: string;
+  tours?: { id: string; title: string; destination: string; start_date: string; end_date: string; status: string };
+}
 
 export default async function VolunteerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -97,7 +103,7 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
               <p style={{ fontSize: 13, color: "#9B9188" }}>No assignments yet.</p>
             ) : (
               <div className="space-y-2">
-                {(assignments ?? []).map((a: any) => (
+                {((assignments ?? []) as VolunteerAssignment[]).map((a) => (
                   <div key={a.id} style={{ background: "#F3F0E8", borderRadius: 8, padding: "10px 14px" }}>
                     <p style={{ fontSize: 14, fontWeight: 500, color: "#19140F", margin: "0 0 4px" }}>{a.tours?.title}</p>
                     <div style={{ fontSize: 12, color: "#9B9188", display: "flex", gap: 12 }}>

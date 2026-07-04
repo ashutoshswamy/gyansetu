@@ -2,14 +2,28 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getGroupsByTour, addGroupMember, removeGroupMember, updateGroup } from "@/actions/groups";
-import { Users, MapPin, Star, Trash2, ArrowLeft } from "lucide-react";
+import { addGroupMember, removeGroupMember } from "@/actions/groups";
+import { Users, MapPin, Trash2, ArrowLeft } from "lucide-react";
+
+interface GroupMember {
+  id: string;
+  user_id: string;
+  role_in_group?: string;
+  users?: { name: string; email: string };
+}
+
+interface GroupDetail {
+  name: string;
+  state_allocated?: string;
+  tours?: { title: string };
+  tour_group_members?: GroupMember[];
+}
 
 export default function GroupDetailPage() {
   const params = useParams();
   const router = useRouter();
   const groupId = params.groupId as string;
-  const [group, setGroup] = useState<any>(null);
+  const [group, setGroup] = useState<GroupDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [newUserId, setNewUserId] = useState("");
   const [newRole, setNewRole] = useState("");
@@ -41,8 +55,8 @@ export default function GroupDetailPage() {
       // Refresh
       const d = await fetch(`/api/groups/${groupId}`).then(r => r.json());
       setGroup(d);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to add member");
     } finally {
       setSaving(false);
     }
@@ -54,8 +68,8 @@ export default function GroupDetailPage() {
       await removeGroupMember(groupId, userId);
       const d = await fetch(`/api/groups/${groupId}`).then(r => r.json());
       setGroup(d);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to remove member");
     } finally {
       setSaving(false);
     }
@@ -108,7 +122,7 @@ export default function GroupDetailPage() {
             <select value={newUserId} onChange={e => setNewUserId(e.target.value)} style={{ ...inputStyle, flex: 2 }}>
               <option value="">Select volunteer...</option>
               {volunteers
-                .filter(v => !(group.tour_group_members ?? []).some((m: any) => m.user_id === v.id))
+                .filter(v => !(group.tour_group_members ?? []).some((m) => m.user_id === v.id))
                 .map(v => <option key={v.id} value={v.id}>{v.name} ({v.email})</option>)}
             </select>
             <input
@@ -137,7 +151,7 @@ export default function GroupDetailPage() {
             <p style={{ color: "#9B9188", fontSize: 14 }}>No members yet.</p>
           ) : (
             <div className="space-y-2">
-              {(group.tour_group_members ?? []).map((m: any) => (
+              {(group.tour_group_members ?? []).map((m) => (
                 <div key={m.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderRadius: 8, background: "#F3F0E8" }}>
                   <div>
                     <span style={{ fontSize: 14, fontWeight: 500, color: "#19140F" }}>{m.users?.name}</span>

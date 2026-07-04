@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAdminUser } from "@/lib/clerk/action-auth";
-import { visitSchema, type VisitInput } from "@/lib/validations";
+import { visitSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
 const requireAdmin = requireAdminUser;

@@ -2,7 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { TestAttemptsViewer } from "./attempts-viewer";
+import { TestAttemptsViewer, type Attempt } from "./attempts-viewer";
 
 export default async function TestDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -52,7 +52,7 @@ export default async function TestDetailsPage({ params }: { params: Promise<{ id
         </div>
 
         {/* Attempts Table / Panel Split Viewer */}
-        <TestAttemptsViewer test={test} attempts={(attempts ?? []) as any[]} />
+        <TestAttemptsViewer test={test} attempts={(attempts ?? []) as Attempt[]} />
       </div>
     </div>
   );

@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { ExportButton } from "@/components/features/export-button";
 import { ApproveRejectButtons } from "../approve-button";
-import { Calendar, User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
+import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import type { EligibilityTest, TestQuestion } from "@/types";
 
-interface Attempt {
+export interface Attempt {
   id: string;
   test_id: string;
   student_id: string;
@@ -37,7 +37,7 @@ export function TestAttemptsViewer({
 
   // Prepare CSV Export Data
   const exportData = attempts.map((attempt) => {
-    const row: Record<string, any> = {
+    const row: Record<string, string> = {
       "Student Name": attempt.users?.name ?? "Unknown",
       "Student Email": attempt.users?.email ?? "Unknown",
       "Status": attempt.status,
@@ -55,7 +55,7 @@ export function TestAttemptsViewer({
     return row;
   });
 
-  function isAnswerCorrect(question: TestQuestion, studentAnswer: any) {
+  function isAnswerCorrect(question: TestQuestion, studentAnswer: string | string[] | undefined) {
     if (!question.correct_answer) return null;
     if (question.type === "subjective") return null;
 

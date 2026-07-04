@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { deleteEarcStaff } from "@/actions/earc";
-import { Users, Trash2, Loader2, ShieldCheck } from "lucide-react";
+import { Users, Trash2, Loader2 } from "lucide-react";
 
 interface StaffMember {
   id: string;

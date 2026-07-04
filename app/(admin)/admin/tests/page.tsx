@@ -10,6 +10,25 @@ const testStatusStyles: Record<string, { color: string; background: string }> = 
   closed: { color: "#9B9188", background: "rgba(90,82,71,0.08)" },
 };
 
+interface TestAttemptRow {
+  id: string;
+  test_id: string;
+  score?: number;
+  status: string;
+  student_id: string;
+  users?: { name: string; email: string };
+}
+
+interface TestRow {
+  id: string;
+  title: string;
+  status: "draft" | "active" | "closed";
+  duration_minutes: number;
+  passing_score: number;
+  questions?: unknown[];
+  tours?: { title: string; destination: string };
+}
+
 export default async function AdminTestsPage() {
   const db = createServerClient();
 
@@ -24,23 +43,23 @@ export default async function AdminTestsPage() {
       .order("submitted_at", { ascending: false }),
   ]);
 
-  const attemptsByTest = (attempts ?? []).reduce(
-    (acc: Record<string, any[]>, a: any) => {
+  const attemptsByTest = ((attempts ?? []) as unknown as TestAttemptRow[]).reduce(
+    (acc: Record<string, TestAttemptRow[]>, a) => {
       if (!acc[a.test_id]) acc[a.test_id] = [];
       acc[a.test_id].push(a);
       return acc;
     },
-    {}
+    {} as Record<string, TestAttemptRow[]>
   );
 
-  const exportData = (tests ?? []).flatMap((t: any) => {
+  const exportData = ((tests ?? []) as TestRow[]).flatMap((t) => {
     const testAttempts = attemptsByTest[t.id] ?? [];
     if (testAttempts.length === 0) {
       return [{ test: t.title, tour: t.tours?.title ?? "-", attempts: 0, avg_score: "-", pass_rate: "-" }];
     }
-    const scores = testAttempts.map((a: any) => a.score ?? 0);
+    const scores = testAttempts.map((a) => a.score ?? 0);
     const avg = scores.reduce((s: number, n: number) => s + n, 0) / scores.length;
-    const passed = testAttempts.filter((a: any) => (a.score ?? 0) >= t.passing_score).length;
+    const passed = testAttempts.filter((a) => (a.score ?? 0) >= t.passing_score).length;
     return [{
       test: t.title,
       tour: t.tours?.title ?? "-",
@@ -91,15 +110,15 @@ export default async function AdminTestsPage() {
             </div>
           )}
 
-          {(tests ?? []).map((test: any) => {
+          {((tests ?? []) as TestRow[]).map((test) => {
             const testAttempts = attemptsByTest[test.id] ?? [];
-            const scores = testAttempts.map((a: any) => a.score ?? 0);
+            const scores = testAttempts.map((a) => a.score ?? 0);
             const avg =
               scores.length > 0
                 ? scores.reduce((s: number, n: number) => s + n, 0) / scores.length
                 : null;
             const passed = testAttempts.filter(
-              (a: any) => (a.score ?? 0) >= test.passing_score
+              (a) => (a.score ?? 0) >= test.passing_score
             ).length;
             const s = testStatusStyles[test.status] ?? testStatusStyles.draft;
 
@@ -181,7 +200,7 @@ export default async function AdminTestsPage() {
                       Results
                     </p>
                     <div className="space-y-1.5">
-                      {testAttempts.slice(0, 8).map((attempt: any) => {
+                      {testAttempts.slice(0, 8).map((attempt) => {
                         const score = attempt.score ?? 0;
                         const isPendingApproval = attempt.status === "pending_approval";
                         const isApproved = attempt.status === "approved";

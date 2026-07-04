@@ -18,6 +18,19 @@ const appStatusStyles: Record<string, { color: string; bg: string }> = {
   rejected:    { color: "#B8381E", bg: "rgba(184,56,30,0.08)" },
 };
 
+interface TourTest {
+  id: string;
+  title: string;
+  status: string;
+}
+
+interface TourApplicationRow {
+  id: string;
+  status: string;
+  test_score?: number;
+  users?: { id: string; name: string; email: string; avatar_url?: string };
+}
+
 export default async function TourManagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const db = createServerClient();
@@ -89,7 +102,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
           <div className="mb-6 rounded-xl p-4" style={{ background: "white", border: "1px solid #E4DFD1" }}>
             <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9B9188", marginBottom: 10 }}>Eligibility Tests</p>
             <div className="flex flex-wrap gap-2">
-              {(tests ?? []).map((t: any) => (
+              {((tests ?? []) as TourTest[]).map((t) => (
                 <span key={t.id} style={{ fontSize: 12, padding: "4px 10px", borderRadius: 4, background: "rgba(74,85,190,0.07)", color: "#4A55BE", fontWeight: 500 }}>
                   {t.title} · {t.status}
                 </span>
@@ -109,8 +122,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
                 <p style={{ fontSize: 13, color: "#9B9188" }}>No applications yet.</p>
               </div>
             )}
-            {(applications ?? []).map((app: any) => {
-              const as = appStatusStyles[app.status] ?? appStatusStyles.pending;
+            {((applications ?? []) as TourApplicationRow[]).map((app) => {
               return (
                 <div key={app.id} className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: "white", border: "1px solid #E4DFD1" }}>
                   <div className="flex items-center gap-3">
@@ -128,7 +140,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
                         {app.test_score.toFixed(1)}%
                       </span>
                     )}
-                    <ApplicationStatusSelect applicationId={app.id} currentStatus={app.status} />
+                    <ApplicationStatusSelect currentStatus={app.status} />
                   </div>
                 </div>
               );
@@ -140,7 +152,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
   );
 }
 
-function ApplicationStatusSelect({ applicationId, currentStatus }: { applicationId: string; currentStatus: string }) {
+function ApplicationStatusSelect({ currentStatus }: { currentStatus: string }) {
   const as = appStatusStyles[currentStatus] ?? appStatusStyles.pending;
   return (
     <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: as.color, background: as.bg, textTransform: "capitalize" }}>

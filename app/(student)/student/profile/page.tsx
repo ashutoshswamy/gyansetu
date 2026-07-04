@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { upsertVolunteerProfile, getMyVolunteerProfile } from "@/actions/profiles";
-import { UserCircle, AlertCircle, CheckCircle, Info } from "lucide-react";
+import { AlertCircle, CheckCircle, Info } from "lucide-react";
 import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
+import type { VolunteerProfile } from "@/types";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
@@ -16,7 +17,7 @@ function getAge(dob: string): number {
 }
 
 export default function EnrolleeProfilePage() {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<VolunteerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -67,8 +68,8 @@ export default function EnrolleeProfilePage() {
       setProfile(p);
       if (p?.date_of_birth) setDob(p.date_of_birth);
       setSaved(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save profile");
     } finally {
       setSaving(false);
     }

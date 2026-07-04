@@ -5,6 +5,7 @@ import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth"
 import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
 import { eligibilityTestSchema, testAttemptSchema } from "@/lib/validations";
 import type { EligibilityTestInput, TestAttemptInput } from "@/lib/validations";
+import { scoreTestAttempt } from "@/lib/scoring";
 import { revalidatePath } from "next/cache";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
@@ -46,28 +47,7 @@ export async function submitTestAttempt(input: TestAttemptInput) {
 
   if (!test) throw new Error("Test not found");
 
-  let score = 0;
-  let totalMarks = 0;
-
-  for (const q of test.questions) {
-    totalMarks += q.marks;
-    if (q.type === "mcq" && q.correct_answer) {
-      if (answers[q.id] === q.correct_answer) score += q.marks;
-    } else if (q.type === "multi_select" && q.correct_answer) {
-      const userAnswer = (answers[q.id] as string[]) ?? [];
-      const correct = q.correct_answer as string[];
-      if (
-        userAnswer.length === correct.length &&
-        userAnswer.every((a: string) => correct.includes(a))
-      ) {
-        score += q.marks;
-      }
-    }
-    // subjective: score added by admin review
-  }
-
-  const percentScore = totalMarks > 0 ? (score / totalMarks) * 100 : 0;
-  const passed = percentScore >= test.passing_score;
+  const { percentScore, passed } = scoreTestAttempt(test.questions, answers, test.passing_score);
 
   // If passed → pending_approval (admin must approve before role is promoted)
   // If not passed → submitted
@@ -112,7 +92,7 @@ export async function approveTestResult(attemptId: string) {
   if (fetchError || !attempt) throw new Error("Attempt not found");
   if (attempt.status !== "pending_approval") throw new Error("Attempt is not pending approval");
 
-  const student = attempt.users as any;
+  const student = attempt.users as unknown as { id: string; clerk_id: string; role: string | null };
   if (!student?.clerk_id) throw new Error("Student Clerk ID missing");
 
   // 1. Promote in Supabase first (source of truth)
@@ -123,7 +103,7 @@ export async function approveTestResult(attemptId: string) {
   const clerk = await clerkClient();
   try {
     await clerk.users.updateUserMetadata(student.clerk_id, { publicMetadata: { role: "volunteer" } });
-  } catch (err) {
+  } catch {
     await db.from("users").update({ role: student.role ?? null }).eq("id", student.id);
     throw new Error("Failed to update auth provider; role change rolled back");
   }

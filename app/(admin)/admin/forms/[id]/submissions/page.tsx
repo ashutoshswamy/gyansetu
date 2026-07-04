@@ -3,13 +3,17 @@ import { ExportButton } from "@/components/features/export-button";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Inbox } from "lucide-react";
-import type { FormField } from "@/types";
+import type { FormField, FormSubmission } from "@/types";
+
+type Submission = Pick<FormSubmission, "id" | "data" | "submitted_at"> & {
+  users?: { name: string; email: string };
+};
 
 export default async function FormSubmissionsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const db = createServerClient();
 
-  const [{ data: form, error: formError }, { data: submissions, error: subError }] = await Promise.all([
+  const [{ data: form, error: formError }, { data: submissions }] = await Promise.all([
     db.from("dynamic_forms").select("*").eq("id", id).single(),
     db
       .from("form_submissions")
@@ -21,16 +25,17 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
   if (formError || !form) notFound();
 
   const fields = (form.fields as FormField[]) ?? [];
+  const subs = (submissions ?? []) as unknown as Submission[];
 
-  const exportData = (submissions ?? []).map((sub: any) => {
-    const row: Record<string, any> = {
+  const exportData = subs.map((sub) => {
+    const row: Record<string, string> = {
       "Submitter Name": sub.users?.name ?? "Unknown",
       "Submitter Email": sub.users?.email ?? "Unknown",
       "Submitted At": new Date(sub.submitted_at).toLocaleString(),
     };
     for (const field of fields) {
       const val = sub.data?.[field.id];
-      row[field.label] = Array.isArray(val) ? val.join(", ") : (val ?? "");
+      row[field.label] = Array.isArray(val) ? val.join(", ") : String(val ?? "");
     }
     return row;
   });
@@ -81,7 +86,7 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
                   </tr>
                 </thead>
                 <tbody>
-                  {(submissions ?? []).map((sub: any) => (
+                  {subs.map((sub) => (
                     <tr key={sub.id} style={{ borderBottom: "1px solid #E4DFD1" }} className="hover:bg-slate-50/50">
                       <td className="p-4">
                         <div className="font-medium text-[#19140F]">{sub.users?.name ?? "Unknown"}</div>

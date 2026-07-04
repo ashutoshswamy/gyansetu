@@ -48,7 +48,7 @@ export function TourForm() {
     defaultValues: { status: "draft" as const },
   });
 
-  async function onSubmit(data: any) {
+  async function onSubmit(data: TourInput) {
     setError(null);
     try {
       await createTour(data);

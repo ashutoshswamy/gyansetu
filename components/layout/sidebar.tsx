@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import NextImage from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { UserButton, useUser } from "@clerk/nextjs";
 import type { UserRole } from "@/types";
 import { createClientClient } from "@/lib/supabase/client";
@@ -337,6 +337,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
       isMounted = false;
       clientDb.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- depend on user.id only; `user` gets a new reference every render
   }, [role, user?.id]);
 
   return (
@@ -347,7 +348,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
       {/* Logo */}
       <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid #E4DFD1" }}>
         <div className="flex items-center mb-4" style={{ minHeight: 36 }}>
-          <img src="/logo_wide.png" alt="Gyan Setu" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+          <NextImage src="/logo_wide.png" alt="Gyan Setu" width={120} height={36} style={{ height: 36, width: "auto", objectFit: "contain" }} />
         </div>
         <div
           className="flex items-center gap-2 px-2.5 py-1.5 rounded"

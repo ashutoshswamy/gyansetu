@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { upsertVolunteerProfile, getMyVolunteerProfile } from "@/actions/profiles";
-import { User, Phone, AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle } from "lucide-react";
 import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
+import type { VolunteerProfile } from "@/types";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
@@ -12,7 +13,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function VolunteerProfilePage() {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<VolunteerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -60,8 +61,8 @@ export default function VolunteerProfilePage() {
       });
       setProfile(p);
       setSaved(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save profile");
     } finally {
       setSaving(false);
     }
@@ -86,7 +87,7 @@ export default function VolunteerProfilePage() {
         {profile?.consent_given && (
           <div style={{ background: "rgba(42,94,58,0.07)", border: "1px solid rgba(42,94,58,0.2)", borderRadius: 8, padding: "10px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#2A5E3A" }}>
             <CheckCircle size={15} />
-            Consent given on {new Date(profile.consent_given_at).toLocaleDateString()}
+            Consent given on {profile.consent_given_at ? new Date(profile.consent_given_at).toLocaleDateString() : "-"}
           </div>
         )}
 

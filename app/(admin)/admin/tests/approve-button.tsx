@@ -13,8 +13,8 @@ export function ApproveRejectButtons({ attemptId }: { attemptId: string }) {
     try {
       await approveTestResult(attemptId);
       router.refresh();
-    } catch (err: any) {
-      alert(err.message ?? "Failed to approve");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to approve");
     } finally {
       setLoading(null);
     }
@@ -25,8 +25,8 @@ export function ApproveRejectButtons({ attemptId }: { attemptId: string }) {
     try {
       await rejectTestResult(attemptId);
       router.refresh();
-    } catch (err: any) {
-      alert(err.message ?? "Failed to reject");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to reject");
     } finally {
       setLoading(null);
     }

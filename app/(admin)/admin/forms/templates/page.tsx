@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { DeleteFormButton } from "@/components/features/forms/delete-form-button";
 import { ArrowLeft } from "lucide-react";
+import type { DynamicForm } from "@/types";
 
 export default async function FormTemplatesPage() {
   const db = createServerClient();
@@ -40,10 +41,10 @@ export default async function FormTemplatesPage() {
         <div className="space-y-3">
           {(templates ?? []).length === 0 && (
             <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
-              No templates saved yet. Create a form and select "Template" type to save one.
+              No templates saved yet. Create a form and select &quot;Template&quot; type to save one.
             </p>
           )}
-          {(templates ?? []).map((template: any) => (
+          {(templates ?? []).map((template: DynamicForm) => (
             <div
               key={template.id}
               className="flex items-center justify-between"

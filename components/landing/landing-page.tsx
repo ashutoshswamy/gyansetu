@@ -9,6 +9,7 @@ import {
 } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sun,
   Network,
@@ -153,7 +154,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
       >
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-            <img src="/logo_wide.png" alt="Gyan Setu" style={{ height: 40, width: "auto", objectFit: "contain" }} />
+            <Image src="/logo_wide.png" alt="Gyan Setu" width={135} height={40} style={{ height: 40, width: "auto", objectFit: "contain" }} />
           </motion.div>
 
           <div className="desktop-nav-links" style={{ display: "flex", gap: 30 }}>
@@ -857,7 +858,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "64px 24px 48px", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48 }} className="footer-grid">
           {/* Brand column */}
           <div>
-            <img src="/logo_wide.png" alt="Gyan Setu" style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 18 }} />
+            <Image src="/logo_wide.png" alt="Gyan Setu" width={120} height={36} style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 18 }} />
             <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "rgba(255,255,255,.45)", lineHeight: 1.75, maxWidth: 300, marginBottom: 24 }}>
               Jnanaprabodhini Educational Activity Research Centre. Building bridges of knowledge across India since 1962.
             </p>

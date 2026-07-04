@@ -1,6 +1,15 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { auth } from "@clerk/nextjs/server";
 import { FolderOpen, GraduationCap, BookMarked, FileText } from "lucide-react";
+import type { EarcFileCategory } from "@/actions/earc";
+
+type RecentEarcFile = {
+  id: string;
+  name: string;
+  category: EarcFileCategory;
+  description?: string;
+  created_at: string;
+};
 
 export default async function EarcDashboardPage() {
   const { userId } = await auth();
@@ -89,7 +98,7 @@ export default async function EarcDashboardPage() {
             </div>
           ) : (
             <div className="divide-y" style={{ borderColor: "#E4DFD1" }}>
-              {(recentFiles ?? []).map((f: any) => {
+              {(recentFiles ?? []).map((f: RecentEarcFile) => {
                 const cat = categoryColor[f.category] ?? categoryColor.document;
                 return (
                   <div key={f.id} className="flex items-center gap-4 px-5 py-3">

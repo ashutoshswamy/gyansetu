@@ -32,6 +32,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
   if (!profile?.date_of_birth) {
     ageBlock = "Complete your profile with your date of birth before applying.";
   } else {
+    // eslint-disable-next-line react-hooks/purity -- server component, evaluated fresh per request
     const age = Math.floor((Date.now() - new Date(profile.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
     if (age < 18) ageBlock = `You must be 18 or older to apply (your age: ${age}).`;
   }

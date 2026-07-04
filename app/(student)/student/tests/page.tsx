@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import type { EligibilityTest } from "@/types";
 
 export default async function StudentTestsPage() {
   const { userId } = await auth();
@@ -42,7 +43,7 @@ export default async function StudentTestsPage() {
               No active tests available. Apply for tours to unlock tests.
             </p>
           )}
-          {(tests ?? []).map((test: any) => {
+          {(tests ?? []).map((test: EligibilityTest) => {
             const attempt = attemptMap.get(test.id);
             const passed = attempt?.score !== null && attempt?.score !== undefined && attempt.score >= test.passing_score;
             return (

@@ -115,6 +115,7 @@ export default async function GalleryPage() {
                       overflow: "hidden",
                     }}
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-supplied URL, not a same-origin/whitelisted host for next/image */}
                     <img
                       src={image.url}
                       alt={image.caption ?? category.name}

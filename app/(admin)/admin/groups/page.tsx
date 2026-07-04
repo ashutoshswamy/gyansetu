@@ -2,18 +2,30 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Users, MapPin, Star } from "lucide-react";
 
+interface GroupMember {
+  id: string;
+  role_in_group?: string;
+  users?: { id: string; name: string; email: string };
+}
+
+interface GroupRow {
+  id: string;
+  name: string;
+  state_allocated?: string;
+  tours?: { id: string; title: string; destination: string };
+  tour_group_members?: GroupMember[];
+  users?: { id: string; name: string };
+}
+
 export default async function AdminGroupsPage() {
   const db = createServerClient();
 
-  const [{ data: groups }, { data: tours }] = await Promise.all([
-    db
-      .from("tour_groups")
-      .select("*, tours(id, title, destination), tour_group_members(id, role_in_group, users(id, name, email)), users!tour_groups_mentor_id_fkey(id, name)")
-      .order("created_at", { ascending: false }),
-    db.from("tours").select("id, title").order("created_at", { ascending: false }),
-  ]);
+  const { data: groups } = await db
+    .from("tour_groups")
+    .select("*, tours(id, title, destination), tour_group_members(id, role_in_group, users(id, name, email)), users!tour_groups_mentor_id_fkey(id, name)")
+    .order("created_at", { ascending: false });
 
-  const groupsByTour: Record<string, any[]> = {};
+  const groupsByTour: Record<string, GroupRow[]> = {};
   for (const g of groups ?? []) {
     const key = g.tours?.title ?? "Unlinked";
     if (!groupsByTour[key]) groupsByTour[key] = [];
@@ -52,7 +64,7 @@ export default async function AdminGroupsPage() {
               {tourTitle} ({tourGroups.length} groups)
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {tourGroups.map((group: any) => (
+              {tourGroups.map((group) => (
                 <div key={group.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 18px" }}>
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -84,13 +96,13 @@ export default async function AdminGroupsPage() {
                       <span>{group.tour_group_members?.length ?? 0} members</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {(group.tour_group_members ?? []).slice(0, 5).map((m: any) => (
+                      {(group.tour_group_members ?? []).slice(0, 5).map((m) => (
                         <span key={m.id} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: "rgba(74,85,190,0.07)", color: "#4A55BE" }}>
                           {m.users?.name}
                         </span>
                       ))}
                       {(group.tour_group_members ?? []).length > 5 && (
-                        <span style={{ fontSize: 11, color: "#9B9188" }}>+{group.tour_group_members.length - 5} more</span>
+                        <span style={{ fontSize: 11, color: "#9B9188" }}>+{(group.tour_group_members ?? []).length - 5} more</span>
                       )}
                     </div>
                   </div>

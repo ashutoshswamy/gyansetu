@@ -32,8 +32,8 @@ export function EarcUploadForm({
           setSuccess(false);
           window.location.reload();
         }, 1200);
-      } catch (err: any) {
-        setError(err.message ?? "Upload failed");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Upload failed");
       }
     });
   }

@@ -7,6 +7,16 @@ const typeIcon: Record<string, React.ElementType> = {
   video: Video,
 };
 
+interface MediaRow {
+  id: string;
+  file_url: string;
+  caption?: string;
+  media_type: "photo" | "document" | "video";
+  created_at: string;
+  tours?: { id: string; title: string };
+  users?: { id: string; name: string };
+}
+
 export default async function AdminMediaPage() {
   const db = createServerClient();
 
@@ -15,7 +25,7 @@ export default async function AdminMediaPage() {
     .select("*, tours(id, title), users!media_gallery_uploaded_by_fkey(id, name)")
     .order("created_at", { ascending: false });
 
-  const byTour: Record<string, any[]> = {};
+  const byTour: Record<string, MediaRow[]> = {};
   for (const m of media ?? []) {
     const key = m.tours?.title ?? "Unlinked";
     if (!byTour[key]) byTour[key] = [];
@@ -43,7 +53,7 @@ export default async function AdminMediaPage() {
               {tourTitle} ({items.length})
             </h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {items.map((item: any) => {
+              {items.map((item) => {
                 const Icon = typeIcon[item.media_type] ?? Image;
                 return (
                   <a

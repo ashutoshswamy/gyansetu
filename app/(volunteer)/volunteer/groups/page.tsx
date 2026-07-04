@@ -1,6 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { Users, MapPin, Star } from "lucide-react";
+import type { TourGroupMember, TourGroup } from "@/types";
+
+type MembershipRow = TourGroupMember & {
+  tour_groups?: (TourGroup & {
+    tours?: { id: string; title: string; destination: string; start_date: string } | null;
+    users?: { id: string; name: string; email: string } | null;
+  }) | null;
+};
 
 export default async function VolunteerGroupsPage() {
   const { userId } = await auth();
@@ -30,7 +38,7 @@ export default async function VolunteerGroupsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {(myMembership ?? []).map((m: any) => {
+            {(myMembership ?? []).map((m: MembershipRow) => {
               const g = m.tour_groups;
               return (
                 <div key={m.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "20px 24px" }}>

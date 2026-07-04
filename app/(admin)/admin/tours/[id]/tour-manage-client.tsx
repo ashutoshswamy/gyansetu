@@ -13,7 +13,7 @@ export function TourManageClient({ tourId, currentStatus }: { tourId: string; cu
   async function changeStatus(status: string) {
     setLoading(true);
     try {
-      await updateTour(tourId, { status: status as any });
+      await updateTour(tourId, { status: status as "draft" | "open" | "closed" | "completed" });
       router.refresh();
     } finally {
       setLoading(false);

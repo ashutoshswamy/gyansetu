@@ -1,6 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
 import { getMyCertificates } from "@/actions/certificates";
 import { Award } from "lucide-react";
+import type { CertificateType } from "@/types";
+
+type CertificateRow = {
+  id: string;
+  certificate_type: CertificateType;
+  issued_at: string;
+  notes?: string;
+  tours?: { id: string; title: string; destination: string } | null;
+  issuer?: { id: string; name: string } | null;
+};
 
 const typeColors: Record<string, { color: string; bg: string; border: string }> = {
   participation: { color: "#4A55BE", bg: "rgba(74,85,190,0.05)", border: "rgba(74,85,190,0.2)" },
@@ -29,7 +38,7 @@ export default async function VolunteerCertificatesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {(certs as any[]).map((cert) => {
+            {(certs as CertificateRow[]).map((cert) => {
               const c = typeColors[cert.certificate_type] ?? typeColors.participation;
               return (
                 <div

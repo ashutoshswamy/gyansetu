@@ -1,6 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { Calendar, MapPin, Tag } from "lucide-react";
+import type { Event } from "@/types";
+
+type EventRow = Event & { tours?: { id: string; title: string } | null };
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
@@ -14,7 +16,6 @@ const typeColors: Record<string, { color: string; bg: string }> = {
 };
 
 export default async function VolunteerEventsPage() {
-  const { userId } = await auth();
   const db = createServerClient();
 
   const { data: events } = await db
@@ -22,8 +23,8 @@ export default async function VolunteerEventsPage() {
     .select("*, tours(id, title)")
     .order("event_date", { ascending: true });
 
-  const upcoming = (events ?? []).filter((e: any) => ["upcoming", "ongoing"].includes(e.status));
-  const past = (events ?? []).filter((e: any) => !["upcoming", "ongoing"].includes(e.status));
+  const upcoming = (events ?? []).filter((e: EventRow) => ["upcoming", "ongoing"].includes(e.status));
+  const past = (events ?? []).filter((e: EventRow) => !["upcoming", "ongoing"].includes(e.status));
 
   return (
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
@@ -40,7 +41,7 @@ export default async function VolunteerEventsPage() {
           </h2>
           <div className="space-y-3">
             {upcoming.length === 0 && <p style={{ color: "#9B9188", fontSize: 14 }}>No upcoming events.</p>}
-            {upcoming.map((event: any) => <EventCard key={event.id} event={event} />)}
+            {upcoming.map((event: EventRow) => <EventCard key={event.id} event={event} />)}
           </div>
         </section>
 
@@ -50,7 +51,7 @@ export default async function VolunteerEventsPage() {
           </h2>
           <div className="space-y-3">
             {past.length === 0 && <p style={{ color: "#9B9188", fontSize: 14 }}>No past events.</p>}
-            {past.map((event: any) => <EventCard key={event.id} event={event} muted />)}
+            {past.map((event: EventRow) => <EventCard key={event.id} event={event} muted />)}
           </div>
         </section>
       </div>
@@ -58,7 +59,7 @@ export default async function VolunteerEventsPage() {
   );
 }
 
-function EventCard({ event, muted }: { event: any; muted?: boolean }) {
+function EventCard({ event, muted }: { event: EventRow; muted?: boolean }) {
   const t = typeColors[event.event_type] ?? typeColors.other;
   return (
     <div style={{ background: muted ? "#F3F0E8" : "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 18px", opacity: muted ? 0.75 : 1 }}>
