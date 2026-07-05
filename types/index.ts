@@ -53,11 +53,12 @@ export interface EligibilityTest {
   id: string;
   title: string;
   description?: string;
-  tour_id: string;
+  tour_id?: string;
   duration_minutes: number;
   passing_score: number;
   questions: TestQuestion[];
   status: "draft" | "active" | "closed";
+  is_template: boolean;
   created_by: string;
   created_at: string;
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { uploadMedia, getMediaByTour, getTodayUploadCount } from "@/actions/daily-logs";
+import { uploadFileToStorage } from "@/actions/upload";
 import { Image as ImageIcon, Upload } from "lucide-react";
 import type { MediaGalleryItem } from "@/types";
 
@@ -61,14 +62,9 @@ export default function VolunteerMediaPage() {
         const file = fileRef.current?.files?.[0];
         if (!file || !selectedTour) return;
 
-        // Upload to Supabase Storage
-        const { createClientClient } = await import("@/lib/supabase/client");
-        const sb = createClientClient();
-        const path = `media/${selectedTour}/${Date.now()}-${file.name}`;
-        const { error: uploadError } = await sb.storage.from("media").upload(path, file);
-        if (uploadError) throw new Error(uploadError.message);
-        const { data: urlData } = sb.storage.from("media").getPublicUrl(path);
-        finalUrl = urlData.publicUrl;
+        const fd = new FormData();
+        fd.append("file", file);
+        finalUrl = await uploadFileToStorage(fd, "media", selectedTour);
         isVideo = file.type.startsWith("video/");
       }
 

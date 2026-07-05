@@ -23,11 +23,12 @@ const testQuestionSchema = z.object({
 export const eligibilityTestSchema = z.object({
   title: z.string().min(3),
   description: z.string().optional(),
-  tour_id: z.string().uuid(),
+  tour_id: z.string().uuid().optional().nullable(),
   duration_minutes: z.number().int().positive(),
   passing_score: z.number().int().min(0).max(100),
   questions: z.array(testQuestionSchema).min(1),
   status: z.enum(["draft", "active", "closed"]).default("draft"),
+  is_template: z.boolean().default(false),
 });
 
 const formFieldSchema = z.object({

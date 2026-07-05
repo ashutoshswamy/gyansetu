@@ -3,6 +3,7 @@
 import { useForm, type UseFormRegister, type FieldValues } from "react-hook-form";
 import type { DynamicForm, FormField } from "@/types";
 import { submitForm } from "@/actions/forms";
+import { uploadFileToStorage } from "@/actions/upload";
 import { useState, useEffect, useRef } from "react";
 
 const inputStyle: React.CSSProperties = {
@@ -46,13 +47,10 @@ function FileImageInput({
     setUploading(true);
     setError(null);
     try {
-      const { createClientClient } = await import("@/lib/supabase/client");
-      const sb = createClientClient();
-      const path = `forms/${field.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await sb.storage.from("media").upload(path, file);
-      if (uploadError) throw new Error(uploadError.message);
-      const { data: urlData } = sb.storage.from("media").getPublicUrl(path);
-      onChange(urlData.publicUrl);
+      const fd = new FormData();
+      fd.append("file", file);
+      const url = await uploadFileToStorage(fd, "media", `forms/${field.id}`);
+      onChange(url);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

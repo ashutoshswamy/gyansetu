@@ -36,6 +36,7 @@ export default async function AdminTestsPage() {
     db
       .from("eligibility_tests")
       .select("*, tours(title, destination)")
+      .eq("is_template", false)
       .order("created_at", { ascending: false }),
     db
       .from("test_attempts")
@@ -85,6 +86,11 @@ export default async function AdminTestsPage() {
           </div>
           <div className="flex items-center gap-3">
             <ExportButton data={exportData} filename="test-results.csv" />
+            <Link href="/admin/tests/templates">
+              <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
+                Test Templates
+              </button>
+            </Link>
             <Link href="/admin/tests/new">
               <button
                 className="flex items-center gap-2"

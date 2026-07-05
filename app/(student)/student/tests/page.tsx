@@ -18,7 +18,7 @@ export default async function StudentTestsPage() {
   const tourIds = (applications ?? []).map((a) => a.tour_id);
 
   const { data: tests } = tourIds.length > 0
-    ? await db.from("eligibility_tests").select("*").in("tour_id", tourIds).eq("status", "active")
+    ? await db.from("eligibility_tests").select("*").in("tour_id", tourIds).eq("status", "active").eq("is_template", false)
     : { data: [] };
 
   const { data: attempts } = await db

@@ -1,14 +1,18 @@
 "use server";
 
-import { requireAdminUser } from "@/lib/clerk/action-auth";
+import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { createServerClient } from "@/lib/supabase/server";
 
-const ALLOWED_BUCKETS = ["blog-covers", "newsletter-files", "gallery-images"] as const;
+const ALLOWED_BUCKETS = ["blog-covers", "newsletter-files", "gallery-images", "media"] as const;
+
+// "media" is uploaded by any logged-in role (student/volunteer/admin); others are admin-only.
+const OPEN_BUCKETS = new Set(["media"]);
 
 const ALLOWED_EXTENSIONS: Record<string, string[]> = {
   "blog-covers":      ["jpg", "jpeg", "png", "webp", "gif"],
   "gallery-images":   ["jpg", "jpeg", "png", "webp", "gif"],
   "newsletter-files": ["pdf", "doc", "docx", "jpg", "jpeg", "png", "webp"],
+  "media":            ["jpg", "jpeg", "png", "webp", "gif", "mp4", "webm", "mov", "ogg"],
 };
 
 const ALLOWED_MIME_TYPES = new Set([
@@ -16,6 +20,7 @@ const ALLOWED_MIME_TYPES = new Set([
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "video/mp4", "video/webm", "video/quicktime", "video/ogg",
 ]);
 
 export async function uploadFileToStorage(
@@ -23,10 +28,14 @@ export async function uploadFileToStorage(
   bucket: string,
   folder: string
 ): Promise<string> {
-  await requireAdminUser();
-
   if (!(ALLOWED_BUCKETS as readonly string[]).includes(bucket)) {
     throw new Error("Invalid storage bucket");
+  }
+
+  if (OPEN_BUCKETS.has(bucket)) {
+    await getAuthenticatedUser();
+  } else {
+    await requireAdminUser();
   }
 
   const file = formData.get("file") as File | null;

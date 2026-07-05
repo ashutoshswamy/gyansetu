@@ -13,7 +13,7 @@ export default async function TakeTestPage({ params }: { params: Promise<{ id: s
     .eq("status", "active")
     .single();
 
-  if (error || !test) notFound();
+  if (error || !test || test.is_template) notFound();
 
   return (
     <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>

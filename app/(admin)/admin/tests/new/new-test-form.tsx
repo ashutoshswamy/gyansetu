@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createTest } from "@/actions/tests";
+import { createTest, updateTest } from "@/actions/tests";
+import type { EligibilityTest } from "@/types";
 
 type Tour = { id: string; title: string };
 type QuestionType = "mcq" | "multi_select" | "subjective";
@@ -16,6 +17,18 @@ interface Question {
   marks: number;
 }
 
+interface InitialData {
+  id: string;
+  title: string;
+  description?: string;
+  tour_id?: string;
+  duration_minutes: number;
+  passing_score: number;
+  status: "draft" | "active" | "closed";
+  is_template: boolean;
+  questions: Question[];
+}
+
 function uid() {
   return Math.random().toString(36).slice(2, 9);
 }
@@ -24,18 +37,20 @@ function blankQuestion(): Question {
   return { id: uid(), type: "mcq", question: "", options: ["", ""], correct_answer: "", marks: 1 };
 }
 
-export function NewTestForm({ tours }: { tours: Tour[] }) {
+export function NewTestForm({ tours, templates = [], initialData }: { tours: Tour[]; templates?: EligibilityTest[]; initialData?: InitialData }) {
   const router = useRouter();
+  const isEdit = !!initialData;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tourId, setTourId] = useState(tours[0]?.id ?? "");
-  const [duration, setDuration] = useState(30);
-  const [passing, setPassing] = useState(60);
-  const [status, setStatus] = useState<"draft" | "active" | "closed">("draft");
-  const [questions, setQuestions] = useState<Question[]>([blankQuestion()]);
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [description, setDescription] = useState(initialData?.description ?? "");
+  const [tourId, setTourId] = useState(initialData?.tour_id ?? "");
+  const [duration, setDuration] = useState(initialData?.duration_minutes ?? 30);
+  const [passing, setPassing] = useState(initialData?.passing_score ?? 60);
+  const [status, setStatus] = useState<"draft" | "active" | "closed">(initialData?.status ?? "draft");
+  const [isTemplate, setIsTemplate] = useState(initialData?.is_template ?? false);
+  const [questions, setQuestions] = useState<Question[]>(initialData?.questions ?? [blankQuestion()]);
 
   function updateQ(idx: number, patch: Partial<Question>) {
     setQuestions(qs => qs.map((q, i) => i === idx ? { ...q, ...patch } : q));
@@ -70,27 +85,52 @@ export function NewTestForm({ tours }: { tours: Tour[] }) {
     }));
   }
 
+  function importTemplate(templateId: string) {
+    const selected = templates.find(t => t.id === templateId);
+    if (!selected) return;
+    setTitle(selected.title);
+    setDescription(selected.description ?? "");
+    setDuration(selected.duration_minutes);
+    setPassing(selected.passing_score);
+    setStatus(selected.status);
+    setIsTemplate(false); // Default to saving as new linked test
+    setQuestions(selected.questions.map(q => ({
+      id: uid(),
+      type: q.type,
+      question: q.question,
+      options: q.options ?? ["", ""],
+      correct_answer: q.correct_answer ?? "",
+      marks: q.marks,
+    })));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setError("");
+    const payload = {
+      title,
+      description: description || undefined,
+      tour_id: isTemplate ? null : (tourId || null),
+      duration_minutes: duration,
+      passing_score: passing,
+      questions: questions.map(q => ({
+        ...q,
+        options: q.type === "subjective" ? undefined : q.options.filter(Boolean),
+        correct_answer: q.type === "subjective" ? undefined : q.correct_answer,
+      })),
+      status,
+      is_template: isTemplate,
+    };
     try {
-      await createTest({
-        title,
-        description: description || undefined,
-        tour_id: tourId,
-        duration_minutes: duration,
-        passing_score: passing,
-        questions: questions.map(q => ({
-          ...q,
-          options: q.type === "subjective" ? undefined : q.options.filter(Boolean),
-          correct_answer: q.type === "subjective" ? undefined : q.correct_answer,
-        })),
-        status,
-      });
-      router.push("/admin/tests");
+      if (isEdit) {
+        await updateTest(initialData.id, payload);
+      } else {
+        await createTest(payload);
+      }
+      router.push(isTemplate ? "/admin/tests/templates" : "/admin/tests");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create test");
+      setError(err instanceof Error ? err.message : "Failed to save test");
       setSaving(false);
     }
   }
@@ -100,6 +140,30 @@ export function NewTestForm({ tours }: { tours: Tour[] }) {
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Template Importer */}
+      {!isEdit && templates.length > 0 && (
+        <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1.5px dashed #4A55BE", color: "#4A55BE" }}>
+          <label style={{ ...labelStyle, color: "#4A55BE" }}>Import from existing Template</label>
+          <div className="flex gap-3 items-center mt-1">
+            <select
+              style={{ ...inputStyle, borderColor: "rgba(74,85,190,0.3)" }}
+              defaultValue=""
+              onChange={e => { if (e.target.value) importTemplate(e.target.value); }}
+            >
+              <option value="">Select a template to import...</option>
+              {templates.map(t => (
+                <option key={t.id} value={t.id}>
+                  {t.title} ({t.questions?.length ?? 0} questions)
+                </option>
+              ))}
+            </select>
+          </div>
+          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6, margin: "6px 0 0 0" }}>
+            * Selecting a template will overwrite the details and questions in the builder below.
+          </p>
+        </div>
+      )}
+
       {/* Meta */}
       <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1px solid #E4DFD1" }}>
         <p style={{ fontSize: 12, fontWeight: 600, color: "#9B9188", marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Test Details</p>
@@ -114,11 +178,32 @@ export function NewTestForm({ tours }: { tours: Tour[] }) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label style={labelStyle}>Linked Tour *</label>
-              <select required style={inputStyle} value={tourId} onChange={e => setTourId(e.target.value)}>
-                {tours.length === 0 && <option value="">No tours available</option>}
+              <label style={labelStyle}>Test Type *</label>
+              <select style={inputStyle} value={isTemplate ? "template" : "link"} onChange={e => {
+                const val = e.target.value === "template";
+                setIsTemplate(val);
+                if (val) setTourId("");
+              }}>
+                <option value="link">Standard Test</option>
+                <option value="template">Template</option>
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Linked Tour {isTemplate ? "" : "*"}</label>
+              <select required={!isTemplate} disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourId} onChange={e => setTourId(e.target.value)}>
+                <option value="">{tours.length === 0 ? "No tours available" : "No tour"}</option>
                 {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
               </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label style={labelStyle}>Duration (minutes) *</label>
+              <input required type="number" min={1} style={inputStyle} value={duration} onChange={e => setDuration(Number(e.target.value))} />
+            </div>
+            <div>
+              <label style={labelStyle}>Passing Score (%) *</label>
+              <input required type="number" min={0} max={100} style={inputStyle} value={passing} onChange={e => setPassing(Number(e.target.value))} />
             </div>
             <div>
               <label style={labelStyle}>Status</label>
@@ -127,16 +212,6 @@ export function NewTestForm({ tours }: { tours: Tour[] }) {
                 <option value="active">Active</option>
                 <option value="closed">Closed</option>
               </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label style={labelStyle}>Duration (minutes) *</label>
-              <input required type="number" min={1} style={inputStyle} value={duration} onChange={e => setDuration(Number(e.target.value))} />
-            </div>
-            <div>
-              <label style={labelStyle}>Passing Score (%) *</label>
-              <input required type="number" min={0} max={100} style={inputStyle} value={passing} onChange={e => setPassing(Number(e.target.value))} />
             </div>
           </div>
         </div>
@@ -234,8 +309,8 @@ export function NewTestForm({ tours }: { tours: Tour[] }) {
         <button type="button" onClick={() => router.back()} style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}>
           Cancel
         </button>
-        <button type="submit" disabled={saving || tours.length === 0} style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: saving ? "#C8C4BC" : "#19140F", color: "white", cursor: saving ? "not-allowed" : "pointer" }}>
-          {saving ? "Creating..." : "Create Test"}
+        <button type="submit" disabled={saving || (!isTemplate && tours.length === 0)} style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: saving ? "#C8C4BC" : "#19140F", color: "white", cursor: saving ? "not-allowed" : "pointer" }}>
+          {saving ? "Saving..." : isEdit ? "Save Changes" : "Create Test"}
         </button>
       </div>
     </form>

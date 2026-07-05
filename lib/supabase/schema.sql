@@ -62,6 +62,7 @@ create table if not exists public.eligibility_tests (
   passing_score    integer not null check (passing_score between 0 and 100),
   questions        jsonb not null default '[]',
   status           text not null default 'draft' check (status in ('draft', 'active', 'closed')),
+  is_template      boolean not null default false,
   created_by       uuid references public.users(id) on delete set null,
   created_at       timestamptz default now()
 );

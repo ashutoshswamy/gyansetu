@@ -31,6 +31,34 @@ export async function createTest(input: EligibilityTestInput) {
   return test;
 }
 
+export async function updateTest(id: string, input: EligibilityTestInput) {
+  const { db } = await requireAdminUser();
+  const data = eligibilityTestSchema.parse(input);
+
+  const { data: test, error } = await db
+    .from("eligibility_tests")
+    .update(data)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) { console.error("[updateTest]", error); throw new Error("Failed to update test"); }
+
+  revalidatePath("/admin/tests");
+  revalidatePath(`/admin/tests/${id}/edit`);
+
+  return test;
+}
+
+export async function deleteTest(id: string) {
+  const { db } = await requireAdminUser();
+
+  const { error } = await db.from("eligibility_tests").delete().eq("id", id);
+  if (error) { console.error("[deleteTest]", error); throw new Error("Failed to delete test"); }
+
+  revalidatePath("/admin/tests");
+}
+
 export async function submitTestAttempt(input: TestAttemptInput) {
   const { db, user, userId } = await getAuthenticatedUser();
 
@@ -41,11 +69,12 @@ export async function submitTestAttempt(input: TestAttemptInput) {
 
   const { data: test } = await db
     .from("eligibility_tests")
-    .select("questions, passing_score, tour_id")
+    .select("questions, passing_score, tour_id, is_template")
     .eq("id", test_id)
     .single();
 
   if (!test) throw new Error("Test not found");
+  if (test.is_template) throw new Error("Test not available");
 
   const { percentScore, passed } = scoreTestAttempt(test.questions, answers, test.passing_score);
 
