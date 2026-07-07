@@ -953,7 +953,13 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             </p>
             <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, color: "rgba(255,255,255,.28)", margin: 0 }}>
               Made by{" "}
-              <span style={{ color: "rgba(255,255,255,.45)", fontWeight: 600 }}>Anahat Entertainment</span>
+              <a href="https://anahat-entertainment.vercel.app" target="_blank" rel="noopener noreferrer"
+                style={{ color: "rgba(255,255,255,.45)", fontWeight: 600, textDecoration: "none", transition: "color .18s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.45)"; }}
+              >
+                Anahat Entertainment
+              </a>
             </p>
           </div>
         </div>
