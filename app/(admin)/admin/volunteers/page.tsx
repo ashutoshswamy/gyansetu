@@ -70,7 +70,7 @@ export default async function AdminVolunteersPage() {
           <ExportButton data={exportData} filename="volunteers.csv" label="Export CSV" />
         </div>
 
-        <div className="grid grid-cols-3 mb-6 rounded-xl overflow-hidden" style={{ border: "1px solid #E4DFD1", background: "white" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 mb-6 rounded-xl overflow-hidden" style={{ border: "1px solid #E4DFD1", background: "white" }}>
           {summaryItems.map((item, idx) => (
             <div key={item.label} className="py-4 px-5" style={{ borderRight: idx < summaryItems.length - 1 ? "1px solid #E4DFD1" : undefined }}>
               <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9B9188", marginBottom: 4 }}>{item.label}</p>

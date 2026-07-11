@@ -155,9 +155,85 @@ create table if not exists public.volunteer_profiles (
   consent_given               boolean not null default false,
   consent_given_at            timestamptz,
   availability_notes          text,
+  -- Section 1: personal & contact (volunteer_registration.md)
+  first_name                  text,
+  middle_name                 text,
+  last_name                   text,
+  gender                      text,
+  blood_group                 text,
+  aadhaar_number              text,
+  photo_url                   text,
+  alternate_phone             text,
+  house_no                    text,
+  street                      text,
+  district                    text,
+  pincode                     text,
+  permanent_address_same      boolean not null default true,
+  permanent_address           text,
+  -- Section 2: education / professional background
+  current_status              text check (current_status in ('student', 'working_professional', 'both', 'other')),
+  student_location             text,
+  qualification                text,
+  course_name                  text,
+  stream                       text,
+  edu_course_status            text check (edu_course_status in ('pursuing', 'completed')),
+  company_name                 text,
+  work_location                text,
+  designation                  text,
+  work_department              text,
+  years_experience             integer,
+  -- Section 3: emergency & medical
+  emergency_contact_address    text,
+  has_allergies                boolean not null default false,
+  allergies_detail             text,
+  has_medical_conditions       boolean not null default false,
+  medical_conditions_detail    text,
+  takes_medicines              boolean not null default false,
+  medicines_detail             text,
+  dietary_restrictions         text[],
+  -- Declaration
+  certified_true                boolean not null default false,
+  signature_name                 text,
   created_at                  timestamptz default now(),
   updated_at                  timestamptz default now()
 );
+
+-- Idempotent column additions for already-deployed databases
+alter table public.volunteer_profiles add column if not exists first_name text;
+alter table public.volunteer_profiles add column if not exists middle_name text;
+alter table public.volunteer_profiles add column if not exists last_name text;
+alter table public.volunteer_profiles add column if not exists gender text;
+alter table public.volunteer_profiles add column if not exists blood_group text;
+alter table public.volunteer_profiles add column if not exists aadhaar_number text;
+alter table public.volunteer_profiles add column if not exists photo_url text;
+alter table public.volunteer_profiles add column if not exists alternate_phone text;
+alter table public.volunteer_profiles add column if not exists house_no text;
+alter table public.volunteer_profiles add column if not exists street text;
+alter table public.volunteer_profiles add column if not exists district text;
+alter table public.volunteer_profiles add column if not exists pincode text;
+alter table public.volunteer_profiles add column if not exists permanent_address_same boolean not null default true;
+alter table public.volunteer_profiles add column if not exists permanent_address text;
+alter table public.volunteer_profiles add column if not exists current_status text;
+alter table public.volunteer_profiles add column if not exists student_location text;
+alter table public.volunteer_profiles add column if not exists qualification text;
+alter table public.volunteer_profiles add column if not exists course_name text;
+alter table public.volunteer_profiles add column if not exists stream text;
+alter table public.volunteer_profiles add column if not exists edu_course_status text;
+alter table public.volunteer_profiles add column if not exists company_name text;
+alter table public.volunteer_profiles add column if not exists work_location text;
+alter table public.volunteer_profiles add column if not exists designation text;
+alter table public.volunteer_profiles add column if not exists work_department text;
+alter table public.volunteer_profiles add column if not exists years_experience integer;
+alter table public.volunteer_profiles add column if not exists emergency_contact_address text;
+alter table public.volunteer_profiles add column if not exists has_allergies boolean not null default false;
+alter table public.volunteer_profiles add column if not exists allergies_detail text;
+alter table public.volunteer_profiles add column if not exists has_medical_conditions boolean not null default false;
+alter table public.volunteer_profiles add column if not exists medical_conditions_detail text;
+alter table public.volunteer_profiles add column if not exists takes_medicines boolean not null default false;
+alter table public.volunteer_profiles add column if not exists medicines_detail text;
+alter table public.volunteer_profiles add column if not exists dietary_restrictions text[];
+alter table public.volunteer_profiles add column if not exists certified_true boolean not null default false;
+alter table public.volunteer_profiles add column if not exists signature_name text;
 
 -- Alumni Profiles
 create table if not exists public.alumni_profiles (
@@ -614,8 +690,84 @@ create table if not exists public.alumni_registrations (
   role_during_tour text,
   highlights       text,
   willing_to_mentor boolean    not null default false,
-  created_at       timestamptz not null default now()
+  created_at       timestamptz not null default now(),
+  -- Section 1: personal information (alumni_registration.md)
+  first_name                    text,
+  middle_name                   text,
+  last_name                     text,
+  gender                        text,
+  date_of_birth                 date,
+  blood_group                   text,
+  -- Section 2: visit history, repeatable — [{year, month, location, role}]
+  visit_history                 jsonb not null default '[]',
+  -- Section 3: professional & educational details
+  company_name                  text,
+  work_location                 text,
+  designation                   text,
+  work_department               text,
+  years_experience              integer,
+  institution                   text,
+  edu_location                  text,
+  qualification                 text,
+  course_name                   text,
+  stream                        text,
+  course_status                 text,
+  year_semester                 text,
+  -- Section 4: contact details
+  mobile_number                 text,
+  alternate_mobile_number       text,
+  linkedin_url                  text,
+  preferred_communication       text[],
+  -- Section 5: engagement with Gyan Setu
+  interested_volunteering       text,
+  available_network_activities  text,
+  preferred_contribution        text[],
+  areas_of_interest             text[],
+  availability                  text,
+  willing_to_mentor_new         text,
+  -- Section 6: additional information
+  why_stay_connected            text,
+  skills_contribute             text,
+  suggestions                   text,
+  additional_remarks            text,
+  -- Admin-only (not shown to alumni)
+  last_contacted                timestamptz
 );
+
+alter table public.alumni_registrations add column if not exists first_name text;
+alter table public.alumni_registrations add column if not exists middle_name text;
+alter table public.alumni_registrations add column if not exists last_name text;
+alter table public.alumni_registrations add column if not exists gender text;
+alter table public.alumni_registrations add column if not exists date_of_birth date;
+alter table public.alumni_registrations add column if not exists blood_group text;
+alter table public.alumni_registrations add column if not exists visit_history jsonb not null default '[]';
+alter table public.alumni_registrations add column if not exists company_name text;
+alter table public.alumni_registrations add column if not exists work_location text;
+alter table public.alumni_registrations add column if not exists designation text;
+alter table public.alumni_registrations add column if not exists work_department text;
+alter table public.alumni_registrations add column if not exists years_experience integer;
+alter table public.alumni_registrations add column if not exists institution text;
+alter table public.alumni_registrations add column if not exists edu_location text;
+alter table public.alumni_registrations add column if not exists qualification text;
+alter table public.alumni_registrations add column if not exists course_name text;
+alter table public.alumni_registrations add column if not exists stream text;
+alter table public.alumni_registrations add column if not exists course_status text;
+alter table public.alumni_registrations add column if not exists year_semester text;
+alter table public.alumni_registrations add column if not exists mobile_number text;
+alter table public.alumni_registrations add column if not exists alternate_mobile_number text;
+alter table public.alumni_registrations add column if not exists linkedin_url text;
+alter table public.alumni_registrations add column if not exists preferred_communication text[];
+alter table public.alumni_registrations add column if not exists interested_volunteering text;
+alter table public.alumni_registrations add column if not exists available_network_activities text;
+alter table public.alumni_registrations add column if not exists preferred_contribution text[];
+alter table public.alumni_registrations add column if not exists areas_of_interest text[];
+alter table public.alumni_registrations add column if not exists availability text;
+alter table public.alumni_registrations add column if not exists willing_to_mentor_new text;
+alter table public.alumni_registrations add column if not exists why_stay_connected text;
+alter table public.alumni_registrations add column if not exists skills_contribute text;
+alter table public.alumni_registrations add column if not exists suggestions text;
+alter table public.alumni_registrations add column if not exists additional_remarks text;
+alter table public.alumni_registrations add column if not exists last_contacted timestamptz;
 
 create table if not exists public.testimonials (
   id          uuid        primary key default gen_random_uuid(),

@@ -1,6 +1,7 @@
 "use server";
 
 import { createServerClient } from "@/lib/supabase/server";
+import { requireAdminUser } from "@/lib/clerk/action-auth";
 import { alumniRegistrationSchema } from "@/lib/validations";
 import { resend, FROM_EMAIL } from "@/lib/resend/client";
 import { Ratelimit } from "@upstash/ratelimit";
@@ -20,15 +21,49 @@ export async function submitAlumniRegistration(data: unknown) {
 
   const parsed = alumniRegistrationSchema.parse(data);
   const db = createServerClient();
+  const firstVisit = parsed.visit_history?.[0];
 
   const { error } = await db.from("alumni_registrations").insert({
     name: parsed.name,
     email: parsed.email,
-    batch_year: parsed.batch_year || null,
-    tour_destination: parsed.tour_destination || null,
-    role_during_tour: parsed.role_during_tour || null,
+    batch_year: parsed.batch_year || firstVisit?.year || null,
+    tour_destination: parsed.tour_destination || firstVisit?.location || null,
+    role_during_tour: parsed.role_during_tour || firstVisit?.role || null,
     highlights: parsed.highlights || null,
     willing_to_mentor: parsed.willing_to_mentor ?? false,
+    first_name: parsed.first_name || null,
+    middle_name: parsed.middle_name || null,
+    last_name: parsed.last_name || null,
+    gender: parsed.gender || null,
+    date_of_birth: parsed.date_of_birth || null,
+    blood_group: parsed.blood_group || null,
+    visit_history: parsed.visit_history ?? [],
+    company_name: parsed.company_name || null,
+    work_location: parsed.work_location || null,
+    designation: parsed.designation || null,
+    work_department: parsed.work_department || null,
+    years_experience: parsed.years_experience ?? null,
+    institution: parsed.institution || null,
+    edu_location: parsed.edu_location || null,
+    qualification: parsed.qualification || null,
+    course_name: parsed.course_name || null,
+    stream: parsed.stream || null,
+    course_status: parsed.course_status || null,
+    year_semester: parsed.year_semester || null,
+    mobile_number: parsed.mobile_number || null,
+    alternate_mobile_number: parsed.alternate_mobile_number || null,
+    linkedin_url: parsed.linkedin_url || null,
+    preferred_communication: parsed.preferred_communication ?? [],
+    interested_volunteering: parsed.interested_volunteering || null,
+    available_network_activities: parsed.available_network_activities || null,
+    preferred_contribution: parsed.preferred_contribution ?? [],
+    areas_of_interest: parsed.areas_of_interest ?? [],
+    availability: parsed.availability || null,
+    willing_to_mentor_new: parsed.willing_to_mentor_new || null,
+    why_stay_connected: parsed.why_stay_connected || null,
+    skills_contribute: parsed.skills_contribute || null,
+    suggestions: parsed.suggestions || null,
+    additional_remarks: parsed.additional_remarks || null,
   });
   if (error) {
     console.error("submitAlumniRegistration error:", error);
@@ -60,4 +95,14 @@ export async function submitAlumniRegistration(data: unknown) {
   }).catch((err) => {
     console.error("Alumni registration email failed:", err);
   });
+}
+
+export async function getAllAlumniRegistrations() {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("alumni_registrations")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) { console.error("[getAllAlumniRegistrations]", error); throw new Error("Failed to fetch alumni registrations"); }
+  return data ?? [];
 }

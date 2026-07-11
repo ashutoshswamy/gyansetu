@@ -64,7 +64,7 @@ export default async function EarcDashboardPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {stats.map(({ label, value, Icon, color }) => (
             <div
               key={label}

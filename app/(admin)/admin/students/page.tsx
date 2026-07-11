@@ -95,7 +95,7 @@ export default async function AdminEnrollmentsPage() {
 
         {/* Summary bar */}
         <div
-          className="grid grid-cols-4 mb-6 rounded-xl overflow-hidden"
+          className="grid grid-cols-2 sm:grid-cols-4 mb-6 rounded-xl overflow-hidden"
           style={{ border: "1px solid #E4DFD1", background: "white" }}
         >
           {summaryItems.map((item, idx) => (

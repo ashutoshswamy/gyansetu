@@ -61,8 +61,9 @@ const adminGroups: NavGroup[] = [
   {
     label: "People",
     items: [
-      { label: "Enrollments", href: "/admin/students",   Icon: UserCheck },
-      { label: "Volunteers",  href: "/admin/volunteers", Icon: Users },
+      { label: "Enrollments",      href: "/admin/students",   Icon: UserCheck },
+      { label: "Volunteers",       href: "/admin/volunteers", Icon: Users },
+      { label: "Profile Data",     href: "/admin/profiles",   Icon: UserCircle },
     ],
   },
   {
@@ -93,6 +94,7 @@ const adminGroups: NavGroup[] = [
       { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquare },
       { label: "Sponsors",     href: "/admin/sponsors",     Icon: Handshake },
       { label: "Careers",      href: "/admin/careers",      Icon: Briefcase },
+      { label: "Alumni",       href: "/admin/alumni",       Icon: GraduationCap },
     ],
   },
   {

@@ -41,7 +41,7 @@ export function EarcStaffForm() {
     >
       <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", marginBottom: 16 }}>Create EARC Staff Account</h2>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>
             Full Name <span style={{ color: "#B8381E" }}>*</span>

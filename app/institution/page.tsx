@@ -146,7 +146,7 @@ export default function InstitutionPage() {
               />
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+            <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="email" style={labelStyle}>Email <span style={{ color: "#C0392B" }}>*</span></label>
                 <input
@@ -174,7 +174,7 @@ export default function InstitutionPage() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+            <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="institution_type" style={labelStyle}>Institution Type</label>
                 <select

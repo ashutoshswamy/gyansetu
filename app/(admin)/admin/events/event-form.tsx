@@ -86,7 +86,7 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
           <input name="title" required defaultValue={initialData?.title} placeholder="e.g. Gyan Setu Katta – Pre-Visit Orientation" style={inputStyle} />
         </Field>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Event Type" required>
             <select name="event_type" required defaultValue={initialData?.event_type ?? "katta"} style={inputStyle}>
               {EVENT_TYPES.map(t => (
@@ -104,7 +104,7 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
           </Field>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Date" required>
             <input name="event_date" type="date" required defaultValue={initialData?.event_date} style={inputStyle} />
           </Field>
@@ -114,7 +114,7 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
           </Field>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Location">
             <input name="location" defaultValue={initialData?.location ?? ""} placeholder="e.g. Pune / Online / School Hall" style={inputStyle} />
           </Field>

@@ -211,14 +211,19 @@
   .hero-grid { grid-template-columns: 1fr !important; }
   .hero-visual { display: none !important; }
   .desktop-nav-links { display: none !important; }
+  .mobile-menu-btn { display: flex !important; }
   .what-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
   .steps-grid { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
-  .feat-grid { grid-template-columns: 1fr !important; }
-  .feat-header { flex-direction: column !important; align-items: flex-start !important; }
   .career-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
   .sponsor-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
   .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 40px !important; }
 }
 @media (max-width: 600px) {
   .footer-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+}
+
+/* Generic 2-column form row used by public lead-gen and admin forms */
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) {
+  .form-row-2 { grid-template-columns: 1fr !important; }
 }

@@ -119,7 +119,7 @@ export default function CareersPage() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+            <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="name" style={labelStyle}>Full Name <span style={{ color: "#C0392B" }}>*</span></label>
                 <input id="name" name="name" type="text" required value={form.name} onChange={handleChange} placeholder="Your full name" style={inputStyle} />
@@ -130,7 +130,7 @@ export default function CareersPage() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+            <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="phone" style={labelStyle}>Phone</label>
                 <input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 98765 43210" style={inputStyle} />
@@ -141,7 +141,7 @@ export default function CareersPage() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+            <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="standard" style={labelStyle}>Standard / Class</label>
                 <input id="standard" name="standard" type="text" value={form.standard} onChange={handleChange} placeholder="e.g. 12th, B.Sc. 2nd Year" style={inputStyle} />
@@ -160,7 +160,7 @@ export default function CareersPage() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+            <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="state" style={labelStyle}>State</label>
                 <select id="state" name="state" value={form.state} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>

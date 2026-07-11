@@ -88,7 +88,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-4 mb-6 rounded-xl overflow-hidden" style={{ border: "1px solid #E4DFD1", background: "white" }}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 mb-6 rounded-xl overflow-hidden" style={{ border: "1px solid #E4DFD1", background: "white" }}>
           {Object.entries(counts).map(([status, count], idx) => (
             <div key={status} className="py-4 px-5" style={{ borderRight: idx < 3 ? "1px solid #E4DFD1" : undefined }}>
               <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9B9188", marginBottom: 4 }}>{status}</p>

@@ -85,7 +85,7 @@ export function TourForm() {
             {errors.destination && <p style={errStyle}>{errors.destination.message}</p>}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label style={labelStyle}>Start Date *</label>
               <input type="date" {...register("start_date")} style={inputStyle} />
@@ -98,7 +98,7 @@ export function TourForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label style={labelStyle}>Capacity (seats) *</label>
               <input

@@ -148,6 +148,41 @@ export const volunteerProfileSchema = z.object({
   medical_notes: z.string().max(1000).optional(),
   consent_given: z.boolean().optional(),
   availability_notes: z.string().max(500).optional(),
+  first_name: z.string().max(100).optional(),
+  middle_name: z.string().max(100).optional(),
+  last_name: z.string().max(100).optional(),
+  gender: z.string().max(30).optional(),
+  blood_group: z.string().max(10).optional(),
+  aadhaar_number: z.string().max(20).optional(),
+  photo_url: z.string().max(1000).optional(),
+  alternate_phone: z.string().max(20).optional(),
+  house_no: z.string().max(200).optional(),
+  street: z.string().max(200).optional(),
+  district: z.string().max(100).optional(),
+  pincode: z.string().max(10).optional(),
+  permanent_address_same: z.boolean().optional(),
+  permanent_address: z.string().max(500).optional(),
+  current_status: z.enum(["student", "working_professional", "both", "other"]).optional(),
+  student_location: z.string().max(200).optional(),
+  qualification: z.string().max(100).optional(),
+  course_name: z.string().max(200).optional(),
+  stream: z.string().max(100).optional(),
+  edu_course_status: z.enum(["pursuing", "completed"]).optional(),
+  company_name: z.string().max(200).optional(),
+  work_location: z.string().max(200).optional(),
+  designation: z.string().max(200).optional(),
+  work_department: z.string().max(200).optional(),
+  years_experience: z.number().int().min(0).max(70).optional(),
+  emergency_contact_address: z.string().max(500).optional(),
+  has_allergies: z.boolean().optional(),
+  allergies_detail: z.string().max(1000).optional(),
+  has_medical_conditions: z.boolean().optional(),
+  medical_conditions_detail: z.string().max(1000).optional(),
+  takes_medicines: z.boolean().optional(),
+  medicines_detail: z.string().max(1000).optional(),
+  dietary_restrictions: z.array(z.string()).optional(),
+  certified_true: z.boolean().optional(),
+  signature_name: z.string().max(200).optional(),
 });
 
 
@@ -178,6 +213,13 @@ export const careerInquirySchema = z.object({
   message: z.string().max(2000).optional(),
 });
 
+const alumniVisitSchema = z.object({
+  year: z.string().max(10).optional(),
+  month: z.string().max(20).optional(),
+  location: z.string().max(200).optional(),
+  role: z.string().max(100).optional(),
+});
+
 export const alumniRegistrationSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
@@ -186,6 +228,45 @@ export const alumniRegistrationSchema = z.object({
   role_during_tour: z.string().max(100).optional(),
   highlights: z.string().max(2000).optional(),
   willing_to_mentor: z.boolean().optional(),
+  // Section 1: personal information
+  first_name: z.string().max(100).optional(),
+  middle_name: z.string().max(100).optional(),
+  last_name: z.string().max(100).optional(),
+  gender: z.string().max(30).optional(),
+  date_of_birth: z.string().optional(),
+  blood_group: z.string().max(10).optional(),
+  // Section 2: visit history
+  visit_history: z.array(alumniVisitSchema).optional(),
+  // Section 3: professional & educational details
+  company_name: z.string().max(200).optional(),
+  work_location: z.string().max(200).optional(),
+  designation: z.string().max(200).optional(),
+  work_department: z.string().max(200).optional(),
+  years_experience: z.number().int().min(0).max(70).optional(),
+  institution: z.string().max(200).optional(),
+  edu_location: z.string().max(200).optional(),
+  qualification: z.string().max(100).optional(),
+  course_name: z.string().max(200).optional(),
+  stream: z.string().max(100).optional(),
+  course_status: z.enum(["pursuing", "completed"]).optional(),
+  year_semester: z.string().max(50).optional(),
+  // Section 4: contact details
+  mobile_number: z.string().max(20).optional(),
+  alternate_mobile_number: z.string().max(20).optional(),
+  linkedin_url: z.string().url().optional().or(z.literal("")),
+  preferred_communication: z.array(z.string()).optional(),
+  // Section 5: engagement with Gyan Setu
+  interested_volunteering: z.enum(["Yes", "No", "Maybe"]).optional(),
+  available_network_activities: z.enum(["Yes", "No", "Maybe"]).optional(),
+  preferred_contribution: z.array(z.string()).optional(),
+  areas_of_interest: z.array(z.string()).optional(),
+  availability: z.enum(["Weekdays", "Weekends", "Both", "Occasionally"]).optional(),
+  willing_to_mentor_new: z.enum(["Yes", "No", "Maybe"]).optional(),
+  // Section 6: additional information
+  why_stay_connected: z.string().max(2000).optional(),
+  skills_contribute: z.string().max(2000).optional(),
+  suggestions: z.string().max(2000).optional(),
+  additional_remarks: z.string().max(2000).optional(),
 });
 
 export const institutionInquirySchema = z.object({

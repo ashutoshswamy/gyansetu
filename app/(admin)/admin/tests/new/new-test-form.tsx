@@ -176,7 +176,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
             <label style={labelStyle}>Description</label>
             <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 60 }} value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional instructions for students" />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label style={labelStyle}>Test Type *</label>
               <select style={inputStyle} value={isTemplate ? "template" : "link"} onChange={e => {
@@ -196,7 +196,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label style={labelStyle}>Duration (minutes) *</label>
               <input required type="number" min={1} style={inputStyle} value={duration} onChange={e => setDuration(Number(e.target.value))} />
@@ -231,7 +231,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
             </div>
 
             <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="col-span-2">
                   <label style={labelStyle}>Question *</label>
                   <input required style={inputStyle} value={q.question} onChange={e => updateQ(qIdx, { question: e.target.value })} placeholder="Question text" />

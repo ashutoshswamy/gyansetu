@@ -153,7 +153,7 @@ export default function NewVisitPage() {
             </div>
 
             {/* Destination + State */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
                 <label style={labelStyle}>Destination <span style={{ color: "#F5A520" }}>*</span></label>
                 <input
@@ -178,7 +178,7 @@ export default function NewVisitPage() {
             </div>
 
             {/* Start + End dates */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
                 <label style={labelStyle}>Start Date <span style={{ color: "#F5A520" }}>*</span></label>
                 <input
@@ -230,7 +230,7 @@ export default function NewVisitPage() {
             </div>
 
             {/* Capacity + Status */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
                 <label style={labelStyle}>Capacity (seats)</label>
                 <input

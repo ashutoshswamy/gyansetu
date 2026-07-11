@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  motion,
-  useInView,
-  useMotionValue,
-  useTransform,
-  useSpring,
-} from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,12 +8,10 @@ import {
   Sun,
   Network,
   TrendingUp,
-  Home,
-  ClipboardCheck,
-  Users,
   ChevronRight,
+  Menu,
+  X,
 } from "lucide-react";
-import { AlumniSection } from "./alumni-section";
 
 interface Testimonial {
   id: string;
@@ -51,32 +43,6 @@ function AnimatedStat({ value, label, delay = 0 }: { value: string; label: strin
       <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 11.5, color: "var(--lp-tm)", marginTop: 5, fontWeight: 400 }}>
         {label}
       </div>
-    </motion.div>
-  );
-}
-
-/* ── 3D Tilt Card ── */
-function TiltCard({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotX = useTransform(y, [-0.5, 0.5], [7, -7]);
-  const rotY = useTransform(x, [-0.5, 0.5], [-7, 7]);
-  const sRotX = useSpring(rotX, { stiffness: 280, damping: 28 });
-  const sRotY = useSpring(rotY, { stiffness: 280, damping: 28 });
-
-  return (
-    <motion.div
-      onMouseMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        x.set((e.clientX - r.left) / r.width - 0.5);
-        y.set((e.clientY - r.top) / r.height - 0.5);
-      }}
-      onMouseLeave={() => { x.set(0); y.set(0); }}
-      style={{ rotateX: sRotX, rotateY: sRotY, transformStyle: "preserve-3d", ...style }}
-      whileHover={{ scale: 1.02, boxShadow: "0 12px 48px rgba(74,85,190,0.13)" }}
-      transition={{ scale: { duration: 0.22 }, boxShadow: { duration: 0.22 } }}
-    >
-      {children}
     </motion.div>
   );
 }
@@ -113,6 +79,7 @@ function FloatingCard({
 /* ── Main component ── */
 export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 24);
@@ -122,14 +89,11 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
 
   const whatRef = useRef<HTMLDivElement>(null);
   const howRef  = useRef<HTMLDivElement>(null);
-  const featRef = useRef<HTMLDivElement>(null);
   const whatInView = useInView(whatRef, { once: true, margin: "-80px" });
   const howInView  = useInView(howRef,  { once: true, margin: "-80px" });
-  const featInView = useInView(featRef, { once: true, margin: "-80px" });
 
   const navLinks = [
     { label: "How It Works", href: "#how-it-works"  },
-    { label: "Features",     href: "#features"      },
     { label: "Visits",       href: "/visits"        },
     { label: "Gallery",      href: "/gallery"       },
     { label: "Blog",         href: "/blog"          },
@@ -173,6 +137,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
           </div>
 
           <motion.div
+            className="desktop-nav-links"
             style={{ display: "flex", alignItems: "center", gap: 6 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -191,7 +156,49 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               </>
             )}
           </motion.div>
+
+          <button
+            type="button"
+            className="mobile-menu-btn"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMobileOpen((v) => !v)}
+            style={{ display: "none", alignItems: "center", justifyContent: "center", width: 38, height: 38, background: "transparent", border: "1px solid var(--lp-border)", borderRadius: 8, cursor: "pointer", color: "var(--lp-text)" }}
+          >
+            {mobileOpen ? <X size={19} /> : <Menu size={19} />}
+          </button>
         </div>
+
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            style={{ borderTop: "1px solid var(--lp-border)", background: "rgba(250,250,247,.98)" }}
+          >
+            <div style={{ padding: "16px 24px", display: "flex", flexDirection: "column", gap: 4 }}>
+              {navLinks.map(({ label, href }) => (
+                <a key={label} href={href} onClick={() => setMobileOpen(false)} className="nav-link" style={{ padding: "10px 4px" }}>
+                  {label}
+                </a>
+              ))}
+              <div style={{ display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
+                {isLoggedIn ? (
+                  <Link href="/dashboard" className="btn-primary" onClick={() => setMobileOpen(false)}>
+                    Go to Dashboard <ChevronRight size={15} />
+                  </Link>
+                ) : (
+                  <>
+                    <Link href="/sign-in" className="btn-ghost" onClick={() => setMobileOpen(false)}>Sign In</Link>
+                    <Link href="/sign-up" className="btn-primary" onClick={() => setMobileOpen(false)}>
+                      Get Started <ChevronRight size={15} />
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
       </motion.nav>
 
       {/* ── HERO ── */}
@@ -526,72 +533,6 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
-      <section id="features" ref={featRef}>
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
-          <div
-            className="feat-header"
-            style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 32, marginBottom: 52 }}
-          >
-            <div>
-              <motion.span
-                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 12 }}
-                initial={{ opacity: 0 }}
-                animate={featInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.5 }}
-              >
-                Platform Features
-              </motion.span>
-              <motion.h2
-                style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: 0, maxWidth: 380 }}
-                initial={{ opacity: 0, y: 18 }}
-                animate={featInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.65, delay: 0.1 }}
-              >
-                Everything in<br />One Place
-              </motion.h2>
-            </div>
-            <motion.p
-              style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15, color: "var(--lp-ts)", maxWidth: 300, lineHeight: 1.7 }}
-              initial={{ opacity: 0, y: 14 }}
-              animate={featInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.55, delay: 0.2 }}
-            >
-              Replacing scattered Google Forms and spreadsheets with a single, purpose-built system for Jnanaprabodhini&apos;s Jnana Pravas programme.
-            </motion.p>
-          </div>
-
-          <div
-            className="feat-grid"
-            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}
-          >
-            {[
-              { bg: "rgba(74,85,190,.07)", color: "#4A55BE", icon: <Home size={22} strokeWidth={1.6} />, title: "Tour Management", desc: "Organise state visits with destinations, capacity, schedules, and applications all tracked in one place with full admin control." },
-              { bg: "rgba(245,165,32,.08)", color: "#F5A520", icon: <ClipboardCheck size={22} strokeWidth={1.6} />, title: "Eligibility Tests", desc: "Online assessments to select the right students: MCQ, multi-select, and subjective, auto-graded with admin review for written answers." },
-              { bg: "rgba(42,94,58,.08)", color: "#2A5E3A", icon: <Users size={22} strokeWidth={1.6} />, title: "Volunteer Tools", desc: "Daily reports, meeting logs, photo uploads, and cultural documentation — purpose-built for student volunteers on tour." },
-            ].map((f, i) => (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 36 }}
-                animate={featInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.65, delay: 0.28 + i * 0.13, ease: [0.22, 0.68, 0, 1.2] }}
-                style={{ perspective: 900 }}
-              >
-                <TiltCard
-                  style={{ background: "white", border: "1px solid var(--lp-border)", borderRadius: 14, padding: "30px 26px", cursor: "default", height: "100%" }}
-                >
-                  <div style={{ width: 46, height: 46, borderRadius: 11, background: f.bg, color: f.color, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-                    {f.icon}
-                  </div>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 16.5, fontWeight: 600, color: "var(--lp-text)", marginBottom: 10, letterSpacing: "-0.01em" }}>{f.title}</div>
-                  <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "var(--lp-ts)", lineHeight: 1.72, margin: 0 }}>{f.desc}</p>
-                </TiltCard>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── TESTIMONIALS ── */}
       <section id="testimonials" style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
@@ -681,7 +622,43 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
       </section>
 
       {/* ── ALUMNI NETWORK ── */}
-      <AlumniSection />
+      <section id="alumni" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", textAlign: "center" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
+          >
+            <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
+              Alumni Network
+            </span>
+            <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
+              Once a Jnanaprabodhini,{" "}
+              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Always a Jnanaprabodhini</span>
+            </h2>
+            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, maxWidth: 560, margin: "0 auto 28px" }}>
+              If you&apos;ve been part of a Gyan Setu tour, you&apos;re part of a lifelong community. Register as an alumni to reconnect, share your journey, and help guide the next generation of volunteers.
+            </p>
+            <Link
+              href="/alumni"
+              style={{
+                display: "inline-block",
+                background: "var(--lp-navy)",
+                color: "white",
+                fontFamily: "'Poppins',sans-serif",
+                fontSize: 13.5,
+                fontWeight: 600,
+                padding: "13px 30px",
+                borderRadius: 8,
+                textDecoration: "none",
+              }}
+            >
+              Register as Alumni
+            </Link>
+          </motion.div>
+        </div>
+      </section>
 
       {/* ── UPGRADE YOUR CAREER ── */}
       <section id="careers" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
@@ -886,7 +863,6 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {[
                 { label: "How It Works", href: "#how-it-works" },
-                { label: "Features", href: "#features" },
                 { label: "Gallery", href: "/gallery" },
                 { label: "Visits", href: "/visits" },
                 { label: "Blog", href: "/blog" },
@@ -907,6 +883,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {[
                 { label: "Apply for a Tour", href: isLoggedIn ? "/dashboard" : "/sign-up" },
+                { label: "Register as Alumni", href: "/alumni" },
                 { label: "Share Your Story", href: "/testimonial" },
                 { label: "Be a Sponsor", href: "/sponsor" },
                 { label: "Careers", href: "/careers" },

@@ -190,7 +190,7 @@ export function TestAttemptsViewer({
                 </div>
 
                 {/* Score Summary */}
-                <div className="grid grid-cols-3 gap-4 mb-6 p-4 rounded-xl" style={{ background: "#F9F8F6", border: "1px solid #E4DFD1" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 p-4 rounded-xl" style={{ background: "#F9F8F6", border: "1px solid #E4DFD1" }}>
                   <div>
                     <span style={labelStyle}>Status</span>
                     <p className="mt-1" style={{ fontSize: 14, fontWeight: 700, color: "#19140F", margin: "4px 0 0 0", textTransform: "capitalize" }}>

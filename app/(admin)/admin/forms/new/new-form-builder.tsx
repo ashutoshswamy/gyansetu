@@ -185,7 +185,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             <label style={labelStyle}>Description</label>
             <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 56 }} value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional description" />
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
               <label style={labelStyle}>Form Type *</label>
               <select style={inputStyle} value={isTemplate ? "template" : "link"} onChange={e => {
@@ -239,7 +239,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               )}
             </div>
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label style={labelStyle}>Label *</label>
                   <input required style={inputStyle} value={f.label} onChange={e => updateField(fIdx, { label: e.target.value })} placeholder="Field label" />
