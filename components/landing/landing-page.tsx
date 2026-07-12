@@ -93,6 +93,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
   const howInView  = useInView(howRef,  { once: true, margin: "-80px" });
 
   const navLinks = [
+    { label: "Our Story",    href: "#our-story"     },
     { label: "How It Works", href: "#how-it-works"  },
     { label: "Visits",       href: "/visits"        },
     { label: "Gallery",      href: "/gallery"       },
@@ -232,7 +233,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <span style={{ display: "inline-block", width: 28, height: 1.5, background: "var(--lp-amber)" }} />
-              Jnanaprabodhini Educational Tours
+              Jnana Prabodhini Educational Tours
             </motion.div>
 
             {/* Headline */}
@@ -274,7 +275,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.56 }}
             >
-              Jnanaprabodhini takes students across India to meet government officials, immerse in regional cultures, and build lifelong connections with students from every corner of the country.
+              Jnana Prabodhini takes students across India to meet government officials, immerse in regional cultures, and build lifelong connections with students from every corner of the country.
             </motion.p>
 
             {/* CTAs */}
@@ -299,7 +300,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               {[
                 { val: "82,800+", lbl: "Students Connected", d: 0.82 },
                 { val: "1,585",   lbl: "Schools",            d: 0.9  },
-                { val: "11",      lbl: "States & UTs",       d: 0.98 },
+                { val: "13",      lbl: "States & UTs",       d: 0.98 },
                 { val: "965+",    lbl: "Volunteers",         d: 1.06 },
               ].map((s) => (
                 <AnimatedStat key={s.lbl} value={s.val} label={s.lbl} delay={s.d} />
@@ -398,7 +399,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             transition={{ duration: 0.6, delay: 0.14 }}
           >
             &ldquo;Gyan-Setu&rdquo; is a programme conducted by volunteers visiting remote parts of India.
-            This year-long programme, organised by Jnanaprabodhini&apos;s Educational Activity Research Centre (EARC),
+            This year-long programme, organised by Jnana Prabodhini&apos;s Educational Activity Research Centre (EARC),
             consists of visits by teams of volunteers to conduct joyful, science-based workshops and camps
             for middle school students.
           </motion.p>
@@ -443,6 +444,55 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── OUR STORY ── */}
+      <section id="our-story" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+        <div style={{ maxWidth: 780, margin: "0 auto", padding: "88px 24px", textAlign: "center" }}>
+          <motion.span
+            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            Our Story
+          </motion.span>
+          <motion.h2
+            style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: "0 0 20px" }}
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, delay: 0.1 }}
+          >
+            Since 2013, Building Human Bridges
+          </motion.h2>
+          <motion.p
+            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, marginBottom: 18 }}
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.16 }}
+          >
+            Established in 2013 by the late Mr. Vivek Ponkshe and his students, Gyan-Setu promotes national integration
+            through educational and cultural outreach. Our journey began with a visionary idea: to bridge educational
+            gaps in India&apos;s remote, tribal, and developmentally challenged regions, using science as a tool to
+            connect, empower, and inspire.
+          </motion.p>
+          <motion.p
+            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, marginBottom: 18 }}
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.22 }}
+          >
+            Driven by the spirit of volunteerism, Gyan-Setu brings together passionate individuals — mostly college
+            students and young professionals — from across India. Through language exchange, homestays, traditional
+            meals, and shared experiences, they form lasting human bonds and a deep understanding of India&apos;s
+            social and cultural fabric, while transforming into socially responsible, culturally aware changemakers
+            for the nation.
+          </motion.p>
         </div>
       </section>
 
@@ -634,8 +684,8 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               Alumni Network
             </span>
             <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
-              Once a Jnanaprabodhini,{" "}
-              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Always a Jnanaprabodhini</span>
+              Once a Jnana Prabodhini,{" "}
+              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Always a Jnana Prabodhini</span>
             </h2>
             <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, maxWidth: 560, margin: "0 auto 28px" }}>
               If you&apos;ve been part of a Gyan Setu tour, you&apos;re part of a lifelong community. Register as an alumni to reconnect, share your journey, and help guide the next generation of volunteers.
@@ -715,7 +765,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             >
               {[
                 { num: "965+", label: "Volunteers trained", desc: "across India over multiple tour cohorts" },
-                { num: "11",   label: "States covered",     desc: "giving team members diverse field experience" },
+                { num: "13",   label: "States covered",     desc: "giving team members diverse field experience" },
                 { num: "100%", label: "Hands-on learning",  desc: "every role involves real community impact" },
               ].map((stat, i) => (
                 <div key={i} style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "22px 24px", display: "flex", gap: 20, alignItems: "flex-start" }}>
@@ -808,7 +858,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.14 }}
           >
-            Create your account, apply for an upcoming Jnana Pravas, and take the eligibility test. Selected students travel across India as Jnanaprabodhini volunteers.
+            Create your account, apply for an upcoming Jnana Pravas, and take the eligibility test. Selected students travel across India as Jnana Prabodhini volunteers.
           </motion.p>
           <motion.div
             style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}
@@ -837,7 +887,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
           <div>
             <Image src="/logo_wide.png" alt="Gyan Setu" width={120} height={36} style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 18 }} />
             <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "rgba(255,255,255,.45)", lineHeight: 1.75, maxWidth: 300, marginBottom: 24 }}>
-              Jnanaprabodhini Educational Activity Research Centre. Building bridges of knowledge across India since 1962.
+              Jnana Prabodhini Educational Activity Research Centre. Building bridges of knowledge across India since 2013.
             </p>
             <div style={{ display: "flex", gap: 14 }}>
               {[
@@ -903,10 +953,20 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
                 <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Address</div>
+                <a href="https://goo.gl/maps/XptGcSa9XG8C7aFq7" target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.65, textDecoration: "none", transition: "color .18s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                >
+                  510, 1st Floor EARC<br />
+                  Jnana Prabodhini, Sadashiv Peth<br />
+                  Pune - 411030
+                </a>
+              </div>
+              <div>
+                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Phone</div>
                 <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.65 }}>
-                  Jnanaprabodhini EARC<br />
-                  Sadashiv Peth, Pune<br />
-                  Maharashtra, India
+                  9325585695<br />
+                  020-24207209
                 </div>
               </div>
               <div>
@@ -918,6 +978,23 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                   gyansetu@jnanaprabodhini.org
                 </a>
               </div>
+              <div>
+                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Websites</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <a href="https://earc.jnanaprabodhini.org/" target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                  >
+                    EARC
+                  </a>
+                  <a href="https://www.jnanaprabodhini.org/" target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                  >
+                    Jnana Prabodhini
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -926,7 +1003,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
         <div style={{ borderTop: "1px solid rgba(255,255,255,.07)", padding: "20px 24px" }}>
           <div style={{ maxWidth: 1120, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
             <p suppressHydrationWarning style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, color: "rgba(255,255,255,.28)", margin: 0 }}>
-              © {new Date().getFullYear()} Jnanaprabodhini Educational Resource Centre. All rights reserved.
+              © {new Date().getFullYear()} Jnana Prabodhini Educational Resource Centre. All rights reserved.
             </p>
             <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, color: "rgba(255,255,255,.28)", margin: 0 }}>
               Made by{" "}

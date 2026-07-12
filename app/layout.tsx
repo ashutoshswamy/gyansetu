@@ -25,8 +25,8 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Gyan Setu | Jnanaprabodhini Educational Tours",
-  description: "Portal for Jnanaprabodhini's Jnana Pravas programme: educational tours across India for students to meet government officials, explore regional cultures, and build connections.",
+  title: "Gyan Setu | Jnana Prabodhini Educational Tours",
+  description: "Portal for Jnana Prabodhini's Jnana Pravas programme: educational tours across India for students to meet government officials, explore regional cultures, and build connections.",
 };
 
 export default function RootLayout({

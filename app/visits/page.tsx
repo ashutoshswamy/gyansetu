@@ -222,7 +222,7 @@ export default async function VisitsPage() {
               Upcoming Visits
             </h1>
             <p style={{ fontSize: 15, color: "#5A5247", margin: 0, lineHeight: 1.6 }}>
-              Jnanaprabodhini volunteer visits to remote parts of India — science workshops, cultural exchanges, and knowledge bridges.
+              Jnana Prabodhini volunteer visits to remote parts of India — science workshops, cultural exchanges, and knowledge bridges.
             </p>
           </div>
         </div>

@@ -164,7 +164,7 @@ export function AlumniRegistrationForm() {
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Alumni Network</p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Alumni Registration</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Once a Jnanaprabodhini, always a Jnanaprabodhini — reconnect and stay part of the Gyan Setu family.</p>
+          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Once a Jnana Prabodhini, always a Jnana Prabodhini — reconnect and stay part of the Gyan Setu family.</p>
         </div>
 
         {/* Tabs */}
