@@ -36,7 +36,7 @@ export async function getVolunteerProfileById(userId: string) {
   const { db } = await requireAdmin();
   const { data } = await db
     .from("volunteer_profiles")
-    .select("*, users(id, name, email, role, avatar_url, created_at)")
+    .select("*, users:users!volunteer_profiles_user_id_fkey(id, name, email, role, avatar_url, created_at)")
     .eq("user_id", userId)
     .single();
   return data;
@@ -46,7 +46,7 @@ export async function getAllVolunteerProfiles() {
   const { db } = await requireAdmin();
   const { data, error } = await db
     .from("volunteer_profiles")
-    .select("*, users(id, name, email, role, created_at)")
+    .select("*, users:users!volunteer_profiles_user_id_fkey(id, name, email, role, created_at)")
     .order("created_at", { ascending: false });
   if (error) { console.error("[getAllVolunteerProfiles]", error); throw new Error("Failed to fetch profiles"); }
   return data ?? [];
