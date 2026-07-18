@@ -35,6 +35,19 @@ end $$;
 -- ============================================================
 -- DROP TABLES (cascade handles FK order)
 -- ============================================================
+drop table if exists public.tour_reports            cascade;
+drop table if exists public.expenses                cascade;
+drop table if exists public.expense_advances        cascade;
+drop table if exists public.location_updates        cascade;
+drop table if exists public.travel_tickets          cascade;
+drop table if exists public.id_cards                cascade;
+drop table if exists public.kit_assignments         cascade;
+drop table if exists public.kit_items               cascade;
+drop table if exists public.local_hosts             cascade;
+drop table if exists public.demo_evaluations        cascade;
+drop table if exists public.workshop_attendees      cascade;
+drop table if exists public.workshops               cascade;
+drop table if exists public.registration_fees       cascade;
 drop table if exists public.earc_files              cascade;
 drop table if exists public.institution_inquiries   cascade;
 drop table if exists public.alumni_registrations    cascade;
@@ -84,3 +97,5 @@ drop function if exists public.handle_updated_at() cascade;
 -- delete from storage.buckets where id = 'newsletter-files';
 -- delete from storage.objects where bucket_id = 'earc-files';
 -- delete from storage.buckets where id = 'earc-files';
+-- delete from storage.objects where bucket_id = 'documents';
+-- delete from storage.buckets where id = 'documents';

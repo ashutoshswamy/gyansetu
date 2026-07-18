@@ -35,6 +35,14 @@ import {
   GraduationCap,
   BookMarked,
   ShieldCheck,
+  Wallet,
+  IdCard,
+  Package,
+  Home,
+  Train,
+  ClipboardCheck,
+  FileBarChart,
+  Receipt,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -71,6 +79,20 @@ const adminGroups: NavGroup[] = [
     items: [
       { label: "Tests", href: "/admin/tests", Icon: ClipboardList },
       { label: "Forms", href: "/admin/forms", Icon: FileText },
+      { label: "Demo Evaluations", href: "/admin/demo-evaluations", Icon: ClipboardCheck },
+    ],
+  },
+  {
+    label: "Volunteer Journey",
+    items: [
+      { label: "Registration Fees", href: "/admin/registration-fees", Icon: Wallet },
+      { label: "Workshops",         href: "/admin/workshops",         Icon: GraduationCap },
+      { label: "ID Cards",          href: "/admin/id-cards",          Icon: IdCard },
+      { label: "Local Hosts",       href: "/admin/local-hosts",       Icon: Home },
+      { label: "Kit Assembly",      href: "/admin/kits",              Icon: Package },
+      { label: "Travel & Tickets",  href: "/admin/travel",            Icon: Train },
+      { label: "Finance",           href: "/admin/finance",           Icon: Receipt },
+      { label: "Tour Reports",      href: "/admin/tour-reports",      Icon: FileBarChart },
     ],
   },
   {
@@ -123,12 +145,19 @@ const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
   volunteer: [
     { label: "Dashboard",     href: "/volunteer",              Icon: LayoutDashboard },
     { label: "My Tours",      href: "/volunteer/tours",        Icon: Plane },
+    { label: "Registration Fee", href: "/volunteer/registration-fee", Icon: Wallet },
     { label: "Tasks & Forms", href: "/volunteer/forms",        Icon: CheckSquare },
+    { label: "Workshops",     href: "/volunteer/workshops",    Icon: GraduationCap },
     { label: "Events",        href: "/volunteer/events",       Icon: Calendar },
     { label: "My Group",      href: "/volunteer/groups",       Icon: UsersRound },
+    { label: "Demo Evaluation", href: "/volunteer/demo-evaluations", Icon: ClipboardCheck },
     { label: "Daily Log",     href: "/volunteer/daily-log",    Icon: BookOpen },
+    { label: "Travel",        href: "/volunteer/travel",       Icon: Train },
+    { label: "Expenses",      href: "/volunteer/expenses",     Icon: Wallet },
+    { label: "Tour Report",   href: "/volunteer/tour-report",  Icon: FileBarChart },
     { label: "Media",         href: "/volunteer/media",        Icon: Image },
     { label: "Certificates",  href: "/volunteer/certificates", Icon: Award },
+    { label: "ID Card",       href: "/volunteer/id-card",      Icon: IdCard },
     { label: "My Profile",    href: "/volunteer/profile",      Icon: UserCircle },
   ],
 };

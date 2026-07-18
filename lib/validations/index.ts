@@ -59,6 +59,7 @@ export const dynamicFormSchema = z.object({
   target_role: z.enum(["enrollee", "volunteer", "admin", "all"]),
   status: z.enum(["draft", "active", "closed"]),
   is_template: z.boolean().default(false),
+  category: z.enum(["general", "task", "survey", "cultural_activity"]).default("general"),
 });
 
 export const testAttemptSchema = z.object({
@@ -283,3 +284,144 @@ export const institutionInquirySchema = z.object({
 export type VisitInput = z.infer<typeof visitSchema>;
 export type NewsletterInput = z.infer<typeof newsletterSchema>;
 export type VolunteerProfileInput = z.infer<typeof volunteerProfileSchema>;
+
+// ── Volunteer journey modules ──────────────────────────────────────────────
+
+export const registrationFeeSchema = z.object({
+  volunteer_id: z.string().uuid(),
+  amount: z.number().positive(),
+  status: z.enum(["pending", "paid", "waived", "refunded"]).default("pending"),
+  payment_reference: z.string().max(200).optional(),
+  paid_at: z.string().optional(),
+  notes: z.string().max(1000).optional(),
+});
+
+export const workshopSchema = z.object({
+  title: z.string().min(3).max(200),
+  workshop_type: z.enum(["science", "mathematics", "exhibition_cultural", "other"]),
+  workshop_date: z.string(),
+  workshop_time: z.string().optional(),
+  hall_location: z.string().max(200).optional(),
+  trainer_id: z.string().uuid().optional(),
+  status: z.enum(["scheduled", "completed", "cancelled"]).default("scheduled"),
+  kit_ready: z.boolean().default(false),
+  plan_notes: z.string().max(2000).optional(),
+});
+
+export const workshopAttendeeSchema = z.object({
+  workshop_id: z.string().uuid(),
+  volunteer_id: z.string().uuid(),
+  attendance_status: z.enum(["pending", "present", "absent", "excused"]).default("pending"),
+  missed_summary: z.string().max(2000).optional(),
+  makeup_decision: z.enum(["pending", "allowed", "not_allowed"]).optional(),
+});
+
+const demoEvaluationScoresSchema = z.object({
+  content_delivery: z.number().min(0).max(10),
+  hindi_communication: z.number().min(0).max(10),
+  team_coordination: z.number().min(0).max(10),
+  classroom_management: z.number().min(0).max(10),
+  activity_flow: z.number().min(0).max(10),
+  confidence: z.number().min(0).max(10),
+  student_engagement: z.number().min(0).max(10),
+});
+
+export const demoEvaluationSchema = z.object({
+  volunteer_id: z.string().uuid(),
+  tour_id: z.string().uuid().optional(),
+  scores: demoEvaluationScoresSchema,
+  remarks: z.string().max(2000).optional(),
+});
+
+export const localHostSchema = z.object({
+  name: z.string().min(2).max(200),
+  phone: z.string().max(20).optional(),
+  email: z.string().email().optional().or(z.literal("")),
+  state: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
+  address: z.string().max(500).optional(),
+  group_id: z.string().uuid().optional(),
+  notes: z.string().max(1000).optional(),
+});
+
+export const kitItemSchema = z.object({
+  name: z.string().min(2).max(200),
+  category: z.string().max(100).optional(),
+  quantity_per_school: z.number().int().positive().default(1),
+  notes: z.string().max(500).optional(),
+});
+
+export const kitAssignmentSchema = z.object({
+  group_id: z.string().uuid(),
+  school_count: z.number().int().positive().default(1),
+  packed: z.boolean().default(false),
+  distributed: z.boolean().default(false),
+  notes: z.string().max(1000).optional(),
+});
+
+export const idCardSchema = z.object({
+  volunteer_id: z.string().uuid(),
+  card_number: z.string().min(2).max(100),
+  valid_from: z.string(),
+  valid_to: z.string(),
+  card_file_url: z.string().url().optional().or(z.literal("")),
+});
+
+export const travelTicketSchema = z.object({
+  group_id: z.string().uuid(),
+  train_number: z.string().max(50).optional(),
+  pnr: z.string().max(50).optional(),
+  departure_station: z.string().max(200).optional(),
+  arrival_station: z.string().max(200).optional(),
+  departure_at: z.string().optional(),
+  arrival_at: z.string().optional(),
+  ticket_file_url: z.string().url().optional().or(z.literal("")),
+  confirmation_status: z.enum(["pending", "confirmed", "cancelled"]).default("pending"),
+  itinerary_approved: z.boolean().default(false),
+});
+
+export const locationUpdateSchema = z.object({
+  group_id: z.string().uuid(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  note: z.string().max(1000).optional(),
+  status_type: z.enum(["current_location", "train_delay", "arrival_estimate", "other"]).optional(),
+});
+
+export const expenseAdvanceSchema = z.object({
+  group_id: z.string().uuid(),
+  amount: z.number().positive(),
+  notes: z.string().max(1000).optional(),
+});
+
+export const expenseSchema = z.object({
+  group_id: z.string().uuid(),
+  category: z.enum(["travel", "accommodation", "food", "materials", "miscellaneous", "other"]),
+  amount: z.number().positive(),
+  bill_url: z.string().url().optional().or(z.literal("")),
+  description: z.string().max(1000).optional(),
+});
+
+export const tourReportSchema = z.object({
+  tour_id: z.string().uuid(),
+  group_id: z.string().uuid().optional(),
+  summary: z.string().min(10),
+  highlights: z.string().max(3000).optional(),
+  challenges: z.string().max(3000).optional(),
+  report_file_url: z.string().url().optional().or(z.literal("")),
+  status: z.enum(["draft", "submitted", "approved"]).default("draft"),
+});
+
+export type RegistrationFeeInput = z.infer<typeof registrationFeeSchema>;
+export type WorkshopInput = z.infer<typeof workshopSchema>;
+export type WorkshopAttendeeInput = z.infer<typeof workshopAttendeeSchema>;
+export type DemoEvaluationInput = z.infer<typeof demoEvaluationSchema>;
+export type LocalHostInput = z.infer<typeof localHostSchema>;
+export type KitItemInput = z.infer<typeof kitItemSchema>;
+export type KitAssignmentInput = z.infer<typeof kitAssignmentSchema>;
+export type IdCardInput = z.infer<typeof idCardSchema>;
+export type TravelTicketInput = z.infer<typeof travelTicketSchema>;
+export type LocationUpdateInput = z.infer<typeof locationUpdateSchema>;
+export type ExpenseAdvanceInput = z.infer<typeof expenseAdvanceSchema>;
+export type ExpenseInput = z.infer<typeof expenseSchema>;
+export type TourReportInput = z.infer<typeof tourReportSchema>;

@@ -2,6 +2,7 @@ import { getAllVolunteerProfiles } from "@/actions/profiles";
 import { ExportButton } from "@/components/features/export-button";
 import { Inbox, CheckCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { AadhaarToggleButton } from "./aadhaar-toggle-button";
 
 export default async function ProfilesPage() {
   const profiles = await getAllVolunteerProfiles();
@@ -55,6 +56,7 @@ export default async function ProfilesPage() {
                     <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 180 }}>Institution / Company</th>
                     <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 180 }}>Emergency Contact</th>
                     <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 110 }}>Consent</th>
+                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 180 }}>Aadhaar</th>
                     <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 130 }}>Submitted</th>
                     <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 90 }}></th>
                   </tr>
@@ -86,6 +88,13 @@ export default async function ProfilesPage() {
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, color: "#A8641C" }}>
                               <AlertCircle size={12} /> No
                             </span>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          {role === "volunteer" ? (
+                            <AadhaarToggleButton userId={p.user_id} verified={!!p.aadhaar_verified} />
+                          ) : (
+                            <span style={{ fontSize: 12, color: "#9B9188" }}>-</span>
                           )}
                         </td>
                         <td className="p-4 text-[#5A5247]">{new Date(p.created_at).toLocaleDateString()}</td>

@@ -883,3 +883,316 @@ insert into storage.buckets (id, name, public)
   values ('earc-files', 'earc-files', true)
   on conflict (id) do nothing;
 
+-- ── VOLUNTEER JOURNEY MODULES ───────────────────────────────────────────────
+
+-- Dynamic forms gain a category so Task Assignment / PPT Submission / Survey /
+-- Interesting-Facts Repository / Cultural Activity all route through the
+-- existing form builder instead of bespoke tables.
+alter table public.dynamic_forms add column if not exists category text not null default 'general'
+  check (category in ('general', 'task', 'survey', 'cultural_activity'));
+
+-- Aadhaar verification + additional document uploads on volunteer_profiles
+alter table public.volunteer_profiles add column if not exists aadhaar_verified boolean not null default false;
+alter table public.volunteer_profiles add column if not exists aadhaar_verified_at timestamptz;
+alter table public.volunteer_profiles add column if not exists aadhaar_verified_by uuid references public.users(id) on delete set null;
+alter table public.volunteer_profiles add column if not exists parent_consent_url text;
+alter table public.volunteer_profiles add column if not exists indemnity_bond_url text;
+
+-- Registration Fee Management
+create table if not exists public.registration_fees (
+  id                 uuid primary key default gen_random_uuid(),
+  volunteer_id       uuid references public.users(id) on delete cascade unique,
+  amount             numeric not null,
+  status             text not null default 'pending' check (status in ('pending', 'paid', 'waived', 'refunded')),
+  payment_reference  text,
+  paid_at            timestamptz,
+  notes              text,
+  created_at         timestamptz default now(),
+  updated_at         timestamptz default now()
+);
+
+-- Workshop Management (Science / Mathematics / Exhibition & Cultural)
+create table if not exists public.workshops (
+  id             uuid primary key default gen_random_uuid(),
+  title          text not null,
+  workshop_type  text not null check (workshop_type in ('science', 'mathematics', 'exhibition_cultural', 'other')),
+  workshop_date  date not null,
+  workshop_time  text,
+  hall_location  text,
+  trainer_id     uuid references public.users(id) on delete set null,
+  status         text not null default 'scheduled' check (status in ('scheduled', 'completed', 'cancelled')),
+  kit_ready      boolean not null default false,
+  plan_notes     text,
+  created_by     uuid references public.users(id) on delete set null,
+  created_at     timestamptz default now(),
+  updated_at     timestamptz default now()
+);
+
+create table if not exists public.workshop_attendees (
+  id                 uuid primary key default gen_random_uuid(),
+  workshop_id        uuid references public.workshops(id) on delete cascade,
+  volunteer_id       uuid references public.users(id) on delete cascade,
+  attendance_status  text not null default 'pending' check (attendance_status in ('pending', 'present', 'absent', 'excused')),
+  missed_summary     text,
+  makeup_decision    text check (makeup_decision in ('pending', 'allowed', 'not_allowed')),
+  created_at         timestamptz default now(),
+  unique (workshop_id, volunteer_id)
+);
+
+-- Demo Session: Observer Assessment / Evaluation
+create table if not exists public.demo_evaluations (
+  id            uuid primary key default gen_random_uuid(),
+  volunteer_id  uuid references public.users(id) on delete cascade,
+  observer_id   uuid references public.users(id) on delete set null,
+  tour_id       uuid references public.tours(id) on delete set null,
+  scores        jsonb not null default '{}',
+  total_score   numeric,
+  remarks       text,
+  evaluated_at  timestamptz default now()
+);
+
+-- Local Host Management
+create table if not exists public.local_hosts (
+  id          uuid primary key default gen_random_uuid(),
+  name        text not null,
+  phone       text,
+  email       text,
+  state       text,
+  city        text,
+  address     text,
+  group_id    uuid references public.tour_groups(id) on delete set null,
+  notes       text,
+  created_by  uuid references public.users(id) on delete set null,
+  created_at  timestamptz default now(),
+  updated_at  timestamptz default now()
+);
+
+-- Kit Assembly & Inventory
+create table if not exists public.kit_items (
+  id                    uuid primary key default gen_random_uuid(),
+  name                  text not null,
+  category              text,
+  quantity_per_school   integer not null default 1,
+  notes                 text,
+  created_at            timestamptz default now()
+);
+
+create table if not exists public.kit_assignments (
+  id               uuid primary key default gen_random_uuid(),
+  group_id         uuid references public.tour_groups(id) on delete cascade unique,
+  school_count     integer not null default 1,
+  packed           boolean not null default false,
+  distributed      boolean not null default false,
+  distributed_at   timestamptz,
+  notes            text,
+  created_by       uuid references public.users(id) on delete set null,
+  created_at       timestamptz default now(),
+  updated_at       timestamptz default now()
+);
+
+-- ID Card Generation
+create table if not exists public.id_cards (
+  id            uuid primary key default gen_random_uuid(),
+  volunteer_id  uuid references public.users(id) on delete cascade,
+  card_number   text unique not null,
+  valid_from    date not null,
+  valid_to      date not null,
+  card_file_url text,
+  issued_by     uuid references public.users(id) on delete set null,
+  issued_at     timestamptz default now()
+);
+
+-- Ticket Management & Travel Planning
+create table if not exists public.travel_tickets (
+  id                    uuid primary key default gen_random_uuid(),
+  group_id              uuid references public.tour_groups(id) on delete cascade,
+  train_number          text,
+  pnr                   text,
+  departure_station     text,
+  arrival_station       text,
+  departure_at          timestamptz,
+  arrival_at            timestamptz,
+  ticket_file_url       text,
+  confirmation_status   text not null default 'pending' check (confirmation_status in ('pending', 'confirmed', 'cancelled')),
+  itinerary_approved    boolean not null default false,
+  created_by            uuid references public.users(id) on delete set null,
+  created_at            timestamptz default now(),
+  updated_at            timestamptz default now()
+);
+
+-- GPS / Location Updates (optional, during travel)
+create table if not exists public.location_updates (
+  id           uuid primary key default gen_random_uuid(),
+  group_id     uuid references public.tour_groups(id) on delete cascade,
+  posted_by    uuid references public.users(id) on delete set null,
+  latitude     numeric,
+  longitude    numeric,
+  note         text,
+  status_type  text check (status_type in ('current_location', 'train_delay', 'arrival_estimate', 'other')),
+  created_at   timestamptz default now()
+);
+
+-- Financial Management: advances, expenses, bill approval
+create table if not exists public.expense_advances (
+  id         uuid primary key default gen_random_uuid(),
+  group_id   uuid references public.tour_groups(id) on delete cascade,
+  amount     numeric not null,
+  given_at   timestamptz default now(),
+  given_by   uuid references public.users(id) on delete set null,
+  notes      text
+);
+
+create table if not exists public.expenses (
+  id                 uuid primary key default gen_random_uuid(),
+  group_id           uuid references public.tour_groups(id) on delete cascade,
+  submitted_by       uuid references public.users(id) on delete cascade,
+  category           text not null check (category in ('travel', 'accommodation', 'food', 'materials', 'miscellaneous', 'other')),
+  amount             numeric not null,
+  bill_url           text,
+  description        text,
+  status             text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  approved_by        uuid references public.users(id) on delete set null,
+  approved_at        timestamptz,
+  rejection_reason   text,
+  created_at         timestamptz default now()
+);
+
+-- Final Tour Report
+create table if not exists public.tour_reports (
+  id               uuid primary key default gen_random_uuid(),
+  tour_id          uuid references public.tours(id) on delete cascade,
+  group_id         uuid references public.tour_groups(id) on delete set null,
+  submitted_by     uuid references public.users(id) on delete cascade,
+  summary          text not null,
+  highlights       text,
+  challenges       text,
+  report_file_url  text,
+  status           text not null default 'draft' check (status in ('draft', 'submitted', 'approved')),
+  created_at       timestamptz default now(),
+  updated_at       timestamptz default now()
+);
+
+-- Storage bucket for bills / tickets / id-card photos / reports
+insert into storage.buckets (id, name, public)
+  values ('documents', 'documents', true)
+  on conflict (id) do nothing;
+
+-- updated_at triggers
+drop trigger if exists registration_fees_updated_at on public.registration_fees;
+drop trigger if exists workshops_updated_at          on public.workshops;
+drop trigger if exists local_hosts_updated_at        on public.local_hosts;
+drop trigger if exists kit_assignments_updated_at    on public.kit_assignments;
+drop trigger if exists travel_tickets_updated_at     on public.travel_tickets;
+drop trigger if exists tour_reports_updated_at       on public.tour_reports;
+
+create trigger registration_fees_updated_at before update on public.registration_fees for each row execute procedure public.handle_updated_at();
+create trigger workshops_updated_at          before update on public.workshops          for each row execute procedure public.handle_updated_at();
+create trigger local_hosts_updated_at        before update on public.local_hosts        for each row execute procedure public.handle_updated_at();
+create trigger kit_assignments_updated_at    before update on public.kit_assignments    for each row execute procedure public.handle_updated_at();
+create trigger travel_tickets_updated_at     before update on public.travel_tickets     for each row execute procedure public.handle_updated_at();
+create trigger tour_reports_updated_at       before update on public.tour_reports       for each row execute procedure public.handle_updated_at();
+
+-- RLS
+alter table public.registration_fees   enable row level security;
+alter table public.workshops           enable row level security;
+alter table public.workshop_attendees  enable row level security;
+alter table public.demo_evaluations    enable row level security;
+alter table public.local_hosts         enable row level security;
+alter table public.kit_items           enable row level security;
+alter table public.kit_assignments     enable row level security;
+alter table public.id_cards            enable row level security;
+alter table public.travel_tickets      enable row level security;
+alter table public.location_updates    enable row level security;
+alter table public.expense_advances    enable row level security;
+alter table public.expenses            enable row level security;
+alter table public.tour_reports        enable row level security;
+
+-- registration_fees: volunteer reads own, admin manages all
+create policy "registration_fees_read_own" on public.registration_fees for select using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
+);
+create policy "admins_manage_registration_fees" on public.registration_fees for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- workshops: all authenticated read, admin manages
+create policy "workshops_read_all" on public.workshops for select using (true);
+create policy "admins_manage_workshops" on public.workshops for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- workshop_attendees: volunteer manages own row, admin manages all
+create policy "workshop_attendees_own" on public.workshop_attendees for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
+);
+create policy "admins_manage_workshop_attendees" on public.workshop_attendees for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- demo_evaluations: volunteer reads own, admin/observer manage
+create policy "demo_evaluations_read_own" on public.demo_evaluations for select using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
+);
+create policy "admins_manage_demo_evaluations" on public.demo_evaluations for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- local_hosts: all authenticated read, admin manages
+create policy "local_hosts_read_all" on public.local_hosts for select using (true);
+create policy "admins_manage_local_hosts" on public.local_hosts for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- kit_items / kit_assignments: all authenticated read, admin manages
+create policy "kit_items_read_all" on public.kit_items for select using (true);
+create policy "admins_manage_kit_items" on public.kit_items for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+create policy "kit_assignments_read_all" on public.kit_assignments for select using (true);
+create policy "admins_manage_kit_assignments" on public.kit_assignments for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- id_cards: volunteer reads own, admin manages
+create policy "id_cards_read_own" on public.id_cards for select using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
+);
+create policy "admins_manage_id_cards" on public.id_cards for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- travel_tickets / location_updates: all authenticated read, admin manages; volunteers can post location updates
+create policy "travel_tickets_read_all" on public.travel_tickets for select using (true);
+create policy "admins_manage_travel_tickets" on public.travel_tickets for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+create policy "location_updates_read_all" on public.location_updates for select using (true);
+create policy "volunteers_insert_location_updates" on public.location_updates for insert with check (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('volunteer', 'admin'))
+);
+create policy "admins_manage_location_updates" on public.location_updates for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- expense_advances: all authenticated read, admin manages
+create policy "expense_advances_read_all" on public.expense_advances for select using (true);
+create policy "admins_manage_expense_advances" on public.expense_advances for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- expenses: volunteer manages own submissions, admin manages all
+create policy "expenses_own" on public.expenses for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = submitted_by)
+);
+create policy "admins_manage_expenses" on public.expenses for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+
+-- tour_reports: volunteer manages own, admin manages all
+create policy "tour_reports_own" on public.tour_reports for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = submitted_by)
+);
+create policy "admins_manage_tour_reports" on public.tour_reports for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role = 'admin')
+);
+

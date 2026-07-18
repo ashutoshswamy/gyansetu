@@ -25,6 +25,7 @@ interface InitialData {
   tour_id?: string;
   target_role: "enrollee" | "volunteer" | "all";
   status: "draft" | "active" | "closed";
+  category?: "general" | "task" | "survey" | "cultural_activity";
   is_template: boolean;
   fields: Field[];
 }
@@ -61,6 +62,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [tourId, setTourId] = useState(initialData?.tour_id ?? "");
   const [targetRole, setTargetRole] = useState<"enrollee" | "volunteer" | "all">(initialData?.target_role ?? "enrollee");
+  const [category, setCategory] = useState<"general" | "task" | "survey" | "cultural_activity">(initialData?.category ?? "general");
   const [status, setStatus] = useState<"draft" | "active" | "closed">(initialData?.status ?? "draft");
   const [isTemplate, setIsTemplate] = useState(initialData?.is_template ?? false);
   const [fields, setFields] = useState<Field[]>(initialData?.fields ?? [blankField()]);
@@ -96,6 +98,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
       tour_id: isTemplate ? null : (tourId || null),
       target_role: targetRole,
       status,
+      category,
       is_template: isTemplate,
       fields: fields.map(f => ({
         id: f.id,
@@ -220,6 +223,15 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
                 <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Category</label>
+              <select style={inputStyle} value={category} onChange={e => setCategory(e.target.value as "general" | "task" | "survey" | "cultural_activity")}>
+                <option value="general">General</option>
+                <option value="task">Task Assignment / PPT Submission</option>
+                <option value="survey">Survey / Interesting Facts</option>
+                <option value="cultural_activity">Cultural Activity</option>
               </select>
             </div>
           </div>

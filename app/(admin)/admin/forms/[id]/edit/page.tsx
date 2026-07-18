@@ -35,6 +35,7 @@ export default async function EditFormPage({ params }: { params: Promise<{ id: s
             tour_id: form.tour_id ?? undefined,
             target_role: form.target_role,
             status: form.status,
+            category: form.category ?? "general",
             is_template: !!form.is_template,
             fields: form.fields ?? [],
           }}

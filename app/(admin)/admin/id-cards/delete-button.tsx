@@ -1,0 +1,38 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { deleteIdCard } from "@/actions/id-cards";
+
+export function DeleteIdCardButton({ id }: { id: string }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  async function handleDelete() {
+    if (!confirm("Delete this ID card?")) return;
+    setLoading(true);
+    try {
+      await deleteIdCard(id);
+      router.refresh();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to delete");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button
+      onClick={handleDelete}
+      disabled={loading}
+      style={{
+        fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4,
+        background: "transparent", color: "#B8381E",
+        border: "1.5px solid rgba(184,56,30,0.3)",
+        cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,
+      }}
+    >
+      {loading ? "..." : "Delete"}
+    </button>
+  );
+}

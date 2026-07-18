@@ -51,3 +51,20 @@ export async function getAllVolunteerProfiles() {
   if (error) { console.error("[getAllVolunteerProfiles]", error); throw new Error("Failed to fetch profiles"); }
   return data ?? [];
 }
+
+export async function setAadhaarVerified(userId: string, verified: boolean) {
+  const { db, user } = await requireAdmin();
+  const { data, error } = await db
+    .from("volunteer_profiles")
+    .update({
+      aadhaar_verified: verified,
+      aadhaar_verified_at: verified ? new Date().toISOString() : null,
+      aadhaar_verified_by: verified ? user.id : null,
+    })
+    .eq("user_id", userId)
+    .select()
+    .single();
+  if (error) { console.error("[setAadhaarVerified]", error); throw new Error("Failed to update Aadhaar verification"); }
+  revalidatePath("/admin/profiles");
+  return data;
+}

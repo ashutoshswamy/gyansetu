@@ -104,6 +104,7 @@ export interface DynamicForm {
   target_role: UserRole | "enrollee" | "all";
   status: "draft" | "active" | "closed";
   is_template: boolean;
+  category: "general" | "task" | "survey" | "cultural_activity";
   created_by: string;
   created_at: string;
 }
@@ -272,6 +273,11 @@ export interface VolunteerProfile {
   dietary_restrictions?: string[];
   certified_true: boolean;
   signature_name?: string;
+  aadhaar_verified: boolean;
+  aadhaar_verified_at?: string;
+  aadhaar_verified_by?: string;
+  parent_consent_url?: string;
+  indemnity_bond_url?: string;
   created_at: string;
   updated_at: string;
   user?: UserProfile;
@@ -290,4 +296,200 @@ export interface DailyLog {
   updated_at: string;
   tour?: Tour;
   volunteer?: UserProfile;
+}
+
+// Volunteer journey modules
+
+export interface RegistrationFee {
+  id: string;
+  volunteer_id: string;
+  amount: number;
+  status: "pending" | "paid" | "waived" | "refunded";
+  payment_reference?: string;
+  paid_at?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  volunteer?: UserProfile;
+}
+
+export type WorkshopType = "science" | "mathematics" | "exhibition_cultural" | "other";
+
+export interface Workshop {
+  id: string;
+  title: string;
+  workshop_type: WorkshopType;
+  workshop_date: string;
+  workshop_time?: string;
+  hall_location?: string;
+  trainer_id?: string;
+  status: "scheduled" | "completed" | "cancelled";
+  kit_ready: boolean;
+  plan_notes?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  trainer?: UserProfile;
+}
+
+export interface WorkshopAttendee {
+  id: string;
+  workshop_id: string;
+  volunteer_id: string;
+  attendance_status: "pending" | "present" | "absent" | "excused";
+  missed_summary?: string;
+  makeup_decision?: "pending" | "allowed" | "not_allowed";
+  created_at: string;
+  workshop?: Workshop;
+  volunteer?: UserProfile;
+}
+
+export interface DemoEvaluationScores {
+  content_delivery: number;
+  hindi_communication: number;
+  team_coordination: number;
+  classroom_management: number;
+  activity_flow: number;
+  confidence: number;
+  student_engagement: number;
+}
+
+export interface DemoEvaluation {
+  id: string;
+  volunteer_id: string;
+  observer_id?: string;
+  tour_id?: string;
+  scores: DemoEvaluationScores;
+  total_score?: number;
+  remarks?: string;
+  evaluated_at: string;
+  volunteer?: UserProfile;
+  observer?: UserProfile;
+  tour?: Tour;
+}
+
+export interface LocalHost {
+  id: string;
+  name: string;
+  phone?: string;
+  email?: string;
+  state?: string;
+  city?: string;
+  address?: string;
+  group_id?: string;
+  notes?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  group?: TourGroup;
+}
+
+export interface KitItem {
+  id: string;
+  name: string;
+  category?: string;
+  quantity_per_school: number;
+  notes?: string;
+  created_at: string;
+}
+
+export interface KitAssignment {
+  id: string;
+  group_id: string;
+  school_count: number;
+  packed: boolean;
+  distributed: boolean;
+  distributed_at?: string;
+  notes?: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  group?: TourGroup;
+}
+
+export interface IdCard {
+  id: string;
+  volunteer_id: string;
+  card_number: string;
+  valid_from: string;
+  valid_to: string;
+  card_file_url?: string;
+  issued_by: string;
+  issued_at: string;
+  volunteer?: UserProfile;
+}
+
+export interface TravelTicket {
+  id: string;
+  group_id: string;
+  train_number?: string;
+  pnr?: string;
+  departure_station?: string;
+  arrival_station?: string;
+  departure_at?: string;
+  arrival_at?: string;
+  ticket_file_url?: string;
+  confirmation_status: "pending" | "confirmed" | "cancelled";
+  itinerary_approved: boolean;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  group?: TourGroup;
+}
+
+export interface LocationUpdate {
+  id: string;
+  group_id: string;
+  posted_by: string;
+  latitude?: number;
+  longitude?: number;
+  note?: string;
+  status_type?: "current_location" | "train_delay" | "arrival_estimate" | "other";
+  created_at: string;
+  group?: TourGroup;
+  poster?: UserProfile;
+}
+
+export interface ExpenseAdvance {
+  id: string;
+  group_id: string;
+  amount: number;
+  given_at: string;
+  given_by: string;
+  notes?: string;
+  group?: TourGroup;
+}
+
+export interface Expense {
+  id: string;
+  group_id: string;
+  submitted_by: string;
+  category: "travel" | "accommodation" | "food" | "materials" | "miscellaneous" | "other";
+  amount: number;
+  bill_url?: string;
+  description?: string;
+  status: "pending" | "approved" | "rejected";
+  approved_by?: string;
+  approved_at?: string;
+  rejection_reason?: string;
+  created_at: string;
+  group?: TourGroup;
+  submitter?: UserProfile;
+}
+
+export interface TourReport {
+  id: string;
+  tour_id: string;
+  group_id?: string;
+  submitted_by: string;
+  summary: string;
+  highlights?: string;
+  challenges?: string;
+  report_file_url?: string;
+  status: "draft" | "submitted" | "approved";
+  created_at: string;
+  updated_at: string;
+  tour?: Tour;
+  group?: TourGroup;
+  submitter?: UserProfile;
 }
