@@ -21,7 +21,7 @@ export default async function AdminGalleryPage() {
   const cats = (categories as CategoryRow[]) ?? [];
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
 
         {/* Header */}

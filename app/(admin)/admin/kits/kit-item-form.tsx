@@ -43,7 +43,7 @@ export function KitItemForm() {
           {error}
         </div>
       )}
-      <div className="grid grid-cols-4 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 4 }}>Item Name *</label>
           <input name="name" required style={inputStyle} placeholder="e.g. Backpack" />

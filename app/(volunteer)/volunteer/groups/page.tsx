@@ -20,7 +20,7 @@ async function GroupCard({ m }: { m: MembershipRow }) {
 
   return (
     <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "20px 24px" }}>
-      <div className="flex items-start justify-between gap-4 mb-4">
+      <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
         <div>
           <h2 style={{ fontSize: 18, fontWeight: 600, color: "#19140F", margin: "0 0 4px" }}>{g?.name}</h2>
           <p style={{ fontSize: 13, color: "#9B9188", margin: 0 }}>{g?.tours?.title} · {g?.tours?.destination}</p>
@@ -105,7 +105,7 @@ export default async function VolunteerGroupsPage() {
     .eq("user_id", currentUser?.id ?? "");
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>

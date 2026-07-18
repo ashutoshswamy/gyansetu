@@ -12,9 +12,9 @@ export default async function EarcDocumentsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-start justify-between mb-8">
+        <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
             <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
               EARC Panel

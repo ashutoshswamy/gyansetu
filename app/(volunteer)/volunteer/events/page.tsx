@@ -27,7 +27,7 @@ export default async function VolunteerEventsPage() {
   const past = (events ?? []).filter((e: EventRow) => !["upcoming", "ongoing"].includes(e.status));
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
@@ -63,7 +63,7 @@ function EventCard({ event, muted }: { event: EventRow; muted?: boolean }) {
   const t = typeColors[event.event_type] ?? typeColors.other;
   return (
     <div style={{ background: muted ? "#F3F0E8" : "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 18px", opacity: muted ? 0.75 : 1 }}>
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }} className="truncate">{event.title}</h3>

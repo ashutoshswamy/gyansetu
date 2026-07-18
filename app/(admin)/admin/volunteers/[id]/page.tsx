@@ -21,7 +21,7 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
   if (!user) return <div className="p-8" style={{ color: "#DC2626" }}>Volunteer not found.</div>;
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-4xl mx-auto">
         <Link href="/admin/volunteers">
           <button style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>
@@ -31,7 +31,7 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
 
         {/* Header */}
         <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "20px 24px", marginBottom: 20 }}>
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>{user.name}</h1>
               <p style={{ fontSize: 14, color: "#9B9188", margin: "4px 0 0" }}>{user.email}</p>

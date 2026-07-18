@@ -55,7 +55,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
   };
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-5xl mx-auto">
         {/* Back */}
         <Link href="/admin/tours" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "#9B9188" }}>
@@ -63,7 +63,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
         </Link>
 
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>{tour.title}</h1>

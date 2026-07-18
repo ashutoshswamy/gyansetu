@@ -40,7 +40,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
   const s = statusStyles[tour.status ?? "draft"] ?? statusStyles.draft;
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-3xl mx-auto">
         <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>

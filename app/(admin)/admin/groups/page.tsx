@@ -33,9 +33,9 @@ export default async function AdminGroupsPage() {
   }
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-start justify-between mb-8">
+        <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
             <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
               Admin Console
@@ -66,7 +66,7 @@ export default async function AdminGroupsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {tourGroups.map((group) => (
                 <div key={group.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 18px" }}>
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start justify-between mb-3 flex-wrap gap-4">
                     <div>
                       <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: 0 }}>{group.name}</h3>
                       {group.state_allocated && (

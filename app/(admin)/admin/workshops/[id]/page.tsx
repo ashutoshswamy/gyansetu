@@ -36,7 +36,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
 
   if (!workshop) {
     return (
-      <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+      <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
         <p style={{ color: "#5A5247" }}>Workshop not found.</p>
       </div>
     );
@@ -47,7 +47,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
   const allVolunteers = volunteersRes.data ?? [];
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-5xl mx-auto">
         <Link href="/admin/workshops" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "#5A5247", textDecoration: "none", marginBottom: 16 }}>
           <ArrowLeft size={14} /> Back to Workshops

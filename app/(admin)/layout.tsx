@@ -57,7 +57,7 @@ export default async function AdminLayout({
     <div className="flex min-h-screen" style={{ background: "#FAFAF7" }}>
       <RealtimeRefresher tables={["tours", "tour_applications", "test_attempts", "users", "notifications", "events", "dynamic_forms", "eligibility_tests", "tour_groups"]} />
       <Sidebar role={role as UserRole} />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">{children}</main>
     </div>
   );
 }

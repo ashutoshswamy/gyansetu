@@ -43,6 +43,8 @@ import {
   ClipboardCheck,
   FileBarChart,
   Receipt,
+  Menu,
+  X,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -293,6 +295,12 @@ export function Sidebar({ role }: { role: SidebarRole }) {
 
   const { user } = useUser();
   const [progress, setProgress] = useState<{ completed: number; total: number } | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setMobileOpen(false);
+  }
 
   const initialOpen = (group: NavGroup) =>
     group.items.some((item) => isItemActive(item.href, pathname));
@@ -372,10 +380,38 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   }, [role, user?.id]);
 
   return (
-    <aside
-      className="w-56 min-h-screen flex flex-col flex-shrink-0"
-      style={{ background: "#FFFFFF", borderRight: "1px solid #E4DFD1" }}
-    >
+    <>
+      {/* Mobile top bar */}
+      <div
+        className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4"
+        style={{ height: 56, background: "#FFFFFF", borderBottom: "1px solid #E4DFD1" }}
+      >
+        <NextImage src="/logo_wide.png" alt="Gyan Setu" width={100} height={30} style={{ height: 30, width: "auto", objectFit: "contain" }} />
+        <button
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+          className="flex items-center justify-center rounded"
+          style={{ width: 36, height: 36, background: "none", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
+        >
+          {mobileOpen ? <X className="w-4 h-4" style={{ color: "#19140F" }} /> : <Menu className="w-4 h-4" style={{ color: "#19140F" }} />}
+        </button>
+      </div>
+
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-30"
+          style={{ background: "rgba(25,20,15,0.4)" }}
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`w-64 lg:w-56 min-h-screen flex flex-col flex-shrink-0 fixed lg:static inset-y-0 left-0 z-40 transform transition-transform duration-200 ${mobileOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        style={{ background: "#FFFFFF", borderRight: "1px solid #E4DFD1" }}
+      >
       {/* Logo */}
       <div className="px-5 pt-5 pb-4" style={{ borderBottom: "1px solid #E4DFD1" }}>
         <div className="flex items-center mb-4" style={{ minHeight: 36 }}>
@@ -449,6 +485,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
           </p>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

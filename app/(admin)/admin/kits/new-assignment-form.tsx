@@ -57,7 +57,7 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
           {error}
         </div>
       )}
-      <div className="grid grid-cols-3 gap-3 items-end">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
         <div style={{ gridColumn: "span 2" }}>
           <label style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 4 }}>Group *</label>
           <select name="group_id" required style={inputStyle}>

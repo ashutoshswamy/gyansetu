@@ -19,7 +19,7 @@ export default async function StudentLayout({
     <div className="flex min-h-screen" style={{ background: "#FAFAF7" }}>
       <RealtimeRefresher tables={["tour_applications", "test_attempts", "notifications", "dynamic_forms", "eligibility_tests", "tours"]} />
       <Sidebar role={role ?? "enrollee"} />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">{children}</main>
     </div>
   );
 }

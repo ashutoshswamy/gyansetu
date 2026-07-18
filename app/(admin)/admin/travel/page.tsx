@@ -13,9 +13,9 @@ export default async function AdminTravelPage() {
   const tickets = await getAllTravelTickets();
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-start justify-between mb-8">
+        <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
             <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Travel & Tickets</h1>
@@ -39,7 +39,7 @@ export default async function AdminTravelPage() {
             const s = statusColors[t.confirmation_status] ?? statusColors.pending;
             return (
               <div key={t.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "16px 20px" }}>
-                <div className="flex items-start justify-between gap-4 mb-3">
+                <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F" }}>{t.group?.name ?? "Unknown group"}</span>

@@ -32,7 +32,7 @@ export default async function AnalyticsPage() {
   const selectionRate = totalApplied > 0 ? ((selectedCount / totalApplied) * 100).toFixed(1) : "0";
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">

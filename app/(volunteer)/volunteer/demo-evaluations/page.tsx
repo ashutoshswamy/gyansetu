@@ -21,7 +21,7 @@ export default async function VolunteerDemoEvaluationsPage() {
   const evaluations = await getMyDemoEvaluations();
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
@@ -42,7 +42,7 @@ export default async function VolunteerDemoEvaluationsPage() {
               const color = scoreColor(e.total_score);
               return (
                 <div key={e.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "20px 22px" }}>
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
                     <div>
                       <h3 style={{ fontSize: 16, fontWeight: 600, color: "#19140F", margin: 0 }}>{e.tour?.title ?? "General"}</h3>
                       <p style={{ fontSize: 12, color: "#9B9188", marginTop: 4 }}>{new Date(e.evaluated_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>

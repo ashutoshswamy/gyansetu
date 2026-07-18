@@ -44,7 +44,7 @@ export default async function VolunteerToursPage() {
   const upcoming = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "draft");
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
@@ -87,7 +87,7 @@ function Section({ title, assignments }: { title: string; assignments: Assignmen
           const s = statusStyles[a.tours?.status ?? "draft"] ?? statusStyles.draft;
           return (
             <div key={a.id} className="rounded-xl p-5" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-              <div className="flex items-start justify-between gap-4 mb-3">
+              <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
                 <div className="min-w-0">
                   <p style={{ fontSize: 16, fontWeight: 600, color: "#19140F", marginBottom: 2 }}>{a.tours?.title}</p>
                   {a.role_description && (

@@ -24,7 +24,7 @@ export default async function TestDetailsPage({ params }: { params: Promise<{ id
   if (testError || !test) notFound();
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-6xl mx-auto">
         {/* Back Link */}
         <Link href="/admin/tests" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "#9B9188" }}>

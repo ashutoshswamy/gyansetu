@@ -48,7 +48,7 @@ export default async function EarcLayout({ children }: { children: React.ReactNo
   return (
     <div className="flex min-h-screen" style={{ background: "#FAFAF7" }}>
       <Sidebar role={role as UserRole} />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">{children}</main>
     </div>
   );
 }

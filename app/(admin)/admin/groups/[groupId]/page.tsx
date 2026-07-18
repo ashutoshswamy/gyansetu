@@ -90,13 +90,13 @@ export default function GroupDetailPage() {
   );
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-4xl mx-auto">
         <button onClick={() => router.push("/admin/groups")} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>
           <ArrowLeft size={14} /> Back to Groups
         </button>
 
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>{group.name}</h1>
             {group.tours?.title && <p style={{ fontSize: 14, color: "#9B9188", marginTop: 4 }}>{group.tours.title}</p>}
