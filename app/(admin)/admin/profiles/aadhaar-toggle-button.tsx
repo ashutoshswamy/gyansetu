@@ -36,7 +36,7 @@ export function AadhaarToggleButton({ userId, verified }: { userId: string; veri
         onClick={handleClick}
         disabled={loading}
         style={{
-          fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4,
+          fontSize: 12, fontWeight: 600, padding: "9px 12px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
           background: "transparent",
           color: "#4A55BE",
           border: "1.5px solid rgba(74,85,190,0.3)",

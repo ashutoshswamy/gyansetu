@@ -26,7 +26,7 @@ export function DeleteKitItemButton({ id }: { id: string }) {
       onClick={handleDelete}
       disabled={loading}
       style={{
-        fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4,
+        fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
         background: "transparent", color: "#B8381E",
         border: "1.5px solid rgba(184,56,30,0.3)",
         cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,

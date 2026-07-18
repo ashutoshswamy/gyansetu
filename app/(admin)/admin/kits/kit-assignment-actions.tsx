@@ -66,7 +66,7 @@ export function KitAssignmentActions({
         onClick={togglePacked}
         disabled={loading}
         style={{
-          fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4,
+          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
           background: packed ? "#2A5E3A" : "transparent",
           color: packed ? "white" : "#5A5247",
           border: packed ? "none" : "1.5px solid #E4DFD1",
@@ -76,14 +76,14 @@ export function KitAssignmentActions({
         {packed ? "Packed" : "Mark Packed"}
       </button>
       {distributed ? (
-        <span style={{ fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4, background: "rgba(74,85,190,0.08)", color: "#4A55BE" }}>
+        <span style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "rgba(74,85,190,0.08)", color: "#4A55BE" }}>
           Distributed
         </span>
       ) : packed ? (
         <button
           onClick={handleDistribute}
           disabled={loading}
-          style={{ fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4, background: "#4A55BE", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
+          style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#4A55BE", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
         >
           Mark Distributed
         </button>

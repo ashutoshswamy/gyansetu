@@ -27,7 +27,7 @@ export function ConfirmButton({ id, disabled }: { id: string; disabled: boolean 
       onClick={handleClick}
       disabled={loading}
       style={{
-        fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 4,
+        fontSize: 12, fontWeight: 600, padding: "9px 12px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
         background: loading ? "#C8C4BC" : "#2A5E3A", color: "white", border: "none",
         cursor: loading ? "not-allowed" : "pointer",
       }}
@@ -58,7 +58,7 @@ export function ApproveItineraryButton({ id, approved }: { id: string; approved:
       onClick={handleClick}
       disabled={loading}
       style={{
-        fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 4,
+        fontSize: 12, fontWeight: 600, padding: "9px 12px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
         background: "transparent", color: approved ? "#2A5E3A" : "#5A5247",
         border: `1.5px solid ${approved ? "rgba(42,94,58,0.3)" : "#E4DFD1"}`,
         cursor: loading ? "not-allowed" : "pointer",

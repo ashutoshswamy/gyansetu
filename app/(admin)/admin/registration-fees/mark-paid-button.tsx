@@ -25,7 +25,7 @@ export function MarkPaidButton({ feeId }: { feeId: string }) {
       onClick={handleClick}
       disabled={loading}
       style={{
-        fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4,
+        fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
         background: loading ? "#C8C4BC" : "#2A5E3A",
         color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,
       }}
