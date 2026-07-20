@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const status = searchParams.get("status");
 
-  if (status && status !== "open" && user.role !== "admin" && user.role !== "volunteer") {
+  if (status && status !== "open" && user.role !== "admin" && user.role !== "super_admin" && user.role !== "volunteer") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

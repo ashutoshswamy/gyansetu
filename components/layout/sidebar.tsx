@@ -45,6 +45,7 @@ import {
   Receipt,
   Menu,
   X,
+  KeyRound,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -129,6 +130,13 @@ const adminGroups: NavGroup[] = [
   },
 ];
 
+const superAdminGroup: NavGroup = {
+  label: "Super Admin",
+  items: [
+    { label: "Role Assignment", href: "/admin/super-admin", Icon: KeyRound },
+  ],
+};
+
 const earcNavItems: NavItem[] = [
   { label: "Dashboard",      href: "/earc",                   Icon: LayoutDashboard },
   { label: "Student Data",   href: "/earc/student-data",      Icon: GraduationCap },
@@ -194,6 +202,12 @@ const roleConfig: Record<
     bgColor: "rgba(184,56,30,0.08)",
     textColor: "#B8381E",
   },
+  super_admin: {
+    label: "Super Admin",
+    dotColor: "#8A2BE2",
+    bgColor: "rgba(138,43,226,0.08)",
+    textColor: "#8A2BE2",
+  },
 };
 
 const iconAccentColor: Record<SidebarRole, string> = {
@@ -201,6 +215,7 @@ const iconAccentColor: Record<SidebarRole, string> = {
   enrollee: "#1E5A8A",
   volunteer: "#2A5E3A",
   earc_staff: "#B8381E",
+  super_admin: "#8A2BE2",
 };
 
 function isItemActive(href: string, pathname: string) {
@@ -290,8 +305,9 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   const pathname = usePathname();
   const config = roleConfig[role];
   const accentColor = iconAccentColor[role];
-  const isAdmin = role === "admin";
+  const isAdmin = role === "admin" || role === "super_admin";
   const isEarc = role === "earc_staff";
+  const groups = role === "super_admin" ? [...adminGroups, superAdminGroup] : adminGroups;
 
   const { user } = useUser();
   const [progress, setProgress] = useState<{ completed: number; total: number } | null>(null);
@@ -435,7 +451,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
         {isAdmin ? (
           <div className="space-y-1">
-            {adminGroups.map((group) => (
+            {groups.map((group) => (
               <CollapsibleGroup
                 key={group.label}
                 group={group}

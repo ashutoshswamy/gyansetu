@@ -6,7 +6,7 @@ export default async function DashboardRedirect() {
   const { user } = await getAuthenticatedUser();
   const role = user.role;
 
-  if (role === "admin") redirect("/admin");
+  if (role === "admin" || role === "super_admin") redirect("/admin");
   if (role === "volunteer") redirect("/volunteer");
   if (role === "earc_staff") redirect("/earc");
 

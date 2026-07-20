@@ -2,7 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/types";
 
-const ADMIN_ROLES: UserRole[] = ["admin"];
+const ADMIN_ROLES: UserRole[] = ["admin", "super_admin"];
 
 async function resolveUserWithRole() {
   const { userId, sessionClaims } = await auth();
@@ -76,6 +76,16 @@ export async function requireAdminUser() {
   const { db, user, userId } = await resolveUserWithRole();
 
   if (!user.role || !ADMIN_ROLES.includes(user.role as UserRole)) {
+    throw new Error("Unauthorized");
+  }
+
+  return { db, user, userId };
+}
+
+export async function requireSuperAdminUser() {
+  const { db, user, userId } = await resolveUserWithRole();
+
+  if (user.role !== "super_admin") {
     throw new Error("Unauthorized");
   }
 

@@ -34,27 +34,27 @@ export default clerkMiddleware(async (auth, req) => {
 
   const role = (sessionClaims?.metadata as { role?: UserRole })?.role;
 
-  // Admin routes: only admin passes. Null role bypasses here on purpose —
+  // Admin routes: only admin/super_admin pass. Null role bypasses here on purpose —
   // (admin)/layout.tsx re-verifies against Supabase for manually-promoted
   // admins whose Clerk JWT hasn't synced yet, and redirects otherwise.
-  if (isAdminRoute(req) && role !== "admin") {
+  if (isAdminRoute(req) && role !== "admin" && role !== "super_admin") {
     if (role !== null && role !== undefined) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 
-  // Volunteer routes: only volunteer/admin pass. Block null-role users.
-  if (isVolunteerRoute(req) && role !== "volunteer" && role !== "admin") {
+  // Volunteer routes: only volunteer/admin/super_admin pass. Block null-role users.
+  if (isVolunteerRoute(req) && role !== "volunteer" && role !== "admin" && role !== "super_admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   // Student routes: block admins.
-  if (isStudentRoute(req) && role === "admin") {
+  if (isStudentRoute(req) && (role === "admin" || role === "super_admin")) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // EARC routes: only earc_staff/admin pass.
-  if (isEarcRoute(req) && role !== "earc_staff" && role !== "admin") {
+  // EARC routes: only earc_staff/admin/super_admin pass.
+  if (isEarcRoute(req) && role !== "earc_staff" && role !== "admin" && role !== "super_admin") {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 });

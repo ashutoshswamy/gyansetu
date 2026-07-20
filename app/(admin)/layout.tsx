@@ -6,7 +6,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/types";
 
-const ADMIN_ROLES: UserRole[] = ["admin"];
+const ADMIN_ROLES: UserRole[] = ["admin", "super_admin"];
 
 export default async function AdminLayout({
   children,
