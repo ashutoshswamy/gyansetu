@@ -5,7 +5,7 @@ import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
 import { clerkClient } from "@clerk/nextjs/server";
 import type { UserRole } from "@/types";
 
-const ASSIGNABLE_ROLES: (UserRole | null)[] = ["volunteer", "admin", "earc_staff", "super_admin", null];
+const ASSIGNABLE_ROLES: UserRole[] = ["enrollee", "volunteer", "admin", "earc_staff", "super_admin"];
 
 export async function getAllUsers() {
   const { db } = await requireSuperAdminUser();
@@ -19,7 +19,7 @@ export async function getAllUsers() {
   return data;
 }
 
-export async function updateUserRole(clerkId: string, role: UserRole | null) {
+export async function updateUserRole(clerkId: string, role: UserRole) {
   const { db, userId } = await requireSuperAdminUser();
 
   if (!clerkId || typeof clerkId !== "string") throw new Error("Invalid user");

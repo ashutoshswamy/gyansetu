@@ -165,13 +165,13 @@ export async function demoteVolunteer(userId: string) {
   if (!student.clerk_id) throw new Error("User Clerk ID missing");
 
   // 1. Reset Supabase role
-  const { error: dbError } = await db.from("users").update({ role: null }).eq("id", userId);
+  const { error: dbError } = await db.from("users").update({ role: "enrollee" }).eq("id", userId);
   if (dbError) throw new Error("Failed to demote role in database");
 
   // 2. Sync Clerk; rollback if it fails
   const clerk = await clerkClient();
   try {
-    await clerk.users.updateUserMetadata(student.clerk_id, { publicMetadata: { role: null } });
+    await clerk.users.updateUserMetadata(student.clerk_id, { publicMetadata: { role: "enrollee" } });
   } catch {
     await db.from("users").update({ role: "volunteer" }).eq("id", userId);
     throw new Error("Failed to update auth provider; demotion rolled back");

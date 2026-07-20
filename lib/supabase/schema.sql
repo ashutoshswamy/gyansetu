@@ -1,7 +1,8 @@
 -- Gyan Setu — complete Supabase schema
 -- Run fresh in Supabase SQL editor (idempotent: uses IF NOT EXISTS / OR REPLACE)
 --
--- Roles: volunteer | admin | earc_staff | super_admin  (null = new signup / enrollee)
+-- Roles: enrollee | volunteer | admin | earc_staff | super_admin
+-- enrollee: default role on signup (assigned via Clerk publicMetadata, same as any other role).
 -- super_admin: all admin access + can reassign any user's role.
 
 -- ============================================================
@@ -24,13 +25,13 @@ $$ language plpgsql;
 -- TABLES
 -- ============================================================
 
--- Users (synced from Clerk via webhook; role null = new signup / enrollee)
+-- Users (synced from Clerk via webhook; role defaults to 'enrollee' on signup)
 create table if not exists public.users (
   id          uuid primary key default gen_random_uuid(),
   clerk_id    text unique not null,
   email       text unique not null,
   name        text not null,
-  role        text check (role in ('volunteer', 'admin', 'earc_staff', 'super_admin')),
+  role        text default 'enrollee' check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'super_admin')),
   avatar_url  text,
   created_at  timestamptz default now(),
   updated_at  timestamptz default now()
@@ -1198,10 +1199,12 @@ create policy "admins_manage_tour_reports" on public.tour_reports for all using 
 
 
 -- ============================================================
--- MIGRATION: allow super_admin on existing databases
+-- MIGRATION: allow enrollee/super_admin on existing databases
 -- (schema.sql tables use IF NOT EXISTS, so this constraint change
 -- must be applied by hand against an already-provisioned DB)
 -- ============================================================
 alter table public.users drop constraint if exists users_role_check;
 alter table public.users add constraint users_role_check
-  check (role in ('volunteer', 'admin', 'earc_staff', 'super_admin'));
+  check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'super_admin'));
+alter table public.users alter column role set default 'enrollee';
+update public.users set role = 'enrollee' where role is null;

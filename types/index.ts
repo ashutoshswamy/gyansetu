@@ -1,4 +1,4 @@
-export type UserRole = "volunteer" | "admin" | "earc_staff" | "super_admin";
+export type UserRole = "enrollee" | "volunteer" | "admin" | "earc_staff" | "super_admin";
 
 export interface UserProfile {
   id: string;

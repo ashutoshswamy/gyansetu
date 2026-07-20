@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
-import type { WebhookEvent } from "@clerk/nextjs/server";
+import { clerkClient, type WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { Webhook } from "svix";
 
@@ -33,14 +33,17 @@ export async function POST(req: Request) {
   if (event.type === "user.created") {
     const { id, email_addresses, first_name, last_name, image_url } = event.data;
 
-    // New users get no role — they must pass a test to become a volunteer
+    // New users start as enrollee — they must pass a test to become a volunteer
     await db.from("users").insert({
       clerk_id: id,
       email: email_addresses[0]?.email_address ?? "",
       name: `${first_name ?? ""} ${last_name ?? ""}`.trim(),
       avatar_url: image_url,
-      role: null,
+      role: "enrollee",
     });
+
+    const clerk = await clerkClient();
+    await clerk.users.updateUserMetadata(id, { publicMetadata: { role: "enrollee" } });
   }
 
   if (event.type === "user.updated") {

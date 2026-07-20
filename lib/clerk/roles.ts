@@ -7,5 +7,5 @@ export async function getUserRole(): Promise<UserRole | null> {
 }
 
 export function isEnrolleeRole(role: UserRole | null): boolean {
-  return role === null;
+  return role === null || role === "enrollee";
 }

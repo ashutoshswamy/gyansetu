@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { updateUserRole } from "@/actions/users";
 import type { UserRole } from "@/types";
 
-const ROLE_OPTIONS: { value: UserRole | "none"; label: string }[] = [
-  { value: "none", label: "Enrollee (no role)" },
+const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
+  { value: "enrollee", label: "Enrollee" },
   { value: "volunteer", label: "Volunteer" },
   { value: "admin", label: "Admin" },
   { value: "earc_staff", label: "EARC Staff" },
@@ -20,7 +20,7 @@ export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole 
   async function handleChange(value: string) {
     setLoading(true);
     try {
-      await updateUserRole(clerkId, value === "none" ? null : (value as UserRole));
+      await updateUserRole(clerkId, value as UserRole);
       router.refresh();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Failed to update role");
@@ -31,7 +31,7 @@ export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole 
 
   return (
     <select
-      value={role ?? "none"}
+      value={role ?? "enrollee"}
       disabled={loading}
       onChange={(e) => handleChange(e.target.value)}
       style={{
