@@ -15,13 +15,14 @@ const ROLE_GROUPS: { key: UserRole | "enrollee"; label: string }[] = [
 
 export default async function SuperAdminPage() {
   let userId: string;
+  let users: Awaited<ReturnType<typeof getAllUsers>>;
   try {
     ({ userId } = await requireSuperAdminUser());
-  } catch {
+    users = await getAllUsers();
+  } catch (err) {
+    console.error("[super-admin page]", err);
     redirect("/dashboard");
   }
-
-  const users = await getAllUsers();
 
   const grouped = ROLE_GROUPS.map((g) => ({
     ...g,
@@ -78,6 +79,8 @@ export default async function SuperAdminPage() {
                               <td className="p-4">
                                 {u.clerk_id === userId ? (
                                   <span style={{ fontSize: 12, color: "#9B9188" }}>Cannot change own role</span>
+                                ) : u.role === "super_admin" ? (
+                                  <span style={{ fontSize: 12, color: "#9B9188" }}>Assigned via Clerk only</span>
                                 ) : (
                                   <RoleSelect clerkId={u.clerk_id} role={u.role} />
                                 )}

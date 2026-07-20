@@ -5,7 +5,7 @@ import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
 import { clerkClient } from "@clerk/nextjs/server";
 import type { UserRole } from "@/types";
 
-const ASSIGNABLE_ROLES: UserRole[] = ["enrollee", "volunteer", "admin", "earc_staff", "super_admin"];
+const ASSIGNABLE_ROLES: UserRole[] = ["enrollee", "volunteer", "admin", "earc_staff"];
 
 export async function getAllUsers() {
   const { db } = await requireSuperAdminUser();

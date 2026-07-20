@@ -41,7 +41,7 @@ export default async function AdminLayout({
     // Clerk has role — ensure Supabase row exists and role is synced.
     const clerk = await clerkClient();
     const clerkUser = await clerk.users.getUser(userId);
-    await db.from("users").upsert(
+    const { error: upsertError } = await db.from("users").upsert(
       {
         clerk_id: userId,
         email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
@@ -51,6 +51,7 @@ export default async function AdminLayout({
       },
       { onConflict: "clerk_id", ignoreDuplicates: false }
     );
+    if (upsertError) console.error("[admin layout] user upsert failed:", upsertError.message);
   }
 
   return (

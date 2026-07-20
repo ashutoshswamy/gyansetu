@@ -10,7 +10,6 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: "volunteer", label: "Volunteer" },
   { value: "admin", label: "Admin" },
   { value: "earc_staff", label: "EARC Staff" },
-  { value: "super_admin", label: "Super Admin" },
 ];
 
 export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole | null }) {
