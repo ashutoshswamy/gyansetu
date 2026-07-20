@@ -5,12 +5,10 @@ import { Users } from "lucide-react";
 import { RoleSelect } from "./role-select";
 import type { UserRole } from "@/types";
 
-const ROLE_GROUPS: { key: UserRole | "enrollee"; label: string }[] = [
+const ROLE_GROUPS: { key: UserRole; label: string }[] = [
   { key: "super_admin", label: "Super Admin" },
   { key: "admin", label: "Admin" },
   { key: "earc_staff", label: "EARC Staff" },
-  { key: "volunteer", label: "Volunteer" },
-  { key: "enrollee", label: "Enrollee" },
 ];
 
 export default async function SuperAdminPage() {
@@ -26,8 +24,9 @@ export default async function SuperAdminPage() {
 
   const grouped = ROLE_GROUPS.map((g) => ({
     ...g,
-    users: users.filter((u) => (u.role ?? "enrollee") === g.key),
+    users: users.filter((u) => u.role === g.key),
   }));
+  const shownCount = grouped.reduce((sum, g) => sum + g.users.length, 0);
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
@@ -38,11 +37,11 @@ export default async function SuperAdminPage() {
           </p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Role Assignment</h1>
           <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
-            Assign or change any user&apos;s role &middot; {users.length} total
+            Assign admin &amp; EARC staff roles &middot; {shownCount} total
           </p>
         </div>
 
-        {users.length === 0 ? (
+        {shownCount === 0 ? (
           <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid #E4DFD1" }}>
             <Users className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
             <p style={{ fontSize: 14, color: "#9B9188" }}>No users yet.</p>

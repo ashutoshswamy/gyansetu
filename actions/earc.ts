@@ -1,98 +1,6 @@
 "use server";
 
-import { requireAdminUser, requireEarcUser } from "@/lib/clerk/action-auth";
-import { createServerClient } from "@/lib/supabase/server";
-import { clerkClient } from "@clerk/nextjs/server";
-import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
-import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
-import { z } from "zod";
-
-const createStaffSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  password: z.string().min(8).max(72),
-});
-
-export async function createEarcStaff(formData: FormData) {
-  await requireAdminUser();
-
-  const parsed = createStaffSchema.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-  if (!parsed.success) throw new Error("Invalid input");
-
-  const { name, email, password } = parsed.data;
-  const [firstName, ...rest] = name.trim().split(" ");
-  const lastName = rest.join(" ") || "";
-
-  const clerk = await clerkClient();
-
-  let clerkUser;
-  try {
-    clerkUser = await clerk.users.createUser({
-      emailAddress: [email],
-      password,
-      firstName,
-      lastName,
-      publicMetadata: { role: "earc_staff" },
-    });
-  } catch (err: unknown) {
-    const clerkErr = isClerkAPIResponseError(err) ? err.errors?.[0] : undefined;
-    if (clerkErr?.code === "form_identifier_exists") {
-      // User already exists in Clerk — find them and promote to earc_staff
-      const existing = await clerk.users.getUserList({ emailAddress: [email] });
-      const existingUser = existing.data[0];
-      if (!existingUser) throw new Error("Could not find existing user with that email.");
-
-      await clerk.users.updateUserMetadata(existingUser.id, {
-        publicMetadata: { role: "earc_staff" },
-      });
-
-      const db = createServerClient();
-      await db.from("users").upsert(
-        {
-          clerk_id: existingUser.id,
-          email,
-          name: `${existingUser.firstName ?? ""} ${existingUser.lastName ?? ""}`.trim() || name.trim(),
-          role: "earc_staff",
-        },
-        { onConflict: "clerk_id", ignoreDuplicates: false }
-      );
-
-      await revokeAllUserSessions(existingUser.id);
-      return;
-    }
-    if (clerkErr?.code === "form_password_pwned") {
-      throw new Error("Password is too common. Choose a stronger password.");
-    }
-    throw new Error(clerkErr?.message ?? "Failed to create account");
-  }
-
-  const db = createServerClient();
-  await db.from("users").upsert(
-    {
-      clerk_id: clerkUser.id,
-      email,
-      name: name.trim(),
-      role: "earc_staff",
-    },
-    { onConflict: "clerk_id", ignoreDuplicates: false }
-  );
-}
-
-export async function deleteEarcStaff(clerkId: string) {
-  await requireAdminUser();
-
-  if (!clerkId || typeof clerkId !== "string") throw new Error("Invalid id");
-
-  const clerk = await clerkClient();
-  await clerk.users.deleteUser(clerkId);
-
-  const db = createServerClient();
-  await db.from("users").delete().eq("clerk_id", clerkId);
-}
+import { requireEarcUser } from "@/lib/clerk/action-auth";
 
 const ALLOWED_EARC_MIME_TYPES = new Set([
   "application/pdf",
@@ -185,7 +93,7 @@ export async function deleteEarcFile(fileId: string) {
     .maybeSingle();
 
   if (!data) throw new Error("File not found");
-  if (data.uploaded_by !== user.id && user.role !== "admin") {
+  if (data.uploaded_by !== user.id && user.role !== "admin" && user.role !== "super_admin") {
     throw new Error("You can only delete files you uploaded");
   }
 

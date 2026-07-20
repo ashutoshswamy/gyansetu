@@ -95,7 +95,7 @@ export async function requireSuperAdminUser() {
 export async function requireVolunteerUser() {
   const { db, user } = await resolveUserWithRole();
 
-  const allowed: string[] = ["volunteer", "admin"];
+  const allowed: string[] = ["volunteer", "admin", "super_admin"];
   if (!user.role || !allowed.includes(user.role)) {
     throw new Error("Unauthorized");
   }
@@ -106,7 +106,7 @@ export async function requireVolunteerUser() {
 export async function requireEarcUser() {
   const { db, user, userId } = await resolveUserWithRole();
 
-  const allowed: string[] = ["earc_staff", "admin"];
+  const allowed: string[] = ["earc_staff", "admin", "super_admin"];
   if (!user.role || !allowed.includes(user.role)) {
     throw new Error("Unauthorized");
   }

@@ -34,7 +34,6 @@ import {
   FolderOpen,
   GraduationCap,
   BookMarked,
-  ShieldCheck,
   Wallet,
   IdCard,
   Package,
@@ -120,12 +119,6 @@ const adminGroups: NavGroup[] = [
       { label: "Sponsors",     href: "/admin/sponsors",     Icon: Handshake },
       { label: "Careers",      href: "/admin/careers",      Icon: Briefcase },
       { label: "Alumni",       href: "/admin/alumni",       Icon: GraduationCap },
-    ],
-  },
-  {
-    label: "EARC",
-    items: [
-      { label: "EARC Staff", href: "/admin/earc-staff", Icon: ShieldCheck },
     ],
   },
 ];

@@ -5,7 +5,7 @@ import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
 import { clerkClient } from "@clerk/nextjs/server";
 import type { UserRole } from "@/types";
 
-const ASSIGNABLE_ROLES: UserRole[] = ["enrollee", "volunteer", "admin", "earc_staff"];
+const ASSIGNABLE_ROLES: UserRole[] = ["admin", "earc_staff"];
 
 export async function getAllUsers() {
   const { db } = await requireSuperAdminUser();
@@ -13,6 +13,7 @@ export async function getAllUsers() {
   const { data, error } = await db
     .from("users")
     .select("id, clerk_id, name, email, role, created_at")
+    .in("role", ["super_admin", "admin", "earc_staff"])
     .order("created_at", { ascending: false });
 
   if (error) throw new Error("Failed to load users");
