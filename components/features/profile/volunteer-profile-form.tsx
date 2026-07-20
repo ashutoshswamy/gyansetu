@@ -60,7 +60,7 @@ export function VolunteerProfileForm({ variant }: Props) {
     }).catch(() => setLoading(false));
   }, []);
 
-  function csvToArray(val: string) { return val.split(",").map(s => s.trim()).filter(Boolean); }
+  function csvToArray(val: string | null) { return (val ?? "").split(",").map(s => s.trim()).filter(Boolean); }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
