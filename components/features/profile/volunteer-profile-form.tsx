@@ -17,9 +17,25 @@ const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Don't K
 const RELATIONS = ["Father", "Mother", "Spouse", "Brother", "Sister", "Friend", "Guardian", "Other"];
 const DIETARY = ["Vegetarian", "Vegan", "Jain", "Eggetarian", "Non-Vegetarian", "Gluten-Free", "Lactose-Free", "Diabetic Diet", "Other"];
 const STREAMS = ["Engineering", "Science", "Commerce", "Arts", "Medical", "Management", "Law", "Computer Applications", "Agriculture", "Education", "Other"];
+const KNOWN_LANGUAGES = ["English", "Marathi", "Hindi"];
 
 function getAge(dob: string): number {
   return Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+}
+
+function countWords(text: string): number {
+  const trimmed = text.trim();
+  return trimmed ? trimmed.split(/\s+/).length : 0;
+}
+
+function sanitizeNameInput(e: React.FormEvent<HTMLInputElement>) {
+  e.currentTarget.value = e.currentTarget.value.replace(/[^a-zA-Z\s]/g, "").toUpperCase();
+}
+
+function sanitizeDigitsInput(maxLen: number) {
+  return (e: React.FormEvent<HTMLInputElement>) => {
+    e.currentTarget.value = e.currentTarget.value.replace(/\D/g, "").slice(0, maxLen);
+  };
 }
 
 interface Props {
@@ -43,6 +59,13 @@ export function VolunteerProfileForm({ variant }: Props) {
   const [hasAllergies, setHasAllergies] = useState(false);
   const [hasMedicalConditions, setHasMedicalConditions] = useState(false);
   const [takesMedicines, setTakesMedicines] = useState(false);
+  const [eduCourseStatus, setEduCourseStatus] = useState("");
+  const [collegeState, setCollegeState] = useState("");
+  const [collegeCity, setCollegeCity] = useState("");
+  const [otherLangChecked, setOtherLangChecked] = useState(false);
+  const [otherLangValue, setOtherLangValue] = useState("");
+  const [permState, setPermState] = useState("");
+  const [permCity, setPermCity] = useState("");
 
   useEffect(() => {
     getMyVolunteerProfile().then(d => {
@@ -53,9 +76,22 @@ export function VolunteerProfileForm({ variant }: Props) {
       if (d?.photo_url) setPhotoUrl(d.photo_url);
       if (d) setSameAddress(d.permanent_address_same ?? true);
       if (d?.current_status) setCurrentStatus(d.current_status);
+      if (d?.edu_course_status) setEduCourseStatus(d.edu_course_status);
       setHasAllergies(d?.has_allergies ?? false);
       setHasMedicalConditions(d?.has_medical_conditions ?? false);
       setTakesMedicines(d?.takes_medicines ?? false);
+
+      // student_location is stored as "City, State" — best-effort split for the dropdowns.
+      const locParts = ((d?.student_location as string) ?? "").split(",").map((s: string) => s.trim());
+      if (locParts.length === 2 && INDIAN_STATES.includes(locParts[1])) {
+        setCollegeState(locParts[1]);
+        setCollegeCity(locParts[0]);
+      }
+
+      const langs: string[] = d?.languages ?? [];
+      const extra = langs.filter((l: string) => !KNOWN_LANGUAGES.includes(l));
+      if (extra.length) { setOtherLangChecked(true); setOtherLangValue(extra.join(", ")); }
+
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
@@ -69,6 +105,26 @@ export function VolunteerProfileForm({ variant }: Props) {
     setSaved(false);
     const fd = new FormData(e.currentTarget);
     const str = (name: string) => (fd.get(name) as string) || undefined;
+
+    const bioText = (fd.get("bio") as string) || "";
+    const bioWords = countWords(bioText);
+    if (bioWords > 0 && bioWords < 100) {
+      setError(`Bio must be at least 100 words (currently ${bioWords}).`);
+      setSaving(false);
+      return;
+    }
+
+    const checkedLangs = fd.getAll("languages") as string[];
+    const otherLangs = csvToArray(fd.get("languages_other") as string);
+
+    const permHouseNo = str("perm_house_no");
+    const permStreet = str("perm_street");
+    const permDistrict = str("perm_district");
+    const permPincode = str("perm_pincode");
+    const permanentAddressCombined = [
+      permHouseNo, permStreet, permCity, permDistrict, permState, permPincode ? `- ${permPincode}` : undefined,
+    ].filter(Boolean).join(", ");
+
     try {
       const p = await upsertVolunteerProfile({
         first_name: str("first_name"),
@@ -89,16 +145,16 @@ export function VolunteerProfileForm({ variant }: Props) {
         pincode: str("pincode"),
         address: str("address"),
         permanent_address_same: sameAddress,
-        permanent_address: sameAddress ? undefined : str("permanent_address"),
+        permanent_address: sameAddress ? undefined : (permanentAddressCombined || undefined),
 
         current_status: currentStatus as "student" | "working_professional" | "both" | "other",
         institution: str("institution"),
-        student_location: str("student_location"),
+        student_location: collegeCity && collegeState ? `${collegeCity}, ${collegeState}` : undefined,
         qualification: str("qualification"),
         course_name: str("course_name"),
         stream: str("stream"),
-        edu_course_status: str("edu_course_status") as "pursuing" | "completed" | undefined,
-        course_year: str("course_year"),
+        edu_course_status: eduCourseStatus as "pursuing" | "completed" | undefined,
+        course_year: eduCourseStatus === "completed" ? undefined : str("course_year"),
         company_name: str("company_name"),
         work_location: str("work_location"),
         designation: str("designation"),
@@ -107,7 +163,7 @@ export function VolunteerProfileForm({ variant }: Props) {
 
         bio: str("bio"),
         skills: csvToArray(fd.get("skills") as string),
-        languages: csvToArray(fd.get("languages") as string),
+        languages: [...checkedLangs, ...otherLangs],
         states_visited: fd.getAll("states_visited") as string[],
         availability_notes: str("availability_notes"),
 
@@ -220,9 +276,9 @@ export function VolunteerProfileForm({ variant }: Props) {
           {activeTab === "personal" && (
             <div className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <F label="First Name" required><input name="first_name" required defaultValue={profile?.first_name ?? ""} style={inputStyle} /></F>
-                <F label="Middle Name"><input name="middle_name" defaultValue={profile?.middle_name ?? ""} style={inputStyle} /></F>
-                <F label="Last Name" required><input name="last_name" required defaultValue={profile?.last_name ?? ""} style={inputStyle} /></F>
+                <F label="First Name" required><input name="first_name" required onInput={sanitizeNameInput} defaultValue={(profile?.first_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
+                <F label="Middle Name"><input name="middle_name" onInput={sanitizeNameInput} defaultValue={(profile?.middle_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
+                <F label="Last Name" required><input name="last_name" required onInput={sanitizeNameInput} defaultValue={(profile?.last_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Gender" required>
@@ -242,12 +298,12 @@ export function VolunteerProfileForm({ variant }: Props) {
                     {BLOOD_GROUPS.map(b => <option key={b} value={b}>{b}</option>)}
                   </select>
                 </F>
-                <F label="Aadhaar Number" hint="12-digit, optional"><input name="aadhaar_number" maxLength={12} defaultValue={profile?.aadhaar_number ?? ""} style={inputStyle} /></F>
+                <F label="Aadhaar Number" hint="12-digit, numbers only, optional"><input name="aadhaar_number" inputMode="numeric" pattern="[0-9]*" maxLength={12} onInput={sanitizeDigitsInput(12)} defaultValue={profile?.aadhaar_number ?? ""} style={inputStyle} /></F>
               </div>
               <FileUploadField label="Profile Photograph" value={photoUrl} onChange={setPhotoUrl} bucket="media" folder="profile-photos" accept="image/*" showImagePreview hint="Passport-size, JPG/PNG, max 5 MB." />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <F label="Mobile Number (WhatsApp)" required><input name="phone" type="tel" required defaultValue={profile?.phone ?? ""} style={inputStyle} /></F>
-                <F label="Alternate Mobile Number"><input name="alternate_phone" type="tel" defaultValue={profile?.alternate_phone ?? ""} style={inputStyle} /></F>
+                <F label="Mobile Number (WhatsApp)" required hint="Exactly 10 digits"><input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required onInput={sanitizeDigitsInput(10)} defaultValue={profile?.phone ?? ""} style={inputStyle} /></F>
+                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} style={inputStyle} /></F>
               </div>
 
               <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
@@ -293,15 +349,54 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </div>
                 </F>
                 {!sameAddress && (
-                  <F label="Permanent Address" required>
-                    <textarea name="permanent_address" rows={2} required={!sameAddress} defaultValue={profile?.permanent_address ?? ""} style={{ ...inputStyle, resize: "vertical" }} />
-                  </F>
+                  <div style={{ marginTop: 4 }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <F label="House / Flat No." required><input name="perm_house_no" required={!sameAddress} style={inputStyle} /></F>
+                      <F label="Street / Area" required><input name="perm_street" required={!sameAddress} style={inputStyle} /></F>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
+                      <F label="State" required>
+                        <select value={permState} onChange={e => { setPermState(e.target.value); setPermCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
+                          <option value="">Select state</option>
+                          {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </F>
+                      <F label="Village / City" required>
+                        {permState && STATE_CITIES[permState]?.length > 0 ? (
+                          <select value={permCity} onChange={e => setPermCity(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
+                            <option value="">Select city</option>
+                            {STATE_CITIES[permState].map(c => <option key={c} value={c}>{c}</option>)}
+                          </select>
+                        ) : (
+                          <input value={permCity} onChange={e => setPermCity(e.target.value)} placeholder="Your city/village" style={inputStyle} disabled={!permState} />
+                        )}
+                      </F>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
+                      <F label="District" required><input name="perm_district" required={!sameAddress} style={inputStyle} /></F>
+                      <F label="PIN Code" required><input name="perm_pincode" maxLength={6} required={!sameAddress} style={inputStyle} /></F>
+                    </div>
+                  </div>
                 )}
               </div>
 
-              <F label="Bio" hint="Brief introduction about yourself"><textarea name="bio" rows={3} defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Bio" hint={`Brief introduction about yourself — minimum 100 words`}><textarea name="bio" rows={5} defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Skills" hint="Comma-separated: Teaching, Photography, Music..."><input name="skills" defaultValue={(profile?.skills ?? []).join(", ")} style={inputStyle} /></F>
-              <F label="Languages Known" hint="Comma-separated"><input name="languages" defaultValue={(profile?.languages ?? []).join(", ")} style={inputStyle} /></F>
+              <F label="Languages Known">
+                <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                  {KNOWN_LANGUAGES.map(l => (
+                    <label key={l} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
+                      <input type="checkbox" name="languages" value={l} defaultChecked={(profile?.languages ?? []).includes(l)} /> {l}
+                    </label>
+                  ))}
+                  <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
+                    <input type="checkbox" checked={otherLangChecked} onChange={e => setOtherLangChecked(e.target.checked)} /> Other
+                  </label>
+                </div>
+                {otherLangChecked && (
+                  <input name="languages_other" placeholder="Specify other language(s), comma-separated" value={otherLangValue} onChange={e => setOtherLangValue(e.target.value)} style={{ ...inputStyle, marginTop: 8 }} />
+                )}
+              </F>
               {variant === "volunteer" && (
                 <F label="States Visited (previous Gyan Setu)">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 mt-1">
@@ -322,7 +417,7 @@ export function VolunteerProfileForm({ variant }: Props) {
             <div className="space-y-5">
               <F label="Current Status" required>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                  {[["student", "Student"], ["working_professional", "Working Professional"], ["both", "Both Student & Working Professional"], ["other", "Other"]].map(([val, label]) => (
+                  {[["student", "Student"], ["working_professional", "Working Professional"]].map(([val, label]) => (
                     <label key={val} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
                       <input type="radio" name="current_status" value={val} checked={currentStatus === val} onChange={() => setCurrentStatus(val)} /> {label}
                     </label>
@@ -330,18 +425,33 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </div>
               </F>
 
-              {(currentStatus === "student" || currentStatus === "both") && (
+              {currentStatus === "student" && (
                 <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
                   <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Student Details</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <F label="College / Institution Name" required><input name="institution" required defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
-                    <F label="Location" required hint="City, State"><input name="student_location" required defaultValue={profile?.student_location ?? ""} style={inputStyle} /></F>
+                  <F label="College / Institution Name" required><input name="institution" required defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
+                    <F label="College State" required>
+                      <select value={collegeState} onChange={e => { setCollegeState(e.target.value); setCollegeCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
+                        <option value="">Select state</option>
+                        {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </F>
+                    <F label="College City" required>
+                      {collegeState && STATE_CITIES[collegeState]?.length > 0 ? (
+                        <select value={collegeCity} onChange={e => setCollegeCity(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
+                          <option value="">Select city</option>
+                          {STATE_CITIES[collegeState].map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      ) : (
+                        <input value={collegeCity} onChange={e => setCollegeCity(e.target.value)} placeholder="Your city" style={inputStyle} disabled={!collegeState} />
+                      )}
+                    </F>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                     <F label="Qualification" required>
                       <select name="qualification" required defaultValue={profile?.qualification ?? ""} style={{ ...inputStyle, appearance: "none" }}>
                         <option value="">Select</option>
-                        <option>Diploma</option><option>UG</option><option>PG</option><option>PhD</option><option>Other</option>
+                        <option>Diploma</option><option>UG</option><option>PG</option><option>PhD</option>
                       </select>
                     </F>
                     <F label="Course Name" required hint="Example: B.Tech, B.Com, MBA"><input name="course_name" required defaultValue={profile?.course_name ?? ""} style={inputStyle} /></F>
@@ -354,20 +464,22 @@ export function VolunteerProfileForm({ variant }: Props) {
                       </select>
                     </F>
                     <F label="Course Status" required>
-                      <select name="edu_course_status" required defaultValue={profile?.edu_course_status ?? ""} style={{ ...inputStyle, appearance: "none" }}>
+                      <select name="edu_course_status" required value={eduCourseStatus} onChange={e => setEduCourseStatus(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
                         <option value="">Select</option>
                         <option value="pursuing">Pursuing</option>
                         <option value="completed">Completed</option>
                       </select>
                     </F>
                   </div>
-                  <F label="Year / Semester" hint="e.g. 1st Year, Final Semester">
-                    <input name="course_year" defaultValue={profile?.course_year ?? ""} style={{ ...inputStyle, marginTop: 16 }} />
-                  </F>
+                  {eduCourseStatus !== "completed" && (
+                    <F label="Year / Semester" hint="e.g. 1st Year, Final Semester">
+                      <input name="course_year" defaultValue={profile?.course_year ?? ""} style={{ ...inputStyle, marginTop: 16 }} />
+                    </F>
+                  )}
                 </div>
               )}
 
-              {(currentStatus === "working_professional" || currentStatus === "both") && (
+              {currentStatus === "working_professional" && (
                 <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
                   <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

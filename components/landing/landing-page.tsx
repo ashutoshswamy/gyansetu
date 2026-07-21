@@ -146,7 +146,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
           >
             {isLoggedIn ? (
               <Link href="/dashboard" className="btn-primary">
-                Go to Dashboard <ChevronRight size={15} />
+                Go to Home <ChevronRight size={15} />
               </Link>
             ) : (
               <>
@@ -186,7 +186,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               <div style={{ display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
                 {isLoggedIn ? (
                   <Link href="/dashboard" className="btn-primary" onClick={() => setMobileOpen(false)}>
-                    Go to Dashboard <ChevronRight size={15} />
+                    Go to Home <ChevronRight size={15} />
                   </Link>
                 ) : (
                   <>
@@ -289,7 +289,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                 href={isLoggedIn ? "/dashboard" : "/sign-up"}
                 className="btn-primary"
               >
-                {isLoggedIn ? "Go to Dashboard" : "Apply for a Tour"}
+                {isLoggedIn ? "Go to Home" : "Apply for a Tour"}
                 <ChevronRight size={16} />
               </Link>
               <a href="#how-it-works" className="btn-outline">Learn More</a>
@@ -868,7 +868,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             transition={{ duration: 0.55, delay: 0.26 }}
           >
             {isLoggedIn ? (
-              <Link href="/dashboard" className="btn-white">Go to Dashboard</Link>
+              <Link href="/dashboard" className="btn-white">Go to Home</Link>
             ) : (
               <>
                 <Link href="/sign-up" className="btn-white">Apply Now</Link>
@@ -937,7 +937,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                 { label: "Share Your Story", href: "/testimonial" },
                 { label: "Be a Sponsor", href: "/sponsor" },
                 { label: "Careers", href: "/careers" },
-                { label: isLoggedIn ? "Dashboard" : "Sign In", href: isLoggedIn ? "/dashboard" : "/sign-in" },
+                { label: isLoggedIn ? "Home" : "Sign In", href: isLoggedIn ? "/dashboard" : "/sign-in" },
               ].map(({ label, href }) => (
                 <a key={label} href={href} style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
                   onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}

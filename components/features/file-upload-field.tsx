@@ -112,7 +112,7 @@ export function FileUploadField({
           ref={fileRef}
           type="file"
           accept={accept}
-          style={{ display: "none" }}
+          style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", border: 0 }}
           onChange={handleFileChange}
         />
       </div>

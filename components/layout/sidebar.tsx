@@ -54,7 +54,7 @@ const adminGroups: NavGroup[] = [
   {
     label: "Overview",
     items: [
-      { label: "Dashboard", href: "/admin", Icon: LayoutDashboard },
+      { label: "Home", href: "/admin", Icon: LayoutDashboard },
       { label: "Analytics", href: "/admin/analytics", Icon: BarChart2 },
     ],
   },
@@ -131,7 +131,7 @@ const superAdminGroup: NavGroup = {
 };
 
 const earcNavItems: NavItem[] = [
-  { label: "Dashboard",      href: "/earc",                   Icon: LayoutDashboard },
+  { label: "Home",           href: "/earc",                   Icon: LayoutDashboard },
   { label: "Student Data",   href: "/earc/student-data",      Icon: GraduationCap },
   { label: "Programme Data", href: "/earc/programme-data",    Icon: BookMarked },
   { label: "Documents",      href: "/earc/documents",         Icon: FolderOpen },
@@ -139,14 +139,15 @@ const earcNavItems: NavItem[] = [
 
 const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
   enrollee: [
-    { label: "Dashboard",  href: "/student",         Icon: LayoutDashboard },
+    { label: "Home",       href: "/student",         Icon: LayoutDashboard },
+    { label: "My Profile", href: "/student/profile", Icon: UserCircle },
     { label: "Open Tours", href: "/student/tours",   Icon: Plane },
     { label: "My Tests",   href: "/student/tests",   Icon: ClipboardList },
     { label: "My Forms",   href: "/student/forms",   Icon: FileText },
-    { label: "My Profile", href: "/student/profile", Icon: UserCircle },
   ],
   volunteer: [
-    { label: "Dashboard",     href: "/volunteer",              Icon: LayoutDashboard },
+    { label: "Home",          href: "/volunteer",              Icon: LayoutDashboard },
+    { label: "My Profile",    href: "/volunteer/profile",      Icon: UserCircle },
     { label: "My Tours",      href: "/volunteer/tours",        Icon: Plane },
     { label: "Registration Fee", href: "/volunteer/registration-fee", Icon: Wallet },
     { label: "Tasks & Forms", href: "/volunteer/forms",        Icon: CheckSquare },
@@ -161,7 +162,6 @@ const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
     { label: "Media",         href: "/volunteer/media",        Icon: Image },
     { label: "Certificates",  href: "/volunteer/certificates", Icon: Award },
     { label: "ID Card",       href: "/volunteer/id-card",      Icon: IdCard },
-    { label: "My Profile",    href: "/volunteer/profile",      Icon: UserCircle },
   ],
 };
 
