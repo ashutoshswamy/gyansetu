@@ -101,6 +101,7 @@ export default async function AdminDashboard() {
             value={stats.total_tours}
             icon={<Plane size={18} />}
             accent="indigo"
+            href="/admin/tours"
           />
           <StatCard
             label="Active Tours"
@@ -108,18 +109,21 @@ export default async function AdminDashboard() {
             sub="currently open"
             icon={<Plane size={18} />}
             accent="sky"
+            href="/admin/tours"
           />
           <StatCard
             label="Enrolled Users"
             value={stats.total_enrollees}
             icon={<UserCheck size={18} />}
             accent="sky"
+            href="/admin/students"
           />
           <StatCard
             label="Volunteers"
             value={stats.total_volunteers}
             icon={<Users size={18} />}
             accent="emerald"
+            href="/admin/volunteers"
           />
           <StatCard
             label="Pending Reviews"
@@ -127,6 +131,7 @@ export default async function AdminDashboard() {
             sub="awaiting admin"
             icon={<Clock size={18} />}
             accent="amber"
+            href="/admin/students"
           />
           <StatCard
             label="Awaiting Approval"
@@ -134,6 +139,7 @@ export default async function AdminDashboard() {
             sub="test results"
             icon={<ClipboardList size={18} />}
             accent="amber"
+            href="/admin/tests"
           />
         </div>
 

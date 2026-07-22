@@ -1,9 +1,12 @@
+import Link from "next/link";
+
 interface StatCardProps {
   label: string;
   value: string | number;
   sub?: string;
   icon?: React.ReactNode;
   accent?: "indigo" | "sky" | "emerald" | "amber" | "rose";
+  href?: string;
 }
 
 const accentMap = {
@@ -40,16 +43,18 @@ export function StatCard({
   sub,
   icon,
   accent = "indigo",
+  href,
 }: StatCardProps) {
   const a = accentMap[accent];
 
-  return (
+  const card = (
     <div
-      className="relative p-5 rounded-[10px] overflow-hidden"
+      className="relative p-5 rounded-[10px] overflow-hidden h-full"
       style={{
         background: "#FFFFFF",
         border: "1px solid #E4DFD1",
         borderLeft: `3px solid ${a.border}`,
+        transition: "box-shadow 0.15s, transform 0.15s",
       }}
     >
       <div
@@ -101,5 +106,13 @@ export function StatCard({
         )}
       </div>
     </div>
+  );
+
+  if (!href) return card;
+
+  return (
+    <Link href={href} className="block h-full hover:shadow-md hover:-translate-y-0.5 transition-transform" style={{ transitionDuration: "0.15s" }}>
+      {card}
+    </Link>
   );
 }
