@@ -106,6 +106,12 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (status === "active" && !isTemplate) {
+      const ok = window.confirm(
+        "Status is set to Active — this test will be immediately visible and available to every enrollee already applied to the linked tour. Continue?"
+      );
+      if (!ok) return;
+    }
     setSaving(true);
     setError("");
     const payload = {

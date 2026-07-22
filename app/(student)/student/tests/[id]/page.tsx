@@ -1,9 +1,12 @@
+import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { TestRunner } from "@/components/features/tests/test-runner";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 export default async function TakeTestPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const { userId } = await auth();
   const db = createServerClient();
 
   const { data: test, error } = await db
@@ -14,6 +17,32 @@ export default async function TakeTestPage({ params }: { params: Promise<{ id: s
     .single();
 
   if (error || !test || test.is_template) notFound();
+
+  const { data: user } = await db.from("users").select("id").eq("clerk_id", userId!).single();
+  const { data: existingAttempt } = await db
+    .from("test_attempts")
+    .select("id")
+    .eq("test_id", id)
+    .eq("student_id", user?.id ?? "")
+    .maybeSingle();
+
+  if (existingAttempt) {
+    return (
+      <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+        <div className="max-w-3xl mx-auto text-center" style={{ paddingTop: 80 }}>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: "#19140F", margin: "0 0 10px" }}>
+            You have already submitted this test
+          </h1>
+          <p style={{ fontSize: 14, color: "#5A5247", marginBottom: 20 }}>
+            Each test can only be attempted once.
+          </p>
+          <Link href="/student/tests" style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE" }}>
+            Back to Tests
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>

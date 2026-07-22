@@ -77,6 +77,15 @@ export async function submitTestAttempt(input: TestAttemptInput) {
   if (!test) throw new Error("Test not found");
   if (test.is_template) throw new Error("Test not available");
 
+  const { data: existing } = await db
+    .from("test_attempts")
+    .select("id")
+    .eq("test_id", test_id)
+    .eq("student_id", user.id)
+    .maybeSingle();
+
+  if (existing) throw new Error("You have already submitted this test");
+
   const { percentScore, passed } = scoreTestAttempt(test.questions, answers, test.passing_score);
 
   // If passed → pending_approval (admin must approve before role is promoted)
@@ -85,7 +94,7 @@ export async function submitTestAttempt(input: TestAttemptInput) {
 
   const { data, error } = await db
     .from("test_attempts")
-    .upsert({
+    .insert({
       test_id,
       student_id: user.id,
       answers,
@@ -167,7 +176,7 @@ export async function approveTestResult(attemptId: string) {
 
   const { data: attempt, error: fetchError } = await db
     .from("test_attempts")
-    .select("id, student_id, status, users!test_attempts_student_id_fkey(id, clerk_id, role)")
+    .select("id, student_id, status, users!test_attempts_student_id_fkey(id, clerk_id, role), eligibility_tests(tour_id)")
     .eq("id", attemptId)
     .single();
 
@@ -175,6 +184,7 @@ export async function approveTestResult(attemptId: string) {
   if (attempt.status !== "pending_approval") throw new Error("Attempt is not pending approval");
 
   const student = attempt.users as unknown as { id: string; clerk_id: string; role: string | null };
+  const tourId = (attempt.eligibility_tests as unknown as { tour_id: string | null } | null)?.tour_id;
   if (!student?.clerk_id) throw new Error("Student Clerk ID missing");
 
   // 1. Promote in Supabase first (source of truth)
@@ -193,7 +203,16 @@ export async function approveTestResult(attemptId: string) {
   // 3. Mark attempt approved
   await db.from("test_attempts").update({ status: "approved" }).eq("id", attemptId);
 
-  // 4. Force re-auth (best-effort — stale JWT expires naturally if this fails)
+  // 4. Advance the enrollee to the next application stage
+  if (tourId) {
+    await db
+      .from("tour_applications")
+      .update({ status: "selected", updated_at: new Date().toISOString() })
+      .eq("tour_id", tourId)
+      .eq("student_id", student.id);
+  }
+
+  // 5. Force re-auth (best-effort — stale JWT expires naturally if this fails)
   try {
     await revokeAllUserSessions(student.clerk_id);
   } catch {
@@ -202,6 +221,8 @@ export async function approveTestResult(attemptId: string) {
 
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");
+  revalidatePath("/admin/tours");
+  revalidatePath("/student/tours");
 }
 
 export async function demoteVolunteer(userId: string) {
@@ -231,11 +252,26 @@ export async function demoteVolunteer(userId: string) {
   }
 
   // 3. Revert any approved test attempts for this user back to pending_approval
-  await db
+  const { data: revertedAttempts } = await db
     .from("test_attempts")
     .update({ status: "pending_approval" })
     .eq("student_id", userId)
-    .eq("status", "approved");
+    .eq("status", "approved")
+    .select("id, eligibility_tests(tour_id)");
+
+  // 3b. Revert matching applications back to shortlisted
+  const tourIds = (revertedAttempts ?? [])
+    .map((a) => (a.eligibility_tests as unknown as { tour_id: string | null } | null)?.tour_id)
+    .filter((id): id is string => !!id);
+
+  if (tourIds.length > 0) {
+    await db
+      .from("tour_applications")
+      .update({ status: "shortlisted", updated_at: new Date().toISOString() })
+      .eq("student_id", userId)
+      .in("tour_id", tourIds)
+      .eq("status", "selected");
+  }
 
   // 4. Force re-auth
   try {
@@ -246,10 +282,21 @@ export async function demoteVolunteer(userId: string) {
 
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");
+  revalidatePath("/admin/tours");
+  revalidatePath("/student/tours");
 }
 
 export async function rejectTestResult(attemptId: string) {
   const { db } = await requireAdminUser();
+
+  const { data: attempt, error: fetchError } = await db
+    .from("test_attempts")
+    .select("id, student_id, eligibility_tests(tour_id)")
+    .eq("id", attemptId)
+    .single();
+
+  if (fetchError || !attempt) throw new Error("Attempt not found");
+  const tourId = (attempt.eligibility_tests as unknown as { tour_id: string | null } | null)?.tour_id;
 
   const { error } = await db
     .from("test_attempts")
@@ -258,5 +305,17 @@ export async function rejectTestResult(attemptId: string) {
 
   if (error) { console.error("[rejectTestResult]", error); throw new Error("Failed to reject test result"); }
 
+  // Decline the enrollee's application for this tour too
+  if (tourId) {
+    await db
+      .from("tour_applications")
+      .update({ status: "rejected", updated_at: new Date().toISOString() })
+      .eq("tour_id", tourId)
+      .eq("student_id", attempt.student_id);
+  }
+
   revalidatePath("/admin/tests");
+  revalidatePath("/admin/students");
+  revalidatePath("/admin/tours");
+  revalidatePath("/student/tours");
 }

@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { createServerClient } from "@/lib/supabase/server";
 import { requireAdminUser } from "@/lib/clerk/action-auth";
 import { alumniRegistrationSchema } from "@/lib/validations";
@@ -19,7 +20,15 @@ export async function submitAlumniRegistration(data: unknown) {
   const { success } = await ratelimit.limit(`alumni:${ip}`);
   if (!success) throw new Error("Too many submissions. Please try again later.");
 
-  const parsed = alumniRegistrationSchema.parse(data);
+  let parsed;
+  try {
+    parsed = alumniRegistrationSchema.parse(data);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      throw new Error(err.issues[0]?.message ?? "Please check your form entries and try again.");
+    }
+    throw err;
+  }
   const db = createServerClient();
   const firstVisit = parsed.visit_history?.[0];
 

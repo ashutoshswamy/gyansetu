@@ -254,7 +254,7 @@ export const alumniRegistrationSchema = z.object({
   // Section 4: contact details
   mobile_number: z.string().max(20).optional(),
   alternate_mobile_number: z.string().max(20).optional(),
-  linkedin_url: z.string().url().optional().or(z.literal("")),
+  linkedin_url: z.string().max(300).optional().or(z.literal("")),
   preferred_communication: z.array(z.string()).optional(),
   // Section 5: engagement with Gyan Setu
   interested_volunteering: z.enum(["Yes", "No", "Maybe"]).optional(),
