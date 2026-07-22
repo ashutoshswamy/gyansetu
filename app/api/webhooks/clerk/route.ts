@@ -3,6 +3,9 @@ import { createServerClient } from "@/lib/supabase/server";
 import { clerkClient, type WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { Webhook } from "svix";
+import type { UserRole } from "@/types";
+
+const VALID_ROLES: UserRole[] = ["enrollee", "volunteer", "admin", "earc_staff", "super_admin"];
 
 export async function POST(req: Request) {
   const headersList = await headers();
@@ -47,13 +50,23 @@ export async function POST(req: Request) {
   }
 
   if (event.type === "user.updated") {
-    const { id, email_addresses, first_name, last_name, image_url } = event.data;
-    await db.from("users").update({
+    const { id, email_addresses, first_name, last_name, image_url, public_metadata } = event.data;
+
+    const update: Record<string, unknown> = {
       email: email_addresses[0]?.email_address ?? "",
       name: `${first_name ?? ""} ${last_name ?? ""}`.trim(),
       avatar_url: image_url,
       updated_at: new Date().toISOString(),
-    }).eq("clerk_id", id);
+    };
+
+    // Someone edited publicMetadata.role directly in the Clerk dashboard —
+    // Supabase is the source of truth everywhere else in the app, so pull it in here.
+    const metadataRole = public_metadata?.role as UserRole | undefined;
+    if (metadataRole && VALID_ROLES.includes(metadataRole)) {
+      update.role = metadataRole;
+    }
+
+    await db.from("users").update(update).eq("clerk_id", id);
   }
 
   if (event.type === "user.deleted") {

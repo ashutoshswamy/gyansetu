@@ -8,7 +8,7 @@ import { submitAlumniRegistration } from "@/actions/alumni-registration";
 type Visit = { year: string; month: string; location: string; role: string };
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const VISIT_ROLES = ["Volunteer", "Team Lead", "Resource Person", "Coordinator", "Other"];
+const VISIT_ROLES = ["Volunteer", "Team Lead", "Resource Person", "Coordinator", "EARC Member", "Project Head", "Other"];
 const STREAMS = ["Engineering", "Science", "Commerce", "Arts", "Medical", "Management", "Law", "Computer Applications", "Agriculture", "Education", "Other"];
 const CONTRIBUTION_MODES = ["School Visits", "Online Mentoring", "Content Creation", "Fundraising", "Career Guidance", "Event Management", "Social Media", "Translation", "Research", "Technical Support", "Other"];
 const INTEREST_AREAS = ["Science", "Mathematics", "National Integration", "Education", "Career Guidance", "Leadership", "Exhibition", "Research"];
@@ -52,8 +52,8 @@ export function AlumniRegistrationForm() {
   const [form, setForm] = useState({
     first_name: "", middle_name: "", last_name: "", gender: "", date_of_birth: "", blood_group: "",
     email: "",
-    company_name: "", work_location: "", designation: "", work_department: "", years_experience: "",
-    institution: "", edu_location: "", qualification: "", course_name: "", stream: "", course_status: "", year_semester: "",
+    company_name: "", work_city: "", work_state: "", designation: "", work_department: "", years_experience: "",
+    institution: "", edu_city: "", edu_state: "", qualification: "", course_name: "", stream: "", course_status: "",
     mobile_number: "", alternate_mobile_number: "", linkedin_url: "",
     interested_volunteering: "", available_network_activities: "", availability: "", willing_to_mentor_new: "",
     why_stay_connected: "", skills_contribute: "", suggestions: "", additional_remarks: "",
@@ -96,17 +96,16 @@ export function AlumniRegistrationForm() {
         blood_group: form.blood_group || undefined,
         visit_history: visits.filter((v) => v.year || v.month || v.location || v.role),
         company_name: form.company_name.trim() || undefined,
-        work_location: form.work_location.trim() || undefined,
+        work_location: [form.work_city.trim(), form.work_state.trim()].filter(Boolean).join(", ") || undefined,
         designation: form.designation.trim() || undefined,
         work_department: form.work_department.trim() || undefined,
         years_experience: form.years_experience ? Number(form.years_experience) : undefined,
         institution: form.institution.trim() || undefined,
-        edu_location: form.edu_location.trim() || undefined,
+        edu_location: [form.edu_city.trim(), form.edu_state.trim()].filter(Boolean).join(", ") || undefined,
         qualification: form.qualification || undefined,
         course_name: form.course_name.trim() || undefined,
         stream: form.stream || undefined,
         course_status: (form.course_status || undefined) as "pursuing" | "completed" | undefined,
-        year_semester: form.year_semester.trim() || undefined,
         mobile_number: form.mobile_number.trim() || undefined,
         alternate_mobile_number: form.alternate_mobile_number.trim() || undefined,
         linkedin_url: form.linkedin_url.trim() || undefined,
@@ -258,12 +257,15 @@ export function AlumniRegistrationForm() {
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <F label="Company / Organization Name"><input name="company_name" value={form.company_name} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="Location" hint="City, State"><input name="work_location" value={form.work_location} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="Years of Experience"><input name="years_experience" type="number" min={0} value={form.years_experience} onChange={handleChange} style={inputStyle} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" style={{ marginTop: 16 }}>
                   <F label="Designation"><input name="designation" value={form.designation} onChange={handleChange} style={inputStyle} /></F>
                   <F label="Work Area / Department" hint="e.g. HR, IT"><input name="work_department" value={form.work_department} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="Years of Experience"><input name="years_experience" type="number" min={0} value={form.years_experience} onChange={handleChange} style={inputStyle} /></F>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
+                  <F label="City"><input name="work_city" value={form.work_city} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="State"><input name="work_state" value={form.work_state} onChange={handleChange} style={inputStyle} /></F>
                 </div>
               </div>
 
@@ -271,34 +273,32 @@ export function AlumniRegistrationForm() {
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Educational Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <F label="College / Institution Name" required><input name="institution" required value={form.institution} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="Location" required hint="City, State"><input name="edu_location" required value={form.edu_location} onChange={handleChange} style={inputStyle} /></F>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="Qualification" required>
                     <select name="qualification" required value={form.qualification} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
                       <option value="">Select</option>
                       <option>Diploma</option><option>UG</option><option>PG</option><option>PhD</option><option>Other</option>
                     </select>
                   </F>
-                  <F label="Course Name" required hint="e.g. B.Tech, B.Com, MBA"><input name="course_name" required value={form.course_name} onChange={handleChange} style={inputStyle} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
+                  <F label="City" required><input name="edu_city" required value={form.edu_city} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="State" required><input name="edu_state" required value={form.edu_state} onChange={handleChange} style={inputStyle} /></F>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
+                  <F label="Course Name" required hint="e.g. B.Tech, B.Com, MBA"><input name="course_name" required value={form.course_name} onChange={handleChange} style={inputStyle} /></F>
                   <F label="Stream / Specialization" required>
                     <select name="stream" required value={form.stream} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
                       <option value="">Select</option>
                       {STREAMS.map((s) => <option key={s}>{s}</option>)}
                     </select>
                   </F>
-                  <F label="Course Status" required>
-                    <select name="course_status" required value={form.course_status} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
-                      <option value="">Select</option>
-                      <option value="pursuing">Pursuing</option>
-                      <option value="completed">Completed</option>
-                    </select>
-                  </F>
                 </div>
-                <F label="Year / Semester" hint="e.g. 1st Year, Final Semester">
-                  <input name="year_semester" value={form.year_semester} onChange={handleChange} style={{ ...inputStyle, marginTop: 16 }} />
+                <F label="Course Status" required>
+                  <select name="course_status" required value={form.course_status} onChange={handleChange} style={{ ...inputStyle, appearance: "none", marginTop: 16, maxWidth: 260 }}>
+                    <option value="">Select</option>
+                    <option value="pursuing">Pursuing</option>
+                    <option value="completed">Completed</option>
+                  </select>
                 </F>
               </div>
             </div>
@@ -368,12 +368,12 @@ export function AlumniRegistrationForm() {
               <F label="Skills that you can contribute"><textarea name="skills_contribute" value={form.skills_contribute} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Any suggestions for strengthening the Alumni Network?"><textarea name="suggestions" value={form.suggestions} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Additional Remarks"><textarea name="additional_remarks" value={form.additional_remarks} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
+
+              <button type="submit" disabled={status === "loading"} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: status === "loading" ? "not-allowed" : "pointer", opacity: status === "loading" ? 0.7 : 1 }}>
+                {status === "loading" ? "Submitting..." : "Register as Alumni"}
+              </button>
             </div>
           )}
-
-          <button type="submit" disabled={status === "loading"} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: status === "loading" ? "not-allowed" : "pointer", opacity: status === "loading" ? 0.7 : 1 }}>
-            {status === "loading" ? "Submitting..." : "Register as Alumni"}
-          </button>
         </form>
       </div>
     </div>
