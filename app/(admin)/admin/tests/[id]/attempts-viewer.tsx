@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ExportButton } from "@/components/features/export-button";
 import { ApproveRejectButtons } from "../approve-button";
+import { saveSubjectiveEvaluation } from "@/actions/tests";
+import { useRouter } from "next/navigation";
 import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import type { EligibilityTest, TestQuestion } from "@/types";
 
@@ -12,6 +14,7 @@ export interface Attempt {
   student_id: string;
   answers: Record<string, string | string[]>;
   score?: number;
+  subjective_marks?: Record<string, number>;
   status: "in_progress" | "submitted" | "evaluated" | "pending_approval" | "approved" | "rejected";
   started_at: string;
   submitted_at?: string;
@@ -28,12 +31,44 @@ export function TestAttemptsViewer({
   test: EligibilityTest;
   attempts: Attempt[];
 }) {
+  const router = useRouter();
   const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(
     attempts.length > 0 ? attempts[0].id : null
   );
+  const [marksDraft, setMarksDraft] = useState<Record<string, string>>({});
+  const [lastAttemptId, setLastAttemptId] = useState<string | null>(selectedAttemptId);
+  const [savingEval, setSavingEval] = useState(false);
 
   const selectedAttempt = attempts.find((a) => a.id === selectedAttemptId);
   const questions = test.questions ?? [];
+
+  if (selectedAttemptId !== lastAttemptId) {
+    setLastAttemptId(selectedAttemptId);
+    const initial: Record<string, string> = {};
+    if (selectedAttempt?.subjective_marks) {
+      for (const [qId, val] of Object.entries(selectedAttempt.subjective_marks)) {
+        initial[qId] = String(val);
+      }
+    }
+    setMarksDraft(initial);
+  }
+
+  async function handleSaveEvaluation() {
+    if (!selectedAttempt) return;
+    setSavingEval(true);
+    try {
+      const marks: Record<string, number> = {};
+      for (const [qId, val] of Object.entries(marksDraft)) {
+        if (val !== "") marks[qId] = Number(val);
+      }
+      await saveSubjectiveEvaluation(selectedAttempt.id, marks);
+      router.refresh();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to save evaluation");
+    } finally {
+      setSavingEval(false);
+    }
+  }
 
   // Prepare CSV Export Data
   const exportData = attempts.map((attempt) => {
@@ -263,6 +298,32 @@ export function TestAttemptsViewer({
                           </div>
                         </div>
 
+                        {/* Subjective marks entry */}
+                        {q.type === "subjective" && (
+                          <div className="mt-2.5 p-3 rounded-lg flex items-center gap-2.5" style={{ background: "#F9F8F6", border: "1px solid #E4DFD1", marginLeft: 26 }}>
+                            <span style={{ fontSize: 10, fontWeight: 600, color: "#9B9188", textTransform: "uppercase" }}>
+                              Marks Awarded
+                            </span>
+                            {selectedAttempt.status === "approved" || selectedAttempt.status === "rejected" ? (
+                              <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>
+                                {selectedAttempt.subjective_marks?.[q.id] ?? 0} / {q.marks}
+                              </span>
+                            ) : (
+                              <>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={q.marks}
+                                  value={marksDraft[q.id] ?? ""}
+                                  onChange={(e) => setMarksDraft((prev) => ({ ...prev, [q.id]: e.target.value }))}
+                                  style={{ width: 60, fontSize: 13, padding: "4px 8px", borderRadius: 4, border: "1px solid #E4DFD1" }}
+                                />
+                                <span style={{ fontSize: 12, color: "#9B9188" }}>/ {q.marks}</span>
+                              </>
+                            )}
+                          </div>
+                        )}
+
                         {/* Correct Answer (if incorrect or subjective) */}
                         {correctness !== true && q.correct_answer && (
                           <div className="mt-2 p-3 rounded-lg bg-[#FAF8F2] border border-[#EBE5D6]" style={{ marginLeft: 26 }}>
@@ -278,6 +339,24 @@ export function TestAttemptsViewer({
                     );
                   })}
                 </div>
+
+                {questions.some((q) => q.type === "subjective") &&
+                  selectedAttempt.status !== "approved" &&
+                  selectedAttempt.status !== "rejected" && (
+                    <div className="flex justify-end pt-5 mt-5" style={{ borderTop: "1px solid #E4DFD1" }}>
+                      <button
+                        onClick={handleSaveEvaluation}
+                        disabled={savingEval}
+                        style={{
+                          fontSize: 12, fontWeight: 600, padding: "9px 16px", borderRadius: 6,
+                          background: savingEval ? "#C8C4BC" : "#4A55BE", color: "white", border: "none",
+                          cursor: savingEval ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        {savingEval ? "Saving..." : "Save Evaluation"}
+                      </button>
+                    </div>
+                  )}
               </div>
             ) : (
               <div className="rounded-xl p-8 text-center bg-white border border-dashed" style={{ borderColor: "#E4DFD1" }}>

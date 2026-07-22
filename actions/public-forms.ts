@@ -35,7 +35,6 @@ export async function submitTestimonial(data: unknown) {
     batch_year: parsed.batch_year || null,
     role: parsed.role || null,
     message: parsed.message,
-    is_approved: false,
   });
   if (error) {
     console.error("submitTestimonial error:", error);
@@ -112,10 +111,19 @@ export async function submitInstitutionInquiry(data: unknown) {
 
 export async function approveTestimonial(id: string) {
   const { db } = await requireAdminUser();
-  const { error } = await db.from("testimonials").update({ is_approved: true }).eq("id", id);
+  const { error } = await db.from("testimonials").update({ status: "approved" }).eq("id", id);
   if (error) {
     console.error("approveTestimonial error:", error);
     throw new Error("Failed to approve testimonial.");
+  }
+}
+
+export async function declineTestimonial(id: string) {
+  const { db } = await requireAdminUser();
+  const { error } = await db.from("testimonials").update({ status: "declined" }).eq("id", id);
+  if (error) {
+    console.error("declineTestimonial error:", error);
+    throw new Error("Failed to decline testimonial.");
   }
 }
 

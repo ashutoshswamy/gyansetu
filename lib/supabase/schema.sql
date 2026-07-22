@@ -94,11 +94,13 @@ create table if not exists public.test_attempts (
   student_id   uuid references public.users(id) on delete cascade,
   answers      jsonb not null default '{}',
   score        numeric,
+  subjective_marks jsonb not null default '{}',
   status       text not null default 'in_progress' check (status in ('in_progress', 'submitted', 'evaluated', 'pending_approval', 'approved', 'rejected')),
   started_at   timestamptz default now(),
   submitted_at timestamptz,
   unique (test_id, student_id)
 );
+alter table public.test_attempts add column if not exists subjective_marks jsonb not null default '{}';
 
 -- Dynamic Forms
 create table if not exists public.dynamic_forms (
@@ -776,9 +778,17 @@ create table if not exists public.testimonials (
   batch_year  text,
   role        text,
   message     text        not null,
-  is_approved boolean     not null default false,
+  status      text        not null default 'pending' check (status in ('pending', 'approved', 'declined')),
   created_at  timestamptz not null default now()
 );
+alter table public.testimonials add column if not exists status text not null default 'pending' check (status in ('pending', 'approved', 'declined'));
+drop policy if exists "testimonials_read_approved" on public.testimonials;
+do $$ begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'testimonials' and column_name = 'is_approved') then
+    update public.testimonials set status = 'approved' where is_approved = true and status = 'pending';
+    alter table public.testimonials drop column is_approved;
+  end if;
+end $$;
 
 create table if not exists public.sponsor_inquiries (
   id                uuid        primary key default gen_random_uuid(),
@@ -833,7 +843,7 @@ create policy "admins_manage_alumni_registrations" on public.alumni_registration
 
 -- testimonials: anyone can insert (public form), only admins read all / manage
 create policy "testimonials_insert_public" on public.testimonials for insert with check (true);
-create policy "testimonials_read_approved" on public.testimonials for select using (is_approved = true);
+create policy "testimonials_read_approved" on public.testimonials for select using (status = 'approved');
 create policy "admins_read_all_testimonials"  on public.testimonials for select using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
 );

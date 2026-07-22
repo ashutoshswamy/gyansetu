@@ -5,7 +5,8 @@ type Answers = Record<string, string | string[]>;
 export function scoreTestAttempt(
   questions: TestQuestion[],
   answers: Answers,
-  passingScore: number
+  passingScore: number,
+  subjectiveMarks: Record<string, number> = {}
 ): { score: number; totalMarks: number; percentScore: number; passed: boolean } {
   let score = 0;
   let totalMarks = 0;
@@ -23,8 +24,9 @@ export function scoreTestAttempt(
       ) {
         score += q.marks;
       }
+    } else if (q.type === "subjective" && subjectiveMarks[q.id] !== undefined) {
+      score += Math.max(0, Math.min(subjectiveMarks[q.id], q.marks));
     }
-    // subjective: score added by admin review
   }
 
   const percentScore = totalMarks > 0 ? (score / totalMarks) * 100 : 0;

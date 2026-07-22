@@ -9,6 +9,7 @@ import { scoreTestAttempt } from "@/lib/scoring";
 import { revalidatePath } from "next/cache";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
+import type { TestQuestion } from "@/types";
 
 const testRatelimit = new Ratelimit({
   redis,
@@ -107,6 +108,58 @@ export async function submitTestAttempt(input: TestAttemptInput) {
 
   revalidatePath("/student/tests");
   return { ...data, passed, score: percentScore };
+}
+
+export async function saveSubjectiveEvaluation(attemptId: string, marks: Record<string, number>) {
+  const { db } = await requireAdminUser();
+
+  const { data: attempt, error: fetchError } = await db
+    .from("test_attempts")
+    .select("id, test_id, answers, status")
+    .eq("id", attemptId)
+    .single();
+
+  if (fetchError || !attempt) throw new Error("Attempt not found");
+  if (attempt.status === "approved" || attempt.status === "rejected") {
+    throw new Error("Attempt already finalized");
+  }
+
+  const { data: test, error: testError } = await db
+    .from("eligibility_tests")
+    .select("questions, passing_score")
+    .eq("id", attempt.test_id)
+    .single();
+
+  if (testError || !test) throw new Error("Test not found");
+
+  const questions = test.questions as TestQuestion[];
+  const subjectiveMarks: Record<string, number> = {};
+  for (const q of questions) {
+    if (q.type === "subjective" && marks[q.id] !== undefined) {
+      subjectiveMarks[q.id] = Math.max(0, Math.min(Number(marks[q.id]) || 0, q.marks));
+    }
+  }
+
+  const { percentScore, passed } = scoreTestAttempt(
+    questions,
+    attempt.answers,
+    test.passing_score,
+    subjectiveMarks
+  );
+
+  const { error } = await db
+    .from("test_attempts")
+    .update({
+      subjective_marks: subjectiveMarks,
+      score: percentScore,
+      status: passed ? "pending_approval" : "submitted",
+    })
+    .eq("id", attemptId);
+
+  if (error) { console.error("[saveSubjectiveEvaluation]", error); throw new Error("Failed to save evaluation"); }
+
+  revalidatePath("/admin/tests");
+  revalidatePath(`/admin/tests/${attempt.test_id}`);
 }
 
 export async function approveTestResult(attemptId: string) {

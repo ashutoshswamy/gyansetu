@@ -156,12 +156,16 @@ export default function TestimonialPage() {
                 id="message"
                 name="message"
                 required
+                maxLength={100}
                 value={form.message}
                 onChange={handleChange}
                 placeholder="Share your experience..."
                 rows={5}
                 style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
               />
+              <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6, textAlign: "right" }}>
+                {form.message.length}/100
+              </p>
             </div>
 
             {status === "error" && (

@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { ExportButton } from "@/components/features/export-button";
 
 interface SponsorInquiry {
   id: string;
@@ -24,15 +25,28 @@ export default async function AdminSponsorsPage() {
 
   const inquiries = (data ?? []) as SponsorInquiry[];
 
+  const exportData = inquiries.map((i) => ({
+    "Organization": i.organization_name,
+    "Contact Name": i.contact_name,
+    "Email": i.email,
+    "Phone": i.phone ?? "",
+    "Sponsorship Type": i.sponsorship_type ?? "",
+    "Message": i.message ?? "",
+    "Submitted At": formatDate(i.created_at),
+  }));
+
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "32px 24px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-        <div style={{ marginBottom: 28 }}>
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
-            Admin Console
-          </p>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>Sponsor Inquiries</h1>
-          <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>{inquiries.length} inquiries total</p>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
+          <div>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+              Admin Console
+            </p>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>Sponsor Inquiries</h1>
+            <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>{inquiries.length} inquiries total</p>
+          </div>
+          <ExportButton data={exportData} filename="sponsor-inquiries.csv" />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

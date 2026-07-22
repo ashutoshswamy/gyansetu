@@ -69,6 +69,7 @@ export interface TestAttempt {
   student_id: string;
   answers: Record<string, string | string[]>;
   score?: number;
+  subjective_marks?: Record<string, number>;
   status: "in_progress" | "submitted" | "evaluated" | "pending_approval" | "approved" | "rejected";
   started_at: string;
   submitted_at?: string;

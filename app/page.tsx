@@ -9,7 +9,7 @@ export default async function HomePage() {
   const { data: testimonials } = await db
     .from("testimonials")
     .select("id, name, batch_year, role, message")
-    .eq("is_approved", true)
+    .eq("status", "approved")
     .order("created_at", { ascending: false })
     .limit(6);
 

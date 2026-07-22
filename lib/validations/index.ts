@@ -191,7 +191,7 @@ export const testimonialSchema = z.object({
   name: z.string().min(2).max(100),
   batch_year: z.string().max(20).optional(),
   role: z.string().max(100).optional(),
-  message: z.string().min(10).max(2000),
+  message: z.string().min(10).max(100),
 });
 
 export const sponsorInquirySchema = z.object({
