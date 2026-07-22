@@ -45,6 +45,7 @@ import {
   Menu,
   X,
   KeyRound,
+  Landmark,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -119,6 +120,7 @@ const adminGroups: NavGroup[] = [
       { label: "Sponsors",     href: "/admin/sponsors",     Icon: Handshake },
       { label: "Careers",      href: "/admin/careers",      Icon: Briefcase },
       { label: "Alumni",       href: "/admin/alumni",       Icon: GraduationCap },
+      { label: "Institutions", href: "/admin/institutions", Icon: Landmark },
     ],
   },
 ];
