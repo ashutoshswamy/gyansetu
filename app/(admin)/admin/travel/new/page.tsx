@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createTravelTicket } from "@/actions/travel";
-import { createClientClient } from "@/lib/supabase/client";
+import { getAllGroups } from "@/actions/groups";
 import type { TravelTicketInput } from "@/lib/validations";
 
 export default function NewTravelTicketPage() {
@@ -13,11 +13,7 @@ export default function NewTravelTicketPage() {
   const [groups, setGroups] = useState<{ id: string; name: string; tours?: { title: string } | null }[]>([]);
 
   useEffect(() => {
-    createClientClient()
-      .from("tour_groups")
-      .select("id, name, tours(title)")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setGroups((data as unknown as typeof groups) ?? []));
+    getAllGroups().then(data => setGroups(data as unknown as typeof groups)).catch(() => setGroups([]));
   }, []);
 
   const inputStyle: React.CSSProperties = {

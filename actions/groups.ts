@@ -60,6 +60,26 @@ export async function removeGroupMember(groupId: string, userId: string) {
   revalidatePath("/admin/groups");
 }
 
+export async function getAllGroups() {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("tour_groups")
+    .select("id, name, tours(title)")
+    .order("created_at", { ascending: false });
+  if (error) { console.error("[getAllGroups]", error); throw new Error("Failed to fetch groups"); }
+  return data ?? [];
+}
+
+export async function getGroupsForSelect() {
+  const { db } = await getAuthenticatedUser();
+  const { data, error } = await db
+    .from("tour_groups")
+    .select("id, name, tours(title)")
+    .order("created_at", { ascending: false });
+  if (error) { console.error("[getGroupsForSelect]", error); throw new Error("Failed to fetch groups"); }
+  return data ?? [];
+}
+
 export async function getGroupsByTour(tourId: string) {
   const { db } = await requireAdminUser();
   const { data, error } = await db

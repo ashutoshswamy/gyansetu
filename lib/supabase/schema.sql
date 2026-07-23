@@ -909,6 +909,8 @@ alter table public.volunteer_profiles add column if not exists aadhaar_verified_
 alter table public.volunteer_profiles add column if not exists parent_consent_url text;
 alter table public.volunteer_profiles add column if not exists indemnity_bond_url text;
 
+alter table public.workshops add column if not exists trainer_name text;
+
 -- Registration Fee Management
 create table if not exists public.registration_fees (
   id                 uuid primary key default gen_random_uuid(),
@@ -931,6 +933,7 @@ create table if not exists public.workshops (
   workshop_time  text,
   hall_location  text,
   trainer_id     uuid references public.users(id) on delete set null,
+  trainer_name   text,
   status         text not null default 'scheduled' check (status in ('scheduled', 'completed', 'cancelled')),
   kit_ready      boolean not null default false,
   plan_notes     text,
@@ -1012,6 +1015,8 @@ create table if not exists public.id_cards (
   issued_by     uuid references public.users(id) on delete set null,
   issued_at     timestamptz default now()
 );
+alter table public.id_cards add column if not exists tour_id  uuid references public.tours(id) on delete set null;
+alter table public.id_cards add column if not exists group_id uuid references public.tour_groups(id) on delete set null;
 
 -- Ticket Management & Travel Planning
 create table if not exists public.travel_tickets (
@@ -1031,17 +1036,21 @@ create table if not exists public.travel_tickets (
   updated_at            timestamptz default now()
 );
 
--- GPS / Location Updates (optional, during travel)
+-- Location Updates (optional, during travel)
 create table if not exists public.location_updates (
   id           uuid primary key default gen_random_uuid(),
   group_id     uuid references public.tour_groups(id) on delete cascade,
   posted_by    uuid references public.users(id) on delete set null,
-  latitude     numeric,
-  longitude    numeric,
+  from_location text,
+  to_location   text,
   note         text,
   status_type  text check (status_type in ('current_location', 'train_delay', 'arrival_estimate', 'other')),
   created_at   timestamptz default now()
 );
+alter table public.location_updates add column if not exists from_location text;
+alter table public.location_updates add column if not exists to_location   text;
+alter table public.location_updates drop column if exists latitude;
+alter table public.location_updates drop column if exists longitude;
 
 -- Financial Management: advances, expenses, bill approval
 create table if not exists public.expense_advances (

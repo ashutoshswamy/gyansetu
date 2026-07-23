@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { tourSchema, type TourInput } from "@/lib/validations";
 import { createTour, updateTour } from "@/actions/tours";
 import { useRouter } from "next/navigation";
@@ -68,9 +69,12 @@ export function TourForm({ initialData }: { initialData?: Tour }) {
       } else {
         await createTour(data);
       }
+      toast.success(isEdit ? "Tour updated successfully" : "Tour created successfully");
       router.push("/admin/tours");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to save tour");
+      const message = e instanceof Error ? e.message : "Failed to save tour";
+      setError(message);
+      toast.error(message);
     }
   }
 

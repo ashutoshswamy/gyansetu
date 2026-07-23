@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { submitCareerInquiry } from "@/actions/public-forms";
 import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
 
@@ -55,8 +56,11 @@ export default function CareersPage() {
         message: form.message.trim() || undefined,
       });
       setStatus("success");
+      toast.success("Application submitted successfully");
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setErrorMsg(message);
+      toast.error(message);
       setStatus("error");
     }
   }

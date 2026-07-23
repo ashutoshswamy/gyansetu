@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { submitSponsorInquiry } from "@/actions/public-forms";
 
 export default function SponsorPage() {
@@ -33,8 +34,11 @@ export default function SponsorPage() {
         message: form.message.trim() || undefined,
       });
       setStatus("success");
+      toast.success("Inquiry submitted successfully");
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setErrorMsg(message);
+      toast.error(message);
       setStatus("error");
     }
   }

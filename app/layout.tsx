@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Geist_Mono, Cormorant_Garamond } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 import { QueryProvider } from "@/components/layout/query-provider";
 import "./globals.css";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
       >
         <body className="min-h-full bg-background text-foreground">
           <QueryProvider>{children}</QueryProvider>
+          <Toaster richColors position="top-center" closeButton />
         </body>
       </html>
     </ClerkProvider>

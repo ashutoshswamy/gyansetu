@@ -70,7 +70,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
                 {workshop.hall_location ? ` · ${workshop.hall_location}` : ""}
               </p>
               <p style={{ fontSize: 13, color: "#5A5247", margin: "2px 0 0" }}>
-                Trainer: {workshop.trainer?.name ?? "Not assigned"}
+                Trainer: {workshop.trainer?.name ?? workshop.trainer_name ?? "Not assigned"}
                 {" · "}
                 Kit: <span style={{ color: workshop.kit_ready ? "#2A5E3A" : "#9B9188", fontWeight: 600 }}>{workshop.kit_ready ? "Ready" : "Not Ready"}</span>
               </p>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createEvent, updateEvent } from "@/actions/events";
 import type { EventType } from "@/types";
 
@@ -66,9 +67,12 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
       } else {
         await createEvent(payload);
       }
+      toast.success(isEdit ? "Event updated successfully" : "Event created successfully");
       router.push("/admin/events");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save event");
+      const message = err instanceof Error ? err.message : "Failed to save event";
+      setError(message);
+      toast.error(message);
       setLoading(false);
     }
   }

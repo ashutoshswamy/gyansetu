@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { submitExpense } from "@/actions/finance";
-import { createClientClient } from "@/lib/supabase/client";
+import { getGroupsForSelect } from "@/actions/groups";
 import type { ExpenseInput } from "@/lib/validations";
 
 const CATEGORIES: ExpenseInput["category"][] = ["travel", "accommodation", "food", "materials", "miscellaneous", "other"];
@@ -16,11 +17,7 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
 
   useEffect(() => {
     if (groupId) return;
-    createClientClient()
-      .from("tour_groups")
-      .select("id, name, tours(title)")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setGroups((data as unknown as typeof groups) ?? []));
+    getGroupsForSelect().then(data => setGroups(data as unknown as typeof groups)).catch(() => setGroups([]));
   }, [groupId]);
 
   const inputStyle: React.CSSProperties = {
@@ -35,17 +32,25 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
     setError(null);
     const fd = new FormData(e.currentTarget);
     try {
-      await submitExpense({
+      const result = await submitExpense({
         group_id: groupId || (fd.get("group_id") as string),
         category: fd.get("category") as ExpenseInput["category"],
         amount: Number(fd.get("amount")),
         bill_url: (fd.get("bill_url") as string) || undefined,
         description: (fd.get("description") as string) || undefined,
       });
+      if (!result.ok) {
+        setError(result.error);
+        toast.error(result.error);
+        return;
+      }
       (e.target as HTMLFormElement).reset();
+      toast.success("Expense submitted successfully");
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to submit expense");
+      const message = err instanceof Error ? err.message : "Failed to submit expense";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }

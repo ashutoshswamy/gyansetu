@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { addGroupMember, removeGroupMember } from "@/actions/groups";
 import { Users, MapPin, Trash2, ArrowLeft } from "lucide-react";
+import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
 interface GroupMember {
   id: string;
@@ -119,12 +120,14 @@ export default function GroupDetailPage() {
         <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20, marginBottom: 20 }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 14px" }}>Add Member</h2>
           <div className="flex gap-3">
-            <select value={newUserId} onChange={e => setNewUserId(e.target.value)} style={{ ...inputStyle, flex: 2 }}>
-              <option value="">Select volunteer...</option>
-              {volunteers
-                .filter(v => !(group.tour_group_members ?? []).some((m) => m.user_id === v.id))
-                .map(v => <option key={v.id} value={v.id}>{v.name} ({v.email})</option>)}
-            </select>
+            <div style={{ flex: 2 }}>
+              <VolunteerCombobox
+                volunteers={volunteers}
+                value={newUserId}
+                onChange={setNewUserId}
+                excludeIds={new Set((group.tour_group_members ?? []).map(m => m.user_id))}
+              />
+            </div>
             <input
               value={newRole}
               onChange={e => setNewRole(e.target.value)}

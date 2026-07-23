@@ -139,16 +139,16 @@ export const volunteerProfileSchema = z.object({
   city: z.string().max(100).optional(),
   institution: z.string().max(200).optional(),
   course_year: z.string().max(50).optional(),
-  skills: z.array(z.string()).optional(),
+  skills: z.array(z.string()).min(1, "Skills are required"),
   languages: z.array(z.string()).optional(),
   states_visited: z.array(z.string()).optional(),
-  bio: z.string().max(1000).optional(),
+  bio: z.string().max(1000).min(1, "Bio is required"),
   emergency_contact_name: z.string().max(200).optional(),
   emergency_contact_phone: z.string().max(20).optional(),
   emergency_contact_relation: z.string().max(100).optional(),
   medical_notes: z.string().max(1000).optional(),
   consent_given: z.boolean().optional(),
-  availability_notes: z.string().max(500).optional(),
+  availability_notes: z.string().max(500).min(1, "Availability notes are required"),
   first_name: z.string().max(100).optional(),
   middle_name: z.string().max(100).optional(),
   last_name: z.string().max(100).optional(),
@@ -303,6 +303,7 @@ export const workshopSchema = z.object({
   workshop_time: z.string().optional(),
   hall_location: z.string().max(200).optional(),
   trainer_id: z.string().uuid().optional(),
+  trainer_name: z.string().max(200).optional(),
   status: z.enum(["scheduled", "completed", "cancelled"]).default("scheduled"),
   kit_ready: z.boolean().default(false),
   plan_notes: z.string().max(2000).optional(),
@@ -361,7 +362,8 @@ export const kitAssignmentSchema = z.object({
 
 export const idCardSchema = z.object({
   volunteer_id: z.string().uuid(),
-  card_number: z.string().min(2).max(100),
+  tour_id: z.string().uuid(),
+  group_id: z.string().uuid().optional(),
   valid_from: z.string(),
   valid_to: z.string(),
   card_file_url: z.string().url().optional().or(z.literal("")),
@@ -382,8 +384,8 @@ export const travelTicketSchema = z.object({
 
 export const locationUpdateSchema = z.object({
   group_id: z.string().uuid(),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
+  from_location: z.string().max(200).optional(),
+  to_location: z.string().max(200).optional(),
   note: z.string().max(1000).optional(),
   status_type: z.enum(["current_location", "train_delay", "arrival_estimate", "other"]).optional(),
 });

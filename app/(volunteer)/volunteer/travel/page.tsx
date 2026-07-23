@@ -114,8 +114,8 @@ export default async function VolunteerTravelPage() {
                       <span style={{ fontSize: 12, color: "#9B9188" }}>{new Date(u.created_at).toLocaleString()}</span>
                     </div>
                     {u.note && <p style={{ fontSize: 14, color: "#19140F", margin: "2px 0" }}>{u.note}</p>}
-                    {(u.latitude != null && u.longitude != null) && (
-                      <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>{u.latitude}, {u.longitude}</p>
+                    {(u.from_location || u.to_location) && (
+                      <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>{u.from_location || "?"} → {u.to_location || "?"}</p>
                     )}
                     <p style={{ fontSize: 12, color: "#9B9188", margin: "2px 0 0" }}>Posted by {u.poster?.name ?? "Unknown"}</p>
                   </div>

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Star } from "lucide-react";
 import { createDemoEvaluation } from "@/actions/demo-evaluations";
+import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
 const SCORE_FIELDS = [
   { key: "content_delivery", label: "Content Delivery" },
@@ -14,12 +16,48 @@ const SCORE_FIELDS = [
   { key: "student_engagement", label: "Student Engagement" },
 ] as const;
 
+type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
+
+// score 0-10 <-> 5 stars, half-star step (star value = score / 2)
+function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map(star => {
+        const filled = Math.min(1, Math.max(0, value / 2 - (star - 1)));
+        return (
+          <button
+            key={star}
+            type="button"
+            aria-label={`${star * 2} of 10`}
+            onClick={e => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const half = e.clientX - rect.left < rect.width / 2;
+              onChange(star * 2 - (half ? 1 : 0));
+            }}
+            style={{ position: "relative", width: 22, height: 22, padding: 0, border: "none", background: "none", cursor: "pointer", lineHeight: 0 }}
+          >
+            <Star size={22} color="#E4DFD1" fill="#E4DFD1" style={{ position: "absolute", top: 0, left: 0 }} />
+            <div style={{ position: "absolute", top: 0, left: 0, width: `${filled * 100}%`, height: "100%", overflow: "hidden" }}>
+              <Star size={22} color="#F5A524" fill="#F5A524" />
+            </div>
+          </button>
+        );
+      })}
+      <span style={{ fontSize: 12, color: "#5A5247", marginLeft: 6, minWidth: 28 }}>{value.toFixed(1)}</span>
+    </div>
+  );
+}
+
 export default function NewDemoEvaluationPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
+  const [volunteerId, setVolunteerId] = useState("");
+  const [scores, setScores] = useState<Record<ScoreKey, number>>(
+    Object.fromEntries(SCORE_FIELDS.map(f => [f.key, 0])) as Record<ScoreKey, number>
+  );
 
   useEffect(() => {
     fetch("/api/tours").then(r => r.json()).then(d => setTours(Array.isArray(d) ? d : []));
@@ -38,9 +76,6 @@ export default function NewDemoEvaluationPage() {
     setError(null);
     const fd = new FormData(e.currentTarget);
     try {
-      const scores = Object.fromEntries(
-        SCORE_FIELDS.map(f => [f.key, Number(fd.get(f.key))])
-      ) as Record<(typeof SCORE_FIELDS)[number]["key"], number>;
       await createDemoEvaluation({
         volunteer_id: fd.get("volunteer_id") as string,
         tour_id: (fd.get("tour_id") as string) || undefined,
@@ -71,10 +106,7 @@ export default function NewDemoEvaluationPage() {
           <div className="space-y-5">
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
-              <select name="volunteer_id" required style={inputStyle}>
-                <option value="">Select volunteer...</option>
-                {volunteers.map(v => <option key={v.id} value={v.id}>{v.name} ({v.email})</option>)}
-              </select>
+              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={setVolunteerId} name="volunteer_id" />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour (optional)</label>
@@ -86,11 +118,11 @@ export default function NewDemoEvaluationPage() {
 
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, color: "#19140F", display: "block", marginBottom: 10 }}>Scores (0-10 each)</label>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-3">
                 {SCORE_FIELDS.map(f => (
-                  <div key={f.key}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>{f.label}</label>
-                    <input type="number" name={f.key} min={0} max={10} step="0.5" required defaultValue={0} style={inputStyle} />
+                  <div key={f.key} className="flex items-center justify-between gap-4">
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247" }}>{f.label}</label>
+                    <StarRating value={scores[f.key]} onChange={v => setScores(s => ({ ...s, [f.key]: v }))} />
                   </div>
                 ))}
               </div>

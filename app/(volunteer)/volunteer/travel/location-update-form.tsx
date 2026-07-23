@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { postLocationUpdate } from "@/actions/travel";
 import type { LocationUpdateInput } from "@/lib/validations";
 
@@ -28,20 +29,21 @@ export function LocationUpdateForm({ groupId }: { groupId: string }) {
     setSaving(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
-    const lat = fd.get("latitude") as string;
-    const lng = fd.get("longitude") as string;
     try {
       await postLocationUpdate({
         group_id: groupId,
         note: (fd.get("note") as string) || undefined,
         status_type: (fd.get("status_type") as LocationUpdateInput["status_type"]) || undefined,
-        latitude: lat ? Number(lat) : undefined,
-        longitude: lng ? Number(lng) : undefined,
+        from_location: (fd.get("from_location") as string) || undefined,
+        to_location: (fd.get("to_location") as string) || undefined,
       });
       (e.target as HTMLFormElement).reset();
+      toast.success("Location updated successfully");
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to post update");
+      const message = err instanceof Error ? err.message : "Failed to post update";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -66,12 +68,12 @@ export function LocationUpdateForm({ groupId }: { groupId: string }) {
           </div>
           <div />
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Latitude</label>
-            <input name="latitude" type="number" step="any" style={inputStyle} />
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>From</label>
+            <input name="from_location" type="text" placeholder="e.g. New Delhi" style={inputStyle} />
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Longitude</label>
-            <input name="longitude" type="number" step="any" style={inputStyle} />
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>To</label>
+            <input name="to_location" type="text" placeholder="e.g. Mumbai Central" style={inputStyle} />
           </div>
         </div>
         <div>

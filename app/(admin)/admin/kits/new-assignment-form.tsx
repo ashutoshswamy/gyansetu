@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { upsertKitAssignment } from "@/actions/kits";
 import { createClientClient } from "@/lib/supabase/client";
 
@@ -40,9 +41,12 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
         distributed: false,
       });
       (e.target as HTMLFormElement).reset();
+      toast.success("Kit assigned successfully");
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create assignment");
+      const message = err instanceof Error ? err.message : "Failed to create assignment";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

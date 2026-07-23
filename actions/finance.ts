@@ -3,20 +3,34 @@
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
 import { expenseAdvanceSchema, expenseSchema, rejectExpenseSchema, type ExpenseAdvanceInput, type ExpenseInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+import { ZodError } from "zod";
+
+function describeZodError(err: ZodError): string {
+  const first = err.issues[0];
+  if (!first) return "Invalid input";
+  const path = first.path.join(".");
+  return path ? `${path}: ${first.message}` : first.message;
+}
 
 // Advances
 
 export async function createExpenseAdvance(input: ExpenseAdvanceInput) {
   const { db, user } = await requireAdminUser();
-  const data = expenseAdvanceSchema.parse(input);
+  let data: ExpenseAdvanceInput;
+  try {
+    data = expenseAdvanceSchema.parse(input);
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
   const { data: advance, error } = await db
     .from("expense_advances")
     .insert({ ...data, given_by: user.id })
     .select()
     .single();
-  if (error) { console.error("[createExpenseAdvance]", error); throw new Error("Failed to record advance"); }
+  if (error) { console.error("[createExpenseAdvance]", error); return { ok: false as const, error: "Failed to record advance" }; }
   revalidatePath("/admin/finance");
-  return advance;
+  return { ok: true as const, advance };
 }
 
 export async function getAllExpenseAdvances() {
@@ -33,16 +47,22 @@ export async function getAllExpenseAdvances() {
 
 export async function submitExpense(input: ExpenseInput) {
   const { db, user } = await requireVolunteerUser();
-  const data = expenseSchema.parse(input);
+  let data: ExpenseInput;
+  try {
+    data = expenseSchema.parse(input);
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
   const { data: expense, error } = await db
     .from("expenses")
     .insert({ ...data, submitted_by: user.id })
     .select()
     .single();
-  if (error) { console.error("[submitExpense]", error); throw new Error("Failed to submit expense"); }
+  if (error) { console.error("[submitExpense]", error); return { ok: false as const, error: "Failed to submit expense" }; }
   revalidatePath("/admin/finance");
   revalidatePath("/volunteer/expenses");
-  return expense;
+  return { ok: true as const, expense };
 }
 
 export async function approveExpense(id: string) {
@@ -53,9 +73,9 @@ export async function approveExpense(id: string) {
     .select("id, status, submitted_by")
     .eq("id", id)
     .single();
-  if (fetchError || !expense) throw new Error("Expense not found");
-  if (expense.status !== "pending") throw new Error("Expense is not pending approval");
-  if (expense.submitted_by === user.id) throw new Error("Cannot approve your own expense");
+  if (fetchError || !expense) return { ok: false as const, error: "Expense not found" };
+  if (expense.status !== "pending") return { ok: false as const, error: "Expense is not pending approval" };
+  if (expense.submitted_by === user.id) return { ok: false as const, error: "Cannot approve your own expense" };
 
   const { data, error } = await db
     .from("expenses")
@@ -64,24 +84,30 @@ export async function approveExpense(id: string) {
     .eq("status", "pending")
     .select()
     .single();
-  if (error) { console.error("[approveExpense]", error); throw new Error("Failed to approve expense"); }
+  if (error) { console.error("[approveExpense]", error); return { ok: false as const, error: "Failed to approve expense" }; }
   revalidatePath("/admin/finance");
   revalidatePath("/volunteer/expenses");
-  return data;
+  return { ok: true as const, expense: data };
 }
 
 export async function rejectExpense(id: string, reason: string) {
   const { db, user } = await requireAdminUser();
-  const { reason: parsedReason } = rejectExpenseSchema.parse({ reason });
+  let parsedReason: string;
+  try {
+    parsedReason = rejectExpenseSchema.parse({ reason }).reason;
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
 
   const { data: expense, error: fetchError } = await db
     .from("expenses")
     .select("id, status, submitted_by")
     .eq("id", id)
     .single();
-  if (fetchError || !expense) throw new Error("Expense not found");
-  if (expense.status !== "pending") throw new Error("Expense is not pending approval");
-  if (expense.submitted_by === user.id) throw new Error("Cannot reject your own expense");
+  if (fetchError || !expense) return { ok: false as const, error: "Expense not found" };
+  if (expense.status !== "pending") return { ok: false as const, error: "Expense is not pending approval" };
+  if (expense.submitted_by === user.id) return { ok: false as const, error: "Cannot reject your own expense" };
 
   const { data, error } = await db
     .from("expenses")
@@ -90,10 +116,10 @@ export async function rejectExpense(id: string, reason: string) {
     .eq("status", "pending")
     .select()
     .single();
-  if (error) { console.error("[rejectExpense]", error); throw new Error("Failed to reject expense"); }
+  if (error) { console.error("[rejectExpense]", error); return { ok: false as const, error: "Failed to reject expense" }; }
   revalidatePath("/admin/finance");
   revalidatePath("/volunteer/expenses");
-  return data;
+  return { ok: true as const, expense: data };
 }
 
 export async function getAllExpenses() {

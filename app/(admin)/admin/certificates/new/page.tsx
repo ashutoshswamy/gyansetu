@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { issueCertificate } from "@/actions/certificates";
 import type { CertificateType } from "@/types";
+import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
 const CERT_TYPES = ["participation", "excellence", "leadership", "mentor"] as const;
 
@@ -12,6 +13,7 @@ export default function NewCertificatePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
+  const [volunteerId, setVolunteerId] = useState("");
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
 
   useEffect(() => {
@@ -66,10 +68,7 @@ export default function NewCertificatePage() {
           <div className="space-y-5">
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
-              <select name="user_id" required style={inputStyle}>
-                <option value="">Select volunteer...</option>
-                {volunteers.map(v => <option key={v.id} value={v.id}>{v.name} ({v.email})</option>)}
-              </select>
+              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={setVolunteerId} name="user_id" />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Certificate Type <span style={{ color: "#DC2626" }}>*</span></label>

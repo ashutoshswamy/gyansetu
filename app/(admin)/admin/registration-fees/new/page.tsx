@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createRegistrationFee } from "@/actions/registration-fees";
 import type { RegistrationFeeInput } from "@/lib/validations";
+import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
 const STATUSES = ["pending", "paid", "waived", "refunded"] as const;
 
@@ -12,6 +13,7 @@ export default function NewRegistrationFeePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
+  const [volunteerId, setVolunteerId] = useState("");
 
   useEffect(() => {
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
@@ -60,10 +62,7 @@ export default function NewRegistrationFeePage() {
           <div className="space-y-5">
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
-              <select name="volunteer_id" required style={inputStyle}>
-                <option value="">Select volunteer...</option>
-                {volunteers.map(v => <option key={v.id} value={v.id}>{v.name} ({v.email})</option>)}
-              </select>
+              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={setVolunteerId} name="volunteer_id" />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "#DC2626" }}>*</span></label>

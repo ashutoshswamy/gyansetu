@@ -73,7 +73,7 @@ export default async function VolunteerWorkshopsPage() {
                       {new Date(w.workshop_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
                       {w.workshop_time ? ` · ${w.workshop_time}` : ""}
                       {w.hall_location ? ` · ${w.hall_location}` : ""}
-                      {w.trainer?.name ? ` · Trainer: ${w.trainer.name}` : ""}
+                      {w.trainer?.name || w.trainer_name ? ` · Trainer: ${w.trainer?.name ?? w.trainer_name}` : ""}
                     </div>
                     {a?.missed_summary && (
                       <p style={{ fontSize: 13, color: "#5A5247", margin: "6px 0 0", whiteSpace: "pre-wrap" }}>

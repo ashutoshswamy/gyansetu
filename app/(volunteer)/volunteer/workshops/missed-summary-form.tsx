@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { submitMissedWorkshopSummary } from "@/actions/workshops";
 
 export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
@@ -19,9 +20,12 @@ export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
       await submitMissedWorkshopSummary(workshopId, summary);
       setOpen(false);
       setSummary("");
+      toast.success("Summary submitted successfully");
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to submit summary");
+      const message = err instanceof Error ? err.message : "Failed to submit summary";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

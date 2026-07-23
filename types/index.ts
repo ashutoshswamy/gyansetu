@@ -324,6 +324,7 @@ export interface Workshop {
   workshop_time?: string;
   hall_location?: string;
   trainer_id?: string;
+  trainer_name?: string;
   status: "scheduled" | "completed" | "cancelled";
   kit_ready: boolean;
   plan_notes?: string;
@@ -412,12 +413,17 @@ export interface IdCard {
   id: string;
   volunteer_id: string;
   card_number: string;
+  tour_id?: string;
+  group_id?: string;
   valid_from: string;
   valid_to: string;
   card_file_url?: string;
+  photo_url?: string;
   issued_by: string;
   issued_at: string;
   volunteer?: UserProfile;
+  tour?: { id: string; title: string; destination: string };
+  group?: { id: string; name: string };
 }
 
 export interface TravelTicket {
@@ -442,8 +448,8 @@ export interface LocationUpdate {
   id: string;
   group_id: string;
   posted_by: string;
-  latitude?: number;
-  longitude?: number;
+  from_location?: string;
+  to_location?: string;
   note?: string;
   status_type?: "current_location" | "train_delay" | "arrival_estimate" | "other";
   created_at: string;

@@ -95,6 +95,7 @@ const adminGroups: NavGroup[] = [
       { label: "Kit Assembly",      href: "/admin/kits",              Icon: Package },
       { label: "Travel & Tickets",  href: "/admin/travel",            Icon: Train },
       { label: "Finance",           href: "/admin/finance",           Icon: Receipt },
+      { label: "Daily Logs",        href: "/admin/daily-logs",        Icon: BookOpen },
       { label: "Tour Reports",      href: "/admin/tour-reports",      Icon: FileBarChart },
     ],
   },

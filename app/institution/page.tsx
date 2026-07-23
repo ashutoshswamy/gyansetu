@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { submitInstitutionInquiry } from "@/actions/public-forms";
 
 export default function InstitutionPage() {
@@ -39,8 +40,11 @@ export default function InstitutionPage() {
         message: form.message.trim() || undefined,
       });
       setStatus("success");
+      toast.success("Application submitted successfully");
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setErrorMsg(message);
+      toast.error(message);
       setStatus("error");
     }
   }

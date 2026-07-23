@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { approveExpense, rejectExpense } from "@/actions/finance";
 
 export function ExpenseActions({ id }: { id: string }) {
@@ -11,10 +12,12 @@ export function ExpenseActions({ id }: { id: string }) {
   async function handleApprove() {
     setLoading("approve");
     try {
-      await approveExpense(id);
+      const result = await approveExpense(id);
+      if (!result.ok) { toast.error(result.error); return; }
+      toast.success("Expense approved");
       router.refresh();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to approve");
+      toast.error(err instanceof Error ? err.message : "Failed to approve");
     } finally {
       setLoading(null);
     }
@@ -25,10 +28,12 @@ export function ExpenseActions({ id }: { id: string }) {
     if (!reason) return;
     setLoading("reject");
     try {
-      await rejectExpense(id, reason);
+      const result = await rejectExpense(id, reason);
+      if (!result.ok) { toast.error(result.error); return; }
+      toast.success("Expense rejected");
       router.refresh();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to reject");
+      toast.error(err instanceof Error ? err.message : "Failed to reject");
     } finally {
       setLoading(null);
     }

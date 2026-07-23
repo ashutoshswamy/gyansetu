@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { submitTestimonial } from "@/actions/public-forms";
 
 export default function TestimonialPage() {
@@ -31,8 +32,11 @@ export default function TestimonialPage() {
         message: form.message.trim(),
       });
       setStatus("success");
+      toast.success("Testimonial submitted successfully");
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setErrorMsg(message);
+      toast.error(message);
       setStatus("error");
     }
   }

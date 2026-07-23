@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createTest, updateTest } from "@/actions/tests";
 import type { EligibilityTest } from "@/types";
 
@@ -135,14 +136,18 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
 
       if (!result.ok) {
         setError(result.error);
+        toast.error(result.error);
         setSaving(false);
         return;
       }
 
+      toast.success(isEdit ? "Test updated successfully" : "Test created successfully");
       router.push(isTemplate ? "/admin/tests/templates" : "/admin/tests");
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save test");
+      const message = err instanceof Error ? err.message : "Failed to save test";
+      setError(message);
+      toast.error(message);
       setSaving(false);
     }
   }

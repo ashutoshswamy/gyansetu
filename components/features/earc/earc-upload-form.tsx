@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { uploadEarcFile, type EarcFileCategory } from "@/actions/earc";
 import { Upload, Loader2 } from "lucide-react";
 
@@ -27,13 +28,16 @@ export function EarcUploadForm({
       try {
         await uploadEarcFile(fd, category);
         setSuccess(true);
+        toast.success("File uploaded successfully");
         formRef.current?.reset();
         setTimeout(() => {
           setSuccess(false);
           window.location.reload();
         }, 1200);
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Upload failed");
+        const message = err instanceof Error ? err.message : "Upload failed";
+        setError(message);
+        toast.error(message);
       }
     });
   }

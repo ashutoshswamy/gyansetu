@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { Image, FileText, Video } from "lucide-react";
+import { MediaThumb } from "@/components/features/media/media-thumb";
 
 const typeIcon: Record<string, React.ElementType> = {
   photo: Image,
@@ -64,13 +65,7 @@ export default async function AdminMediaPage() {
                     style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
                   >
                     {item.media_type === "photo" ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.file_url}
-                        alt={item.caption ?? "photo"}
-                        style={{ width: "100%", height: 140, objectFit: "cover", display: "block" }}
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                      />
+                      <MediaThumb src={item.file_url} alt={item.caption ?? "photo"} />
                     ) : (
                       <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "#F3F0E8" }}>
                         <Icon size={32} style={{ color: "#9B9188" }} />

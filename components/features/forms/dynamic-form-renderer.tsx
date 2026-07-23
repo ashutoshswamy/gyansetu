@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, type UseFormRegister, type FieldValues } from "react-hook-form";
+import { toast } from "sonner";
 import type { DynamicForm, FormField } from "@/types";
 import { submitForm } from "@/actions/forms";
 import { uploadFileToStorage } from "@/actions/upload";
@@ -206,8 +207,11 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
     try {
       await submitForm({ form_id: form.id, data });
       setSubmitted(true);
+      toast.success("Form submitted successfully");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Submission failed");
+      const message = e instanceof Error ? e.message : "Submission failed";
+      setError(message);
+      toast.error(message);
       setSaving(false);
     }
   }

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createExpenseAdvance } from "@/actions/finance";
-import { createClientClient } from "@/lib/supabase/client";
+import { getAllGroups } from "@/actions/groups";
 
 export function AdvanceForm() {
   const router = useRouter();
@@ -12,11 +13,7 @@ export function AdvanceForm() {
   const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
-    createClientClient()
-      .from("tour_groups")
-      .select("id, name, tours(title)")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setGroups((data as unknown as typeof groups) ?? []));
+    getAllGroups().then(data => setGroups(data as unknown as typeof groups)).catch(() => setGroups([]));
   }, []);
 
   const inputStyle: React.CSSProperties = {
@@ -31,15 +28,23 @@ export function AdvanceForm() {
     setError(null);
     const fd = new FormData(e.currentTarget);
     try {
-      await createExpenseAdvance({
+      const result = await createExpenseAdvance({
         group_id: fd.get("group_id") as string,
         amount: Number(fd.get("amount")),
         notes: (fd.get("notes") as string) || undefined,
       });
+      if (!result.ok) {
+        setError(result.error);
+        toast.error(result.error);
+        return;
+      }
       (e.target as HTMLFormElement).reset();
+      toast.success("Advance recorded successfully");
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to record advance");
+      const message = err instanceof Error ? err.message : "Failed to record advance";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }

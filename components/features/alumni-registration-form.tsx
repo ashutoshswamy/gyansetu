@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { AlertCircle, CheckCircle } from "lucide-react";
 import { submitAlumniRegistration } from "@/actions/alumni-registration";
 
@@ -33,6 +34,18 @@ function F({ label, hint, required, children }: { label: string; hint?: string; 
       {hint && <p style={{ fontSize: 11, color: "#9B9188", margin: "0 0 6px" }}>{hint}</p>}
       {children}
     </div>
+  );
+}
+
+function NextSectionButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: "pointer" }}
+    >
+      Next Section
+    </button>
   );
 }
 
@@ -69,6 +82,13 @@ export function AlumniRegistrationForm() {
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleDigitsChange(maxLen: number) {
+    return (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value.replace(/\D/g, "").slice(0, maxLen) }));
+    };
   }
 
   function updateVisit(i: number, field: keyof Visit, value: string) {
@@ -123,9 +143,12 @@ export function AlumniRegistrationForm() {
         additional_remarks: form.additional_remarks.trim() || undefined,
       });
       setStatus("success");
+      toast.success("Registration submitted successfully");
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setErrorMsg(message);
       setStatus("error");
+      toast.error(message);
     }
   }
 
@@ -208,6 +231,7 @@ export function AlumniRegistrationForm() {
                   </select>
                 </F>
               </div>
+              <NextSectionButton onClick={() => setActiveTab("visits")} />
           </div>
 
           <div className="space-y-3" style={{ display: activeTab === "visits" ? undefined : "none" }}>
@@ -245,6 +269,7 @@ export function AlumniRegistrationForm() {
                 style={{ fontSize: 12.5, fontWeight: 600, color: accent, background: "transparent", border: "none", padding: "6px 0", cursor: "pointer" }}>
                 + Add another visit
               </button>
+              <NextSectionButton onClick={() => setActiveTab("work")} />
           </div>
 
           <div className="space-y-5" style={{ display: activeTab === "work" ? undefined : "none" }}>
@@ -296,12 +321,13 @@ export function AlumniRegistrationForm() {
                   </select>
                 </F>
               </div>
+              <NextSectionButton onClick={() => setActiveTab("contact")} />
           </div>
 
           <div className="space-y-5" style={{ display: activeTab === "contact" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <F label="Mobile Number" required><input name="mobile_number" type="tel" required value={form.mobile_number} onChange={handleChange} style={inputStyle} /></F>
-                <F label="Alternate Mobile Number"><input name="alternate_mobile_number" type="tel" value={form.alternate_mobile_number} onChange={handleChange} style={inputStyle} /></F>
+                <F label="Mobile Number" required hint="Exactly 10 digits"><input name="mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required value={form.mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
+                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={form.alternate_mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Email" required><input name="email" type="email" required value={form.email} onChange={handleChange} placeholder="you@example.com" style={inputStyle} /></F>
@@ -316,6 +342,7 @@ export function AlumniRegistrationForm() {
                   ))}
                 </div>
               </F>
+              <NextSectionButton onClick={() => setActiveTab("engagement")} />
           </div>
 
           <div className="space-y-5" style={{ display: activeTab === "engagement" ? undefined : "none" }}>
@@ -350,6 +377,7 @@ export function AlumniRegistrationForm() {
                   </select>
                 </F>
               </div>
+              <NextSectionButton onClick={() => setActiveTab("additional")} />
           </div>
 
           <div className="space-y-5" style={{ display: activeTab === "additional" ? undefined : "none" }}>

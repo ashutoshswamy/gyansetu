@@ -17,6 +17,7 @@ export default function NewWorkshopPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [trainers, setTrainers] = useState<{ id: string; name: string; email: string }[]>([]);
+  const [trainerChoice, setTrainerChoice] = useState<string>("");
 
   useEffect(() => {
     fetch("/api/volunteers").then(r => r.json()).then(d => setTrainers(d.volunteers ?? []));
@@ -40,7 +41,8 @@ export default function NewWorkshopPage() {
         workshop_date: fd.get("workshop_date") as string,
         workshop_time: (fd.get("workshop_time") as string) || undefined,
         hall_location: (fd.get("hall_location") as string) || undefined,
-        trainer_id: (fd.get("trainer_id") as string) || undefined,
+        trainer_id: trainerChoice === "custom" ? undefined : (fd.get("trainer_id") as string) || undefined,
+        trainer_name: trainerChoice === "custom" ? (fd.get("trainer_name") as string) || undefined : undefined,
         status: fd.get("status") as "scheduled" | "completed" | "cancelled",
         kit_ready: fd.get("kit_ready") === "on",
         plan_notes: (fd.get("plan_notes") as string) || undefined,
@@ -103,10 +105,14 @@ export default function NewWorkshopPage() {
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Trainer (optional)</label>
-              <select name="trainer_id" style={inputStyle}>
+              <select name="trainer_id" value={trainerChoice} onChange={e => setTrainerChoice(e.target.value)} style={inputStyle}>
                 <option value="">No trainer assigned</option>
                 {trainers.map(t => <option key={t.id} value={t.id}>{t.name} ({t.email})</option>)}
+                <option value="custom">Custom / Other (not a registered volunteer)</option>
               </select>
+              {trainerChoice === "custom" && (
+                <input name="trainer_name" placeholder="Trainer's name" style={{ ...inputStyle, marginTop: 8 }} />
+              )}
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Plan Notes</label>

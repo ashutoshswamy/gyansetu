@@ -3,16 +3,55 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createIdCard } from "@/actions/id-cards";
+import { getGroupsByTour } from "@/actions/groups";
+import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
+
+type Group = { id: string; name: string; tour_group_members?: { users?: { id: string } | null }[] };
 
 export default function NewIdCardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
+  const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string; volunteer_profiles?: { photo_url?: string } | null }[]>([]);
+  const [volunteerId, setVolunteerId] = useState("");
+  const selectedPhoto = volunteers.find(v => v.id === volunteerId)?.volunteer_profiles?.photo_url;
+  const [tours, setTours] = useState<{ id: string; title: string; destination: string }[]>([]);
+  const [tourId, setTourId] = useState("");
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [groupId, setGroupId] = useState("");
 
   useEffect(() => {
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
+    fetch("/api/tours").then(r => r.json()).then(d => setTours(Array.isArray(d) ? d : []));
   }, []);
+
+  function autoMatchGroup(list: Group[], forVolunteerId: string) {
+    return list.find(g => g.tour_group_members?.some(m => m.users?.id === forVolunteerId));
+  }
+
+  useEffect(() => {
+    if (!tourId) return;
+    getGroupsByTour(tourId).then(g => {
+      const list = g as Group[];
+      setGroups(list);
+      const match = autoMatchGroup(list, volunteerId);
+      if (match) setGroupId(match.id);
+    }).catch(() => setGroups([]));
+    // Only refetch when the tour changes — volunteer changes are handled by handleVolunteerChange below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tourId]);
+
+  function handleTourChange(id: string) {
+    setTourId(id);
+    setGroupId("");
+    setGroups([]);
+  }
+
+  function handleVolunteerChange(id: string) {
+    setVolunteerId(id);
+    const match = autoMatchGroup(groups, id);
+    if (match) setGroupId(match.id);
+  }
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
@@ -28,7 +67,8 @@ export default function NewIdCardPage() {
     try {
       await createIdCard({
         volunteer_id: fd.get("volunteer_id") as string,
-        card_number: fd.get("card_number") as string,
+        tour_id: fd.get("tour_id") as string,
+        group_id: (fd.get("group_id") as string) || undefined,
         valid_from: fd.get("valid_from") as string,
         valid_to: fd.get("valid_to") as string,
         card_file_url: (fd.get("card_file_url") as string) || undefined,
@@ -57,15 +97,33 @@ export default function NewIdCardPage() {
           <div className="space-y-5">
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
-              <select name="volunteer_id" required style={inputStyle}>
-                <option value="">Select volunteer...</option>
-                {volunteers.map(v => <option key={v.id} value={v.id}>{v.name} ({v.email})</option>)}
-              </select>
+              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="volunteer_id" />
+              {volunteerId && (
+                selectedPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={selectedPhoto} alt="Profile photo" style={{ width: 64, height: 64, borderRadius: 8, objectFit: "cover", marginTop: 8, border: "1px solid #E4DFD1" }} />
+                ) : (
+                  <p style={{ fontSize: 12, color: "#9B9188", marginTop: 6 }}>No profile photo uploaded by this volunteer yet — the card will show no photo unless one is added below.</p>
+                )
+              )}
             </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Card Number <span style={{ color: "#DC2626" }}>*</span></label>
-              <input name="card_number" required style={inputStyle} placeholder="e.g. GS-2026-0001" />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
+                <select name="tour_id" required value={tourId} onChange={e => handleTourChange(e.target.value)} style={inputStyle}>
+                  <option value="">Select tour...</option>
+                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group</label>
+                <select name="group_id" value={groupId} onChange={e => setGroupId(e.target.value)} disabled={!tourId} style={inputStyle}>
+                  <option value="">No group / General</option>
+                  {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
+              </div>
             </div>
+            <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>Card number is generated automatically from the tour, group, and issue sequence.</p>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>
@@ -77,7 +135,8 @@ export default function NewIdCardPage() {
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Card Photo/File URL (optional)</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Card Photo/File URL Override (optional)</label>
+              <p style={{ fontSize: 11, color: "#9B9188", margin: "0 0 6px" }}>By default the card uses the volunteer&apos;s own profile photo. Only set this to override with a different image or attach a file (e.g. PDF).</p>
               <input name="card_file_url" type="url" style={inputStyle} placeholder="https://..." />
             </div>
           </div>

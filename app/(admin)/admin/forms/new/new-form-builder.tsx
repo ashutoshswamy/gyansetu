@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createForm, updateForm } from "@/actions/forms";
 import type { DynamicForm, FormField } from "@/types";
 
@@ -116,13 +117,16 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
       } else {
         await createForm(payload);
       }
+      toast.success(isEdit ? "Form updated successfully" : "Form created successfully");
       if (isTemplate) {
         router.push("/admin/forms/templates");
       } else {
         router.push("/admin/forms");
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save form");
+      const message = err instanceof Error ? err.message : "Failed to save form";
+      setError(message);
+      toast.error(message);
       setSaving(false);
     }
   }

@@ -7,6 +7,7 @@ function looksLikeImage(url: string) {
 
 export default async function VolunteerIdCardPage() {
   const card = await getMyIdCard();
+  const photo = card?.photo_url || (card?.card_file_url && looksLikeImage(card.card_file_url) ? card.card_file_url : undefined);
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
@@ -31,14 +32,21 @@ export default async function VolunteerIdCardPage() {
                 <IdCardIcon size={20} />
                 <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>Gyan Setu Volunteer</span>
               </div>
-              {card.card_file_url && looksLikeImage(card.card_file_url) && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={card.card_file_url}
-                  alt="ID card"
-                  style={{ width: 96, height: 96, borderRadius: 8, objectFit: "cover", marginBottom: 16, border: "2px solid rgba(255,255,255,0.4)" }}
-                />
-              )}
+              <div className="flex items-start gap-4 mb-4">
+                {photo && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={photo}
+                    alt="ID card"
+                    style={{ width: 96, height: 96, borderRadius: 8, objectFit: "cover", border: "2px solid rgba(255,255,255,0.4)", flexShrink: 0 }}
+                  />
+                )}
+                <div>
+                  <p style={{ fontSize: 18, fontWeight: 700, marginBottom: 2 }}>{card.name}</p>
+                  {card.tour?.title && <p style={{ fontSize: 13, opacity: 0.85 }}>{card.tour.title} · {card.tour.destination}</p>}
+                  {card.group?.name && <p style={{ fontSize: 13, opacity: 0.85 }}>Group: {card.group.name}</p>}
+                </div>
+              </div>
               <p style={{ fontSize: 11, opacity: 0.7, marginBottom: 2 }}>Card Number</p>
               <p style={{ fontSize: 20, fontWeight: 700, letterSpacing: "0.04em", marginBottom: 16 }}>{card.card_number}</p>
               <div className="flex justify-between">

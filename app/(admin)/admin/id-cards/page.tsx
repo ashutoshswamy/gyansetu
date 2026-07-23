@@ -39,7 +39,10 @@ export default async function AdminIdCardsPage() {
                   </span>
                 </div>
                 <div style={{ fontSize: 12, color: "#9B9188" }}>
-                  {card.volunteer?.email} · Valid {new Date(card.valid_from).toLocaleDateString()} – {new Date(card.valid_to).toLocaleDateString()}
+                  {card.volunteer?.email}
+                  {card.tour?.title && ` · ${card.tour.title} (${card.tour.destination})`}
+                  {card.group?.name && ` · ${card.group.name}`}
+                  {" · "}Valid {new Date(card.valid_from).toLocaleDateString()} – {new Date(card.valid_to).toLocaleDateString()}
                   {card.card_file_url && (
                     <>
                       {" · "}
