@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Tour } from "@/types";
 import { MapPin, Calendar, Users } from "lucide-react";
+import { DeleteTourButton } from "@/components/features/tours/delete-tour-button";
 
 const statusStyles: Record<Tour["status"], { color: string; background: string }> = {
   draft:     { color: "#9B9188", background: "rgba(90,82,71,0.08)" },
@@ -71,6 +72,12 @@ export default async function AdminToursPage() {
                       Manage
                     </button>
                   </Link>
+                  <Link href={`/admin/tours/${tour.id}/edit`}>
+                    <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
+                      Edit
+                    </button>
+                  </Link>
+                  <DeleteTourButton tourId={tour.id} />
                 </div>
               </div>
             );

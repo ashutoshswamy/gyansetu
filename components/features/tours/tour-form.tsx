@@ -3,9 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tourSchema, type TourInput } from "@/lib/validations";
-import { createTour } from "@/actions/tours";
+import { createTour, updateTour } from "@/actions/tours";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import type { Tour } from "@/types";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -35,8 +36,9 @@ const errStyle: React.CSSProperties = {
   marginTop: 4,
 };
 
-export function TourForm() {
+export function TourForm({ initialData }: { initialData?: Tour }) {
   const router = useRouter();
+  const isEdit = !!initialData;
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -45,16 +47,30 @@ export function TourForm() {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(tourSchema),
-    defaultValues: { status: "draft" as const },
+    defaultValues: initialData
+      ? {
+          title: initialData.title,
+          description: initialData.description,
+          destination: initialData.destination,
+          start_date: initialData.start_date,
+          end_date: initialData.end_date,
+          capacity: initialData.capacity,
+          status: initialData.status,
+        }
+      : { status: "draft" as const },
   });
 
   async function onSubmit(data: TourInput) {
     setError(null);
     try {
-      await createTour(data);
+      if (isEdit) {
+        await updateTour(initialData.id, data);
+      } else {
+        await createTour(data);
+      }
       router.push("/admin/tours");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to create tour");
+      setError(e instanceof Error ? e.message : "Failed to save tour");
     }
   }
 
@@ -133,7 +149,7 @@ export function TourForm() {
             disabled={isSubmitting}
             style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: isSubmitting ? "#C8C4BC" : "#19140F", color: "white", cursor: isSubmitting ? "not-allowed" : "pointer" }}
           >
-            {isSubmitting ? "Creating..." : "Create Tour"}
+            {isSubmitting ? "Saving..." : isEdit ? "Save Changes" : "Create Tour"}
           </button>
           <button
             type="button"

@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
+import { requireAdminUser, requireVolunteerUser, assertGroupAccess } from "@/lib/clerk/action-auth";
 import { localHostSchema, type LocalHostInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -49,7 +49,8 @@ export async function getAllLocalHosts() {
 }
 
 export async function getLocalHostForMyGroup(groupId: string) {
-  const { db } = await requireVolunteerUser();
+  const { db, user } = await requireVolunteerUser();
+  await assertGroupAccess(db, user, groupId);
   const { data, error } = await db
     .from("local_hosts")
     .select("*")

@@ -3,6 +3,7 @@
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
 import { workshopSchema, workshopAttendeeSchema, type WorkshopInput, type WorkshopAttendeeInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 export async function createWorkshop(input: WorkshopInput) {
   const { db, user } = await requireAdminUser();
@@ -86,32 +87,37 @@ export async function getWorkshopAttendees(workshopId: string) {
 
 export async function submitMissedWorkshopSummary(workshopId: string, summary: string) {
   const { db, user } = await requireVolunteerUser();
-  const { data, error } = await db
+  const data = workshopAttendeeSchema.parse({
+    workshop_id: workshopId,
+    volunteer_id: user.id,
+    attendance_status: "excused",
+    missed_summary: summary,
+    makeup_decision: "pending",
+  });
+  const { data: row, error } = await db
     .from("workshop_attendees")
-    .upsert(
-      {
-        workshop_id: workshopId,
-        volunteer_id: user.id,
-        attendance_status: "excused",
-        missed_summary: summary,
-        makeup_decision: "pending",
-      },
-      { onConflict: "workshop_id,volunteer_id" }
-    )
+    .upsert(data, { onConflict: "workshop_id,volunteer_id" })
     .select()
     .single();
   if (error) { console.error("[submitMissedWorkshopSummary]", error); throw new Error("Failed to submit summary"); }
   revalidatePath("/volunteer/workshops");
-  return data;
+  return row;
 }
+
+const decideMakeupSchema = z.object({
+  workshop_id: z.string().uuid(),
+  volunteer_id: z.string().uuid(),
+  decision: z.enum(["allowed", "not_allowed"]),
+});
 
 export async function decideMakeup(workshopId: string, volunteerId: string, decision: "allowed" | "not_allowed") {
   const { db } = await requireAdminUser();
+  const parsed = decideMakeupSchema.parse({ workshop_id: workshopId, volunteer_id: volunteerId, decision });
   const { data, error } = await db
     .from("workshop_attendees")
-    .update({ makeup_decision: decision })
-    .eq("workshop_id", workshopId)
-    .eq("volunteer_id", volunteerId)
+    .update({ makeup_decision: parsed.decision })
+    .eq("workshop_id", parsed.workshop_id)
+    .eq("volunteer_id", parsed.volunteer_id)
     .select()
     .single();
   if (error) { console.error("[decideMakeup]", error); throw new Error("Failed to record decision"); }

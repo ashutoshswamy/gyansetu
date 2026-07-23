@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
-import { expenseAdvanceSchema, expenseSchema, type ExpenseAdvanceInput, type ExpenseInput } from "@/lib/validations";
+import { expenseAdvanceSchema, expenseSchema, rejectExpenseSchema, type ExpenseAdvanceInput, type ExpenseInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
 // Advances
@@ -47,10 +47,21 @@ export async function submitExpense(input: ExpenseInput) {
 
 export async function approveExpense(id: string) {
   const { db, user } = await requireAdminUser();
+
+  const { data: expense, error: fetchError } = await db
+    .from("expenses")
+    .select("id, status, submitted_by")
+    .eq("id", id)
+    .single();
+  if (fetchError || !expense) throw new Error("Expense not found");
+  if (expense.status !== "pending") throw new Error("Expense is not pending approval");
+  if (expense.submitted_by === user.id) throw new Error("Cannot approve your own expense");
+
   const { data, error } = await db
     .from("expenses")
     .update({ status: "approved", approved_by: user.id, approved_at: new Date().toISOString() })
     .eq("id", id)
+    .eq("status", "pending")
     .select()
     .single();
   if (error) { console.error("[approveExpense]", error); throw new Error("Failed to approve expense"); }
@@ -61,10 +72,22 @@ export async function approveExpense(id: string) {
 
 export async function rejectExpense(id: string, reason: string) {
   const { db, user } = await requireAdminUser();
+  const { reason: parsedReason } = rejectExpenseSchema.parse({ reason });
+
+  const { data: expense, error: fetchError } = await db
+    .from("expenses")
+    .select("id, status, submitted_by")
+    .eq("id", id)
+    .single();
+  if (fetchError || !expense) throw new Error("Expense not found");
+  if (expense.status !== "pending") throw new Error("Expense is not pending approval");
+  if (expense.submitted_by === user.id) throw new Error("Cannot reject your own expense");
+
   const { data, error } = await db
     .from("expenses")
-    .update({ status: "rejected", approved_by: user.id, approved_at: new Date().toISOString(), rejection_reason: reason })
+    .update({ status: "rejected", approved_by: user.id, approved_at: new Date().toISOString(), rejection_reason: parsedReason })
     .eq("id", id)
+    .eq("status", "pending")
     .select()
     .single();
   if (error) { console.error("[rejectExpense]", error); throw new Error("Failed to reject expense"); }

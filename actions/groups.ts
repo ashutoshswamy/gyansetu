@@ -78,7 +78,7 @@ export async function getMyGroup(tourId: string) {
     .select("*, tour_groups!inner(*, tours(id, title, destination))")
     .eq("user_id", user.id)
     .eq("tour_groups.tour_id", tourId)
-    .single();
-  if (error) return null;
+    .maybeSingle();
+  if (error) { console.error("[getMyGroup]", error); return null; }
   return data;
 }

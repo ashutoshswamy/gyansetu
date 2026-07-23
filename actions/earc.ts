@@ -43,7 +43,7 @@ export async function uploadEarcFile(
     else if (ext === "png") fileType = "image/png";
     else if (ext === "webp") fileType = "image/webp";
 
-    await db.from("earc_files").insert({
+    const { error } = await db.from("earc_files").insert({
       name,
       file_url: url,
       file_type: fileType,
@@ -51,6 +51,7 @@ export async function uploadEarcFile(
       description: description?.trim() || null,
       uploaded_by: user.id,
     });
+    if (error) { console.error("[uploadEarcFile]", error); throw new Error("Failed to save file record"); }
     return;
   }
 
@@ -71,7 +72,7 @@ export async function uploadEarcFile(
 
   const { data: urlData } = db.storage.from("earc-files").getPublicUrl(safeName);
 
-  await db.from("earc_files").insert({
+  const { error } = await db.from("earc_files").insert({
     name: file.name,
     file_url: urlData.publicUrl,
     file_type: file.type,
@@ -79,6 +80,7 @@ export async function uploadEarcFile(
     description: description?.trim() || null,
     uploaded_by: user.id,
   });
+  if (error) { console.error("[uploadEarcFile]", error); throw new Error("Failed to save file record"); }
 }
 
 export async function deleteEarcFile(fileId: string) {

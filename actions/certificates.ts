@@ -30,7 +30,7 @@ export async function getAllCertificates() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("certificates")
-    .select("*, users!certificates_user_id_fkey(id, name, email), tours(id, title), users!certificates_issued_by_fkey(id, name)")
+    .select("*, recipient:users!certificates_user_id_fkey(id, name, email), tours(id, title), issuer:users!certificates_issued_by_fkey(id, name)")
     .order("issued_at", { ascending: false });
   if (error) { console.error("[certificates]", error); throw new Error("Operation failed"); }
   return data ?? [];
@@ -40,7 +40,7 @@ export async function getMyCertificates() {
   const { db, user } = await getAuthenticatedUser();
   const { data, error } = await db
     .from("certificates")
-    .select("*, tours(id, title, destination), users!certificates_issued_by_fkey(id, name)")
+    .select("*, tours(id, title, destination), issuer:users!certificates_issued_by_fkey(id, name)")
     .eq("user_id", user.id)
     .order("issued_at", { ascending: false });
   if (error) { console.error("[certificates]", error); throw new Error("Operation failed"); }

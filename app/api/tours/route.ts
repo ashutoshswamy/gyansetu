@@ -11,11 +11,15 @@ export async function GET(req: Request) {
   }
 
   const { searchParams } = new URL(req.url);
-  const status = searchParams.get("status");
+  const requestedStatus = searchParams.get("status");
+  const isPrivileged = user.role === "admin" || user.role === "super_admin" || user.role === "volunteer";
 
-  if (status && status !== "open" && user.role !== "admin" && user.role !== "super_admin" && user.role !== "volunteer") {
+  if (requestedStatus && requestedStatus !== "open" && !isPrivileged) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  // Non-privileged callers only ever see open tours, whether or not they pass a status param.
+  const status = isPrivileged ? requestedStatus : "open";
 
   if (status === "open") {
     const cached = await getCached(CACHE_KEYS.activeTours);

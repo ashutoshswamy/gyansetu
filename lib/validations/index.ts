@@ -402,6 +402,10 @@ export const expenseSchema = z.object({
   description: z.string().max(1000).optional(),
 });
 
+export const rejectExpenseSchema = z.object({
+  reason: z.string().trim().min(1).max(1000),
+});
+
 export const tourReportSchema = z.object({
   tour_id: z.string().uuid(),
   group_id: z.string().uuid().optional(),

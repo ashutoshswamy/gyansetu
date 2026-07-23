@@ -187,8 +187,7 @@ export function AlumniRegistrationForm() {
             </div>
           )}
 
-          {activeTab === "personal" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "personal" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <F label="First Name" required><input name="first_name" required value={form.first_name} onChange={handleChange} style={inputStyle} /></F>
                 <F label="Middle Name"><input name="middle_name" value={form.middle_name} onChange={handleChange} style={inputStyle} /></F>
@@ -209,11 +208,9 @@ export function AlumniRegistrationForm() {
                   </select>
                 </F>
               </div>
-            </div>
-          )}
+          </div>
 
-          {activeTab === "visits" && (
-            <div className="space-y-3">
+          <div className="space-y-3" style={{ display: activeTab === "visits" ? undefined : "none" }}>
               <p style={{ fontSize: 13, color: "#5A5247", marginBottom: 4 }}>Add every Gyan Setu tour you&apos;ve been part of.</p>
               {visits.map((v, i) => (
                 <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.4fr 1fr auto", gap: 8, alignItems: "end" }}>
@@ -248,11 +245,9 @@ export function AlumniRegistrationForm() {
                 style={{ fontSize: 12.5, fontWeight: 600, color: accent, background: "transparent", border: "none", padding: "6px 0", cursor: "pointer" }}>
                 + Add another visit
               </button>
-            </div>
-          )}
+          </div>
 
-          {activeTab === "work" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "work" ? undefined : "none" }}>
               <div style={{ borderBottom: "1px solid #E4DFD1", paddingBottom: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -301,11 +296,9 @@ export function AlumniRegistrationForm() {
                   </select>
                 </F>
               </div>
-            </div>
-          )}
+          </div>
 
-          {activeTab === "contact" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "contact" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Mobile Number" required><input name="mobile_number" type="tel" required value={form.mobile_number} onChange={handleChange} style={inputStyle} /></F>
                 <F label="Alternate Mobile Number"><input name="alternate_mobile_number" type="tel" value={form.alternate_mobile_number} onChange={handleChange} style={inputStyle} /></F>
@@ -323,11 +316,9 @@ export function AlumniRegistrationForm() {
                   ))}
                 </div>
               </F>
-            </div>
-          )}
+          </div>
 
-          {activeTab === "engagement" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "engagement" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Interested in Volunteering">
                   <select name="interested_volunteering" value={form.interested_volunteering} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
@@ -359,11 +350,9 @@ export function AlumniRegistrationForm() {
                   </select>
                 </F>
               </div>
-            </div>
-          )}
+          </div>
 
-          {activeTab === "additional" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "additional" ? undefined : "none" }}>
               <F label="Why would you like to stay connected with Gyan Setu?"><textarea name="why_stay_connected" value={form.why_stay_connected} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Skills that you can contribute"><textarea name="skills_contribute" value={form.skills_contribute} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Any suggestions for strengthening the Alumni Network?"><textarea name="suggestions" value={form.suggestions} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
@@ -372,8 +361,7 @@ export function AlumniRegistrationForm() {
               <button type="submit" disabled={status === "loading"} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: status === "loading" ? "not-allowed" : "pointer", opacity: status === "loading" ? 0.7 : 1 }}>
                 {status === "loading" ? "Submitting..." : "Register as Alumni"}
               </button>
-            </div>
-          )}
+          </div>
         </form>
       </div>
     </div>

@@ -117,3 +117,22 @@ export async function requireEarcUser() {
 export async function getAuthenticatedUser() {
   return resolveUserWithRole();
 }
+
+// Volunteers can only see logistics data (travel, kits, local hosts, location updates) for
+// groups they're actually assigned to — admin/super_admin see every group regardless.
+export async function assertGroupAccess(
+  db: ReturnType<typeof createServerClient>,
+  user: { id: string; role: string | null },
+  groupId: string
+) {
+  if (user.role === "admin" || user.role === "super_admin") return;
+
+  const [{ data: membership }, { data: group }] = await Promise.all([
+    db.from("tour_group_members").select("id").eq("group_id", groupId).eq("user_id", user.id).maybeSingle(),
+    db.from("tour_groups").select("mentor_id").eq("id", groupId).maybeSingle(),
+  ]);
+
+  if (!membership && group?.mentor_id !== user.id) {
+    throw new Error("Unauthorized");
+  }
+}

@@ -37,13 +37,17 @@ export async function POST(req: Request) {
     const { id, email_addresses, first_name, last_name, image_url } = event.data;
 
     // New users start as enrollee — they must pass a test to become a volunteer
-    await db.from("users").insert({
+    const { error } = await db.from("users").insert({
       clerk_id: id,
       email: email_addresses[0]?.email_address ?? "",
       name: `${first_name ?? ""} ${last_name ?? ""}`.trim(),
       avatar_url: image_url,
       role: "enrollee",
     });
+    if (error) {
+      console.error("[clerk webhook] user.created insert failed", error);
+      return NextResponse.json({ error: "DB insert failed" }, { status: 500 });
+    }
 
     const clerk = await clerkClient();
     await clerk.users.updateUserMetadata(id, { publicMetadata: { role: "enrollee" } });
@@ -66,11 +70,19 @@ export async function POST(req: Request) {
       update.role = metadataRole;
     }
 
-    await db.from("users").update(update).eq("clerk_id", id);
+    const { error } = await db.from("users").update(update).eq("clerk_id", id);
+    if (error) {
+      console.error("[clerk webhook] user.updated failed", error);
+      return NextResponse.json({ error: "DB update failed" }, { status: 500 });
+    }
   }
 
   if (event.type === "user.deleted") {
-    await db.from("users").delete().eq("clerk_id", event.data.id);
+    const { error } = await db.from("users").delete().eq("clerk_id", event.data.id);
+    if (error) {
+      console.error("[clerk webhook] user.deleted failed", error);
+      return NextResponse.json({ error: "DB delete failed" }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ received: true });

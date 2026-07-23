@@ -3,8 +3,17 @@
 import { requireAdminUser, requireVolunteerUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { dailyLogSchema, type DailyLogInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+import { Ratelimit } from "@upstash/ratelimit";
+import { redis } from "@/lib/redis/client";
 
 const requireAdmin = requireAdminUser;
+
+// Atomic per-user daily cap — a plain SELECT-count-then-INSERT (as used to live here) is a
+// TOCTOU race: two concurrent uploads can both read count < 2 and both insert, bypassing the cap.
+const dailyUploadRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.fixedWindow(2, "1 d"),
+});
 
 export async function createDailyLog(input: DailyLogInput) {
   const { db, user } = await requireVolunteerUser();
@@ -108,24 +117,8 @@ export async function uploadMedia(
 ) {
   const { db, user } = await requireVolunteerUser();
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const startOfDay = today.toISOString();
-
-  const { count, error: countError } = await db
-    .from("media_gallery")
-    .select("id", { count: "exact", head: true })
-    .eq("uploaded_by", user.id)
-    .gte("created_at", startOfDay);
-
-  if (countError) {
-    console.error("[uploadMedia check]", countError);
-    throw new Error("Could not verify daily upload limit");
-  }
-
-  if (count !== null && count >= 2) {
-    throw new Error("Daily upload limit reached. You can only upload 2 media files per day.");
-  }
+  const { success } = await dailyUploadRatelimit.limit(`media-upload:${user.id}`);
+  if (!success) throw new Error("Daily upload limit reached. You can only upload 2 media files per day.");
 
   let parsed: URL;
   try {

@@ -93,22 +93,23 @@ export async function submitTestAttempt(input: TestAttemptInput) {
 
   const { test_id, answers } = testAttemptSchema.parse(input);
 
-  const { data: test } = await db
+  const { data: test, error: testFetchError } = await db
     .from("eligibility_tests")
     .select("questions, passing_score, tour_id, is_template")
     .eq("id", test_id)
     .single();
 
-  if (!test) throw new Error("Test not found");
+  if (testFetchError || !test) throw new Error("Test not found");
   if (test.is_template) throw new Error("Test not available");
 
-  const { data: existing } = await db
+  const { data: existing, error: existingFetchError } = await db
     .from("test_attempts")
     .select("id")
     .eq("test_id", test_id)
     .eq("student_id", user.id)
     .maybeSingle();
 
+  if (existingFetchError) { console.error("[submitTestAttempt]", existingFetchError); throw new Error("Failed to check for an existing attempt"); }
   if (existing) throw new Error("You have already submitted this test");
 
   const { percentScore, passed } = scoreTestAttempt(test.questions, answers, test.passing_score);
@@ -133,11 +134,12 @@ export async function submitTestAttempt(input: TestAttemptInput) {
   if (error) { console.error("[submitTestAttempt]", error); throw new Error("Failed to submit test attempt"); }
 
   if (test.tour_id) {
-    await db
+    const { error: appError } = await db
       .from("tour_applications")
       .update({ test_score: percentScore })
       .eq("tour_id", test.tour_id)
       .eq("student_id", user.id);
+    if (appError) console.error("[submitTestAttempt] failed to record test_score on application", appError);
   }
 
   revalidatePath("/student/tests");
@@ -226,15 +228,17 @@ export async function approveTestResult(attemptId: string) {
   }
 
   // 3. Mark attempt approved
-  await db.from("test_attempts").update({ status: "approved" }).eq("id", attemptId);
+  const { error: attemptError } = await db.from("test_attempts").update({ status: "approved" }).eq("id", attemptId);
+  if (attemptError) console.error("[approveTestResult] failed to mark attempt approved after role promotion", attemptError);
 
   // 4. Advance the enrollee to the next application stage
   if (tourId) {
-    await db
+    const { error: appError } = await db
       .from("tour_applications")
       .update({ status: "selected", updated_at: new Date().toISOString() })
       .eq("tour_id", tourId)
       .eq("student_id", student.id);
+    if (appError) console.error("[approveTestResult] failed to advance application to selected", appError);
   }
 
   // 5. Force re-auth (best-effort — stale JWT expires naturally if this fails)
@@ -277,12 +281,13 @@ export async function demoteVolunteer(userId: string) {
   }
 
   // 3. Revert any approved test attempts for this user back to pending_approval
-  const { data: revertedAttempts } = await db
+  const { data: revertedAttempts, error: revertError } = await db
     .from("test_attempts")
     .update({ status: "pending_approval" })
     .eq("student_id", userId)
     .eq("status", "approved")
     .select("id, eligibility_tests(tour_id)");
+  if (revertError) console.error("[demoteVolunteer] failed to revert approved test attempts after demotion", revertError);
 
   // 3b. Revert matching applications back to shortlisted
   const tourIds = (revertedAttempts ?? [])
@@ -290,12 +295,13 @@ export async function demoteVolunteer(userId: string) {
     .filter((id): id is string => !!id);
 
   if (tourIds.length > 0) {
-    await db
+    const { error: appError } = await db
       .from("tour_applications")
       .update({ status: "shortlisted", updated_at: new Date().toISOString() })
       .eq("student_id", userId)
       .in("tour_id", tourIds)
       .eq("status", "selected");
+    if (appError) console.error("[demoteVolunteer] failed to revert applications to shortlisted", appError);
   }
 
   // 4. Force re-auth
@@ -332,11 +338,12 @@ export async function rejectTestResult(attemptId: string) {
 
   // Decline the enrollee's application for this tour too
   if (tourId) {
-    await db
+    const { error: appError } = await db
       .from("tour_applications")
       .update({ status: "rejected", updated_at: new Date().toISOString() })
       .eq("tour_id", tourId)
       .eq("student_id", attempt.student_id);
+    if (appError) console.error("[rejectTestResult] failed to decline application", appError);
   }
 
   revalidatePath("/admin/tests");

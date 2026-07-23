@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
+import { requireAdminUser, requireVolunteerUser, assertGroupAccess } from "@/lib/clerk/action-auth";
 import { kitItemSchema, kitAssignmentSchema, type KitItemInput, type KitAssignmentInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -68,7 +68,8 @@ export async function getAllKitAssignments() {
 }
 
 export async function getKitAssignmentForMyGroup(groupId: string) {
-  const { db } = await requireVolunteerUser();
+  const { db, user } = await requireVolunteerUser();
+  await assertGroupAccess(db, user, groupId);
   const { data, error } = await db
     .from("kit_assignments")
     .select("*")

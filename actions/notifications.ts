@@ -48,7 +48,8 @@ export async function markNotificationRead(id: string) {
   const { success } = await markReadRatelimit.limit(`notif-read:${userId}`);
   if (!success) throw new Error("Too many requests. Please wait before trying again.");
 
-  await db.from("notifications").update({ read: true }).eq("id", id).eq("user_id", user.id);
+  const { error } = await db.from("notifications").update({ read: true }).eq("id", id).eq("user_id", user.id);
+  if (error) { console.error("[markNotificationRead]", error); throw new Error("Failed to mark notification read"); }
 }
 
 export async function sendEmail({

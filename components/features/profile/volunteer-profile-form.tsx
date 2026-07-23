@@ -273,8 +273,7 @@ export function VolunteerProfileForm({ variant }: Props) {
             </div>
           )}
 
-          {activeTab === "personal" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "personal" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <F label="First Name" required><input name="first_name" required onInput={sanitizeNameInput} defaultValue={(profile?.first_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
                 <F label="Middle Name"><input name="middle_name" onInput={sanitizeNameInput} defaultValue={(profile?.middle_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
@@ -410,11 +409,9 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </F>
               )}
               <F label="Availability Notes"><textarea name="availability_notes" rows={2} placeholder="When are you typically available? Any constraints?" defaultValue={profile?.availability_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
-            </div>
-          )}
+          </div>
 
-          {activeTab === "education" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "education" ? undefined : "none" }}>
               <F label="Current Status" required>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                   {[["student", "Student"], ["working_professional", "Working Professional"]].map(([val, label]) => (
@@ -495,11 +492,9 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </F>
                 </div>
               )}
-            </div>
-          )}
+          </div>
 
-          {activeTab === "emergency" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "emergency" ? undefined : "none" }}>
               <div style={{ background: "rgba(168,100,28,0.06)", border: "1px solid rgba(168,100,28,0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 4 }}>
                 <p style={{ fontSize: 13, color: "#A8641C", margin: 0 }}>
                   This information is kept confidential and only accessed in case of emergencies during visits.
@@ -543,11 +538,9 @@ export function VolunteerProfileForm({ variant }: Props) {
                   <textarea name="medical_notes" rows={3} defaultValue={profile?.medical_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} />
                 </F>
               </div>
-            </div>
-          )}
+          </div>
 
-          {activeTab === "declaration" && (
-            <div className="space-y-5">
+          <div className="space-y-5" style={{ display: activeTab === "declaration" ? undefined : "none" }}>
               <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
                 <input type="checkbox" name="certified_true" required defaultChecked={profile?.certified_true ?? false} style={{ marginTop: 2 }} />
                 <span style={{ fontSize: 13, color: "#19140F", lineHeight: 1.5 }}>
@@ -562,8 +555,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               </label>
               <F label="Digital Signature / Name" required><input name="signature_name" required defaultValue={profile?.signature_name ?? ""} style={inputStyle} /></F>
               <F label="Date"><input disabled value={profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : new Date().toLocaleDateString()} style={{ ...inputStyle, color: "#9B9188" }} /></F>
-            </div>
-          )}
+          </div>
 
           {activeTab === "declaration" && (
             <button type="submit" disabled={saving} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>

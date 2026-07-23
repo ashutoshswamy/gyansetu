@@ -59,10 +59,9 @@ export async function deleteCategory(id: string) {
 export async function addImage(
   categoryId: string,
   url: string,
-  caption: string,
-  uploadedBy: string
+  caption: string
 ) {
-  const { db } = await requireAdmin();
+  const { db, user } = await requireAdmin();
 
   const trimmedUrl = url.trim();
   let parsedUrl: URL;
@@ -79,7 +78,7 @@ export async function addImage(
       category_id: categoryId,
       url: trimmedUrl,
       caption: caption.trim() || null,
-      uploaded_by: uploadedBy,
+      uploaded_by: user.id,
     })
     .select()
     .single();

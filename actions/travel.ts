@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
+import { requireAdminUser, requireVolunteerUser, assertGroupAccess } from "@/lib/clerk/action-auth";
 import { travelTicketSchema, locationUpdateSchema, type TravelTicketInput, type LocationUpdateInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -52,7 +52,8 @@ export async function getAllTravelTickets() {
 }
 
 export async function getTravelTicketForMyGroup(groupId: string) {
-  const { db } = await requireVolunteerUser();
+  const { db, user } = await requireVolunteerUser();
+  await assertGroupAccess(db, user, groupId);
   const { data, error } = await db
     .from("travel_tickets")
     .select("*")
@@ -67,6 +68,7 @@ export async function getTravelTicketForMyGroup(groupId: string) {
 export async function postLocationUpdate(input: LocationUpdateInput) {
   const { db, user } = await requireVolunteerUser();
   const data = locationUpdateSchema.parse(input);
+  await assertGroupAccess(db, user, data.group_id);
   const { data: update, error } = await db
     .from("location_updates")
     .insert({ ...data, posted_by: user.id })
@@ -79,7 +81,8 @@ export async function postLocationUpdate(input: LocationUpdateInput) {
 }
 
 export async function getLocationUpdatesForGroup(groupId: string) {
-  const { db } = await requireVolunteerUser();
+  const { db, user } = await requireVolunteerUser();
+  await assertGroupAccess(db, user, groupId);
   const { data, error } = await db
     .from("location_updates")
     .select("*, poster:users!location_updates_posted_by_fkey(id, name)")

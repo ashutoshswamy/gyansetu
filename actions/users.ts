@@ -27,11 +27,25 @@ export async function updateUserRole(clerkId: string, role: UserRole) {
   if (!ASSIGNABLE_ROLES.includes(role)) throw new Error("Invalid role");
   if (clerkId === userId) throw new Error("Cannot change your own role");
 
-  const clerk = await clerkClient();
-  await clerk.users.updateUserMetadata(clerkId, { publicMetadata: { role } });
+  const { data: prev, error: fetchError } = await db
+    .from("users")
+    .select("role")
+    .eq("clerk_id", clerkId)
+    .single();
+  if (fetchError || !prev) throw new Error("User not found");
 
+  // 1. Update Supabase first (source of truth)
   const { error } = await db.from("users").update({ role }).eq("clerk_id", clerkId);
   if (error) throw new Error("Failed to update role");
+
+  // 2. Sync Clerk; rollback Supabase if Clerk fails
+  const clerk = await clerkClient();
+  try {
+    await clerk.users.updateUserMetadata(clerkId, { publicMetadata: { role } });
+  } catch {
+    await db.from("users").update({ role: prev.role }).eq("clerk_id", clerkId);
+    throw new Error("Failed to update auth provider; role change rolled back");
+  }
 
   await revokeAllUserSessions(clerkId);
 }

@@ -24,7 +24,7 @@ export default function AddImageForm({ categoryId }: Props) {
     setError(null);
 
     try {
-      await addImage(categoryId, url, caption, "admin");
+      await addImage(categoryId, url, caption);
       router.push("/admin/gallery");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
