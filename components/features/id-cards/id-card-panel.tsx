@@ -48,13 +48,14 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
         style={{
           background: "linear-gradient(135deg, #4A55BE 0%, #363F91 100%)",
           borderRadius: 12, padding: 24, color: "white", marginBottom: 20,
+          position: "relative",
         }}
       >
-        <div className="flex items-center gap-2 mb-6">
-          <div style={{ background: "white", borderRadius: 6, padding: 3, display: "flex", flexShrink: 0 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Gyan Setu" crossOrigin="anonymous" style={{ width: 20, height: 20, objectFit: "contain", display: "block" }} />
-          </div>
+        <div style={{ background: "white", borderRadius: 6, padding: 3, display: "flex", position: "absolute", top: 16, right: 16 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Gyan Setu" crossOrigin="anonymous" style={{ width: 24, height: 24, objectFit: "contain", display: "block" }} />
+        </div>
+        <div className="flex items-center gap-2 mb-6" style={{ paddingRight: 40 }}>
           <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>Gyan Setu Volunteer</span>
         </div>
         <div className="flex items-start gap-4 mb-4">
