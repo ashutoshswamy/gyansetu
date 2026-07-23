@@ -11,7 +11,7 @@ export default async function TestDetailsPage({ params }: { params: Promise<{ id
   const [{ data: test, error: testError }, { data: attempts }] = await Promise.all([
     db
       .from("eligibility_tests")
-      .select("*, tours(title)")
+      .select("*, tours!eligibility_tests_tour_id_fkey(title)")
       .eq("id", id)
       .single(),
     db

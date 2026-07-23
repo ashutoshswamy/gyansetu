@@ -140,6 +140,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
       }
 
       router.push(isTemplate ? "/admin/tests/templates" : "/admin/tests");
+      router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to save test");
       setSaving(false);

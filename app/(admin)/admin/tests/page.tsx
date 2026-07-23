@@ -35,7 +35,7 @@ export default async function AdminTestsPage() {
   const [{ data: tests }, { data: attempts }] = await Promise.all([
     db
       .from("eligibility_tests")
-      .select("*, tours(title, destination)")
+      .select("*, tours!eligibility_tests_tour_id_fkey(title, destination)")
       .eq("is_template", false)
       .order("created_at", { ascending: false }),
     db

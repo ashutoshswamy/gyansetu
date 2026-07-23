@@ -565,9 +565,11 @@ export function VolunteerProfileForm({ variant }: Props) {
             </div>
           )}
 
-          <button type="submit" disabled={saving} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-            {saving ? "Saving..." : "Save Profile"}
-          </button>
+          {activeTab === "declaration" && (
+            <button type="submit" disabled={saving} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+              {saving ? "Saving..." : "Save Profile"}
+            </button>
+          )}
         </form>
       </div>
     </div>
