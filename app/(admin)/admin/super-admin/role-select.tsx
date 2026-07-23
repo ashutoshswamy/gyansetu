@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateUserRole } from "@/actions/users";
+import { updateUserRole, deleteUser } from "@/actions/users";
 import type { UserRole } from "@/types";
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
@@ -57,6 +57,43 @@ export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole 
           {status.text}
         </span>
       )}
+    </div>
+  );
+}
+
+export function DeleteUserButton({ clerkId, name }: { clerkId: string; name: string }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleDelete() {
+    if (!confirm(`Delete ${name}? This removes them from Clerk and Supabase and cannot be undone.`)) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteUser(clerkId);
+      router.refresh();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to delete user");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={handleDelete}
+        disabled={loading}
+        style={{
+          fontSize: 12, fontWeight: 600, padding: "8px 10px", borderRadius: 6,
+          border: "1.5px solid #E4B8AE", color: "#B8381E", background: "white",
+          cursor: loading ? "not-allowed" : "pointer",
+        }}
+      >
+        {loading ? "Deleting…" : "Delete"}
+      </button>
+      {error && <span style={{ fontSize: 12, fontWeight: 600, color: "#B8381E" }}>{error}</span>}
     </div>
   );
 }

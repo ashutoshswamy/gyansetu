@@ -35,3 +35,19 @@ export async function updateUserRole(clerkId: string, role: UserRole) {
 
   await revokeAllUserSessions(clerkId);
 }
+
+export async function deleteUser(clerkId: string) {
+  const { db, userId } = await requireSuperAdminUser();
+
+  if (!clerkId || typeof clerkId !== "string") throw new Error("Invalid user");
+  if (clerkId === userId) throw new Error("Cannot delete your own account");
+
+  // Delete in Clerk first — this fires a user.deleted webhook that also removes
+  // the Supabase row, but we delete it here too so the UI reflects it immediately
+  // without waiting on webhook delivery. Re-deleting an already-gone row is a no-op.
+  const clerk = await clerkClient();
+  await clerk.users.deleteUser(clerkId);
+
+  const { error } = await db.from("users").delete().eq("clerk_id", clerkId);
+  if (error) throw new Error("Failed to delete user record");
+}

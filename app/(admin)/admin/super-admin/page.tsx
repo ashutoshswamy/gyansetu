@@ -2,7 +2,7 @@ import { getAllUsers } from "@/actions/users";
 import { requireSuperAdminUser } from "@/lib/clerk/action-auth";
 import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
-import { RoleSelect } from "./role-select";
+import { RoleSelect, DeleteUserButton } from "./role-select";
 import type { UserRole } from "@/types";
 
 const ROLE_GROUPS: { key: UserRole; label: string }[] = [
@@ -66,6 +66,7 @@ export default async function SuperAdminPage() {
                           <tr style={{ background: "#F3F0E8", borderBottom: "1px solid #E4DFD1" }}>
                             <th className="p-4 font-semibold text-[#5A5247]">Name</th>
                             <th className="p-4 font-semibold text-[#5A5247]">Assign Role</th>
+                            <th className="p-4 font-semibold text-[#5A5247]"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -82,6 +83,11 @@ export default async function SuperAdminPage() {
                                   <span style={{ fontSize: 12, color: "#9B9188" }}>Assigned via Clerk only</span>
                                 ) : (
                                   <RoleSelect clerkId={u.clerk_id} role={u.role} />
+                                )}
+                              </td>
+                              <td className="p-4">
+                                {u.clerk_id !== userId && u.role !== "super_admin" && (
+                                  <DeleteUserButton clerkId={u.clerk_id} name={u.name} />
                                 )}
                               </td>
                             </tr>
