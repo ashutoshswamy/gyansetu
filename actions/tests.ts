@@ -85,6 +85,18 @@ export async function deleteTest(id: string) {
   revalidatePath("/admin/tests");
 }
 
+export async function updateTestStatus(id: string, status: "draft" | "active" | "closed") {
+  const { db } = await requireAdminUser();
+
+  if (!["draft", "active", "closed"].includes(status)) throw new Error("Invalid status");
+
+  const { error } = await db.from("eligibility_tests").update({ status }).eq("id", id);
+  if (error) { console.error("[updateTestStatus]", error); throw new Error("Failed to update test status"); }
+
+  revalidatePath("/admin/tests");
+  revalidatePath(`/admin/tests/${id}`);
+}
+
 export async function submitTestAttempt(input: TestAttemptInput) {
   const { db, user, userId } = await getAuthenticatedUser();
 
@@ -193,6 +205,30 @@ export async function saveSubjectiveEvaluation(attemptId: string, marks: Record<
     .eq("id", attemptId);
 
   if (error) { console.error("[saveSubjectiveEvaluation]", error); throw new Error("Failed to save evaluation"); }
+
+  revalidatePath("/admin/tests");
+  revalidatePath(`/admin/tests/${attempt.test_id}`);
+}
+
+// Direct correction of a recorded result — for fixing mistakes (wrong answer key, mis-entered
+// marks, etc.) at any point, including after the attempt has already been approved/rejected.
+// Does not touch status/role — approval and role promotion stay governed by approveTestResult.
+export async function editTestResult(attemptId: string, score: number) {
+  const { db } = await requireAdminUser();
+
+  if (typeof score !== "number" || !Number.isFinite(score) || score < 0 || score > 100) {
+    throw new Error("Score must be a number between 0 and 100");
+  }
+
+  const { data: attempt, error: fetchError } = await db
+    .from("test_attempts")
+    .select("id, test_id")
+    .eq("id", attemptId)
+    .single();
+  if (fetchError || !attempt) throw new Error("Attempt not found");
+
+  const { error } = await db.from("test_attempts").update({ score }).eq("id", attemptId);
+  if (error) { console.error("[editTestResult]", error); throw new Error("Failed to update result"); }
 
   revalidatePath("/admin/tests");
   revalidatePath(`/admin/tests/${attempt.test_id}`);

@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { ExportButton } from "@/components/features/export-button";
 import { ApproveRejectButtons } from "./approve-button";
+import { TestRowActions } from "@/components/features/tests/test-row-actions";
 import Link from "next/link";
 import { ClipboardList, Plus } from "lucide-react";
 
@@ -193,6 +194,7 @@ export default async function AdminTestsPage() {
                         Manage
                       </button>
                     </Link>
+                    <TestRowActions testId={test.id} status={test.status} />
                   </div>
                 </div>
 

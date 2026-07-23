@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ExportButton } from "@/components/features/export-button";
 import { ApproveRejectButtons } from "../approve-button";
-import { saveSubjectiveEvaluation } from "@/actions/tests";
+import { saveSubjectiveEvaluation, editTestResult } from "@/actions/tests";
 import { useRouter } from "next/navigation";
 import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import type { EligibilityTest, TestQuestion } from "@/types";
@@ -38,6 +38,9 @@ export function TestAttemptsViewer({
   const [marksDraft, setMarksDraft] = useState<Record<string, string>>({});
   const [lastAttemptId, setLastAttemptId] = useState<string | null>(selectedAttemptId);
   const [savingEval, setSavingEval] = useState(false);
+  const [scoreDraft, setScoreDraft] = useState("");
+  const [editingScore, setEditingScore] = useState(false);
+  const [savingScore, setSavingScore] = useState(false);
 
   const selectedAttempt = attempts.find((a) => a.id === selectedAttemptId);
   const questions = test.questions ?? [];
@@ -51,6 +54,8 @@ export function TestAttemptsViewer({
       }
     }
     setMarksDraft(initial);
+    setScoreDraft(selectedAttempt?.score !== undefined && selectedAttempt?.score !== null ? String(selectedAttempt.score) : "");
+    setEditingScore(false);
   }
 
   async function handleSaveEvaluation() {
@@ -67,6 +72,25 @@ export function TestAttemptsViewer({
       alert(err instanceof Error ? err.message : "Failed to save evaluation");
     } finally {
       setSavingEval(false);
+    }
+  }
+
+  async function handleSaveScore() {
+    if (!selectedAttempt) return;
+    const score = Number(scoreDraft);
+    if (!Number.isFinite(score) || score < 0 || score > 100) {
+      alert("Score must be a number between 0 and 100");
+      return;
+    }
+    setSavingScore(true);
+    try {
+      await editTestResult(selectedAttempt.id, score);
+      setEditingScore(false);
+      router.refresh();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to update result");
+    } finally {
+      setSavingScore(false);
     }
   }
 
@@ -234,13 +258,48 @@ export function TestAttemptsViewer({
                   </div>
                   <div>
                     <span style={labelStyle}>Score</span>
-                    <p className="mt-1" style={{
-                      fontSize: 14, fontWeight: 700,
-                      color: (selectedAttempt.score ?? 0) >= test.passing_score ? "#2A5E3A" : "#B8381E",
-                      margin: "4px 0 0 0"
-                    }}>
-                      {selectedAttempt.score !== undefined && selectedAttempt.score !== null ? selectedAttempt.score.toFixed(1) + "%" : "N/A"}
-                    </p>
+                    {editingScore ? (
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={scoreDraft}
+                          onChange={(e) => setScoreDraft(e.target.value)}
+                          disabled={savingScore}
+                          style={{ width: 64, fontSize: 13, padding: "4px 6px", borderRadius: 4, border: "1px solid #E4DFD1" }}
+                        />
+                        <span style={{ fontSize: 12, color: "#9B9188" }}>%</span>
+                        <button
+                          onClick={handleSaveScore}
+                          disabled={savingScore}
+                          style={{ fontSize: 11, fontWeight: 600, padding: "4px 8px", borderRadius: 4, border: "none", background: "#4A55BE", color: "white", cursor: savingScore ? "not-allowed" : "pointer" }}
+                        >
+                          {savingScore ? "..." : "Save"}
+                        </button>
+                        <button
+                          onClick={() => setEditingScore(false)}
+                          disabled={savingScore}
+                          style={{ fontSize: 11, padding: "4px 8px", borderRadius: 4, border: "1px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="mt-1 flex items-center gap-2" style={{
+                        fontSize: 14, fontWeight: 700,
+                        color: (selectedAttempt.score ?? 0) >= test.passing_score ? "#2A5E3A" : "#B8381E",
+                        margin: "4px 0 0 0"
+                      }}>
+                        {selectedAttempt.score !== undefined && selectedAttempt.score !== null ? selectedAttempt.score.toFixed(1) + "%" : "N/A"}
+                        <button
+                          onClick={() => setEditingScore(true)}
+                          style={{ fontSize: 11, fontWeight: 600, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                        >
+                          Edit
+                        </button>
+                      </p>
+                    )}
                   </div>
                   <div>
                     <span style={labelStyle}>Result</span>

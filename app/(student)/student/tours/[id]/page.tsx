@@ -28,6 +28,17 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
     db.from("volunteer_profiles").select("date_of_birth").eq("user_id", user?.id ?? "").maybeSingle(),
   ]);
 
+  let eligibilityTest: { id: string; status: string } | null = null;
+  let hasAttempt = false;
+  if (application && tour.eligibility_test_id) {
+    const [{ data: testRow }, { data: attempt }] = await Promise.all([
+      db.from("eligibility_tests").select("id, status").eq("id", tour.eligibility_test_id).maybeSingle(),
+      db.from("test_attempts").select("id").eq("test_id", tour.eligibility_test_id).eq("student_id", user?.id ?? "").maybeSingle(),
+    ]);
+    eligibilityTest = testRow;
+    hasAttempt = !!attempt;
+  }
+
   let ageBlock: string | null = null;
   if (!profile?.date_of_birth) {
     ageBlock = "Complete your profile with your date of birth before applying.";
@@ -73,6 +84,25 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
               Already applied. Status:{" "}
               <span style={{ fontWeight: 600, textTransform: "capitalize" }}>{application.status}</span>
             </p>
+            {application.status !== "rejected" && eligibilityTest && !hasAttempt && (
+              eligibilityTest.status === "active" ? (
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(74,85,190,0.15)" }}>
+                  <p style={{ fontSize: 13, color: "#4A55BE", margin: "0 0 8px 0" }}>
+                    Next step: take the eligibility test to become eligible for this tour.
+                  </p>
+                  <a
+                    href={`/student/tests/${eligibilityTest.id}`}
+                    style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "white", background: "#4A55BE", padding: "9px 18px", borderRadius: 6, textDecoration: "none" }}
+                  >
+                    Go to Eligibility Test →
+                  </a>
+                </div>
+              ) : (
+                <p style={{ fontSize: 13, color: "#4A55BE", margin: "10px 0 0 0", opacity: 0.8 }}>
+                  The eligibility test for this tour isn&apos;t open yet — check back soon.
+                </p>
+              )
+            )}
           </div>
         ) : ageBlock ? (
           <div style={{ background: "rgba(184,56,30,0.06)", border: "1px solid rgba(184,56,30,0.2)", borderRadius: 10, padding: "16px 20px" }}>
