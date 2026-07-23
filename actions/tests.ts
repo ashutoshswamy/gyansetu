@@ -10,6 +10,17 @@ import { revalidatePath } from "next/cache";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
 import type { TestQuestion } from "@/types";
+import { ZodError } from "zod";
+
+// Server Actions have their thrown-error messages redacted in production —
+// validation failures must be returned as data instead of thrown, or the
+// client only ever sees "An error occurred..." with a digest.
+function describeZodError(err: ZodError): string {
+  const first = err.issues[0];
+  if (!first) return "Invalid input";
+  const path = first.path.join(".");
+  return path ? `${path}: ${first.message}` : first.message;
+}
 
 const testRatelimit = new Ratelimit({
   redis,
@@ -18,7 +29,14 @@ const testRatelimit = new Ratelimit({
 
 export async function createTest(input: EligibilityTestInput) {
   const { db, user } = await requireAdminUser();
-  const data = eligibilityTestSchema.parse(input);
+
+  let data: EligibilityTestInput;
+  try {
+    data = eligibilityTestSchema.parse(input);
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
 
   const { data: test, error } = await db
     .from("eligibility_tests")
@@ -26,15 +44,22 @@ export async function createTest(input: EligibilityTestInput) {
     .select()
     .single();
 
-  if (error) { console.error("[createTest]", error); throw new Error("Failed to create test"); }
+  if (error) { console.error("[createTest]", error); return { ok: false as const, error: "Failed to create test" }; }
 
   revalidatePath("/admin/tests");
-  return test;
+  return { ok: true as const, test };
 }
 
 export async function updateTest(id: string, input: EligibilityTestInput) {
   const { db } = await requireAdminUser();
-  const data = eligibilityTestSchema.parse(input);
+
+  let data: EligibilityTestInput;
+  try {
+    data = eligibilityTestSchema.parse(input);
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
 
   const { data: test, error } = await db
     .from("eligibility_tests")
@@ -43,12 +68,12 @@ export async function updateTest(id: string, input: EligibilityTestInput) {
     .select()
     .single();
 
-  if (error) { console.error("[updateTest]", error); throw new Error("Failed to update test"); }
+  if (error) { console.error("[updateTest]", error); return { ok: false as const, error: "Failed to update test" }; }
 
   revalidatePath("/admin/tests");
   revalidatePath(`/admin/tests/${id}/edit`);
 
-  return test;
+  return { ok: true as const, test };
 }
 
 export async function deleteTest(id: string) {

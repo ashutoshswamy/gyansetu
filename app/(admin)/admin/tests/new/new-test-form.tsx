@@ -129,11 +129,16 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
       is_template: isTemplate,
     };
     try {
-      if (isEdit) {
-        await updateTest(initialData.id, payload);
-      } else {
-        await createTest(payload);
+      const result = isEdit
+        ? await updateTest(initialData.id, payload)
+        : await createTest(payload);
+
+      if (!result.ok) {
+        setError(result.error);
+        setSaving(false);
+        return;
       }
+
       router.push(isTemplate ? "/admin/tests/templates" : "/admin/tests");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to save test");
@@ -239,8 +244,8 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="col-span-2">
-                  <label style={labelStyle}>Question *</label>
-                  <input required style={inputStyle} value={q.question} onChange={e => updateQ(qIdx, { question: e.target.value })} placeholder="Question text" />
+                  <label style={labelStyle}>Question * (min 5 characters)</label>
+                  <input required minLength={5} style={inputStyle} value={q.question} onChange={e => updateQ(qIdx, { question: e.target.value })} placeholder="Question text" />
                 </div>
                 <div>
                   <label style={labelStyle}>Type</label>
