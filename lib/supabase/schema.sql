@@ -909,8 +909,6 @@ alter table public.volunteer_profiles add column if not exists aadhaar_verified_
 alter table public.volunteer_profiles add column if not exists parent_consent_url text;
 alter table public.volunteer_profiles add column if not exists indemnity_bond_url text;
 
-alter table public.workshops add column if not exists trainer_name text;
-
 -- Registration Fee Management
 create table if not exists public.registration_fees (
   id                 uuid primary key default gen_random_uuid(),
