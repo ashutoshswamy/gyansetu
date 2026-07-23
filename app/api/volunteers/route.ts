@@ -6,7 +6,7 @@ export async function GET() {
 
   const { data, error } = await db
     .from("users")
-    .select("id, name, email, role, volunteer_profiles(photo_url)")
+    .select("id, name, email, role, volunteer_profiles!volunteer_profiles_user_id_fkey(photo_url)")
     .eq("role", "volunteer")
     .order("name");
 

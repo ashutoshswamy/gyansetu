@@ -6,6 +6,12 @@ import { addGroupMember, removeGroupMember } from "@/actions/groups";
 import { Users, MapPin, Trash2, ArrowLeft } from "lucide-react";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
+const ROLE_LABELS: Record<string, string> = {
+  volunteer: "Volunteer",
+  group_leader: "Group Leader",
+  project_member: "Project Member",
+};
+
 interface GroupMember {
   id: string;
   user_id: string;
@@ -128,12 +134,16 @@ export default function GroupDetailPage() {
                 excludeIds={new Set((group.tour_group_members ?? []).map(m => m.user_id))}
               />
             </div>
-            <input
+            <select
               value={newRole}
               onChange={e => setNewRole(e.target.value)}
-              placeholder="Role in group (optional)"
               style={{ ...inputStyle, flex: 2 }}
-            />
+            >
+              <option value="">Select role (optional)</option>
+              <option value="volunteer">Volunteer</option>
+              <option value="group_leader">Group Leader</option>
+              <option value="project_member">Project Member</option>
+            </select>
             <button
               onClick={handleAddMember}
               disabled={saving || !newUserId}
@@ -159,7 +169,7 @@ export default function GroupDetailPage() {
                   <div>
                     <span style={{ fontSize: 14, fontWeight: 500, color: "#19140F" }}>{m.users?.name}</span>
                     <span style={{ fontSize: 12, color: "#9B9188", marginLeft: 8 }}>{m.users?.email}</span>
-                    {m.role_in_group && <span style={{ fontSize: 12, color: "#4A55BE", marginLeft: 8, padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>{m.role_in_group}</span>}
+                    {m.role_in_group && <span style={{ fontSize: 12, color: "#4A55BE", marginLeft: 8, padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</span>}
                   </div>
                   <button
                     onClick={() => handleRemoveMember(m.user_id)}

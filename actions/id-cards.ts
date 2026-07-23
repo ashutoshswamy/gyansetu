@@ -65,10 +65,21 @@ export async function getAllIdCards() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("id_cards")
-    .select("*, volunteer:users!id_cards_volunteer_id_fkey(id, name, email, volunteer_profiles(photo_url)), tour:tours(id, title, destination), group:tour_groups(id, name)")
+    .select("*, volunteer:users!id_cards_volunteer_id_fkey(id, name, email, volunteer_profiles!volunteer_profiles_user_id_fkey(photo_url)), tour:tours(id, title, destination), group:tour_groups(id, name)")
     .order("issued_at", { ascending: false });
   if (error) { console.error("[getAllIdCards]", error); throw new Error("Failed to fetch ID cards"); }
   return data ?? [];
+}
+
+export async function getIdCard(id: string) {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("id_cards")
+    .select("*, volunteer:users!id_cards_volunteer_id_fkey(id, name, email, volunteer_profiles!volunteer_profiles_user_id_fkey(photo_url)), tour:tours(id, title, destination), group:tour_groups(id, name)")
+    .eq("id", id)
+    .single();
+  if (error) { console.error("[getIdCard]", error); throw new Error("Failed to fetch ID card"); }
+  return data;
 }
 
 export async function getMyIdCard() {
@@ -81,7 +92,7 @@ export async function getMyIdCard() {
       .order("issued_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    db.from("users").select("name, volunteer_profiles(photo_url)").eq("id", user.id).maybeSingle(),
+    db.from("users").select("name, volunteer_profiles!volunteer_profiles_user_id_fkey(photo_url)").eq("id", user.id).maybeSingle(),
   ]);
   if (error) { console.error("[getMyIdCard]", error); throw new Error("Failed to fetch ID card"); }
   return data ? { ...data, name: profile?.name, photo_url: (profile as { volunteer_profiles?: { photo_url?: string } })?.volunteer_profiles?.photo_url } : data;

@@ -14,6 +14,7 @@ interface Props {
   hint?: string;
   /** Show image preview when URL is valid */
   showImagePreview?: boolean;
+  required?: boolean;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -38,6 +39,7 @@ export function FileUploadField({
   placeholder = "https://...",
   hint,
   showImagePreview = false,
+  required = false,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -78,7 +80,7 @@ export function FileUploadField({
 
   return (
     <div>
-      <label style={labelStyle}>{label}</label>
+      <label style={labelStyle}>{label}{required && <span style={{ color: "#DC2626", marginLeft: 2 }}>*</span>}</label>
 
       {/* URL input + upload button row */}
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -87,6 +89,7 @@ export function FileUploadField({
           value={value}
           onChange={(e) => { onChange(e.target.value); setPreviewError(false); }}
           placeholder={placeholder}
+          required={required}
           style={{ ...inputStyle, flex: 1 }}
         />
         <button

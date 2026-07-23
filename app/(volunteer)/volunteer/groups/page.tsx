@@ -5,6 +5,12 @@ import type { TourGroupMember, TourGroup } from "@/types";
 import { getLocalHostForMyGroup } from "@/actions/local-hosts";
 import { getKitAssignmentForMyGroup } from "@/actions/kits";
 
+const ROLE_LABELS: Record<string, string> = {
+  volunteer: "Volunteer",
+  group_leader: "Group Leader",
+  project_member: "Project Member",
+};
+
 type MembershipRow = TourGroupMember & {
   tour_groups?: (TourGroup & {
     tours?: { id: string; title: string; destination: string; start_date: string } | null;
@@ -38,7 +44,7 @@ async function GroupCard({ m }: { m: MembershipRow }) {
 
       {m.role_in_group && (
         <div style={{ fontSize: 13, color: "#4A55BE", background: "rgba(74,85,190,0.06)", padding: "6px 12px", borderRadius: 6, display: "inline-block", marginBottom: 12 }}>
-          Your role: <strong>{m.role_in_group}</strong>
+          Your role: <strong>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</strong>
         </div>
       )}
 

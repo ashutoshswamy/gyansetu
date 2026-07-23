@@ -43,14 +43,11 @@ export default async function AdminIdCardsPage() {
                   {card.tour?.title && ` · ${card.tour.title} (${card.tour.destination})`}
                   {card.group?.name && ` · ${card.group.name}`}
                   {" · "}Valid {new Date(card.valid_from).toLocaleDateString()} – {new Date(card.valid_to).toLocaleDateString()}
-                  {card.card_file_url && (
-                    <>
-                      {" · "}
-                      <a href={card.card_file_url} target="_blank" rel="noopener noreferrer" style={{ color: "#4A55BE" }}>View File</a>
-                    </>
-                  )}
                 </div>
               </div>
+              <Link href={`/admin/id-cards/${card.id}`} style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE", flexShrink: 0 }}>
+                View
+              </Link>
               <DeleteIdCardButton id={card.id} />
             </div>
           ))}

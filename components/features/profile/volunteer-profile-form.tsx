@@ -50,13 +50,13 @@ export function VolunteerProfileForm({ variant }: Props) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"personal" | "education" | "emergency" | "declaration">("personal");
+  const [activeTab, setActiveTab] = useState<"personal" | "education" | "work" | "emergency" | "declaration">("personal");
   const [dob, setDob] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
   const [sameAddress, setSameAddress] = useState(true);
-  const [currentStatus, setCurrentStatus] = useState("student");
+  const [isCurrentlyWorking, setIsCurrentlyWorking] = useState(false);
   const [hasAllergies, setHasAllergies] = useState(false);
   const [hasMedicalConditions, setHasMedicalConditions] = useState(false);
   const [takesMedicines, setTakesMedicines] = useState(false);
@@ -76,7 +76,7 @@ export function VolunteerProfileForm({ variant }: Props) {
       if (d?.city) setSelectedCity(d.city);
       if (d?.photo_url) setPhotoUrl(d.photo_url);
       if (d) setSameAddress(d.permanent_address_same ?? true);
-      if (d?.current_status) setCurrentStatus(d.current_status);
+      setIsCurrentlyWorking(!!d?.company_name || d?.current_status === "working_professional" || d?.current_status === "both");
       if (d?.edu_course_status) setEduCourseStatus(d.edu_course_status);
       setHasAllergies(d?.has_allergies ?? false);
       setHasMedicalConditions(d?.has_medical_conditions ?? false);
@@ -148,7 +148,7 @@ export function VolunteerProfileForm({ variant }: Props) {
         permanent_address_same: sameAddress,
         permanent_address: sameAddress ? undefined : (permanentAddressCombined || undefined),
 
-        current_status: currentStatus as "student" | "working_professional" | "both" | "other",
+        current_status: isCurrentlyWorking ? "both" : "student",
         institution: str("institution"),
         student_location: collegeCity && collegeState ? `${collegeCity}, ${collegeState}` : undefined,
         qualification: str("qualification"),
@@ -205,7 +205,8 @@ export function VolunteerProfileForm({ variant }: Props) {
 
   const tabs = [
     { id: "personal" as const, label: "Personal Info" },
-    { id: "education" as const, label: "Education / Work" },
+    { id: "education" as const, label: "Education" },
+    { id: "work" as const, label: "Work" },
     { id: "emergency" as const, label: "Emergency & Medical" },
     { id: "declaration" as const, label: "Declaration" },
   ];
@@ -303,7 +304,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </F>
                 <F label="Aadhaar Number" hint="12-digit, numbers only, optional"><input name="aadhaar_number" inputMode="numeric" pattern="[0-9]*" maxLength={12} onInput={sanitizeDigitsInput(12)} defaultValue={profile?.aadhaar_number ?? ""} style={inputStyle} /></F>
               </div>
-              <FileUploadField label="Profile Photograph" value={photoUrl} onChange={setPhotoUrl} bucket="media" folder="profile-photos" accept="image/*" showImagePreview hint="Passport-size, JPG/PNG, max 5 MB. Used on your volunteer ID card." />
+              <FileUploadField label="Profile Photograph" value={photoUrl} onChange={setPhotoUrl} bucket="media" folder="profile-photos" accept="image/*" showImagePreview required hint="Passport-size, JPG/PNG, max 5 MB. Used on your volunteer ID card." />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Mobile Number (WhatsApp)" required hint="Exactly 10 digits"><input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required onInput={sanitizeDigitsInput(10)} defaultValue={profile?.phone ?? ""} style={inputStyle} /></F>
                 <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} style={inputStyle} /></F>
@@ -417,82 +418,70 @@ export function VolunteerProfileForm({ variant }: Props) {
           </div>
 
           <div className="space-y-5" style={{ display: activeTab === "education" ? undefined : "none" }}>
-              <F label="Current Status" required>
-                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                  {[["student", "Student"], ["working_professional", "Working Professional"]].map(([val, label]) => (
-                    <label key={val} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
-                      <input type="radio" name="current_status" value={val} checked={currentStatus === val} onChange={() => setCurrentStatus(val)} /> {label}
-                    </label>
-                  ))}
-                </div>
-              </F>
-
-              {currentStatus === "student" && (
-                <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Student Details</p>
-                  <F label="College / Institution Name" required><input name="institution" required defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                    <F label="College State" required>
-                      <select value={collegeState} onChange={e => { setCollegeState(e.target.value); setCollegeCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
-                        <option value="">Select state</option>
-                        {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                    </F>
-                    <F label="College City" required>
-                      {collegeState && STATE_CITIES[collegeState]?.length > 0 ? (
-                        <select value={collegeCity} onChange={e => setCollegeCity(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
-                          <option value="">Select city</option>
-                          {STATE_CITIES[collegeState].map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-                      ) : (
-                        <input value={collegeCity} onChange={e => setCollegeCity(e.target.value)} placeholder="Your city" style={inputStyle} disabled={!collegeState} />
-                      )}
-                    </F>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                    <F label="Qualification" required>
-                      <select name="qualification" required defaultValue={profile?.qualification ?? ""} style={{ ...inputStyle, appearance: "none" }}>
-                        <option value="">Select</option>
-                        <option>Diploma</option><option>UG</option><option>PG</option><option>PhD</option>
-                      </select>
-                    </F>
-                    <F label="Course Name" required hint="Example: B.Tech, B.Com, MBA"><input name="course_name" required defaultValue={profile?.course_name ?? ""} style={inputStyle} /></F>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                    <F label="Stream / Specialization" required>
-                      <select name="stream" required defaultValue={profile?.stream ?? ""} style={{ ...inputStyle, appearance: "none" }}>
-                        <option value="">Select</option>
-                        {STREAMS.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                    </F>
-                    <F label="Course Status" required>
-                      <select name="edu_course_status" required value={eduCourseStatus} onChange={e => setEduCourseStatus(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
-                        <option value="">Select</option>
-                        <option value="pursuing">Pursuing</option>
-                        <option value="completed">Completed</option>
-                      </select>
-                    </F>
-                  </div>
-                  {eduCourseStatus !== "completed" && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                      <F label="Year / Semester" hint="e.g. 1st Year, Final Semester">
-                        <input name="course_year" defaultValue={profile?.course_year ?? ""} style={inputStyle} />
-                      </F>
-                    </div>
+              <F label="College / Institution Name" required><input name="institution" required defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <F label="College State" required>
+                  <select value={collegeState} onChange={e => { setCollegeState(e.target.value); setCollegeCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
+                    <option value="">Select state</option>
+                    {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </F>
+                <F label="College City" required>
+                  {collegeState && STATE_CITIES[collegeState]?.length > 0 ? (
+                    <select value={collegeCity} onChange={e => setCollegeCity(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
+                      <option value="">Select city</option>
+                      {STATE_CITIES[collegeState].map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  ) : (
+                    <input value={collegeCity} onChange={e => setCollegeCity(e.target.value)} placeholder="Your city" style={inputStyle} disabled={!collegeState} />
                   )}
-                </div>
+                </F>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <F label="Qualification" required>
+                  <select name="qualification" required defaultValue={profile?.qualification ?? ""} style={{ ...inputStyle, appearance: "none" }}>
+                    <option value="">Select</option>
+                    <option>Diploma</option><option>UG</option><option>PG</option><option>PhD</option>
+                  </select>
+                </F>
+                <F label="Course Name" required hint="Example: B.Tech, B.Com, MBA"><input name="course_name" required defaultValue={profile?.course_name ?? ""} style={inputStyle} /></F>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <F label="Stream / Specialization" required>
+                  <select name="stream" required defaultValue={profile?.stream ?? ""} style={{ ...inputStyle, appearance: "none" }}>
+                    <option value="">Select</option>
+                    {STREAMS.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </F>
+                <F label="Course Status" required>
+                  <select name="edu_course_status" required value={eduCourseStatus} onChange={e => setEduCourseStatus(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
+                    <option value="">Select</option>
+                    <option value="pursuing">Pursuing</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </F>
+              </div>
+              {eduCourseStatus !== "completed" && (
+                <F label="Year / Semester" hint="e.g. 1st Year, Final Semester">
+                  <input name="course_year" defaultValue={profile?.course_year ?? ""} style={inputStyle} />
+                </F>
               )}
+              <NextSectionButton accent={accent} onClick={() => setActiveTab("work")} />
+          </div>
 
-              {currentStatus === "working_professional" && (
+          <div className="space-y-5" style={{ display: activeTab === "work" ? undefined : "none" }}>
+              <YesNo label="Are you currently working?" checked={isCurrentlyWorking} onChange={setIsCurrentlyWorking} />
+
+              {isCurrentlyWorking && (
                 <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
                   <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <F label="Company / Organization Name" required><input name="company_name" required defaultValue={profile?.company_name ?? ""} style={inputStyle} /></F>
-                    <F label="Location" required hint="City, State"><input name="work_location" required defaultValue={profile?.work_location ?? ""} style={inputStyle} /></F>
+                    <F label="Company / Organization Name" required><input name="company_name" required={isCurrentlyWorking} defaultValue={profile?.company_name ?? ""} style={inputStyle} /></F>
+                    <F label="Location" required hint="City, State"><input name="work_location" required={isCurrentlyWorking} defaultValue={profile?.work_location ?? ""} style={inputStyle} /></F>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                    <F label="Designation" required><input name="designation" required defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
-                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><input name="work_department" required defaultValue={profile?.work_department ?? ""} style={inputStyle} /></F>
+                    <F label="Designation" required><input name="designation" required={isCurrentlyWorking} defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
+                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><input name="work_department" required={isCurrentlyWorking} defaultValue={profile?.work_department ?? ""} style={inputStyle} /></F>
                   </div>
                   <F label="Years of Experience">
                     <input name="years_experience" type="number" min={0} defaultValue={profile?.years_experience ?? ""} style={{ ...inputStyle, marginTop: 16 }} />
