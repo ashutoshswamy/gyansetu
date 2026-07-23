@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:volunteers": "node --env-file=.env.local scripts/seed-volunteers.mjs",
+    "seed:enrollees": "node --env-file=.env.local scripts/seed-enrollees.mjs",
+    "unseed:volunteers": "node --env-file=.env.local scripts/unseed-volunteers.mjs",
+    "unseed:enrollees": "node --env-file=.env.local scripts/unseed-enrollees.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.7",
