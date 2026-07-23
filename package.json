@@ -11,8 +11,12 @@
     "typecheck": "tsc --noEmit",
     "seed:volunteers": "node --env-file=.env.local scripts/seed-volunteers.mjs",
     "seed:enrollees": "node --env-file=.env.local scripts/seed-enrollees.mjs",
+    "seed:tours": "node --env-file=.env.local scripts/seed-tours.mjs",
+    "seed:groups": "node --env-file=.env.local scripts/seed-groups.mjs",
     "unseed:volunteers": "node --env-file=.env.local scripts/unseed-volunteers.mjs",
-    "unseed:enrollees": "node --env-file=.env.local scripts/unseed-enrollees.mjs"
+    "unseed:enrollees": "node --env-file=.env.local scripts/unseed-enrollees.mjs",
+    "unseed:tours": "node --env-file=.env.local scripts/unseed-tours.mjs",
+    "unseed:groups": "node --env-file=.env.local scripts/unseed-groups.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.7",
