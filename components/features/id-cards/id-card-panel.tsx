@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { IdCard as IdCardIcon, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { toPng } from "html-to-image";
 
 export interface IdCardPanelData {
@@ -51,7 +51,10 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
         }}
       >
         <div className="flex items-center gap-2 mb-6">
-          <IdCardIcon size={20} />
+          <div style={{ background: "white", borderRadius: 6, padding: 3, display: "flex", flexShrink: 0 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Gyan Setu" crossOrigin="anonymous" style={{ width: 20, height: 20, objectFit: "contain", display: "block" }} />
+          </div>
           <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>Gyan Setu Volunteer</span>
         </div>
         <div className="flex items-start gap-4 mb-4">
