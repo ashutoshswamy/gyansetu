@@ -106,7 +106,7 @@ export function VolunteerProfileForm({ variant }: Props) {
       requestAnimationFrame(() => {
         invalid.scrollIntoView({ behavior: "smooth", block: "center" });
         invalid.focus();
-        form.reportValidity();
+        invalid.reportValidity();
       });
       return;
     }
@@ -274,7 +274,7 @@ export function VolunteerProfileForm({ variant }: Props) {
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} noValidate style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
           {error && (
             <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626", display: "flex", gap: 8, alignItems: "center" }}>
               <AlertCircle size={14} /> {error}

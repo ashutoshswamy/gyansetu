@@ -86,6 +86,7 @@ export function FileUploadField({
       <div style={{ display: "flex", gap: 8, alignItems: "center", position: "relative" }}>
         <input
           type="url"
+          name={label}
           value={value}
           onChange={(e) => { onChange(e.target.value); setPreviewError(false); }}
           placeholder={placeholder}
