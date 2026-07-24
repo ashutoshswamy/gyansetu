@@ -3,13 +3,18 @@
 import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { volunteerProfileSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 const getUser = getAuthenticatedUser;
 const requireAdmin = requireAdminUser;
 
 export async function upsertVolunteerProfile(input: unknown) {
   const { db, user } = await getUser();
-  const data = volunteerProfileSchema.parse(input);
+  const parsed = volunteerProfileSchema.safeParse(input);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues.map((i: z.ZodIssue) => i.message).join(", "));
+  }
+  const data = parsed.data;
   const consentPayload = data.consent_given
     ? { consent_given: true, consent_given_at: new Date().toISOString() }
     : {};
