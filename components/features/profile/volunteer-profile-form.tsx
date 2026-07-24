@@ -220,7 +220,7 @@ export function VolunteerProfileForm({ variant }: Props) {
   ];
 
   return (
-    <div className="min-h-screen p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 pb-32 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>

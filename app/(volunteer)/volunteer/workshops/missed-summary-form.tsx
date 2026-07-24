@@ -35,7 +35,7 @@ export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        style={{ fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4, background: "transparent", color: "#F5A520", border: "1.5px solid rgba(245,165,32,0.35)", cursor: "pointer" }}
+        style={{ fontSize: 11, fontWeight: 600, minHeight: 40, padding: "0 14px", borderRadius: 4, background: "transparent", color: "#F5A520", border: "1.5px solid rgba(245,165,32,0.35)", cursor: "pointer" }}
       >
         I missed this — submit summary
       </button>
@@ -56,18 +56,18 @@ export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
         placeholder="Explain why you missed this workshop (emergency reason)..."
         style={{ width: "100%", padding: "8px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none", background: "#FAFAF7", color: "#19140F", boxSizing: "border-box", resize: "vertical" }}
       />
-      <div className="flex items-center gap-2" style={{ marginTop: 8 }}>
+      <div className="flex items-center gap-3" style={{ marginTop: 8 }}>
         <button
           onClick={handleSubmit}
           disabled={loading || !summary.trim()}
-          style={{ fontSize: 11, fontWeight: 600, padding: "5px 14px", borderRadius: 4, background: "#4A55BE", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+          style={{ fontSize: 12, fontWeight: 600, minHeight: 40, padding: "0 16px", borderRadius: 4, background: "#4A55BE", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
         >
           {loading ? "Submitting..." : "Submit"}
         </button>
         <button
           onClick={() => { setOpen(false); setError(null); }}
           disabled={loading}
-          style={{ fontSize: 11, fontWeight: 500, padding: "5px 14px", borderRadius: 4, background: "transparent", color: "#5A5247", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
+          style={{ fontSize: 12, fontWeight: 500, minHeight: 40, padding: "0 16px", borderRadius: 4, background: "transparent", color: "#5A5247", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
         >
           Cancel
         </button>

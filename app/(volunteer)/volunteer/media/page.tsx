@@ -120,7 +120,7 @@ export default function VolunteerMediaPage() {
             </label>
           </div>
 
-          <form onSubmit={handleUpload} className="flex gap-3 items-end">
+          <form onSubmit={handleUpload} className="flex flex-col sm:flex-row gap-3 sm:items-end">
             <div style={{ flex: 1 }}>
               {mode === "upload" ? (
                 <input

@@ -47,8 +47,8 @@ export default async function StudentTestsPage() {
             const attempt = attemptMap.get(test.id);
             const passed = attempt?.score !== null && attempt?.score !== undefined && attempt.score >= test.passing_score;
             return (
-              <div key={test.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div>
+              <div key={test.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                <div style={{ minWidth: 0, flex: "1 1 200px" }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: "0 0 6px" }}>{test.title}</h3>
                   <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#9B9188" }}>
                     <span>{test.questions?.length ?? 0} questions</span>
