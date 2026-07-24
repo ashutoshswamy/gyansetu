@@ -1281,8 +1281,15 @@ alter table public.daily_logs add column if not exists key_achievements     text
 alter table public.daily_logs add column if not exists challenges_faced     text;
 alter table public.daily_logs add column if not exists biggest_learning     text;
 alter table public.daily_logs add column if not exists participant_impact  text;
-update public.daily_logs set activities_conducted = activities where activities_conducted is null;
-update public.daily_logs set challenges_faced = challenges where challenges_faced is null and challenges is not null;
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'daily_logs' and column_name = 'activities') then
+    update public.daily_logs set activities_conducted = activities where activities_conducted is null;
+  end if;
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'daily_logs' and column_name = 'challenges') then
+    update public.daily_logs set challenges_faced = challenges where challenges_faced is null and challenges is not null;
+  end if;
+end $$;
 alter table public.daily_logs drop column if exists activities;
 alter table public.daily_logs drop column if exists observations;
 alter table public.daily_logs drop column if exists challenges;
@@ -1403,9 +1410,17 @@ alter table public.tour_reports add column if not exists overall_recommendation 
 alter table public.tour_reports add column if not exists suitable_residential_camps boolean;
 alter table public.tour_reports add column if not exists follow_up_required         boolean;
 alter table public.tour_reports add column if not exists additional_remarks         text;
-update public.tour_reports set location_name = coalesce(nullif(trim(summary), ''), 'Unspecified') where location_name is null;
-update public.tour_reports set challenges_faced = challenges where challenges_faced is null and challenges is not null;
-update public.tour_reports set additional_remarks = coalesce(highlights, summary) where additional_remarks is null;
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'tour_reports' and column_name = 'summary') then
+    update public.tour_reports set location_name = coalesce(nullif(trim(summary), ''), 'Unspecified') where location_name is null;
+    update public.tour_reports set additional_remarks = coalesce(highlights, summary) where additional_remarks is null;
+  end if;
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'tour_reports' and column_name = 'challenges') then
+    update public.tour_reports set challenges_faced = challenges where challenges_faced is null and challenges is not null;
+  end if;
+end $$;
+update public.tour_reports set location_name = 'Unspecified' where location_name is null;
 alter table public.tour_reports drop column if exists summary;
 alter table public.tour_reports drop column if exists highlights;
 alter table public.tour_reports drop column if exists challenges;
