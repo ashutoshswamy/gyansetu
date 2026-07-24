@@ -37,7 +37,7 @@ export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
         onClick={() => setOpen(true)}
         style={{ fontSize: 11, fontWeight: 600, minHeight: 40, padding: "0 14px", borderRadius: 4, background: "transparent", color: "#F5A520", border: "1.5px solid rgba(245,165,32,0.35)", cursor: "pointer" }}
       >
-        I missed this — submit summary
+        I didn&apos;t attend
       </button>
     );
   }

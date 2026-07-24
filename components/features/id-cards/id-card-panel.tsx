@@ -10,6 +10,8 @@ export interface IdCardPanelData {
   card_number: string;
   valid_from: string;
   valid_to: string;
+  state?: string | null;
+  place?: string | null;
   tour_title?: string | null;
   tour_destination?: string | null;
   group_name?: string | null;
@@ -18,6 +20,29 @@ export interface IdCardPanelData {
 
 function looksLikeImage(url: string) {
   return /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url);
+}
+
+const CARD_W = 340;
+const CARD_H = 214;
+
+const faceStyle: React.CSSProperties = {
+  width: CARD_W,
+  height: CARD_H,
+  background: "#FFFDF7",
+  border: "1px solid #E4DFD1",
+  borderRadius: 12,
+  overflow: "hidden",
+  color: "#19140F",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+};
+
+function field(label: string, value?: string | null) {
+  return (
+    <div style={{ marginBottom: 4 }}>
+      <span style={{ fontSize: 9, fontWeight: 700, color: "#9B9188", textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}: </span>
+      <span style={{ fontSize: 11, fontWeight: 600, color: "#19140F" }}>{value || "—"}</span>
+    </div>
+  );
 }
 
 export function IdCardPanel({ data }: { data: IdCardPanelData }) {
@@ -29,7 +54,7 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
     if (!cardRef.current) return;
     setDownloading(true);
     try {
-      const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, cacheBust: true });
+      const dataUrl = await toPng(cardRef.current, { pixelRatio: 3, cacheBust: true });
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `${data.card_number}.png`;
@@ -43,52 +68,64 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
 
   return (
     <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
-      <div
-        ref={cardRef}
-        style={{
-          background: "linear-gradient(135deg, #4A55BE 0%, #363F91 100%)",
-          borderRadius: 12, padding: 24, color: "white", marginBottom: 20,
-          position: "relative",
-        }}
-      >
-        <div style={{ background: "white", borderRadius: 6, padding: 3, display: "flex", position: "absolute", top: 16, right: 16 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Gyan Setu" crossOrigin="anonymous" style={{ width: 24, height: 24, objectFit: "contain", display: "block" }} />
-        </div>
-        <div className="flex items-center gap-2 mb-6" style={{ paddingRight: 40 }}>
-          <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>Gyan Setu Volunteer</span>
-        </div>
-        <div className="flex items-start gap-4 mb-4">
-          {photo && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={photo}
-              alt="ID card"
-              crossOrigin="anonymous"
-              style={{ width: 96, height: 96, borderRadius: 8, objectFit: "cover", border: "2px solid rgba(255,255,255,0.4)", flexShrink: 0 }}
-            />
-          )}
-          <div>
-            <p style={{ fontSize: 18, fontWeight: 700, marginBottom: 2 }}>{data.name}</p>
-            {data.tour_title && <p style={{ fontSize: 13, opacity: 0.85 }}>{data.tour_title} · {data.tour_destination}</p>}
-            {data.group_name && <p style={{ fontSize: 13, opacity: 0.85 }}>Group: {data.group_name}</p>}
+      <div ref={cardRef} style={{ display: "flex", gap: 20, flexWrap: "wrap", background: "#FAFAF7", padding: 16 }}>
+        {/* Front */}
+        <div style={faceStyle}>
+          <div style={{ background: "#EEF0FB", padding: "10px 14px", borderBottom: "2px solid #4A55BE" }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: "#4A55BE", margin: 0 }}>JNANA PRABODHINI – EARC</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#19140F", margin: "1px 0 0" }}>Gyan Setu</p>
+            <p style={{ fontSize: 9, fontWeight: 600, color: "#5A5247", letterSpacing: "0.06em", textTransform: "uppercase", margin: "2px 0 0" }}>
+              Volunteer Identity Card
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 12, padding: "10px 14px" }}>
+            <div style={{ flexShrink: 0 }}>
+              {photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={photo}
+                  alt="Volunteer"
+                  crossOrigin="anonymous"
+                  style={{ width: 76, height: 92, borderRadius: 6, objectFit: "cover", border: "1px solid #E4DFD1", display: "block" }}
+                />
+              ) : (
+                <div style={{ width: 76, height: 92, borderRadius: 6, background: "#F0EEE6", border: "1px dashed #D8CFA8" }} />
+              )}
+            </div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "#19140F", margin: "0 0 5px", lineHeight: 1.2 }}>{data.name}</p>
+              {field("State", data.state)}
+              {field("Place", data.place)}
+              {field("Volunteer ID", data.card_number)}
+              {field("Valid From", new Date(data.valid_from).toLocaleDateString("en-IN"))}
+              {field("Valid To", new Date(data.valid_to).toLocaleDateString("en-IN"))}
+            </div>
+          </div>
+          <div style={{ borderTop: "1px solid #E4DFD1", margin: "0 14px", paddingTop: 6 }}>
+            <p style={{ fontSize: 9, fontWeight: 700, color: "#19140F", margin: 0 }}>Issued by: Project Head – Gyan Setu</p>
+            <p style={{ fontSize: 8.5, color: "#9B9188", margin: "1px 0 0" }}>Educational Activity Research Centre (EARC)</p>
+            <p style={{ fontSize: 8.5, color: "#9B9188", margin: 0 }}>Jnana Prabodhini</p>
           </div>
         </div>
-        <p style={{ fontSize: 11, opacity: 0.7, marginBottom: 2 }}>Card Number</p>
-        <p style={{ fontSize: 20, fontWeight: 700, letterSpacing: "0.04em", marginBottom: 16 }}>{data.card_number}</p>
-        <div className="flex justify-between">
-          <div>
-            <p style={{ fontSize: 10, opacity: 0.7 }}>Valid From</p>
-            <p style={{ fontSize: 13, fontWeight: 600 }}>{new Date(data.valid_from).toLocaleDateString()}</p>
-          </div>
-          <div>
-            <p style={{ fontSize: 10, opacity: 0.7 }}>Valid To</p>
-            <p style={{ fontSize: 13, fontWeight: 600 }}>{new Date(data.valid_to).toLocaleDateString()}</p>
+
+        {/* Back */}
+        <div style={{ ...faceStyle, padding: "12px 14px", display: "flex", flexDirection: "column" }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#19140F", margin: "0 0 6px" }}>Instructions</p>
+          <ol style={{ fontSize: 8.5, color: "#5A5247", lineHeight: 1.5, margin: 0, paddingLeft: 14 }}>
+            <li>This is an official Gyan Setu Volunteer Identity Card issued by Jnana Prabodhini – Educational Activity Research Centre (EARC).</li>
+            <li>Carry this card during all official Gyan Setu programmes, visits, workshops, and events.</li>
+            <li>This card is personal, non-transferable, and valid only for the period mentioned on the front.</li>
+            <li>If the card is lost, damaged, or found, please contact the Gyan Setu team immediately.</li>
+          </ol>
+          <div style={{ marginTop: "auto", borderTop: "1px solid #E4DFD1", paddingTop: 6 }}>
+            <p style={{ fontSize: 9, fontWeight: 700, color: "#19140F", margin: "0 0 2px" }}>Gyan Setu – Educational Activity Research Centre (EARC)</p>
+            <p style={{ fontSize: 8.5, color: "#5A5247", margin: 0 }}>Email: ____________________</p>
+            <p style={{ fontSize: 8.5, color: "#5A5247", margin: 0 }}>Phone: ____________________</p>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 flex-wrap">
+      <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 20 }}>
         <button
           onClick={handleDownload}
           disabled={downloading}
@@ -100,7 +137,7 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
           }}
         >
           <Download size={14} />
-          {downloading ? "Preparing..." : "Download Card"}
+          {downloading ? "Preparing..." : "Download Card (Front + Back)"}
         </button>
 
         {data.card_file_url && !looksLikeImage(data.card_file_url) && (

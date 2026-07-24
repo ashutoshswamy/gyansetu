@@ -1,11 +1,27 @@
 import { getAllDailyLogs } from "@/actions/daily-logs";
-import { BookOpen } from "lucide-react";
+import { BookOpen, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
 
 type DailyLogRow = DailyLog & {
   tours?: { id: string; title: string } | null;
   users?: { id: string; name: string; email: string } | null;
 };
+
+const QUESTIONS = [
+  { key: "activities_conducted", label: "What activities did your team conduct today?" },
+  { key: "key_achievements", label: "What were the key achievements or outcomes of the day?" },
+  { key: "challenges_faced", label: "What challenges did you face today?" },
+  { key: "biggest_learning", label: "What was your biggest learning or observation today?" },
+  { key: "participant_impact", label: "What impact did you observe on the participants today?" },
+] as const;
+
+// A log is "delayed" when it was submitted (created_at) on a different calendar day than
+// the day it's actually reporting on (log_date).
+function isDelayed(log: DailyLogRow) {
+  const logDate = new Date(log.log_date).toDateString();
+  const submittedDate = new Date(log.created_at).toDateString();
+  return logDate !== submittedDate;
+}
 
 export default async function AdminDailyLogsPage() {
   const logs = (await getAllDailyLogs()) as DailyLogRow[];
@@ -41,23 +57,21 @@ export default async function AdminDailyLogsPage() {
                   </p>
                 </div>
               </div>
-              <div className="space-y-2 mt-3">
-                <div>
-                  <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>Activities</p>
-                  <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log.activities}</p>
+              {isDelayed(log) && (
+                <div className="flex items-center gap-2" style={{ background: "rgba(245,165,32,0.08)", border: "1px solid rgba(245,165,32,0.25)", borderRadius: 6, padding: "8px 12px", margin: "10px 0" }}>
+                  <AlertTriangle size={14} style={{ color: "#F5A520", flexShrink: 0 }} />
+                  <p style={{ fontSize: 12, color: "#A8641C", margin: 0 }}>
+                    Delayed entry — submitted on {new Date(log.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}, not the same day as the log date.
+                  </p>
                 </div>
-                {log.observations && (
-                  <div>
-                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>Observations</p>
-                    <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log.observations}</p>
+              )}
+              <div className="space-y-2 mt-3">
+                {QUESTIONS.map((q, i) => (
+                  <div key={q.key}>
+                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>{i + 1}. {q.label}</p>
+                    <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log[q.key]}</p>
                   </div>
-                )}
-                {log.challenges && (
-                  <div>
-                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>Challenges</p>
-                    <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log.challenges}</p>
-                  </div>
-                )}
+                ))}
               </div>
             </div>
           ))}

@@ -31,12 +31,14 @@ export default function NewTravelTicketPage() {
       await createTravelTicket({
         group_id: fd.get("group_id") as string,
         train_number: (fd.get("train_number") as string) || undefined,
+        train_name: (fd.get("train_name") as string) || undefined,
         pnr: (fd.get("pnr") as string) || undefined,
         departure_station: (fd.get("departure_station") as string) || undefined,
         arrival_station: (fd.get("arrival_station") as string) || undefined,
         departure_at: (fd.get("departure_at") as string) || undefined,
         arrival_at: (fd.get("arrival_at") as string) || undefined,
         ticket_file_url: (fd.get("ticket_file_url") as string) || undefined,
+        note: (fd.get("note") as string) || undefined,
         confirmation_status: fd.get("confirmation_status") as TravelTicketInput["confirmation_status"],
         itinerary_approved: fd.get("itinerary_approved") === "on",
       });
@@ -75,41 +77,49 @@ export default function NewTravelTicketPage() {
                 <input name="train_number" type="text" placeholder="Enter train number" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>PNR</label>
-                <input name="pnr" type="text" placeholder="Enter PNR" style={inputStyle} />
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Train Name</label>
+                <input name="train_name" type="text" placeholder="Enter train name" style={inputStyle} />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Departure Station</label>
-                <input name="departure_station" type="text" placeholder="Enter departure station" style={inputStyle} />
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>From</label>
+                <input name="departure_station" type="text" placeholder="Departure station" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Arrival Station</label>
-                <input name="arrival_station" type="text" placeholder="Enter arrival station" style={inputStyle} />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Departure At</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Time</label>
                 <input name="departure_at" type="datetime-local" style={inputStyle} />
               </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Arrival At</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>To</label>
+                <input name="arrival_station" type="text" placeholder="Arrival station" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Time</label>
                 <input name="arrival_at" type="datetime-local" style={inputStyle} />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Ticket File URL</label>
-              <input name="ticket_file_url" type="text" placeholder="https://..." style={inputStyle} />
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>PNR Number</label>
+              <input name="pnr" type="text" placeholder="Enter PNR" style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Confirmation Status</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Current Status</label>
               <select name="confirmation_status" defaultValue="pending" style={inputStyle}>
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="cancelled">Cancelled</option>
               </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Note</label>
+              <textarea name="note" rows={3} placeholder="Any additional notes..." style={{ ...inputStyle, resize: "vertical" }} />
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Ticket File URL</label>
+              <input name="ticket_file_url" type="text" placeholder="https://..." style={inputStyle} />
             </div>
             <label className="flex items-center gap-2" style={{ fontSize: 13, color: "#5A5247" }}>
               <input name="itinerary_approved" type="checkbox" />

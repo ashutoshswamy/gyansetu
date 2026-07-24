@@ -96,14 +96,22 @@ export const certificateSchema = z.object({
   tour_id: z.string().uuid().optional(),
   certificate_type: z.enum(["participation", "excellence", "leadership", "mentor"]),
   notes: z.string().optional(),
+  state: z.string().optional(),
+  place: z.string().optional(),
+  duration_of_visit: z.string().optional(),
+  volunteer_code: z.string().optional(),
 });
+
+const minWords = (n: number) => (val: string) => val.trim().split(/\s+/).filter(Boolean).length >= n;
 
 export const dailyLogSchema = z.object({
   tour_id: z.string().uuid(),
   log_date: z.string(),
-  activities: z.string().min(5),
-  observations: z.string().optional(),
-  challenges: z.string().optional(),
+  activities_conducted: z.string().refine(minWords(50), "Must be at least 50 words"),
+  key_achievements: z.string().refine(minWords(50), "Must be at least 50 words"),
+  challenges_faced: z.string().refine(minWords(50), "Must be at least 50 words"),
+  biggest_learning: z.string().refine(minWords(50), "Must be at least 50 words"),
+  participant_impact: z.string().refine(minWords(50), "Must be at least 50 words"),
 });
 
 export type EventInput = z.infer<typeof eventSchema>;
@@ -142,7 +150,12 @@ export const volunteerProfileSchema = z.object({
   skills: z.array(z.string()).min(1, "Skills are required"),
   languages: z.array(z.string()).optional(),
   states_visited: z.array(z.string()).optional(),
-  bio: z.string().max(1000).min(100, "Bio must be at least 100 characters"),
+  bio: z
+    .string()
+    .refine(
+      (val) => val.trim().split(/\s+/).filter(Boolean).length <= 100,
+      "Bio must be at most 100 words"
+    ),
   emergency_contact_name: z.string().max(200).optional(),
   emergency_contact_phone: z.string().max(20).optional(),
   emergency_contact_relation: z.string().max(100).optional(),
@@ -312,19 +325,22 @@ export const workshopSchema = z.object({
 export const workshopAttendeeSchema = z.object({
   workshop_id: z.string().uuid(),
   volunteer_id: z.string().uuid(),
-  attendance_status: z.enum(["pending", "present", "absent", "excused"]).default("pending"),
+  attendance_status: z.enum(["pending", "pending_approval", "present", "absent", "excused"]).default("pending"),
   missed_summary: z.string().max(2000).optional(),
   makeup_decision: z.enum(["pending", "allowed", "not_allowed"]).optional(),
 });
 
 const demoEvaluationScoresSchema = z.object({
-  content_delivery: z.number().min(0).max(10),
-  hindi_communication: z.number().min(0).max(10),
-  team_coordination: z.number().min(0).max(10),
-  classroom_management: z.number().min(0).max(10),
-  activity_flow: z.number().min(0).max(10),
-  confidence: z.number().min(0).max(10),
+  hindi_english_communication: z.number().min(0).max(10),
+  concept_clarity: z.number().min(0).max(10),
+  communication_skills: z.number().min(0).max(10),
+  presentation_skills: z.number().min(0).max(10),
+  confidence_body_language: z.number().min(0).max(10),
   student_engagement: z.number().min(0).max(10),
+  activity_demonstration: z.number().min(0).max(10),
+  team_coordination: z.number().min(0).max(10),
+  time_session_management: z.number().min(0).max(10),
+  overall_readiness: z.number().min(0).max(10),
 });
 
 export const demoEvaluationSchema = z.object({
@@ -367,17 +383,21 @@ export const idCardSchema = z.object({
   valid_from: z.string(),
   valid_to: z.string(),
   card_file_url: z.string().url().optional().or(z.literal("")),
+  state: z.string().optional(),
+  place: z.string().optional(),
 });
 
 export const travelTicketSchema = z.object({
   group_id: z.string().uuid(),
   train_number: z.string().max(50).optional(),
+  train_name: z.string().max(200).optional(),
   pnr: z.string().max(50).optional(),
   departure_station: z.string().max(200).optional(),
   arrival_station: z.string().max(200).optional(),
   departure_at: z.string().optional(),
   arrival_at: z.string().optional(),
   ticket_file_url: z.string().url().optional().or(z.literal("")),
+  note: z.string().max(1000).optional(),
   confirmation_status: z.enum(["pending", "confirmed", "cancelled"]).default("pending"),
   itinerary_approved: z.boolean().default(false),
 });
@@ -396,26 +416,135 @@ export const expenseAdvanceSchema = z.object({
   notes: z.string().max(1000).optional(),
 });
 
-export const expenseSchema = z.object({
-  group_id: z.string().uuid(),
-  category: z.enum(["travel", "accommodation", "food", "materials", "miscellaneous", "other"]),
-  amount: z.number().positive(),
-  bill_url: z.string().url().optional().or(z.literal("")),
-  description: z.string().max(1000).optional(),
-});
+const TRAVEL_SUBCATEGORIES = ["Train", "Bus", "Flight", "Taxi", "Auto", "Local Transport", "Fuel"] as const;
+const ACCOMMODATION_SUBCATEGORIES = ["Hotel", "Hostel", "Guest House", "Homestay"] as const;
+const FOOD_SUBCATEGORIES = ["Breakfast", "Lunch", "Dinner", "Snacks"] as const;
+
+export const expenseSchema = z
+  .object({
+    group_id: z.string().uuid(),
+    category: z.enum(["travel", "accommodation", "food", "materials", "miscellaneous"]),
+    subcategory: z.string().max(500).optional(),
+    volunteer_count: z.number().int().positive().optional(),
+    vendor_name: z.string().max(200).optional(),
+    expense_date: z.string(),
+    amount: z.number().positive(),
+    bill_url: z.string().url().optional().or(z.literal("")),
+    description: z.string().max(1000).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.category === "travel" && !TRAVEL_SUBCATEGORIES.includes(data.subcategory as (typeof TRAVEL_SUBCATEGORIES)[number])) {
+      ctx.addIssue({ code: "custom", path: ["subcategory"], message: "Select a travel type" });
+    }
+    if (data.category === "accommodation" && !ACCOMMODATION_SUBCATEGORIES.includes(data.subcategory as (typeof ACCOMMODATION_SUBCATEGORIES)[number])) {
+      ctx.addIssue({ code: "custom", path: ["subcategory"], message: "Select an accommodation type" });
+    }
+    if (data.category === "food" && !FOOD_SUBCATEGORIES.includes(data.subcategory as (typeof FOOD_SUBCATEGORIES)[number])) {
+      ctx.addIssue({ code: "custom", path: ["subcategory"], message: "Select a meal type" });
+    }
+    if ((data.category === "materials" || data.category === "miscellaneous") && !data.subcategory?.trim()) {
+      ctx.addIssue({ code: "custom", path: ["subcategory"], message: "Please specify the expense" });
+    }
+    if ((data.category === "accommodation" || data.category === "food") && !data.volunteer_count) {
+      ctx.addIssue({ code: "custom", path: ["volunteer_count"], message: "Number of volunteers is required" });
+    }
+  });
 
 export const rejectExpenseSchema = z.object({
   reason: z.string().trim().min(1).max(1000),
 });
 
+const tourReportHostSchema = z.object({
+  organisation: z.string().max(200).optional(),
+  contact_person_name: z.string().max(200).optional(),
+  designation: z.string().max(200).optional(),
+  mobile_number: z.string().max(20).optional(),
+  state: z.string().max(100).optional(),
+  district: z.string().max(100).optional(),
+  block_taluk: z.string().max(100).optional(),
+  village_city: z.string().max(200).optional(),
+});
+
+const tourReportLogisticsScoresSchema = z.object({
+  accommodation: z.number().min(1).max(10).optional(),
+  food: z.number().min(1).max(10).optional(),
+  local_transport: z.number().min(1).max(10).optional(),
+  coordination_communication: z.number().min(1).max(10).optional(),
+  safety_security: z.number().min(1).max(10).optional(),
+  overall_experience: z.number().min(1).max(10).optional(),
+});
+
 export const tourReportSchema = z.object({
   tour_id: z.string().uuid(),
   group_id: z.string().uuid().optional(),
-  summary: z.string().min(10),
-  highlights: z.string().max(3000).optional(),
-  challenges: z.string().max(3000).optional(),
+  location_name: z.string().min(1).max(200),
+  hosts: z.array(tourReportHostSchema).default([]),
+  logistics_scores: tourReportLogisticsScoresSchema.default({}),
+  unique_features: z.string().max(5000).optional(),
+  best_practices: z.string().max(5000).optional(),
+  cultural_observations: z.string().max(5000).optional(),
+  challenges_faced: z.string().max(5000).optional(),
+  suggestions_future_teams: z.string().max(5000).optional(),
+  important_contacts: z.string().max(5000).optional(),
+  places_worth_visiting: z.string().max(5000).optional(),
+  overall_recommendation: z.enum(["Highly Recommended", "Recommended", "Can be Considered", "Not Recommended"]).optional(),
+  suitable_residential_camps: z.boolean().optional(),
+  follow_up_required: z.boolean().optional(),
+  additional_remarks: z.string().max(3000).optional(),
   report_file_url: z.string().url().optional().or(z.literal("")),
   status: z.enum(["draft", "submitted", "approved"]).default("draft"),
+});
+
+const schoolReportSessionSchema = z.object({
+  standard: z.string().optional(),
+  division: z.string().optional(),
+  num_students: z.number().int().nonnegative().optional(),
+  theme_topic: z.string().optional(),
+  duration_minutes: z.number().int().nonnegative().optional(),
+  language_used: z.string().optional(),
+  combined_session: z.boolean().optional(),
+});
+
+export const schoolReportSchema = z.object({
+  group_id: z.string().uuid(),
+  // Section 1: School Details
+  school_name: z.string().min(1).max(200),
+  school_type: z.enum(["Government", "Government Aided", "Private", "Ashram School", "ZP School", "Other"]).optional(),
+  location_category: z.enum(["Rural", "Semi-Urban", "Urban"]).optional(),
+  medium_of_instruction: z.enum(["Marathi", "Hindi", "English", "Assamese", "Urdu", "Other"]).optional(),
+  street_area: z.string().max(200).optional(),
+  village_town: z.string().max(200).optional(),
+  taluka_tehsil: z.string().max(200).optional(),
+  district: z.string().max(200).optional(),
+  state: z.string().max(100).optional(),
+  pincode: z.string().max(10).optional(),
+  principal_name: z.string().max(200).optional(),
+  principal_mobile: z.string().max(20).optional(),
+  coordinator_name: z.string().max(200).optional(),
+  coordinator_mobile: z.string().max(20).optional(),
+  // Section 2: Visit Details
+  visit_date: z.string().optional(),
+  arrival_time: z.string().optional(),
+  departure_time: z.string().optional(),
+  total_duration_minutes: z.number().int().nonnegative().optional(),
+  volunteers_present_count: z.number().int().nonnegative().optional(),
+  volunteer_names: z.array(z.string()).default([]),
+  // Section 3: Session Details
+  sessions: z.array(schoolReportSessionSchema).default([]),
+  // Section 4: Reflection & Observations
+  student_response: z.string().max(5000).optional(),
+  what_went_well: z.string().max(5000).optional(),
+  challenges_faced: z.string().max(5000).optional(),
+  solutions_adopted: z.string().max(5000).optional(),
+  suggestions_improvement: z.string().max(5000).optional(),
+  memorable_moment: z.string().max(5000).optional(),
+  overall_feedback: z.string().max(5000).optional(),
+  // Section 5: Visit Summary
+  overall_rating: z.enum(["Excellent", "Good", "Satisfactory", "Needs Improvement"]).optional(),
+  follow_up_required: z.boolean().optional(),
+  follow_up_date: z.string().optional(),
+  additional_remarks: z.string().max(3000).optional(),
+  status: z.enum(["draft", "submitted"]).default("draft"),
 });
 
 export type RegistrationFeeInput = z.infer<typeof registrationFeeSchema>;
@@ -431,3 +560,4 @@ export type LocationUpdateInput = z.infer<typeof locationUpdateSchema>;
 export type ExpenseAdvanceInput = z.infer<typeof expenseAdvanceSchema>;
 export type ExpenseInput = z.infer<typeof expenseSchema>;
 export type TourReportInput = z.infer<typeof tourReportSchema>;
+export type SchoolReportInput = z.infer<typeof schoolReportSchema>;

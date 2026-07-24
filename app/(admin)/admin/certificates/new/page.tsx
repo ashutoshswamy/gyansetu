@@ -38,13 +38,17 @@ export default function NewCertificatePage() {
     setError(null);
     const fd = new FormData(e.currentTarget);
     try {
-      await issueCertificate({
+      const cert = await issueCertificate({
         user_id: fd.get("user_id") as string,
         tour_id: fd.get("tour_id") as string || undefined,
         certificate_type: fd.get("certificate_type") as CertificateType,
         notes: fd.get("notes") as string || undefined,
+        state: fd.get("state") as string || undefined,
+        place: fd.get("place") as string || undefined,
+        duration_of_visit: fd.get("duration_of_visit") as string || undefined,
+        volunteer_code: fd.get("volunteer_code") as string || undefined,
       });
-      router.push("/admin/certificates");
+      router.push(`/admin/certificates/${cert.id}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to issue certificate");
     } finally {
@@ -82,6 +86,24 @@ export default function NewCertificatePage() {
                 <option value="">General (no specific tour)</option>
                 {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
               </select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
+                <input name="state" placeholder="e.g. Maharashtra" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
+                <input name="place" placeholder="e.g. Nashik" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit</label>
+                <input name="duration_of_visit" placeholder="e.g. 5 Days" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer ID</label>
+                <input name="volunteer_code" placeholder="e.g. GS-2026-014" style={inputStyle} />
+              </div>
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>

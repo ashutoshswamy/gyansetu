@@ -72,6 +72,8 @@ export default function NewIdCardPage() {
         valid_from: fd.get("valid_from") as string,
         valid_to: fd.get("valid_to") as string,
         card_file_url: (fd.get("card_file_url") as string) || undefined,
+        state: (fd.get("state") as string) || undefined,
+        place: (fd.get("place") as string) || undefined,
       });
       router.push("/admin/id-cards");
     } catch (err: unknown) {
@@ -124,6 +126,16 @@ export default function NewIdCardPage() {
               </div>
             </div>
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>Card number is generated automatically from the tour, group, and issue sequence.</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
+                <input name="state" placeholder="e.g. Maharashtra" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
+                <input name="place" placeholder="e.g. Nashik" style={inputStyle} />
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>

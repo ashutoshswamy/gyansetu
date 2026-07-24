@@ -2,6 +2,15 @@ import { getAllExpenseAdvances, getAllExpenses } from "@/actions/finance";
 import { Receipt, Wallet } from "lucide-react";
 import { AdvanceForm } from "./advance-form";
 import { ExpenseActions } from "./expense-actions";
+import { ReceiptButton } from "@/components/features/expenses/receipt-button";
+
+const categoryLabels: Record<string, string> = {
+  travel: "Travel & Transportation",
+  accommodation: "Accommodation",
+  food: "Food & Refreshments",
+  materials: "Program Materials & Printing",
+  miscellaneous: "Miscellaneous",
+};
 
 const categoryColors: Record<string, { color: string; bg: string }> = {
   travel:        { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
@@ -9,7 +18,6 @@ const categoryColors: Record<string, { color: string; bg: string }> = {
   food:          { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
   materials:     { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
   miscellaneous: { color: "#5A5247", bg: "rgba(90,82,71,0.08)" },
-  other:         { color: "#5A5247", bg: "rgba(90,82,71,0.08)" },
 };
 
 const statusColors: Record<string, { color: string; bg: string }> = {
@@ -60,7 +68,7 @@ export default async function AdminFinancePage() {
             <p style={{ fontSize: 13, color: "#9B9188" }}>No expenses submitted yet.</p>
           )}
           {expenses.map((ex) => {
-            const cat = categoryColors[ex.category] ?? categoryColors.other;
+            const cat = categoryColors[ex.category] ?? categoryColors.miscellaneous;
             const st = statusColors[ex.status] ?? statusColors.pending;
             return (
               <div key={ex.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "16px 20px" }}>
@@ -68,20 +76,28 @@ export default async function AdminFinancePage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span style={{ fontSize: 14, fontWeight: 600, color: "#19140F" }}>{ex.submitter?.name ?? "Unknown"}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: cat.color, background: cat.bg, textTransform: "capitalize" }}>
-                        {ex.category}
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: cat.color, background: cat.bg }}>
+                        {categoryLabels[ex.category] ?? ex.category}
                       </span>
                       <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: st.color, background: st.bg, textTransform: "capitalize" }}>
                         {ex.status}
                       </span>
                     </div>
-                    <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 4px" }}>{ex.group?.name ?? "No group"} · {ex.submitter?.email}</p>
+                    <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 4px" }}>
+                      {ex.group?.name ?? "No group"} · {ex.submitter?.email} · {new Date(ex.expense_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
+                      {ex.subcategory ? ` · ${ex.subcategory}` : ""}
+                      {ex.volunteer_count ? ` · ${ex.volunteer_count} volunteer${ex.volunteer_count !== 1 ? "s" : ""}` : ""}
+                      {ex.vendor_name ? ` · ${ex.vendor_name}` : ""}
+                    </p>
                     {ex.description && <p style={{ fontSize: 13, color: "#5A5247", margin: "4px 0" }}>{ex.description}</p>}
-                    {ex.bill_url && (
-                      <a href={ex.bill_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4A55BE", display: "inline-block", marginTop: 2 }}>
-                        View bill
-                      </a>
-                    )}
+                    <div className="flex items-center gap-3 flex-wrap" style={{ marginTop: 2 }}>
+                      {ex.bill_url && (
+                        <a href={ex.bill_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4A55BE", display: "inline-block" }}>
+                          View bill
+                        </a>
+                      )}
+                      <ReceiptButton expense={ex} />
+                    </div>
                     {ex.rejection_reason && (
                       <p style={{ fontSize: 12, color: "#DC2626", margin: "6px 0 0" }}>Rejected: {ex.rejection_reason}</p>
                     )}

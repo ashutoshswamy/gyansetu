@@ -2,10 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { createDailyLog, getMyDailyLogs } from "@/actions/daily-logs";
-import { BookOpen, Plus, X } from "lucide-react";
+import { BookOpen, Plus, X, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
 
 type DailyLogRow = DailyLog & { tours?: { id: string; title: string } | null };
+
+const QUESTIONS = [
+  { key: "activities_conducted", label: "What activities did your team conduct today?" },
+  { key: "key_achievements", label: "What were the key achievements or outcomes of the day?" },
+  { key: "challenges_faced", label: "What challenges did you face today?" },
+  { key: "biggest_learning", label: "What was your biggest learning or observation today?" },
+  { key: "participant_impact", label: "What impact did you observe on the participants today?" },
+] as const;
+
+function wordCount(text: string) {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+// A log is "delayed" when it was submitted (created_at) on a different calendar day than
+// the day it's actually reporting on (log_date).
+function isDelayed(log: DailyLogRow) {
+  const logDate = new Date(log.log_date).toDateString();
+  const submittedDate = new Date(log.created_at).toDateString();
+  return logDate !== submittedDate;
+}
 
 export default function VolunteerDailyLogPage() {
   const [logs, setLogs] = useState<DailyLogRow[]>([]);
@@ -34,16 +54,27 @@ export default function VolunteerDailyLogPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSaving(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
+
+    for (const q of QUESTIONS) {
+      const text = (fd.get(q.key) as string) || "";
+      if (wordCount(text) < 50) {
+        setError(`"${q.label}" must be at least 50 words (currently ${wordCount(text)}).`);
+        return;
+      }
+    }
+
+    setSaving(true);
     try {
       const log = await createDailyLog({
         tour_id: fd.get("tour_id") as string,
         log_date: fd.get("log_date") as string,
-        activities: fd.get("activities") as string,
-        observations: fd.get("observations") as string || undefined,
-        challenges: fd.get("challenges") as string || undefined,
+        activities_conducted: fd.get("activities_conducted") as string,
+        key_achievements: fd.get("key_achievements") as string,
+        challenges_faced: fd.get("challenges_faced") as string,
+        biggest_learning: fd.get("biggest_learning") as string,
+        participant_impact: fd.get("participant_impact") as string,
       });
       setLogs(prev => [log, ...prev]);
       setShowForm(false);
@@ -95,18 +126,14 @@ export default function VolunteerDailyLogPage() {
                   <input name="log_date" type="date" required defaultValue={new Date().toISOString().split("T")[0]} style={inputStyle} />
                 </div>
               </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Activities Conducted <span style={{ color: "#DC2626" }}>*</span></label>
-                <textarea name="activities" required rows={4} placeholder="What workshops, interactions and activities happened today?" style={{ ...inputStyle, resize: "vertical" }} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Observations & Learnings</label>
-                <textarea name="observations" rows={3} placeholder="What did you notice? Student reactions, community response, cultural insights..." style={{ ...inputStyle, resize: "vertical" }} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Challenges & Suggestions</label>
-                <textarea name="challenges" rows={2} placeholder="Any difficulties faced? Suggestions for improvement..." style={{ ...inputStyle, resize: "vertical" }} />
-              </div>
+              {QUESTIONS.map((q, i) => (
+                <div key={q.key}>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>
+                    {i + 1}. {q.label} <span style={{ color: "#DC2626" }}>*</span>
+                  </label>
+                  <textarea name={q.key} required rows={4} placeholder="Minimum 50 words..." style={{ ...inputStyle, resize: "vertical" }} />
+                </div>
+              ))}
             </div>
             <button type="submit" disabled={saving} style={{ marginTop: 16, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
               {saving ? "Saving..." : "Save Entry"}
@@ -132,23 +159,21 @@ export default function VolunteerDailyLogPage() {
                     {log.tours?.title && <p style={{ fontSize: 12, color: "#9B9188", margin: "2px 0 0" }}>{log.tours.title}</p>}
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div>
-                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Activities</p>
-                    <p style={{ fontSize: 14, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log.activities}</p>
+                {isDelayed(log) && (
+                  <div className="flex items-center gap-2" style={{ background: "rgba(245,165,32,0.08)", border: "1px solid rgba(245,165,32,0.25)", borderRadius: 6, padding: "8px 12px", marginBottom: 12 }}>
+                    <AlertTriangle size={14} style={{ color: "#F5A520", flexShrink: 0 }} />
+                    <p style={{ fontSize: 12, color: "#A8641C", margin: 0 }}>
+                      Delayed entry — submitted on {new Date(log.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}, not the same day as the log date.
+                    </p>
                   </div>
-                  {log.observations && (
-                    <div>
-                      <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Observations</p>
-                      <p style={{ fontSize: 14, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log.observations}</p>
+                )}
+                <div className="space-y-3">
+                  {QUESTIONS.map((q, i) => (
+                    <div key={q.key}>
+                      <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>{i + 1}. {q.label}</p>
+                      <p style={{ fontSize: 14, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log[q.key]}</p>
                     </div>
-                  )}
-                  {log.challenges && (
-                    <div>
-                      <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Challenges</p>
-                      <p style={{ fontSize: 14, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log.challenges}</p>
-                    </div>
-                  )}
+                  ))}
                 </div>
               </div>
             ))}

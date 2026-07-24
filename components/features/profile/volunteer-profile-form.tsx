@@ -58,6 +58,8 @@ export function VolunteerProfileForm({ variant }: Props) {
   const [eduCourseStatus, setEduCourseStatus] = useState("");
   const [collegeState, setCollegeState] = useState("");
   const [collegeCity, setCollegeCity] = useState("");
+  const [workState, setWorkState] = useState("");
+  const [workCity, setWorkCity] = useState("");
   const [otherLangChecked, setOtherLangChecked] = useState(false);
   const [otherLangValue, setOtherLangValue] = useState("");
   const [permState, setPermState] = useState("");
@@ -82,6 +84,13 @@ export function VolunteerProfileForm({ variant }: Props) {
       if (locParts.length === 2 && INDIAN_STATES.includes(locParts[1])) {
         setCollegeState(locParts[1]);
         setCollegeCity(locParts[0]);
+      }
+
+      // work_location is stored as "City, State" — best-effort split for the dropdowns.
+      const workParts = ((d?.work_location as string) ?? "").split(",").map((s: string) => s.trim());
+      if (workParts.length === 2 && INDIAN_STATES.includes(workParts[1])) {
+        setWorkState(workParts[1]);
+        setWorkCity(workParts[0]);
       }
 
       const langs: string[] = d?.languages ?? [];
@@ -117,8 +126,9 @@ export function VolunteerProfileForm({ variant }: Props) {
     const str = (name: string) => (fd.get(name) as string) || undefined;
 
     const bioText = (fd.get("bio") as string) || "";
-    if (bioText.trim().length > 0 && bioText.trim().length < 100) {
-      setError(`Bio must be at least 100 characters (currently ${bioText.trim().length}).`);
+    const bioWordCount = bioText.trim().split(/\s+/).filter(Boolean).length;
+    if (bioWordCount > 100) {
+      setError(`Bio must be at most 100 words (currently ${bioWordCount}).`);
       setSaving(false);
       return;
     }
@@ -165,7 +175,7 @@ export function VolunteerProfileForm({ variant }: Props) {
         edu_course_status: eduCourseStatus as "pursuing" | "completed" | undefined,
         course_year: eduCourseStatus === "completed" ? undefined : str("course_year"),
         company_name: str("company_name"),
-        work_location: str("work_location"),
+        work_location: workCity && workState ? `${workCity}, ${workState}` : undefined,
         designation: str("designation"),
         work_department: str("work_department"),
         years_experience: fd.get("years_experience") ? Number(fd.get("years_experience")) : undefined,
@@ -392,7 +402,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 )}
               </div>
 
-              <F label="Bio" required hint={`Brief introduction about yourself — minimum 100 characters`}><textarea name="bio" required minLength={100} rows={5} placeholder="Write a short bio" defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Bio" required hint={`Brief introduction about yourself — maximum 100 words`}><textarea name="bio" required rows={5} placeholder="Write a short bio" defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Skills" required hint="Comma-separated: Teaching, Photography, Music..."><input name="skills" required placeholder="Enter skills" defaultValue={(profile?.skills ?? []).join(", ")} style={inputStyle} /></F>
               <F label="Languages Known">
                 <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
@@ -485,15 +495,32 @@ export function VolunteerProfileForm({ variant }: Props) {
                   <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <F label="Company / Organization Name" required><input name="company_name" required={isCurrentlyWorking} placeholder="Enter company name" defaultValue={profile?.company_name ?? ""} style={inputStyle} /></F>
-                    <F label="Location" required hint="City, State"><input name="work_location" required={isCurrentlyWorking} placeholder="Enter work location" defaultValue={profile?.work_location ?? ""} style={inputStyle} /></F>
+                    <F label="Designation" required><input name="designation" required={isCurrentlyWorking} placeholder="Enter designation" defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                    <F label="Designation" required><input name="designation" required={isCurrentlyWorking} placeholder="Enter designation" defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
-                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><input name="work_department" required={isCurrentlyWorking} placeholder="Enter department" defaultValue={profile?.work_department ?? ""} style={inputStyle} /></F>
+                    <F label="Work State" required>
+                      <select value={workState} onChange={e => { setWorkState(e.target.value); setWorkCity(""); }} required={isCurrentlyWorking} style={{ ...inputStyle, appearance: "none" }}>
+                        <option value="">Select state</option>
+                        {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </F>
+                    <F label="Work City" required>
+                      {workState && STATE_CITIES[workState]?.length > 0 ? (
+                        <select value={workCity} onChange={e => setWorkCity(e.target.value)} required={isCurrentlyWorking} style={{ ...inputStyle, appearance: "none" }}>
+                          <option value="">Select city</option>
+                          {STATE_CITIES[workState].map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      ) : (
+                        <input value={workCity} onChange={e => setWorkCity(e.target.value)} required={isCurrentlyWorking} placeholder="Your city" style={inputStyle} disabled={!workState} />
+                      )}
+                    </F>
                   </div>
-                  <F label="Years of Experience">
-                    <input name="years_experience" type="number" min={0} placeholder="Enter years of experience" defaultValue={profile?.years_experience ?? ""} style={{ ...inputStyle, marginTop: 16 }} />
-                  </F>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
+                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><input name="work_department" required={isCurrentlyWorking} placeholder="Enter department" defaultValue={profile?.work_department ?? ""} style={inputStyle} /></F>
+                    <F label="Years of Experience">
+                      <input name="years_experience" type="number" min={0} placeholder="Enter years of experience" defaultValue={profile?.years_experience ?? ""} style={inputStyle} />
+                    </F>
+                  </div>
                 </div>
               )}
               <NextSectionButton accent={accent} onClick={() => setActiveTab("emergency")} />

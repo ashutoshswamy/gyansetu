@@ -66,7 +66,7 @@ export default async function AdminCertificatesPage() {
           }) => {
             const c = typeColors[cert.certificate_type] ?? typeColors.participation;
             return (
-              <div key={cert.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
+              <Link key={cert.id} href={`/admin/certificates/${cert.id}`} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16, textDecoration: "none" }}>
                 <div style={{ width: 36, height: 36, borderRadius: 8, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <Award size={18} style={{ color: c.color }} />
                 </div>
@@ -81,7 +81,7 @@ export default async function AdminCertificatesPage() {
                     {cert.users?.email} · {cert.tours?.title ?? "General"} · Issued by {cert.issuer?.name} · {new Date(cert.issued_at).toLocaleDateString()}
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

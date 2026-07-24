@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setWorkshopAttendance, decideMakeup } from "@/actions/workshops";
 
-export function MarkAttendanceButtons({ workshopId, volunteerId }: { workshopId: string; volunteerId: string }) {
+export function MarkAttendanceButtons({ workshopId, volunteerId, pendingApproval }: { workshopId: string; volunteerId: string; pendingApproval?: boolean }) {
   const router = useRouter();
   const [loading, setLoading] = useState<"present" | "absent" | null>(null);
 
@@ -31,7 +31,7 @@ export function MarkAttendanceButtons({ workshopId, volunteerId }: { workshopId:
           color: "white", border: "none", cursor: loading !== null ? "not-allowed" : "pointer",
         }}
       >
-        {loading === "present" ? "..." : "Present"}
+        {loading === "present" ? "..." : pendingApproval ? "Approve" : "Present"}
       </button>
       <button
         onClick={() => mark("absent")}
@@ -43,7 +43,7 @@ export function MarkAttendanceButtons({ workshopId, volunteerId }: { workshopId:
           cursor: loading !== null ? "not-allowed" : "pointer",
         }}
       >
-        {loading === "absent" ? "..." : "Absent"}
+        {loading === "absent" ? "..." : pendingApproval ? "Reject" : "Absent"}
       </button>
     </div>
   );

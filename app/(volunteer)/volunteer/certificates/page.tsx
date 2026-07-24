@@ -1,5 +1,6 @@
 import { getMyCertificates } from "@/actions/certificates";
 import { Award } from "lucide-react";
+import Link from "next/link";
 import type { CertificateType } from "@/types";
 
 type CertificateRow = {
@@ -41,9 +42,10 @@ export default async function VolunteerCertificatesPage() {
             {(certs as CertificateRow[]).map((cert) => {
               const c = typeColors[cert.certificate_type] ?? typeColors.participation;
               return (
-                <div
+                <Link
                   key={cert.id}
-                  style={{ background: "white", border: `1.5px solid ${c.border}`, borderRadius: 12, padding: "20px 22px", position: "relative", overflow: "hidden" }}
+                  href={`/volunteer/certificates/${cert.id}`}
+                  style={{ background: "white", border: `1.5px solid ${c.border}`, borderRadius: 12, padding: "20px 22px", position: "relative", overflow: "hidden", textDecoration: "none", display: "block" }}
                 >
                   <div style={{ position: "absolute", top: -20, right: -20, width: 80, height: 80, borderRadius: "50%", background: c.bg }} />
                   <div className="flex items-start gap-4">
@@ -64,7 +66,7 @@ export default async function VolunteerCertificatesPage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

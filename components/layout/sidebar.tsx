@@ -46,6 +46,7 @@ import {
   X,
   KeyRound,
   Landmark,
+  School,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -159,6 +160,7 @@ const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
     { label: "My Group",      href: "/volunteer/groups",       Icon: UsersRound },
     { label: "Demo Evaluation", href: "/volunteer/demo-evaluations", Icon: ClipboardCheck },
     { label: "Daily Log",     href: "/volunteer/daily-log",    Icon: BookOpen },
+    { label: "School Details", href: "/volunteer/school-reports", Icon: School },
     { label: "Travel",        href: "/volunteer/travel",       Icon: Train },
     { label: "Expenses",      href: "/volunteer/expenses",     Icon: Wallet },
     { label: "Tour Report",   href: "/volunteer/tour-report",  Icon: FileBarChart },

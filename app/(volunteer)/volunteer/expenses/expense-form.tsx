@@ -7,13 +7,28 @@ import { submitExpense } from "@/actions/finance";
 import { getGroupsForSelect } from "@/actions/groups";
 import type { ExpenseInput } from "@/lib/validations";
 
-const CATEGORIES: ExpenseInput["category"][] = ["travel", "accommodation", "food", "materials", "miscellaneous", "other"];
+const CATEGORIES: { value: ExpenseInput["category"]; label: string; hint: string }[] = [
+  { value: "travel", label: "Travel & Transportation", hint: "Train, Bus, Flight, Taxi, Auto, Local Transport, Fuel" },
+  { value: "accommodation", label: "Accommodation", hint: "Hotel, Hostel, Guest House, Homestay" },
+  { value: "food", label: "Food & Refreshments", hint: "Breakfast, Lunch, Dinner, Snacks" },
+  { value: "materials", label: "Program Materials & Printing", hint: "Stationery, science materials, printing, teaching aids, banners, etc." },
+  { value: "miscellaneous", label: "Miscellaneous", hint: "Any expense not covered under the above categories" },
+];
+
+const SUBCATEGORY_OPTIONS: Partial<Record<ExpenseInput["category"], readonly string[]>> = {
+  travel: ["Train", "Bus", "Flight", "Taxi", "Auto", "Local Transport", "Fuel"],
+  accommodation: ["Hotel", "Hostel", "Guest House", "Homestay"],
+  food: ["Breakfast", "Lunch", "Dinner", "Snacks"],
+};
+
+const VOLUNTEER_COUNT_CATEGORIES: ExpenseInput["category"][] = ["accommodation", "food"];
 
 export function ExpenseForm({ groupId }: { groupId: string | null }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
+  const [category, setCategory] = useState<ExpenseInput["category"]>("travel");
 
   useEffect(() => {
     if (groupId) return;
@@ -26,6 +41,10 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
     background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
   };
 
+  const subOptions = SUBCATEGORY_OPTIONS[category];
+  const needsVolunteerCount = VOLUNTEER_COUNT_CATEGORIES.includes(category);
+  const currentCategory = CATEGORIES.find(c => c.value === category)!;
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving(true);
@@ -34,7 +53,11 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
     try {
       const result = await submitExpense({
         group_id: groupId || (fd.get("group_id") as string),
-        category: fd.get("category") as ExpenseInput["category"],
+        category,
+        subcategory: (fd.get("subcategory") as string) || undefined,
+        volunteer_count: needsVolunteerCount ? Number(fd.get("volunteer_count")) : undefined,
+        vendor_name: (fd.get("vendor_name") as string) || undefined,
+        expense_date: fd.get("expense_date") as string,
         amount: Number(fd.get("amount")),
         bill_url: (fd.get("bill_url") as string) || undefined,
         description: (fd.get("description") as string) || undefined,
@@ -45,6 +68,7 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
         return;
       }
       (e.target as HTMLFormElement).reset();
+      setCategory("travel");
       toast.success("Expense submitted successfully");
       router.refresh();
     } catch (err: unknown) {
@@ -74,25 +98,68 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
             </select>
           </div>
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+        <div>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Category <span style={{ color: "#DC2626" }}>*</span></label>
+          <select name="category" required value={category} onChange={e => setCategory(e.target.value as ExpenseInput["category"])} style={inputStyle}>
+            {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>{currentCategory.hint}</p>
+        </div>
+
+        {subOptions ? (
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Category <span style={{ color: "#DC2626" }}>*</span></label>
-            <select name="category" required style={inputStyle}>
-              {CATEGORIES.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Type <span style={{ color: "#DC2626" }}>*</span></label>
+            <select name="subcategory" required defaultValue="" style={inputStyle}>
+              <option value="" disabled>Select type...</option>
+              {subOptions.map(o => <option key={o} value={o}>{o}</option>)}
             </select>
           </div>
+        ) : (
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>
+              {category === "materials" ? "Items Purchased" : "Purpose of Expense"} <span style={{ color: "#DC2626" }}>*</span>
+            </label>
+            <input
+              name="subcategory"
+              type="text"
+              required
+              placeholder={category === "materials" ? "e.g. stationery, science materials, printing, teaching aids, banners..." : "Describe the purpose of this expense..."}
+              style={inputStyle}
+            />
+          </div>
+        )}
+
+        {needsVolunteerCount && (
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Number of Volunteers <span style={{ color: "#DC2626" }}>*</span></label>
+            <input name="volunteer_count" type="number" min="1" step="1" required placeholder="How many volunteers?" style={inputStyle} />
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "#DC2626" }}>*</span></label>
             <input name="amount" type="number" min="0" step="0.01" required placeholder="Enter amount" style={inputStyle} />
           </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Date <span style={{ color: "#DC2626" }}>*</span></label>
+            <input name="expense_date" type="date" required defaultValue={new Date().toISOString().split("T")[0]} style={inputStyle} />
+          </div>
         </div>
+
+        <div>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Name of Person / Vendor</label>
+          <input name="vendor_name" type="text" placeholder="Who was paid?" style={inputStyle} />
+        </div>
+
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Bill URL</label>
           <input name="bill_url" type="text" placeholder="https://..." style={inputStyle} />
         </div>
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Description</label>
-          <textarea name="description" rows={2} placeholder="Enter description" style={{ ...inputStyle, resize: "vertical" }} />
+          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Additional Notes</label>
+          <textarea name="description" rows={2} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />
         </div>
       </div>
       <button type="submit" disabled={saving} style={{ marginTop: 14, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>

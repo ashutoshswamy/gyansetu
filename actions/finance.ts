@@ -136,7 +136,7 @@ export async function getMyExpenses() {
   const { db, user } = await requireVolunteerUser();
   const { data, error } = await db
     .from("expenses")
-    .select("*, group:tour_groups(id, name)")
+    .select("*, group:tour_groups(id, name), submitter:users!expenses_submitted_by_fkey(id, name)")
     .eq("submitted_by", user.id)
     .order("created_at", { ascending: false });
   if (error) { console.error("[getMyExpenses]", error); throw new Error("Failed to fetch expenses"); }

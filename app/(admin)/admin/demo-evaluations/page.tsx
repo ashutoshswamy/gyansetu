@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ClipboardCheck } from "lucide-react";
 
 function scoreColor(total: number) {
-  if (total >= 56) return "#2A5E3A"; // 80%+
-  if (total >= 35) return "#F5A520"; // 50%+
+  if (total >= 80) return "#2A5E3A"; // 80%+
+  if (total >= 50) return "#F5A520"; // 50%+
   return "#DC2626";
 }
 
@@ -42,7 +42,7 @@ export default async function AdminDemoEvaluationsPage() {
                   <div className="flex items-center gap-2 mb-0.5">
                     <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{e.volunteer?.name ?? "Unknown"}</span>
                     <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4, color, background: "rgba(0,0,0,0.03)" }}>
-                      {e.total_score} / 70
+                      {e.total_score} / 100
                     </span>
                   </div>
                   <div style={{ fontSize: 12, color: "#9B9188" }}>

@@ -85,6 +85,24 @@ export async function getWorkshopAttendees(workshopId: string) {
   return data ?? [];
 }
 
+export async function reportWorkshopAttended(workshopId: string) {
+  const { db, user } = await requireVolunteerUser();
+  const data = workshopAttendeeSchema.parse({
+    workshop_id: workshopId,
+    volunteer_id: user.id,
+    attendance_status: "pending_approval",
+  });
+  const { data: row, error } = await db
+    .from("workshop_attendees")
+    .upsert(data, { onConflict: "workshop_id,volunteer_id" })
+    .select()
+    .single();
+  if (error) { console.error("[reportWorkshopAttended]", error); throw new Error("Failed to report attendance"); }
+  revalidatePath("/volunteer/workshops");
+  revalidatePath("/admin/workshops");
+  return row;
+}
+
 export async function submitMissedWorkshopSummary(workshopId: string, summary: string) {
   const { db, user } = await requireVolunteerUser();
   const data = workshopAttendeeSchema.parse({

@@ -279,7 +279,7 @@ create table if not exists public.event_attendees (
   id          uuid primary key default gen_random_uuid(),
   event_id    uuid references public.events(id) on delete cascade,
   user_id     uuid references public.users(id) on delete cascade,
-  rsvp_status text not null default 'pending' check (rsvp_status in ('pending', 'confirmed', 'attended', 'absent')),
+  rsvp_status text not null default 'pending' check (rsvp_status in ('pending', 'confirmed', 'maybe', 'attended', 'absent')),
   created_at  timestamptz default now(),
   unique (event_id, user_id)
 );
@@ -342,6 +342,10 @@ create table if not exists public.certificates (
   notes            text,
   issued_at        timestamptz default now()
 );
+alter table public.certificates add column if not exists state             text;
+alter table public.certificates add column if not exists place             text;
+alter table public.certificates add column if not exists duration_of_visit text;
+alter table public.certificates add column if not exists volunteer_code    text;
 
 -- Daily Logs
 create table if not exists public.daily_logs (
@@ -349,9 +353,11 @@ create table if not exists public.daily_logs (
   tour_id      uuid references public.tours(id) on delete cascade,
   volunteer_id uuid references public.users(id) on delete cascade,
   log_date     date not null,
-  activities   text not null,
-  observations text,
-  challenges   text,
+  activities_conducted text,
+  key_achievements     text,
+  challenges_faced     text,
+  biggest_learning     text,
+  participant_impact   text,
   created_at   timestamptz default now(),
   updated_at   timestamptz default now()
 );
@@ -944,7 +950,7 @@ create table if not exists public.workshop_attendees (
   id                 uuid primary key default gen_random_uuid(),
   workshop_id        uuid references public.workshops(id) on delete cascade,
   volunteer_id       uuid references public.users(id) on delete cascade,
-  attendance_status  text not null default 'pending' check (attendance_status in ('pending', 'present', 'absent', 'excused')),
+  attendance_status  text not null default 'pending' check (attendance_status in ('pending', 'pending_approval', 'present', 'absent', 'excused')),
   missed_summary     text,
   makeup_decision    text check (makeup_decision in ('pending', 'allowed', 'not_allowed')),
   created_at         timestamptz default now(),
@@ -1015,18 +1021,22 @@ create table if not exists public.id_cards (
 );
 alter table public.id_cards add column if not exists tour_id  uuid references public.tours(id) on delete set null;
 alter table public.id_cards add column if not exists group_id uuid references public.tour_groups(id) on delete set null;
+alter table public.id_cards add column if not exists state    text;
+alter table public.id_cards add column if not exists place    text;
 
 -- Ticket Management & Travel Planning
 create table if not exists public.travel_tickets (
   id                    uuid primary key default gen_random_uuid(),
   group_id              uuid references public.tour_groups(id) on delete cascade,
   train_number          text,
+  train_name            text,
   pnr                   text,
   departure_station     text,
   arrival_station       text,
   departure_at          timestamptz,
   arrival_at            timestamptz,
   ticket_file_url       text,
+  note                  text,
   confirmation_status   text not null default 'pending' check (confirmation_status in ('pending', 'confirmed', 'cancelled')),
   itinerary_approved    boolean not null default false,
   created_by            uuid references public.users(id) on delete set null,
@@ -1064,7 +1074,11 @@ create table if not exists public.expenses (
   id                 uuid primary key default gen_random_uuid(),
   group_id           uuid references public.tour_groups(id) on delete cascade,
   submitted_by       uuid references public.users(id) on delete cascade,
-  category           text not null check (category in ('travel', 'accommodation', 'food', 'materials', 'miscellaneous', 'other')),
+  category           text not null check (category in ('travel', 'accommodation', 'food', 'materials', 'miscellaneous')),
+  subcategory        text,
+  volunteer_count    integer,
+  vendor_name        text,
+  expense_date       date not null default current_date,
   amount             numeric not null,
   bill_url           text,
   description        text,
@@ -1075,16 +1089,32 @@ create table if not exists public.expenses (
   created_at         timestamptz default now()
 );
 
--- Final Tour Report
+-- Final Tour Report — one per location visited (forms/tour-report.md)
 create table if not exists public.tour_reports (
-  id               uuid primary key default gen_random_uuid(),
-  tour_id          uuid references public.tours(id) on delete cascade,
-  group_id         uuid references public.tour_groups(id) on delete set null,
-  submitted_by     uuid references public.users(id) on delete cascade,
-  summary          text not null,
-  highlights       text,
-  challenges       text,
-  report_file_url  text,
+  id                          uuid primary key default gen_random_uuid(),
+  tour_id                     uuid references public.tours(id) on delete cascade,
+  group_id                    uuid references public.tour_groups(id) on delete set null,
+  submitted_by                uuid references public.users(id) on delete cascade,
+  -- Section 1: Location Details
+  location_name               text not null,
+  -- Section 2: Local Organisations & Host Details (repeatable entries)
+  hosts                       jsonb not null default '[]',
+  -- Section 3: Logistics Rating (1-10 each)
+  logistics_scores            jsonb not null default '{}',
+  -- Section 4: Observations (150-word minimum, enforced client-side on final submit)
+  unique_features             text,
+  best_practices              text,
+  cultural_observations       text,
+  challenges_faced            text,
+  suggestions_future_teams    text,
+  important_contacts          text,
+  places_worth_visiting       text,
+  -- Section 5: Visit Summary
+  overall_recommendation      text check (overall_recommendation in ('Highly Recommended', 'Recommended', 'Can be Considered', 'Not Recommended')),
+  suitable_residential_camps  boolean,
+  follow_up_required          boolean,
+  additional_remarks          text,
+  report_file_url             text,
   status           text not null default 'draft' check (status in ('draft', 'submitted', 'approved')),
   created_at       timestamptz default now(),
   updated_at       timestamptz default now()
@@ -1225,3 +1255,161 @@ alter table public.users add constraint users_role_check
   check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'super_admin'));
 alter table public.users alter column role set default 'enrollee';
 update public.users set role = 'enrollee' where role is null;
+
+-- ============================================================
+-- MIGRATION: volunteer self-reported workshop attendance
+-- (adds 'pending_approval' status — volunteer claims "attended",
+-- admin approves to 'present' or rejects to 'absent')
+-- ============================================================
+alter table public.workshop_attendees drop constraint if exists workshop_attendees_attendance_status_check;
+alter table public.workshop_attendees add constraint workshop_attendees_attendance_status_check
+  check (attendance_status in ('pending', 'pending_approval', 'present', 'absent', 'excused'));
+
+-- ============================================================
+-- MIGRATION: add 'maybe' RSVP option for events
+-- ============================================================
+alter table public.event_attendees drop constraint if exists event_attendees_rsvp_status_check;
+alter table public.event_attendees add constraint event_attendees_rsvp_status_check
+  check (rsvp_status in ('pending', 'confirmed', 'maybe', 'attended', 'absent'));
+
+-- ============================================================
+-- MIGRATION: replace daily_logs questions (activities/observations/challenges)
+-- with the 5-question reflection format
+-- ============================================================
+alter table public.daily_logs add column if not exists activities_conducted text;
+alter table public.daily_logs add column if not exists key_achievements     text;
+alter table public.daily_logs add column if not exists challenges_faced     text;
+alter table public.daily_logs add column if not exists biggest_learning     text;
+alter table public.daily_logs add column if not exists participant_impact  text;
+update public.daily_logs set activities_conducted = activities where activities_conducted is null;
+update public.daily_logs set challenges_faced = challenges where challenges_faced is null and challenges is not null;
+alter table public.daily_logs drop column if exists activities;
+alter table public.daily_logs drop column if exists observations;
+alter table public.daily_logs drop column if exists challenges;
+-- new/backfilled columns stay nullable at the DB level (old rows can't be backfilled for
+-- questions that didn't exist yet); the 50-word-minimum requirement is enforced by zod
+-- (dailyLogSchema) on every new write instead.
+
+-- ============================================================
+-- MIGRATION: add train_name + note to travel_tickets
+-- ============================================================
+alter table public.travel_tickets add column if not exists train_name text;
+alter table public.travel_tickets add column if not exists note       text;
+
+-- ============================================================
+-- MIGRATION: expense categories -> fixed 5-category list with
+-- subcategory / vendor / date / volunteer-count breakdown
+-- ============================================================
+alter table public.expenses add column if not exists subcategory     text;
+alter table public.expenses add column if not exists volunteer_count integer;
+alter table public.expenses add column if not exists vendor_name     text;
+alter table public.expenses add column if not exists expense_date    date;
+update public.expenses set expense_date = created_at::date where expense_date is null;
+alter table public.expenses alter column expense_date set default current_date;
+alter table public.expenses alter column expense_date set not null;
+update public.expenses set category = 'miscellaneous' where category = 'other';
+alter table public.expenses drop constraint if exists expenses_category_check;
+alter table public.expenses add constraint expenses_category_check
+  check (category in ('travel', 'accommodation', 'food', 'materials', 'miscellaneous'));
+
+-- ============================================================
+-- School Visit Reports (forms/school-form.md, Sections 1-5 only — no photos)
+-- Group-scoped: any member of the group can read every report
+-- submitted under that group, not just their own.
+-- ============================================================
+create table if not exists public.school_reports (
+  id                       uuid primary key default gen_random_uuid(),
+  group_id                 uuid references public.tour_groups(id) on delete set null,
+  submitted_by             uuid references public.users(id) on delete cascade,
+  -- Section 1: School Details
+  school_name              text not null,
+  school_type              text check (school_type in ('Government', 'Government Aided', 'Private', 'Ashram School', 'ZP School', 'Other')),
+  location_category        text check (location_category in ('Rural', 'Semi-Urban', 'Urban')),
+  medium_of_instruction    text check (medium_of_instruction in ('Marathi', 'Hindi', 'English', 'Assamese', 'Urdu', 'Other')),
+  street_area              text,
+  village_town             text,
+  taluka_tehsil            text,
+  district                 text,
+  state                    text,
+  pincode                  text,
+  principal_name           text,
+  principal_mobile         text,
+  coordinator_name         text,
+  coordinator_mobile       text,
+  -- Section 2: Visit Details
+  visit_date               date,
+  arrival_time             text,
+  departure_time           text,
+  total_duration_minutes   integer,
+  volunteers_present_count integer,
+  volunteer_names          text[] not null default '{}',
+  -- Section 3: Session Details (repeatable rows)
+  sessions                 jsonb not null default '[]',
+  -- Section 4: Reflection & Observations (250-word minimum, enforced client-side on final submit)
+  student_response         text,
+  what_went_well           text,
+  challenges_faced         text,
+  solutions_adopted        text,
+  suggestions_improvement  text,
+  memorable_moment         text,
+  overall_feedback         text,
+  -- Section 5: Visit Summary
+  overall_rating           text check (overall_rating in ('Excellent', 'Good', 'Satisfactory', 'Needs Improvement')),
+  follow_up_required       boolean,
+  follow_up_date           date,
+  additional_remarks       text,
+  status                   text not null default 'draft' check (status in ('draft', 'submitted')),
+  created_at               timestamptz default now(),
+  updated_at               timestamptz default now()
+);
+
+drop trigger if exists school_reports_updated_at on public.school_reports;
+create trigger school_reports_updated_at before update on public.school_reports for each row execute procedure public.handle_updated_at();
+
+alter table public.school_reports enable row level security;
+
+-- school_reports: any group member can read the group's reports; only the author can write their own; admins manage all
+create policy "school_reports_group_read" on public.school_reports for select using (
+  exists (
+    select 1 from public.tour_group_members m
+    join public.users u on u.id = m.user_id
+    where m.group_id = school_reports.group_id and u.clerk_id = auth.uid()::text
+  )
+);
+create policy "school_reports_own_write" on public.school_reports for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = submitted_by)
+);
+create policy "admins_manage_school_reports" on public.school_reports for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+);
+
+-- ============================================================
+-- MIGRATION: rebuild tour_reports around forms/tour-report.md
+-- (per-location report: host entries, logistics ratings, 7
+-- observation fields, visit summary) — replaces the old flat
+-- summary/highlights/challenges fields
+-- ============================================================
+alter table public.tour_reports add column if not exists location_name              text;
+alter table public.tour_reports add column if not exists hosts                      jsonb not null default '[]';
+alter table public.tour_reports add column if not exists logistics_scores           jsonb not null default '{}';
+alter table public.tour_reports add column if not exists unique_features            text;
+alter table public.tour_reports add column if not exists best_practices             text;
+alter table public.tour_reports add column if not exists cultural_observations      text;
+alter table public.tour_reports add column if not exists challenges_faced           text;
+alter table public.tour_reports add column if not exists suggestions_future_teams   text;
+alter table public.tour_reports add column if not exists important_contacts         text;
+alter table public.tour_reports add column if not exists places_worth_visiting      text;
+alter table public.tour_reports add column if not exists overall_recommendation     text;
+alter table public.tour_reports add column if not exists suitable_residential_camps boolean;
+alter table public.tour_reports add column if not exists follow_up_required         boolean;
+alter table public.tour_reports add column if not exists additional_remarks         text;
+update public.tour_reports set location_name = coalesce(nullif(trim(summary), ''), 'Unspecified') where location_name is null;
+update public.tour_reports set challenges_faced = challenges where challenges_faced is null and challenges is not null;
+update public.tour_reports set additional_remarks = coalesce(highlights, summary) where additional_remarks is null;
+alter table public.tour_reports drop column if exists summary;
+alter table public.tour_reports drop column if exists highlights;
+alter table public.tour_reports drop column if exists challenges;
+alter table public.tour_reports alter column location_name set not null;
+alter table public.tour_reports drop constraint if exists tour_reports_overall_recommendation_check;
+alter table public.tour_reports add constraint tour_reports_overall_recommendation_check
+  check (overall_recommendation in ('Highly Recommended', 'Recommended', 'Can be Considered', 'Not Recommended'));

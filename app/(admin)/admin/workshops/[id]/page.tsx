@@ -11,11 +11,12 @@ const typeColors: Record<string, { color: string; bg: string; label: string }> =
   other:                { color: "#5A5247", bg: "rgba(90,82,71,0.08)", label: "Other" },
 };
 
-const statusColors: Record<string, { color: string; bg: string }> = {
-  pending: { color: "#9B9188", bg: "rgba(155,145,136,0.1)" },
-  present: { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-  absent:  { color: "#DC2626", bg: "rgba(220,38,38,0.08)" },
-  excused: { color: "#F5A520", bg: "rgba(245,165,32,0.1)" },
+const statusColors: Record<string, { color: string; bg: string; label: string }> = {
+  pending:          { color: "#9B9188", bg: "rgba(155,145,136,0.1)", label: "Pending" },
+  pending_approval: { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Awaiting Approval" },
+  present:          { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)", label: "Present" },
+  absent:           { color: "#DC2626", bg: "rgba(220,38,38,0.08)", label: "Absent" },
+  excused:          { color: "#F5A520", bg: "rgba(245,165,32,0.1)", label: "Excused" },
 };
 
 const makeupColors: Record<string, { color: string; bg: string; label: string }> = {
@@ -96,7 +97,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span style={{ fontSize: 14, fontWeight: 500, color: "#19140F" }}>{v.name}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: sc.color, background: sc.bg, textTransform: "capitalize" }}>{status}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: sc.color, background: sc.bg }}>{sc.label}</span>
                       {a?.makeup_decision && (
                         <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: makeupColors[a.makeup_decision]?.color, background: makeupColors[a.makeup_decision]?.bg }}>
                           Makeup: {makeupColors[a.makeup_decision]?.label}
@@ -111,7 +112,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
                     )}
                   </div>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <MarkAttendanceButtons workshopId={id} volunteerId={v.id} />
+                    <MarkAttendanceButtons workshopId={id} volunteerId={v.id} pendingApproval={status === "pending_approval"} />
                     {a?.missed_summary && a?.makeup_decision === "pending" && (
                       <MakeupDecisionButtons workshopId={id} volunteerId={v.id} />
                     )}

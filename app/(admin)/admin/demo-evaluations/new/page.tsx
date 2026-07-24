@@ -7,13 +7,16 @@ import { createDemoEvaluation } from "@/actions/demo-evaluations";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
 const SCORE_FIELDS = [
-  { key: "content_delivery", label: "Content Delivery" },
-  { key: "hindi_communication", label: "Hindi Communication" },
-  { key: "team_coordination", label: "Team Coordination" },
-  { key: "classroom_management", label: "Classroom Management" },
-  { key: "activity_flow", label: "Activity Flow" },
-  { key: "confidence", label: "Confidence" },
+  { key: "hindi_english_communication", label: "Hindi / English Communication" },
+  { key: "concept_clarity", label: "Concept Clarity" },
+  { key: "communication_skills", label: "Communication Skills" },
+  { key: "presentation_skills", label: "Presentation Skills" },
+  { key: "confidence_body_language", label: "Confidence & Body Language" },
   { key: "student_engagement", label: "Student Engagement" },
+  { key: "activity_demonstration", label: "Activity Demonstration" },
+  { key: "team_coordination", label: "Team Coordination" },
+  { key: "time_session_management", label: "Time & Session Management" },
+  { key: "overall_readiness", label: "Overall Readiness" },
 ] as const;
 
 type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];

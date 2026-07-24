@@ -46,3 +46,26 @@ export async function getMyCertificates() {
   if (error) { console.error("[certificates]", error); throw new Error("Operation failed"); }
   return data ?? [];
 }
+
+export async function getCertificate(id: string) {
+  const { db } = await requireAdmin();
+  const { data, error } = await db
+    .from("certificates")
+    .select("*, recipient:users!certificates_user_id_fkey(id, name, email), tours(id, title), issuer:users!certificates_issued_by_fkey(id, name)")
+    .eq("id", id)
+    .single();
+  if (error) { console.error("[certificates]", error); throw new Error("Operation failed"); }
+  return data;
+}
+
+export async function getMyCertificate(id: string) {
+  const { db, user } = await getAuthenticatedUser();
+  const { data, error } = await db
+    .from("certificates")
+    .select("*, recipient:users!certificates_user_id_fkey(id, name, email), tours(id, title), issuer:users!certificates_issued_by_fkey(id, name)")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+  if (error) { console.error("[certificates]", error); throw new Error("Operation failed"); }
+  return data;
+}

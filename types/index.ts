@@ -161,7 +161,7 @@ export interface EventAttendee {
   id: string;
   event_id: string;
   user_id: string;
-  rsvp_status: "pending" | "confirmed" | "attended" | "absent";
+  rsvp_status: "pending" | "confirmed" | "maybe" | "attended" | "absent";
   created_at: string;
   user?: UserProfile;
 }
@@ -211,6 +211,10 @@ export interface Certificate {
   certificate_type: CertificateType;
   issued_by: string;
   notes?: string;
+  state?: string;
+  place?: string;
+  duration_of_visit?: string;
+  volunteer_code?: string;
   issued_at: string;
   user?: UserProfile;
   tour?: Tour;
@@ -290,9 +294,11 @@ export interface DailyLog {
   tour_id: string;
   volunteer_id: string;
   log_date: string;
-  activities: string;
-  observations?: string;
-  challenges?: string;
+  activities_conducted: string;
+  key_achievements: string;
+  challenges_faced: string;
+  biggest_learning: string;
+  participant_impact: string;
   created_at: string;
   updated_at: string;
   tour?: Tour;
@@ -338,7 +344,7 @@ export interface WorkshopAttendee {
   id: string;
   workshop_id: string;
   volunteer_id: string;
-  attendance_status: "pending" | "present" | "absent" | "excused";
+  attendance_status: "pending" | "pending_approval" | "present" | "absent" | "excused";
   missed_summary?: string;
   makeup_decision?: "pending" | "allowed" | "not_allowed";
   created_at: string;
@@ -347,13 +353,16 @@ export interface WorkshopAttendee {
 }
 
 export interface DemoEvaluationScores {
-  content_delivery: number;
-  hindi_communication: number;
-  team_coordination: number;
-  classroom_management: number;
-  activity_flow: number;
-  confidence: number;
+  hindi_english_communication: number;
+  concept_clarity: number;
+  communication_skills: number;
+  presentation_skills: number;
+  confidence_body_language: number;
   student_engagement: number;
+  activity_demonstration: number;
+  team_coordination: number;
+  time_session_management: number;
+  overall_readiness: number;
 }
 
 export interface DemoEvaluation {
@@ -419,6 +428,8 @@ export interface IdCard {
   valid_to: string;
   card_file_url?: string;
   photo_url?: string;
+  state?: string;
+  place?: string;
   issued_by: string;
   issued_at: string;
   volunteer?: UserProfile;
@@ -430,12 +441,14 @@ export interface TravelTicket {
   id: string;
   group_id: string;
   train_number?: string;
+  train_name?: string;
   pnr?: string;
   departure_station?: string;
   arrival_station?: string;
   departure_at?: string;
   arrival_at?: string;
   ticket_file_url?: string;
+  note?: string;
   confirmation_status: "pending" | "confirmed" | "cancelled";
   itinerary_approved: boolean;
   created_by: string;
@@ -471,7 +484,11 @@ export interface Expense {
   id: string;
   group_id: string;
   submitted_by: string;
-  category: "travel" | "accommodation" | "food" | "materials" | "miscellaneous" | "other";
+  category: "travel" | "accommodation" | "food" | "materials" | "miscellaneous";
+  subcategory?: string;
+  volunteer_count?: number;
+  vendor_name?: string;
+  expense_date: string;
   amount: number;
   bill_url?: string;
   description?: string;
@@ -484,19 +501,103 @@ export interface Expense {
   submitter?: UserProfile;
 }
 
+export interface TourReportHost {
+  organisation?: string;
+  contact_person_name?: string;
+  designation?: string;
+  mobile_number?: string;
+  state?: string;
+  district?: string;
+  block_taluk?: string;
+  village_city?: string;
+}
+
+export interface TourReportLogisticsScores {
+  accommodation?: number;
+  food?: number;
+  local_transport?: number;
+  coordination_communication?: number;
+  safety_security?: number;
+  overall_experience?: number;
+}
+
 export interface TourReport {
   id: string;
   tour_id: string;
   group_id?: string;
   submitted_by: string;
-  summary: string;
-  highlights?: string;
-  challenges?: string;
+  location_name: string;
+  hosts: TourReportHost[];
+  logistics_scores: TourReportLogisticsScores;
+  unique_features?: string;
+  best_practices?: string;
+  cultural_observations?: string;
+  challenges_faced?: string;
+  suggestions_future_teams?: string;
+  important_contacts?: string;
+  places_worth_visiting?: string;
+  overall_recommendation?: "Highly Recommended" | "Recommended" | "Can be Considered" | "Not Recommended";
+  suitable_residential_camps?: boolean;
+  follow_up_required?: boolean;
+  additional_remarks?: string;
   report_file_url?: string;
   status: "draft" | "submitted" | "approved";
   created_at: string;
   updated_at: string;
   tour?: Tour;
+  group?: TourGroup;
+  submitter?: UserProfile;
+}
+
+export interface SchoolReportSession {
+  standard?: string;
+  division?: string;
+  num_students?: number;
+  theme_topic?: string;
+  duration_minutes?: number;
+  language_used?: string;
+  combined_session?: boolean;
+}
+
+export interface SchoolReport {
+  id: string;
+  group_id: string;
+  submitted_by: string;
+  school_name: string;
+  school_type?: "Government" | "Government Aided" | "Private" | "Ashram School" | "ZP School" | "Other";
+  location_category?: "Rural" | "Semi-Urban" | "Urban";
+  medium_of_instruction?: "Marathi" | "Hindi" | "English" | "Assamese" | "Urdu" | "Other";
+  street_area?: string;
+  village_town?: string;
+  taluka_tehsil?: string;
+  district?: string;
+  state?: string;
+  pincode?: string;
+  principal_name?: string;
+  principal_mobile?: string;
+  coordinator_name?: string;
+  coordinator_mobile?: string;
+  visit_date?: string;
+  arrival_time?: string;
+  departure_time?: string;
+  total_duration_minutes?: number;
+  volunteers_present_count?: number;
+  volunteer_names: string[];
+  sessions: SchoolReportSession[];
+  student_response?: string;
+  what_went_well?: string;
+  challenges_faced?: string;
+  solutions_adopted?: string;
+  suggestions_improvement?: string;
+  memorable_moment?: string;
+  overall_feedback?: string;
+  overall_rating?: "Excellent" | "Good" | "Satisfactory" | "Needs Improvement";
+  follow_up_required?: boolean;
+  follow_up_date?: string;
+  additional_remarks?: string;
+  status: "draft" | "submitted";
+  created_at: string;
+  updated_at: string;
   group?: TourGroup;
   submitter?: UserProfile;
 }

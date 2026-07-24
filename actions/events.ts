@@ -51,13 +51,23 @@ export async function getEvents(filters?: { tour_id?: string; event_type?: strin
   return data ?? [];
 }
 
-export async function rsvpEvent(eventId: string, status: "confirmed" | "absent") {
+export async function rsvpEvent(eventId: string, status: "confirmed" | "maybe" | "absent") {
   const { db, user } = await getUser();
   const { error } = await db
     .from("event_attendees")
     .upsert({ event_id: eventId, user_id: user.id, rsvp_status: status }, { onConflict: "event_id,user_id" });
   if (error) { console.error("[rsvpEvent]", error); throw new Error("Failed to update RSVP"); }
   revalidatePath("/volunteer/events");
+}
+
+export async function getMyEventRsvps() {
+  const { db, user } = await getUser();
+  const { data, error } = await db
+    .from("event_attendees")
+    .select("*")
+    .eq("user_id", user.id);
+  if (error) { console.error("[getMyEventRsvps]", error); throw new Error("Failed to fetch RSVPs"); }
+  return data ?? [];
 }
 
 export async function markAttended(eventId: string, userId: string) {

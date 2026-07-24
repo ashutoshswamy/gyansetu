@@ -35,6 +35,7 @@ end $$;
 -- ============================================================
 -- DROP TABLES (cascade handles FK order)
 -- ============================================================
+drop table if exists public.school_reports           cascade;
 drop table if exists public.tour_reports            cascade;
 drop table if exists public.expenses                cascade;
 drop table if exists public.expense_advances        cascade;

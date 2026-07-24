@@ -25,6 +25,8 @@ export default async function AdminIdCardDetailPage({ params }: { params: Promis
             card_number: card.card_number,
             valid_from: card.valid_from,
             valid_to: card.valid_to,
+            state: card.state,
+            place: card.place,
             tour_title: card.tour?.title,
             tour_destination: card.tour?.destination,
             group_name: card.group?.name,

@@ -1,6 +1,8 @@
 import { getUpcomingWorkshops, getMyWorkshopAttendance } from "@/actions/workshops";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, CalendarClock, CheckCircle2, XCircle } from "lucide-react";
 import { MissedSummaryForm } from "./missed-summary-form";
+import { AttendedButton } from "./attended-button";
+import { StatCard } from "@/components/features/dashboard/stat-card";
 
 const typeColors: Record<string, { color: string; bg: string; label: string }> = {
   science:              { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Science" },
@@ -9,11 +11,12 @@ const typeColors: Record<string, { color: string; bg: string; label: string }> =
   other:                { color: "#5A5247", bg: "rgba(90,82,71,0.08)", label: "Other" },
 };
 
-const statusColors: Record<string, { color: string; bg: string }> = {
-  pending: { color: "#9B9188", bg: "rgba(155,145,136,0.1)" },
-  present: { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-  absent:  { color: "#DC2626", bg: "rgba(220,38,38,0.08)" },
-  excused: { color: "#F5A520", bg: "rgba(245,165,32,0.1)" },
+const statusColors: Record<string, { color: string; bg: string; label: string }> = {
+  pending:          { color: "#9B9188", bg: "rgba(155,145,136,0.1)", label: "Pending" },
+  pending_approval: { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Awaiting Approval" },
+  present:          { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)", label: "Present" },
+  absent:           { color: "#DC2626", bg: "rgba(220,38,38,0.08)", label: "Absent" },
+  excused:          { color: "#F5A520", bg: "rgba(245,165,32,0.1)", label: "Excused" },
 };
 
 const makeupColors: Record<string, { color: string; bg: string; label: string }> = {
@@ -30,6 +33,12 @@ export default async function VolunteerWorkshopsPage() {
 
   const attendanceMap = new Map(myAttendance.map(a => [a.workshop_id, a]));
 
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const totalCount = workshops.length;
+  const upcomingCount = workshops.filter(w => new Date(w.workshop_date) >= today && w.status !== "cancelled").length;
+  const attendedCount = myAttendance.filter(a => a.attendance_status === "present").length;
+  const missedCount = myAttendance.filter(a => a.attendance_status === "absent" || a.attendance_status === "excused").length;
+
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-4xl mx-auto">
@@ -37,6 +46,13 @@ export default async function VolunteerWorkshopsPage() {
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Workshops</h1>
           <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Training schedule and your attendance</p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <StatCard label="Total Workshops" value={totalCount} icon={<GraduationCap size={20} />} accent="indigo" />
+          <StatCard label="Upcoming" value={upcomingCount} icon={<CalendarClock size={20} />} accent="sky" />
+          <StatCard label="Attended" value={attendedCount} icon={<CheckCircle2 size={20} />} accent="emerald" />
+          <StatCard label="Missed" value={missedCount} icon={<XCircle size={20} />} accent="rose" />
         </div>
 
         <div className="space-y-3">
@@ -51,7 +67,7 @@ export default async function VolunteerWorkshopsPage() {
             const a = attendanceMap.get(w.id);
             const status = a?.attendance_status ?? "pending";
             const sc = statusColors[status] ?? statusColors.pending;
-            const showMissedForm = status !== "present";
+            const awaitingResponse = status === "pending";
             return (
               <div key={w.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px" }}>
                 <div className="flex items-start gap-4">
@@ -62,7 +78,7 @@ export default async function VolunteerWorkshopsPage() {
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{w.title}</span>
                       <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: t.color, background: t.bg }}>{t.label}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: sc.color, background: sc.bg, textTransform: "capitalize" }}>{status}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: sc.color, background: sc.bg }}>{sc.label}</span>
                       {a?.makeup_decision && (
                         <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: makeupColors[a.makeup_decision]?.color, background: makeupColors[a.makeup_decision]?.bg }}>
                           {makeupColors[a.makeup_decision]?.label}
@@ -80,8 +96,9 @@ export default async function VolunteerWorkshopsPage() {
                         <span style={{ fontWeight: 600, color: "#9B9188" }}>Your summary: </span>{a.missed_summary}
                       </p>
                     )}
-                    {showMissedForm && !a?.missed_summary && (
-                      <div style={{ marginTop: 8 }}>
+                    {awaitingResponse && (
+                      <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 8 }}>
+                        <AttendedButton workshopId={w.id} />
                         <MissedSummaryForm workshopId={w.id} />
                       </div>
                     )}
