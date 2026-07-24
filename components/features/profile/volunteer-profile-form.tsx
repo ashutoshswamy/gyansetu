@@ -96,6 +96,14 @@ export function VolunteerProfileForm({ variant }: Props) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    const invalid = form.querySelector<HTMLElement>(":invalid");
+    if (invalid) {
+      const tab = invalid.closest<HTMLElement>("[data-tab]")?.dataset.tab as typeof activeTab | undefined;
+      if (tab && tab !== activeTab) setActiveTab(tab);
+      requestAnimationFrame(() => form.reportValidity());
+      return;
+    }
     setSaving(true);
     setError(null);
     setSaved(false);
@@ -272,7 +280,7 @@ export function VolunteerProfileForm({ variant }: Props) {
             </div>
           )}
 
-          <div className="space-y-5" style={{ display: activeTab === "personal" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="personal" style={{ display: activeTab === "personal" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <F label="First Name" required><input name="first_name" required placeholder="Enter first name" onInput={sanitizeNameInput} defaultValue={(profile?.first_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
                 <F label="Middle Name"><input name="middle_name" placeholder="Enter middle name" onInput={sanitizeNameInput} defaultValue={(profile?.middle_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
@@ -411,7 +419,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <NextSectionButton accent={accent} onClick={() => setActiveTab("education")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "education" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="education" style={{ display: activeTab === "education" ? undefined : "none" }}>
               <F label="College / Institution Name" required><input name="institution" required placeholder="Enter institution name" defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="College State" required>
@@ -463,7 +471,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <NextSectionButton accent={accent} onClick={() => setActiveTab("work")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "work" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="work" style={{ display: activeTab === "work" ? undefined : "none" }}>
               <YesNo label="Are you currently working?" checked={isCurrentlyWorking} onChange={setIsCurrentlyWorking} />
 
               {isCurrentlyWorking && (
@@ -485,7 +493,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <NextSectionButton accent={accent} onClick={() => setActiveTab("emergency")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "emergency" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="emergency" style={{ display: activeTab === "emergency" ? undefined : "none" }}>
               <div style={{ background: "rgba(168,100,28,0.06)", border: "1px solid rgba(168,100,28,0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 4 }}>
                 <p style={{ fontSize: 13, color: "#A8641C", margin: 0 }}>
                   This information is kept confidential and only accessed in case of emergencies during visits.
@@ -532,7 +540,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <NextSectionButton accent={accent} onClick={() => setActiveTab("declaration")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "declaration" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="declaration" style={{ display: activeTab === "declaration" ? undefined : "none" }}>
               <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
                 <input type="checkbox" name="certified_true" required defaultChecked={profile?.certified_true ?? false} style={{ marginTop: 2 }} />
                 <span style={{ fontSize: 13, color: "#19140F", lineHeight: 1.5 }}>
