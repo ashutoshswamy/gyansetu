@@ -66,7 +66,7 @@ export default function NewRegistrationFeePage() {
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "#DC2626" }}>*</span></label>
-              <input type="number" name="amount" min={0} step="0.01" required style={inputStyle} />
+              <input type="number" name="amount" min={0} step="0.01" required placeholder="Enter amount" style={inputStyle} />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Status <span style={{ color: "#DC2626" }}>*</span></label>

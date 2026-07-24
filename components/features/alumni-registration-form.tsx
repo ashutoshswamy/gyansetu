@@ -212,9 +212,9 @@ export function AlumniRegistrationForm() {
 
           <div className="space-y-5" style={{ display: activeTab === "personal" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <F label="First Name" required><input name="first_name" required value={form.first_name} onChange={handleChange} style={inputStyle} /></F>
-                <F label="Middle Name"><input name="middle_name" value={form.middle_name} onChange={handleChange} style={inputStyle} /></F>
-                <F label="Last Name" required><input name="last_name" required value={form.last_name} onChange={handleChange} style={inputStyle} /></F>
+                <F label="First Name" required><input name="first_name" required placeholder="Enter first name" value={form.first_name} onChange={handleChange} style={inputStyle} /></F>
+                <F label="Middle Name"><input name="middle_name" placeholder="Enter middle name" value={form.middle_name} onChange={handleChange} style={inputStyle} /></F>
+                <F label="Last Name" required><input name="last_name" required placeholder="Enter last name" value={form.last_name} onChange={handleChange} style={inputStyle} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <F label="Gender" required>
@@ -276,23 +276,23 @@ export function AlumniRegistrationForm() {
               <div style={{ borderBottom: "1px solid #E4DFD1", paddingBottom: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <F label="Company / Organization Name"><input name="company_name" value={form.company_name} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="Years of Experience"><input name="years_experience" type="number" min={0} value={form.years_experience} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="Company / Organization Name"><input name="company_name" placeholder="Enter company name" value={form.company_name} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="Years of Experience"><input name="years_experience" type="number" min={0} placeholder="Enter years of experience" value={form.years_experience} onChange={handleChange} style={inputStyle} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" style={{ marginTop: 16 }}>
-                  <F label="Designation"><input name="designation" value={form.designation} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="Work Area / Department" hint="e.g. HR, IT"><input name="work_department" value={form.work_department} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="Designation"><input name="designation" placeholder="Enter designation" value={form.designation} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="Work Area / Department" hint="e.g. HR, IT"><input name="work_department" placeholder="Enter department" value={form.work_department} onChange={handleChange} style={inputStyle} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                  <F label="City"><input name="work_city" value={form.work_city} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="State"><input name="work_state" value={form.work_state} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="City"><input name="work_city" placeholder="Enter city" value={form.work_city} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="State"><input name="work_state" placeholder="Enter state" value={form.work_state} onChange={handleChange} style={inputStyle} /></F>
                 </div>
               </div>
 
               <div>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Educational Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <F label="College / Institution Name" required><input name="institution" required value={form.institution} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="College / Institution Name" required><input name="institution" required placeholder="Enter institution name" value={form.institution} onChange={handleChange} style={inputStyle} /></F>
                   <F label="Qualification" required>
                     <select name="qualification" required value={form.qualification} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
                       <option value="">Select</option>
@@ -301,11 +301,11 @@ export function AlumniRegistrationForm() {
                   </F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                  <F label="City" required><input name="edu_city" required value={form.edu_city} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="State" required><input name="edu_state" required value={form.edu_state} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="City" required><input name="edu_city" required placeholder="Enter city" value={form.edu_city} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="State" required><input name="edu_state" required placeholder="Enter state" value={form.edu_state} onChange={handleChange} style={inputStyle} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                  <F label="Course Name" required hint="e.g. B.Tech, B.Com, MBA"><input name="course_name" required value={form.course_name} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="Course Name" required hint="e.g. B.Tech, B.Com, MBA"><input name="course_name" required placeholder="Enter course name" value={form.course_name} onChange={handleChange} style={inputStyle} /></F>
                   <F label="Stream / Specialization" required>
                     <select name="stream" required value={form.stream} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
                       <option value="">Select</option>
@@ -326,8 +326,8 @@ export function AlumniRegistrationForm() {
 
           <div className="space-y-5" style={{ display: activeTab === "contact" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <F label="Mobile Number" required hint="Exactly 10 digits"><input name="mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required value={form.mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
-                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={form.alternate_mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
+                <F label="Mobile Number" required hint="Exactly 10 digits"><input name="mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter mobile number" value={form.mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
+                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate mobile number" value={form.alternate_mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Email" required><input name="email" type="email" required value={form.email} onChange={handleChange} placeholder="you@example.com" style={inputStyle} /></F>
@@ -381,10 +381,10 @@ export function AlumniRegistrationForm() {
           </div>
 
           <div className="space-y-5" style={{ display: activeTab === "additional" ? undefined : "none" }}>
-              <F label="Why would you like to stay connected with Gyan Setu?"><textarea name="why_stay_connected" value={form.why_stay_connected} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
-              <F label="Skills that you can contribute"><textarea name="skills_contribute" value={form.skills_contribute} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
-              <F label="Any suggestions for strengthening the Alumni Network?"><textarea name="suggestions" value={form.suggestions} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
-              <F label="Additional Remarks"><textarea name="additional_remarks" value={form.additional_remarks} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Why would you like to stay connected with Gyan Setu?"><textarea name="why_stay_connected" placeholder="Your answer" value={form.why_stay_connected} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Skills that you can contribute"><textarea name="skills_contribute" placeholder="Your answer" value={form.skills_contribute} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Any suggestions for strengthening the Alumni Network?"><textarea name="suggestions" placeholder="Your suggestions" value={form.suggestions} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Additional Remarks"><textarea name="additional_remarks" placeholder="Additional remarks" value={form.additional_remarks} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
 
               <button type="submit" disabled={status === "loading"} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: status === "loading" ? "not-allowed" : "pointer", opacity: status === "loading" ? 0.7 : 1 }}>
                 {status === "loading" ? "Submitting..." : "Register as Alumni"}

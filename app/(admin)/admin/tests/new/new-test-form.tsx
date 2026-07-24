@@ -216,11 +216,11 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label style={labelStyle}>Duration (minutes) *</label>
-              <input required type="number" min={1} style={inputStyle} value={duration} onChange={e => setDuration(Number(e.target.value))} />
+              <input required type="number" min={1} placeholder="Enter duration (minutes)" style={inputStyle} value={duration} onChange={e => setDuration(Number(e.target.value))} />
             </div>
             <div>
               <label style={labelStyle}>Passing Score (%) *</label>
-              <input required type="number" min={0} max={100} style={inputStyle} value={passing} onChange={e => setPassing(Number(e.target.value))} />
+              <input required type="number" min={0} max={100} placeholder="Enter passing marks" style={inputStyle} value={passing} onChange={e => setPassing(Number(e.target.value))} />
             </div>
             <div>
               <label style={labelStyle}>Status</label>
@@ -265,7 +265,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
 
               <div>
                 <label style={labelStyle}>Marks</label>
-                <input type="number" min={1} style={{ ...inputStyle, width: 80 }} value={q.marks} onChange={e => updateQ(qIdx, { marks: Number(e.target.value) })} />
+                <input type="number" min={1} placeholder="Marks" style={{ ...inputStyle, width: 80 }} value={q.marks} onChange={e => updateQ(qIdx, { marks: Number(e.target.value) })} />
               </div>
 
               {q.type !== "subjective" && (

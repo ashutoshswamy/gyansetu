@@ -72,21 +72,21 @@ export default function NewTravelTicketPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Train Number</label>
-                <input name="train_number" type="text" style={inputStyle} />
+                <input name="train_number" type="text" placeholder="Enter train number" style={inputStyle} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>PNR</label>
-                <input name="pnr" type="text" style={inputStyle} />
+                <input name="pnr" type="text" placeholder="Enter PNR" style={inputStyle} />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Departure Station</label>
-                <input name="departure_station" type="text" style={inputStyle} />
+                <input name="departure_station" type="text" placeholder="Enter departure station" style={inputStyle} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Arrival Station</label>
-                <input name="arrival_station" type="text" style={inputStyle} />
+                <input name="arrival_station" type="text" placeholder="Enter arrival station" style={inputStyle} />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

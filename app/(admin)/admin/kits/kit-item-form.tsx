@@ -58,7 +58,7 @@ export function KitItemForm() {
         </div>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 4 }}>Qty / School *</label>
-          <input name="quantity_per_school" type="number" min={1} defaultValue={1} required style={inputStyle} />
+          <input name="quantity_per_school" type="number" min={1} defaultValue={1} required placeholder="Enter quantity" style={inputStyle} />
         </div>
         <div>
           <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, width: "100%" }}>

@@ -280,9 +280,9 @@ export function VolunteerProfileForm({ variant }: Props) {
 
           <div className="space-y-5" style={{ display: activeTab === "personal" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <F label="First Name" required><input name="first_name" required onInput={sanitizeNameInput} defaultValue={(profile?.first_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
-                <F label="Middle Name"><input name="middle_name" onInput={sanitizeNameInput} defaultValue={(profile?.middle_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
-                <F label="Last Name" required><input name="last_name" required onInput={sanitizeNameInput} defaultValue={(profile?.last_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
+                <F label="First Name" required><input name="first_name" required placeholder="Enter first name" onInput={sanitizeNameInput} defaultValue={(profile?.first_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
+                <F label="Middle Name"><input name="middle_name" placeholder="Enter middle name" onInput={sanitizeNameInput} defaultValue={(profile?.middle_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
+                <F label="Last Name" required><input name="last_name" required placeholder="Enter last name" onInput={sanitizeNameInput} defaultValue={(profile?.last_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Gender" required>
@@ -302,19 +302,19 @@ export function VolunteerProfileForm({ variant }: Props) {
                     {BLOOD_GROUPS.map(b => <option key={b} value={b}>{b}</option>)}
                   </select>
                 </F>
-                <F label="Aadhaar Number" hint="12-digit, numbers only, optional"><input name="aadhaar_number" inputMode="numeric" pattern="[0-9]*" maxLength={12} onInput={sanitizeDigitsInput(12)} defaultValue={profile?.aadhaar_number ?? ""} style={inputStyle} /></F>
+                <F label="Aadhaar Number" hint="12-digit, numbers only, optional"><input name="aadhaar_number" inputMode="numeric" pattern="[0-9]*" maxLength={12} placeholder="Enter Aadhaar number" onInput={sanitizeDigitsInput(12)} defaultValue={profile?.aadhaar_number ?? ""} style={inputStyle} /></F>
               </div>
               <FileUploadField label="Profile Photograph" value={photoUrl} onChange={setPhotoUrl} bucket="media" folder="profile-photos" accept="image/*" showImagePreview required hint="Passport-size, JPG/PNG, max 5 MB. Used on your volunteer ID card." />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <F label="Mobile Number (WhatsApp)" required hint="Exactly 10 digits"><input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required onInput={sanitizeDigitsInput(10)} defaultValue={profile?.phone ?? ""} style={inputStyle} /></F>
-                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} style={inputStyle} /></F>
+                <F label="Mobile Number (WhatsApp)" required hint="Exactly 10 digits"><input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.phone ?? ""} style={inputStyle} /></F>
+                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} style={inputStyle} /></F>
               </div>
 
               <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Current Address</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <F label="House / Flat No." required><input name="house_no" required defaultValue={profile?.house_no ?? ""} style={inputStyle} /></F>
-                  <F label="Street / Area" required><input name="street" required defaultValue={profile?.street ?? ""} style={inputStyle} /></F>
+                  <F label="House / Flat No." required><input name="house_no" required placeholder="Enter house / flat number" defaultValue={profile?.house_no ?? ""} style={inputStyle} /></F>
+                  <F label="Street / Area" required><input name="street" required placeholder="Enter street / area" defaultValue={profile?.street ?? ""} style={inputStyle} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="State" required>
@@ -335,10 +335,10 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                  <F label="District" required><input name="district" required defaultValue={profile?.district ?? ""} style={inputStyle} /></F>
-                  <F label="PIN Code" required hint="6 digits"><input name="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required onInput={sanitizeDigitsInput(6)} defaultValue={profile?.pincode ?? ""} style={inputStyle} /></F>
+                  <F label="District" required><input name="district" required placeholder="Enter district" defaultValue={profile?.district ?? ""} style={inputStyle} /></F>
+                  <F label="PIN Code" required hint="6 digits"><input name="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} defaultValue={profile?.pincode ?? ""} style={inputStyle} /></F>
                 </div>
-                <F label="Additional Address Notes"><textarea name="address" rows={2} defaultValue={profile?.address ?? ""} style={{ ...inputStyle, resize: "vertical", marginTop: 16 }} /></F>
+                <F label="Additional Address Notes"><textarea name="address" rows={2} placeholder="Enter additional address notes" defaultValue={profile?.address ?? ""} style={{ ...inputStyle, resize: "vertical", marginTop: 16 }} /></F>
               </div>
 
               <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
@@ -355,8 +355,8 @@ export function VolunteerProfileForm({ variant }: Props) {
                 {!sameAddress && (
                   <div style={{ marginTop: 4 }}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <F label="House / Flat No." required><input name="perm_house_no" required={!sameAddress} style={inputStyle} /></F>
-                      <F label="Street / Area" required><input name="perm_street" required={!sameAddress} style={inputStyle} /></F>
+                      <F label="House / Flat No." required><input name="perm_house_no" required={!sameAddress} placeholder="Enter house / flat number" style={inputStyle} /></F>
+                      <F label="Street / Area" required><input name="perm_street" required={!sameAddress} placeholder="Enter street / area" style={inputStyle} /></F>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                       <F label="State" required>
@@ -377,15 +377,15 @@ export function VolunteerProfileForm({ variant }: Props) {
                       </F>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                      <F label="District" required><input name="perm_district" required={!sameAddress} style={inputStyle} /></F>
-                      <F label="PIN Code" required hint="6 digits"><input name="perm_pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required={!sameAddress} onInput={sanitizeDigitsInput(6)} style={inputStyle} /></F>
+                      <F label="District" required><input name="perm_district" required={!sameAddress} placeholder="Enter district" style={inputStyle} /></F>
+                      <F label="PIN Code" required hint="6 digits"><input name="perm_pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required={!sameAddress} placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} style={inputStyle} /></F>
                     </div>
                   </div>
                 )}
               </div>
 
-              <F label="Bio" required hint={`Brief introduction about yourself — minimum 100 words`}><textarea name="bio" required rows={5} defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
-              <F label="Skills" required hint="Comma-separated: Teaching, Photography, Music..."><input name="skills" required defaultValue={(profile?.skills ?? []).join(", ")} style={inputStyle} /></F>
+              <F label="Bio" required hint={`Brief introduction about yourself — minimum 100 words`}><textarea name="bio" required rows={5} placeholder="Write a short bio" defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Skills" required hint="Comma-separated: Teaching, Photography, Music..."><input name="skills" required placeholder="Enter skills" defaultValue={(profile?.skills ?? []).join(", ")} style={inputStyle} /></F>
               <F label="Languages Known">
                 <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
                   {KNOWN_LANGUAGES.map(l => (
@@ -418,7 +418,7 @@ export function VolunteerProfileForm({ variant }: Props) {
           </div>
 
           <div className="space-y-5" style={{ display: activeTab === "education" ? undefined : "none" }}>
-              <F label="College / Institution Name" required><input name="institution" required defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
+              <F label="College / Institution Name" required><input name="institution" required placeholder="Enter institution name" defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="College State" required>
                   <select value={collegeState} onChange={e => { setCollegeState(e.target.value); setCollegeCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
@@ -444,7 +444,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                     <option>Diploma</option><option>UG</option><option>PG</option><option>PhD</option>
                   </select>
                 </F>
-                <F label="Course Name" required hint="Example: B.Tech, B.Com, MBA"><input name="course_name" required defaultValue={profile?.course_name ?? ""} style={inputStyle} /></F>
+                <F label="Course Name" required hint="Example: B.Tech, B.Com, MBA"><input name="course_name" required placeholder="Enter course name" defaultValue={profile?.course_name ?? ""} style={inputStyle} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Stream / Specialization" required>
@@ -463,7 +463,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               </div>
               {eduCourseStatus !== "completed" && (
                 <F label="Year / Semester" hint="e.g. 1st Year, Final Semester">
-                  <input name="course_year" defaultValue={profile?.course_year ?? ""} style={inputStyle} />
+                  <input name="course_year" placeholder="Enter year / semester" defaultValue={profile?.course_year ?? ""} style={inputStyle} />
                 </F>
               )}
               <NextSectionButton accent={accent} onClick={() => setActiveTab("work")} />
@@ -476,15 +476,15 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
                   <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <F label="Company / Organization Name" required><input name="company_name" required={isCurrentlyWorking} defaultValue={profile?.company_name ?? ""} style={inputStyle} /></F>
-                    <F label="Location" required hint="City, State"><input name="work_location" required={isCurrentlyWorking} defaultValue={profile?.work_location ?? ""} style={inputStyle} /></F>
+                    <F label="Company / Organization Name" required><input name="company_name" required={isCurrentlyWorking} placeholder="Enter company name" defaultValue={profile?.company_name ?? ""} style={inputStyle} /></F>
+                    <F label="Location" required hint="City, State"><input name="work_location" required={isCurrentlyWorking} placeholder="Enter work location" defaultValue={profile?.work_location ?? ""} style={inputStyle} /></F>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                    <F label="Designation" required><input name="designation" required={isCurrentlyWorking} defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
-                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><input name="work_department" required={isCurrentlyWorking} defaultValue={profile?.work_department ?? ""} style={inputStyle} /></F>
+                    <F label="Designation" required><input name="designation" required={isCurrentlyWorking} placeholder="Enter designation" defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
+                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><input name="work_department" required={isCurrentlyWorking} placeholder="Enter department" defaultValue={profile?.work_department ?? ""} style={inputStyle} /></F>
                   </div>
                   <F label="Years of Experience">
-                    <input name="years_experience" type="number" min={0} defaultValue={profile?.years_experience ?? ""} style={{ ...inputStyle, marginTop: 16 }} />
+                    <input name="years_experience" type="number" min={0} placeholder="Enter years of experience" defaultValue={profile?.years_experience ?? ""} style={{ ...inputStyle, marginTop: 16 }} />
                   </F>
                 </div>
               )}
@@ -498,7 +498,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <F label="Emergency Contact Name" required><input name="emergency_contact_name" required defaultValue={profile?.emergency_contact_name ?? ""} style={inputStyle} /></F>
+                <F label="Emergency Contact Name" required><input name="emergency_contact_name" required placeholder="Enter contact name" defaultValue={profile?.emergency_contact_name ?? ""} style={inputStyle} /></F>
                 <F label="Relationship" required>
                   <select name="emergency_contact_relation" required defaultValue={profile?.emergency_contact_relation ?? ""} style={{ ...inputStyle, appearance: "none" }}>
                     <option value="">Select</option>
@@ -506,19 +506,19 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </select>
                 </F>
               </div>
-              <F label="Emergency Contact Phone" required hint="Exactly 10 digits"><input name="emergency_contact_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required onInput={sanitizeDigitsInput(10)} defaultValue={profile?.emergency_contact_phone ?? ""} style={inputStyle} /></F>
-              <F label="Emergency Contact Address" required><textarea name="emergency_contact_address" rows={2} required defaultValue={profile?.emergency_contact_address ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Emergency Contact Phone" required hint="Exactly 10 digits"><input name="emergency_contact_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter contact phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.emergency_contact_phone ?? ""} style={inputStyle} /></F>
+              <F label="Emergency Contact Address" required><textarea name="emergency_contact_address" rows={2} required placeholder="Enter contact address" defaultValue={profile?.emergency_contact_address ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
 
               <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Medical Information</p>
                 <YesNo label="Do you have any allergies?" checked={hasAllergies} onChange={setHasAllergies} />
-                {hasAllergies && <F label="Specify allergies" required><textarea name="allergies_detail" rows={2} required defaultValue={profile?.allergies_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
+                {hasAllergies && <F label="Specify allergies" required><textarea name="allergies_detail" rows={2} required placeholder="Describe allergies" defaultValue={profile?.allergies_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
 
                 <YesNo label="Do you have any existing medical conditions?" checked={hasMedicalConditions} onChange={setHasMedicalConditions} />
-                {hasMedicalConditions && <F label="Specify medical conditions" required><textarea name="medical_conditions_detail" rows={2} required defaultValue={profile?.medical_conditions_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
+                {hasMedicalConditions && <F label="Specify medical conditions" required><textarea name="medical_conditions_detail" rows={2} required placeholder="Describe medical conditions" defaultValue={profile?.medical_conditions_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
 
                 <YesNo label="Are you taking any regular medicines?" checked={takesMedicines} onChange={setTakesMedicines} />
-                {takesMedicines && <F label="Mention medicines" required><textarea name="medicines_detail" rows={2} required defaultValue={profile?.medicines_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
+                {takesMedicines && <F label="Mention medicines" required><textarea name="medicines_detail" rows={2} required placeholder="List medicines" defaultValue={profile?.medicines_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
 
                 <F label="Dietary Restrictions">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 mt-1">
@@ -532,7 +532,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </F>
 
                 <F label="Emergency Medical Notes" hint="Any additional information volunteers or medical staff should know">
-                  <textarea name="medical_notes" rows={3} defaultValue={profile?.medical_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} />
+                  <textarea name="medical_notes" rows={3} placeholder="Enter medical notes" defaultValue={profile?.medical_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} />
                 </F>
               </div>
               <NextSectionButton accent={accent} onClick={() => setActiveTab("declaration")} />
@@ -551,7 +551,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                   I consent to Gyan Setu collecting and using my information for volunteer management, communication, event coordination, and emergency purposes in accordance with applicable privacy policies.
                 </span>
               </label>
-              <F label="Digital Signature / Name" required><input name="signature_name" required defaultValue={profile?.signature_name ?? ""} style={inputStyle} /></F>
+              <F label="Digital Signature / Name" required><input name="signature_name" required placeholder="Type full name to sign" defaultValue={profile?.signature_name ?? ""} style={inputStyle} /></F>
               <F label="Date"><input disabled value={profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : new Date().toLocaleDateString()} style={{ ...inputStyle, color: "#9B9188" }} /></F>
           </div>
 

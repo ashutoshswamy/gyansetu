@@ -83,7 +83,7 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
           </div>
           <div>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "#DC2626" }}>*</span></label>
-            <input name="amount" type="number" min="0" step="0.01" required style={inputStyle} />
+            <input name="amount" type="number" min="0" step="0.01" required placeholder="Enter amount" style={inputStyle} />
           </div>
         </div>
         <div>
@@ -92,7 +92,7 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
         </div>
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Description</label>
-          <textarea name="description" rows={2} style={{ ...inputStyle, resize: "vertical" }} />
+          <textarea name="description" rows={2} placeholder="Enter description" style={{ ...inputStyle, resize: "vertical" }} />
         </div>
       </div>
       <button type="submit" disabled={saving} style={{ marginTop: 14, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>

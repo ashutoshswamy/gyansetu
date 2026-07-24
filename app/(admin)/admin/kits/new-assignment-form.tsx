@@ -71,7 +71,7 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
         </div>
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 4 }}>School Count *</label>
-          <input name="school_count" type="number" min={1} defaultValue={1} required style={inputStyle} />
+          <input name="school_count" type="number" min={1} defaultValue={1} required placeholder="Enter number of schools" style={inputStyle} />
         </div>
       </div>
       <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: 12 }}>

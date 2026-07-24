@@ -80,16 +80,16 @@ export default function NewLocalHostPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
-                <input name="state" style={inputStyle} />
+                <input name="state" placeholder="Enter state" style={inputStyle} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>City</label>
-                <input name="city" style={inputStyle} />
+                <input name="city" placeholder="Enter city" style={inputStyle} />
               </div>
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Address</label>
-              <textarea name="address" rows={2} style={{ ...inputStyle, resize: "vertical" }} />
+              <textarea name="address" rows={2} placeholder="Enter address" style={{ ...inputStyle, resize: "vertical" }} />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Linked Group (optional)</label>
@@ -100,7 +100,7 @@ export default function NewLocalHostPage() {
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea name="notes" rows={3} style={{ ...inputStyle, resize: "vertical" }} />
+              <textarea name="notes" rows={3} placeholder="Enter notes" style={{ ...inputStyle, resize: "vertical" }} />
             </div>
           </div>
           <div className="flex gap-3 mt-6">

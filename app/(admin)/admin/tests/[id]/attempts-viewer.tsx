@@ -264,6 +264,7 @@ export function TestAttemptsViewer({
                           type="number"
                           min={0}
                           max={100}
+                          placeholder="Enter score"
                           value={scoreDraft}
                           onChange={(e) => setScoreDraft(e.target.value)}
                           disabled={savingScore}
@@ -373,6 +374,7 @@ export function TestAttemptsViewer({
                                   type="number"
                                   min={0}
                                   max={q.marks}
+                                  placeholder="Enter marks"
                                   value={marksDraft[q.id] ?? ""}
                                   onChange={(e) => setMarksDraft((prev) => ({ ...prev, [q.id]: e.target.value }))}
                                   style={{ width: 60, fontSize: 13, padding: "4px 8px", borderRadius: 4, border: "1px solid #E4DFD1" }}

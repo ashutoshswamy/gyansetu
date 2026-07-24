@@ -56,7 +56,7 @@ export function KitAssignmentActions({
   return (
     <div className="flex items-center gap-2 flex-wrap">
       <input
-        type="number" min={1} value={count}
+        type="number" min={1} placeholder="Enter count" value={count}
         onChange={e => setCount(Number(e.target.value))}
         onBlur={saveCount}
         style={{ ...inputStyle, width: 64 }}

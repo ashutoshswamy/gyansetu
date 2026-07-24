@@ -71,7 +71,7 @@ export default function NewGroupPage() {
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea name="notes" rows={3} style={{ ...inputStyle, resize: "vertical" }} />
+              <textarea name="notes" rows={3} placeholder="Enter notes" style={{ ...inputStyle, resize: "vertical" }} />
             </div>
           </div>
           <div className="flex gap-3 mt-6">

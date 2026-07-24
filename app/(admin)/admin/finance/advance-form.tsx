@@ -67,7 +67,7 @@ export function AdvanceForm() {
         </div>
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "#DC2626" }}>*</span></label>
-          <input name="amount" type="number" min="0" step="0.01" required style={inputStyle} />
+          <input name="amount" type="number" min="0" step="0.01" required placeholder="Enter amount" style={inputStyle} />
         </div>
         <button type="submit" disabled={saving} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1, height: 37 }}>
           {saving ? "Saving..." : "Record Advance"}
@@ -75,7 +75,7 @@ export function AdvanceForm() {
       </div>
       <div style={{ marginTop: 12 }}>
         <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>
-        <input name="notes" type="text" style={inputStyle} />
+        <input name="notes" type="text" placeholder="Enter notes" style={inputStyle} />
       </div>
     </form>
   );
