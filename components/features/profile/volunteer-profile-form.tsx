@@ -24,11 +24,6 @@ function getAge(dob: string): number {
   return Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
 }
 
-function countWords(text: string): number {
-  const trimmed = text.trim();
-  return trimmed ? trimmed.split(/\s+/).length : 0;
-}
-
 function sanitizeNameInput(e: React.FormEvent<HTMLInputElement>) {
   e.currentTarget.value = e.currentTarget.value.replace(/[^a-zA-Z\s]/g, "").toUpperCase();
 }
@@ -108,9 +103,8 @@ export function VolunteerProfileForm({ variant }: Props) {
     const str = (name: string) => (fd.get(name) as string) || undefined;
 
     const bioText = (fd.get("bio") as string) || "";
-    const bioWords = countWords(bioText);
-    if (bioWords > 0 && bioWords < 100) {
-      setError(`Bio must be at least 100 words (currently ${bioWords}).`);
+    if (bioText.trim().length > 0 && bioText.trim().length < 100) {
+      setError(`Bio must be at least 100 characters (currently ${bioText.trim().length}).`);
       setSaving(false);
       return;
     }
@@ -384,7 +378,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 )}
               </div>
 
-              <F label="Bio" required hint={`Brief introduction about yourself — minimum 100 words`}><textarea name="bio" required rows={5} placeholder="Write a short bio" defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Bio" required hint={`Brief introduction about yourself — minimum 100 characters`}><textarea name="bio" required minLength={100} rows={5} placeholder="Write a short bio" defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Skills" required hint="Comma-separated: Teaching, Photography, Music..."><input name="skills" required placeholder="Enter skills" defaultValue={(profile?.skills ?? []).join(", ")} style={inputStyle} /></F>
               <F label="Languages Known">
                 <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>

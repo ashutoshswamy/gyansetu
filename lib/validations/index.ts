@@ -142,7 +142,7 @@ export const volunteerProfileSchema = z.object({
   skills: z.array(z.string()).min(1, "Skills are required"),
   languages: z.array(z.string()).optional(),
   states_visited: z.array(z.string()).optional(),
-  bio: z.string().max(1000).min(1, "Bio is required"),
+  bio: z.string().max(1000).min(100, "Bio must be at least 100 characters"),
   emergency_contact_name: z.string().max(200).optional(),
   emergency_contact_phone: z.string().max(20).optional(),
   emergency_contact_relation: z.string().max(100).optional(),
