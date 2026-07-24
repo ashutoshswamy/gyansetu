@@ -83,7 +83,7 @@ export function FileUploadField({
       <label style={labelStyle}>{label}{required && <span style={{ color: "#DC2626", marginLeft: 2 }}>*</span>}</label>
 
       {/* URL input + upload button row */}
-      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", position: "relative" }}>
         <input
           type="url"
           value={value}

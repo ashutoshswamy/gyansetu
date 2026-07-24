@@ -97,11 +97,17 @@ export function VolunteerProfileForm({ variant }: Props) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const invalid = form.querySelector<HTMLElement>(":invalid");
+    const invalid = form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(":invalid");
     if (invalid) {
       const tab = invalid.closest<HTMLElement>("[data-tab]")?.dataset.tab as typeof activeTab | undefined;
       if (tab && tab !== activeTab) setActiveTab(tab);
-      requestAnimationFrame(() => form.reportValidity());
+      const fieldLabel = invalid.closest("div")?.querySelector("label")?.textContent?.replace("*", "").trim() || invalid.name || "a field";
+      setError(`Please fill in "${fieldLabel}" — required field.`);
+      requestAnimationFrame(() => {
+        invalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        invalid.focus();
+        form.reportValidity();
+      });
       return;
     }
     setSaving(true);

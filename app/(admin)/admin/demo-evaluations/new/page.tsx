@@ -34,10 +34,10 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
               const half = e.clientX - rect.left < rect.width / 2;
               onChange(star * 2 - (half ? 1 : 0));
             }}
-            style={{ position: "relative", width: 22, height: 22, padding: 0, border: "none", background: "none", cursor: "pointer", lineHeight: 0 }}
+            style={{ position: "relative", width: 40, height: 40, padding: 0, border: "none", background: "none", cursor: "pointer", lineHeight: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
           >
-            <Star size={22} color="#E4DFD1" fill="#E4DFD1" style={{ position: "absolute", top: 0, left: 0 }} />
-            <div style={{ position: "absolute", top: 0, left: 0, width: `${filled * 100}%`, height: "100%", overflow: "hidden" }}>
+            <Star size={22} color="#E4DFD1" fill="#E4DFD1" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 22, height: 22, overflow: "hidden", clipPath: `inset(0 ${100 - filled * 100}% 0 0)` }}>
               <Star size={22} color="#F5A524" fill="#F5A524" />
             </div>
           </button>

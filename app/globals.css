@@ -220,6 +220,7 @@
 }
 @media (max-width: 600px) {
   .footer-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .steps-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
 }
 
 /* Generic 2-column form row used by public lead-gen and admin forms */

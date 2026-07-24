@@ -99,9 +99,23 @@ export function AlumniRegistrationForm() {
     setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!form.first_name.trim() || !form.last_name.trim() || !form.email.trim()) return;
+    const formEl = e.currentTarget;
+    const invalid = formEl.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(":invalid");
+    if (invalid) {
+      const tab = invalid.closest<HTMLElement>("[data-tab]")?.dataset.tab as typeof activeTab | undefined;
+      if (tab && tab !== activeTab) setActiveTab(tab);
+      const fieldLabel = invalid.closest("div")?.querySelector("label")?.textContent?.replace("*", "").trim() || invalid.name || "a field";
+      setErrorMsg(`Please fill in "${fieldLabel}" — required field.`);
+      setStatus("error");
+      requestAnimationFrame(() => {
+        invalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        invalid.focus();
+        formEl.reportValidity();
+      });
+      return;
+    }
     setStatus("loading");
     setErrorMsg("");
     try {
@@ -210,7 +224,7 @@ export function AlumniRegistrationForm() {
             </div>
           )}
 
-          <div className="space-y-5" style={{ display: activeTab === "personal" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="personal" style={{ display: activeTab === "personal" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <F label="First Name" required><input name="first_name" required placeholder="Enter first name" value={form.first_name} onChange={handleChange} style={inputStyle} /></F>
                 <F label="Middle Name"><input name="middle_name" placeholder="Enter middle name" value={form.middle_name} onChange={handleChange} style={inputStyle} /></F>
@@ -234,10 +248,10 @@ export function AlumniRegistrationForm() {
               <NextSectionButton onClick={() => setActiveTab("visits")} />
           </div>
 
-          <div className="space-y-3" style={{ display: activeTab === "visits" ? undefined : "none" }}>
+          <div className="space-y-3" data-tab="visits" style={{ display: activeTab === "visits" ? undefined : "none" }}>
               <p style={{ fontSize: 13, color: "#5A5247", marginBottom: 4 }}>Add every Gyan Setu tour you&apos;ve been part of.</p>
               {visits.map((v, i) => (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.4fr 1fr auto", gap: 8, alignItems: "end" }}>
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1.4fr_1fr_auto]" style={{ gap: 8, alignItems: "end" }}>
                   <F label="Year">
                     <select value={v.year} onChange={(e) => updateVisit(i, "year", e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
                       <option value="">Year</option>
@@ -272,7 +286,7 @@ export function AlumniRegistrationForm() {
               <NextSectionButton onClick={() => setActiveTab("work")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "work" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="work" style={{ display: activeTab === "work" ? undefined : "none" }}>
               <div style={{ borderBottom: "1px solid #E4DFD1", paddingBottom: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -324,7 +338,7 @@ export function AlumniRegistrationForm() {
               <NextSectionButton onClick={() => setActiveTab("contact")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "contact" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="contact" style={{ display: activeTab === "contact" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Mobile Number" required hint="Exactly 10 digits"><input name="mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter mobile number" value={form.mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
                 <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate mobile number" value={form.alternate_mobile_number} onChange={handleDigitsChange(10)} style={inputStyle} /></F>
@@ -345,7 +359,7 @@ export function AlumniRegistrationForm() {
               <NextSectionButton onClick={() => setActiveTab("engagement")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "engagement" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="engagement" style={{ display: activeTab === "engagement" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Interested in Volunteering">
                   <select name="interested_volunteering" value={form.interested_volunteering} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
@@ -380,7 +394,7 @@ export function AlumniRegistrationForm() {
               <NextSectionButton onClick={() => setActiveTab("additional")} />
           </div>
 
-          <div className="space-y-5" style={{ display: activeTab === "additional" ? undefined : "none" }}>
+          <div className="space-y-5" data-tab="additional" style={{ display: activeTab === "additional" ? undefined : "none" }}>
               <F label="Why would you like to stay connected with Gyan Setu?"><textarea name="why_stay_connected" placeholder="Your answer" value={form.why_stay_connected} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Skills that you can contribute"><textarea name="skills_contribute" placeholder="Your answer" value={form.skills_contribute} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Any suggestions for strengthening the Alumni Network?"><textarea name="suggestions" placeholder="Your suggestions" value={form.suggestions} onChange={handleChange} rows={3} style={{ ...inputStyle, resize: "vertical" }} /></F>
