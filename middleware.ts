@@ -1,6 +1,17 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { redis } from "@/lib/redis/client";
 import type { UserRole } from "@/types";
+
+// ponytail: global floor for everything not already covered by a tighter
+// per-action limiter (actions/*.ts). Bump if legit dashboard usage trips it.
+const globalRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(200, "1 m"),
+});
+
+const isWebhookRoute = createRouteMatcher(["/api/webhooks(.*)"]);
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -25,6 +36,14 @@ const isEnrolleeRoute = createRouteMatcher(["/enrollee(.*)"]);
 const isEarcRoute = createRouteMatcher(["/earc(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
+  if (!isWebhookRoute(req)) {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const { success } = await globalRatelimit.limit(`global:${ip}`);
+    if (!success) {
+      return new NextResponse("Too many requests. Please try again later.", { status: 429 });
+    }
+  }
+
   if (isPublicRoute(req)) return;
 
   const { userId, sessionClaims } = await auth();
