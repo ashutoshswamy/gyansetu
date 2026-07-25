@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Award } from "lucide-react";
 import type { Certificate } from "@/types";
+import { DeleteCertificateButton } from "./delete-button";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   participation: { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
@@ -66,7 +67,7 @@ export default async function AdminCertificatesPage() {
           }) => {
             const c = typeColors[cert.certificate_type] ?? typeColors.participation;
             return (
-              <Link key={cert.id} href={`/admin/certificates/${cert.id}`} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16, textDecoration: "none" }}>
+              <div key={cert.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 8, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <Award size={18} style={{ color: c.color }} />
                 </div>
@@ -81,7 +82,11 @@ export default async function AdminCertificatesPage() {
                     {cert.users?.email} · {cert.tours?.title ?? "General"} · Issued by {cert.issuer?.name} · {new Date(cert.issued_at).toLocaleDateString()}
                   </div>
                 </div>
-              </Link>
+                <Link href={`/admin/certificates/${cert.id}`} style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE", flexShrink: 0 }}>
+                  View
+                </Link>
+                <DeleteCertificateButton id={cert.id} />
+              </div>
             );
           })}
         </div>
