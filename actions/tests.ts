@@ -9,6 +9,7 @@ import { scoreTestAttempt } from "@/lib/scoring";
 import { revalidatePath } from "next/cache";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
+import { getClientIp } from "@/lib/rate-limit";
 import type { TestQuestion } from "@/types";
 import { ZodError } from "zod";
 
@@ -102,6 +103,10 @@ export async function submitTestAttempt(input: TestAttemptInput) {
 
   const { success } = await testRatelimit.limit(`test-submit:${userId}`);
   if (!success) throw new Error("Too many attempts. Please wait before trying again.");
+
+  const ip = await getClientIp();
+  const { success: ipOk } = await testRatelimit.limit(`test-submit:ip:${ip}`);
+  if (!ipOk) throw new Error("Too many attempts. Please wait before trying again.");
 
   const { test_id, answers } = testAttemptSchema.parse(input);
 

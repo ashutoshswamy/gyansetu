@@ -11,17 +11,12 @@ import { requireAdminUser } from "@/lib/clerk/action-auth";
 import { testimonialSchema, sponsorInquirySchema, careerInquirySchema, institutionInquirySchema } from "@/lib/validations";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
-import { headers } from "next/headers";
+import { getClientIp } from "@/lib/rate-limit";
 
 const publicRatelimit = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(5, "1 h"),
 });
-
-async function getClientIp(): Promise<string> {
-  const h = await headers();
-  return h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-}
 
 export async function submitTestimonial(data: unknown) {
   const ip = await getClientIp();

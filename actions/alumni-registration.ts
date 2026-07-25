@@ -7,7 +7,7 @@ import { alumniRegistrationSchema } from "@/lib/validations";
 import { resend, FROM_EMAIL } from "@/lib/resend/client";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
-import { headers } from "next/headers";
+import { getClientIp } from "@/lib/rate-limit";
 
 const ratelimit = new Ratelimit({
   redis,
@@ -15,8 +15,7 @@ const ratelimit = new Ratelimit({
 });
 
 export async function submitAlumniRegistration(data: unknown) {
-  const h = await headers();
-  const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const ip = await getClientIp();
   const { success } = await ratelimit.limit(`alumni:${ip}`);
   if (!success) throw new Error("Too many submissions. Please try again later.");
 

@@ -6,6 +6,7 @@ import { redis } from "@/lib/redis/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit";
+import { getClientIp } from "@/lib/rate-limit";
 import type { FormField } from "@/types";
 
 const MAX_FIELD_TEXT_LEN = 5000;
@@ -108,6 +109,10 @@ export async function submitForm(input: z.infer<typeof submissionSchema>) {
 
   const { success } = await submitRatelimit.limit(`form-submit:${userId}`);
   if (!success) throw new Error("Too many submissions. Please wait before trying again.");
+
+  const ip = await getClientIp();
+  const { success: ipOk } = await submitRatelimit.limit(`form-submit:ip:${ip}`);
+  if (!ipOk) throw new Error("Too many submissions. Please wait before trying again.");
 
   const { form_id, data } = submissionSchema.parse(input);
 

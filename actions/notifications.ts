@@ -5,6 +5,7 @@ import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth"
 import { Resend } from "resend";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
+import { getClientIp } from "@/lib/rate-limit";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -48,6 +49,10 @@ export async function markNotificationRead(id: string) {
   const { success } = await markReadRatelimit.limit(`notif-read:${userId}`);
   if (!success) throw new Error("Too many requests. Please wait before trying again.");
 
+  const ip = await getClientIp();
+  const { success: ipOk } = await markReadRatelimit.limit(`notif-read:ip:${ip}`);
+  if (!ipOk) throw new Error("Too many requests. Please wait before trying again.");
+
   const { error } = await db.from("notifications").update({ read: true }).eq("id", id).eq("user_id", user.id);
   if (error) { console.error("[markNotificationRead]", error); throw new Error("Failed to mark notification read"); }
 }
@@ -65,6 +70,10 @@ export async function sendEmail({
 
   const { success } = await sendEmailRatelimit.limit(`send-email:${userId}`);
   if (!success) throw new Error("Too many requests. Please wait before trying again.");
+
+  const ip = await getClientIp();
+  const { success: ipOk } = await sendEmailRatelimit.limit(`send-email:ip:${ip}`);
+  if (!ipOk) throw new Error("Too many requests. Please wait before trying again.");
 
   const { data, error } = await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL || "noreply@gyansetu.in",

@@ -7,6 +7,7 @@ import { tourSchema, type TourInput } from "@/lib/validations";
 import { invalidateCache, CACHE_KEYS, redis } from "@/lib/redis/client";
 import { revalidatePath } from "next/cache";
 import { Ratelimit } from "@upstash/ratelimit";
+import { getClientIp } from "@/lib/rate-limit";
 
 const applyRatelimit = new Ratelimit({
   redis,
@@ -69,6 +70,10 @@ export async function applyForTour(tourId: string) {
 
   const { success } = await applyRatelimit.limit(`apply:${userId}`);
   if (!success) throw new Error("Too many applications. Please wait before trying again.");
+
+  const ip = await getClientIp();
+  const { success: ipOk } = await applyRatelimit.limit(`apply:ip:${ip}`);
+  if (!ipOk) throw new Error("Too many applications. Please wait before trying again.");
 
   const { db, user } = await getAuthenticatedUser();
 
