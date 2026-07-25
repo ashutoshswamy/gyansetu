@@ -82,15 +82,14 @@ export async function getIdCard(id: string) {
   return data;
 }
 
-export async function getLatestIdCardForVolunteer(volunteerId: string) {
+export async function getLatestIdCardForVolunteer(volunteerId: string, tourId?: string) {
   const { db } = await requireAdminUser();
-  const { data, error } = await db
+  let query = db
     .from("id_cards")
-    .select("card_number")
-    .eq("volunteer_id", volunteerId)
-    .order("issued_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .select("card_number, state, place")
+    .eq("volunteer_id", volunteerId);
+  if (tourId) query = query.eq("tour_id", tourId);
+  const { data, error } = await query.order("issued_at", { ascending: false }).limit(1).maybeSingle();
   if (error) { console.error("[getLatestIdCardForVolunteer]", error); throw new Error("Failed to fetch ID card"); }
   return data;
 }

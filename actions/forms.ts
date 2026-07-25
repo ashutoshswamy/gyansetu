@@ -76,7 +76,7 @@ export async function updateForm(id: string, input: DynamicFormInput) {
 
   const { data: form, error } = await db
     .from("dynamic_forms")
-    .update({ ...data, updated_at: new Date().toISOString() })
+    .update(data)
     .eq("id", id)
     .select()
     .single();

@@ -15,7 +15,9 @@ export default function NewCertificatePage() {
   const [error, setError] = useState<string | null>(null);
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [volunteerId, setVolunteerId] = useState("");
-  const [volunteerCode, setVolunteerCode] = useState("");
+  const [tourId, setTourId] = useState("");
+  const [idCard, setIdCard] = useState<{ card_number: string; state?: string | null; place?: string | null } | null>(null);
+  const [idCardChecked, setIdCardChecked] = useState(false);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
 
   useEffect(() => {
@@ -28,13 +30,24 @@ export default function NewCertificatePage() {
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
   }, []);
 
+  useEffect(() => {
+    if (!volunteerId) {
+      setIdCard(null);
+      setIdCardChecked(false);
+      return;
+    }
+    let cancelled = false;
+    setIdCardChecked(false);
+    getLatestIdCardForVolunteer(volunteerId, tourId || undefined).then(card => {
+      if (cancelled) return;
+      setIdCard(card ?? null);
+      setIdCardChecked(true);
+    });
+    return () => { cancelled = true; };
+  }, [volunteerId, tourId]);
+
   function handleVolunteerChange(id: string) {
     setVolunteerId(id);
-    setVolunteerCode("");
-    if (!id) return;
-    getLatestIdCardForVolunteer(id).then(card => {
-      if (card?.card_number) setVolunteerCode(card.card_number);
-    });
   }
 
   const inputStyle: React.CSSProperties = {
@@ -93,19 +106,27 @@ export default function NewCertificatePage() {
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour (optional)</label>
-              <select name="tour_id" style={inputStyle}>
+              <select name="tour_id" value={tourId} onChange={e => setTourId(e.target.value)} style={inputStyle}>
                 <option value="">General (no specific tour)</option>
                 {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
               </select>
             </div>
+
+            {volunteerId && idCardChecked && !idCard && (
+              <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", fontSize: 13, color: "#DC2626" }}>
+                No ID card found for this volunteer{tourId ? " on this tour" : ""}. Generate their ID card first &mdash;
+                State, Place, and Volunteer ID are filled in automatically from it.
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
-                <input name="state" placeholder="e.g. Maharashtra" style={inputStyle} />
+                <input name="state" value={idCard?.state ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
-                <input name="place" placeholder="e.g. Nashik" style={inputStyle} />
+                <input name="place" value={idCard?.place ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit</label>
@@ -113,7 +134,7 @@ export default function NewCertificatePage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer ID</label>
-                <input name="volunteer_code" value={volunteerCode} onChange={e => setVolunteerCode(e.target.value)} placeholder="e.g. GS-2026-014" style={inputStyle} />
+                <input name="volunteer_code" value={idCard?.card_number ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
               </div>
             </div>
             <div>
