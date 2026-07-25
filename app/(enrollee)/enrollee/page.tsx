@@ -99,7 +99,7 @@ export default async function EnrollmentDashboard() {
           <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>My Applications</h2>
-              <Link href="/student/tours">
+              <Link href="/enrollee/tours">
                 <button className="flex items-center gap-1" style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                   View all <ArrowRight className="w-3 h-3" />
                 </button>
@@ -149,7 +149,7 @@ export default async function EnrollmentDashboard() {
           <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>Eligibility Tests</h2>
-              <Link href="/student/tests">
+              <Link href="/enrollee/tests">
                 <button className="flex items-center gap-1" style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                   View all <ArrowRight className="w-3 h-3" />
                 </button>
@@ -198,7 +198,7 @@ export default async function EnrollmentDashboard() {
         <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
           <div className="flex items-center justify-between mb-5">
             <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>Upcoming Open Tours</h2>
-            <Link href="/student/tours">
+            <Link href="/enrollee/tours">
               <button className="flex items-center gap-1" style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                 Browse all <ArrowRight className="w-3 h-3" />
               </button>

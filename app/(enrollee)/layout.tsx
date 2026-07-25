@@ -4,7 +4,7 @@ import { getUserRole, isEnrolleeRole } from "@/lib/clerk/roles";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 
-export default async function StudentLayout({
+export default async function EnrolleeLayout({
   children,
 }: {
   children: React.ReactNode;

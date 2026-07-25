@@ -16,11 +16,12 @@ const isPublicRoute = createRouteMatcher([
   "/sponsor(.*)",
   "/careers(.*)",
   "/institution(.*)",
+  "/alumni(.*)",
 ]);
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 const isVolunteerRoute = createRouteMatcher(["/volunteer(.*)"]);
-const isStudentRoute = createRouteMatcher(["/student(.*)"]);
+const isEnrolleeRoute = createRouteMatcher(["/enrollee(.*)"]);
 const isEarcRoute = createRouteMatcher(["/earc(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -48,8 +49,8 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Student routes: block admins.
-  if (isStudentRoute(req) && (role === "admin" || role === "super_admin")) {
+  // Enrollee routes: block admins.
+  if (isEnrolleeRoute(req) && (role === "admin" || role === "super_admin")) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

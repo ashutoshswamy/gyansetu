@@ -320,7 +320,7 @@ export interface RegistrationFee {
   volunteer?: UserProfile;
 }
 
-export type WorkshopType = "science" | "mathematics" | "exhibition_cultural" | "other";
+export type WorkshopType = "science" | "mathematics" | "exhibition_country" | "cultural_survey" | "other";
 
 export interface Workshop {
   id: string;
@@ -338,6 +338,7 @@ export interface Workshop {
   created_at: string;
   updated_at: string;
   trainer?: UserProfile;
+  groups?: { id: string; name: string }[];
 }
 
 export interface WorkshopAttendee {
@@ -373,6 +374,7 @@ export interface DemoEvaluation {
   scores: DemoEvaluationScores;
   total_score?: number;
   remarks?: string;
+  status: "draft" | "submitted";
   evaluated_at: string;
   volunteer?: UserProfile;
   observer?: UserProfile;
@@ -385,7 +387,7 @@ export interface LocalHost {
   phone?: string;
   email?: string;
   state?: string;
-  city?: string;
+  district?: string;
   address?: string;
   group_id?: string;
   notes?: string;
@@ -492,7 +494,7 @@ export interface Expense {
   amount: number;
   bill_url?: string;
   description?: string;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected" | "sent_back";
   approved_by?: string;
   approved_at?: string;
   rejection_reason?: string;

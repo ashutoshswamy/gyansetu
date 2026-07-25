@@ -107,7 +107,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
         ) : ageBlock ? (
           <div style={{ background: "rgba(184,56,30,0.06)", border: "1px solid rgba(184,56,30,0.2)", borderRadius: 10, padding: "16px 20px" }}>
             <p style={{ fontSize: 14, color: "#B8381E", margin: 0, fontWeight: 500 }}>{ageBlock}</p>
-            <a href="/student/profile" style={{ display: "inline-block", marginTop: 10, fontSize: 13, color: "#B8381E", textDecoration: "underline" }}>
+            <a href="/enrollee/profile" style={{ display: "inline-block", marginTop: 10, fontSize: 13, color: "#B8381E", textDecoration: "underline" }}>
               Go to My Profile →
             </a>
           </div>

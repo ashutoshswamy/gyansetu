@@ -41,7 +41,7 @@ export default async function AdminLocalHostsPage() {
                   )}
                 </div>
                 <div style={{ fontSize: 12, color: "#9B9188" }}>
-                  {[h.phone, h.email, [h.city, h.state].filter(Boolean).join(", ")].filter(Boolean).join(" · ") || "No contact details"}
+                  {[h.phone, h.email, [h.district, h.state].filter(Boolean).join(", ")].filter(Boolean).join(" · ") || "No contact details"}
                 </div>
                 {h.notes && <div style={{ fontSize: 12, color: "#5A5247", marginTop: 4 }}>{h.notes}</div>}
               </div>

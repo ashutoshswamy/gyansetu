@@ -154,7 +154,7 @@ export async function submitTestAttempt(input: TestAttemptInput) {
     if (appError) console.error("[submitTestAttempt] failed to record test_score on application", appError);
   }
 
-  revalidatePath("/student/tests");
+  revalidatePath("/enrollee/tests");
   return { ...data, passed, score: percentScore };
 }
 
@@ -287,7 +287,7 @@ export async function approveTestResult(attemptId: string) {
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");
   revalidatePath("/admin/tours");
-  revalidatePath("/student/tours");
+  revalidatePath("/enrollee/tours");
 }
 
 export async function demoteVolunteer(userId: string) {
@@ -350,7 +350,7 @@ export async function demoteVolunteer(userId: string) {
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");
   revalidatePath("/admin/tours");
-  revalidatePath("/student/tours");
+  revalidatePath("/enrollee/tours");
 }
 
 export async function rejectTestResult(attemptId: string) {
@@ -385,5 +385,5 @@ export async function rejectTestResult(attemptId: string) {
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");
   revalidatePath("/admin/tours");
-  revalidatePath("/student/tours");
+  revalidatePath("/enrollee/tours");
 }

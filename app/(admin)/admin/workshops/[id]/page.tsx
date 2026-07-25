@@ -5,10 +5,11 @@ import { ArrowLeft, GraduationCap } from "lucide-react";
 import { MarkAttendanceButtons, MakeupDecisionButtons } from "../attendance-actions";
 
 const typeColors: Record<string, { color: string; bg: string; label: string }> = {
-  science:              { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Science" },
-  mathematics:          { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)", label: "Mathematics" },
-  exhibition_cultural:  { color: "#6B21A8", bg: "rgba(107,33,168,0.08)", label: "Exhibition & Cultural" },
-  other:                { color: "#5A5247", bg: "rgba(90,82,71,0.08)", label: "Other" },
+  science:            { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Science" },
+  mathematics:        { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)", label: "Mathematics" },
+  exhibition_country: { color: "#6B21A8", bg: "rgba(107,33,168,0.08)", label: "Exhibition- Know our Country" },
+  cultural_survey:    { color: "#B8381E", bg: "rgba(184,56,30,0.08)", label: "Cultural and Survey" },
+  other:              { color: "#5A5247", bg: "rgba(90,82,71,0.08)", label: "Other" },
 };
 
 const statusColors: Record<string, { color: string; bg: string; label: string }> = {
@@ -30,7 +31,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
   const db = createServerClient();
 
   const [{ data: workshop }, attendees, volunteersRes] = await Promise.all([
-    db.from("workshops").select("*, trainer:users!workshops_trainer_id_fkey(id, name, email)").eq("id", id).single(),
+    db.from("workshops").select("*, trainer:users!workshops_trainer_id_fkey(id, name, email), workshop_groups(group:tour_groups(id, name))").eq("id", id).single(),
     getWorkshopAttendees(id),
     db.from("users").select("id, name, email").eq("role", "volunteer").order("name"),
   ]);
@@ -71,10 +72,15 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
                 {workshop.hall_location ? ` · ${workshop.hall_location}` : ""}
               </p>
               <p style={{ fontSize: 13, color: "#5A5247", margin: "2px 0 0" }}>
-                Trainer: {workshop.trainer?.name ?? workshop.trainer_name ?? "Not assigned"}
+                Trainer: {workshop.trainer_name ?? "No trainer assigned"}
                 {" · "}
                 Kit: <span style={{ color: workshop.kit_ready ? "#2A5E3A" : "#9B9188", fontWeight: 600 }}>{workshop.kit_ready ? "Ready" : "Not Ready"}</span>
               </p>
+              {workshop.workshop_groups?.length > 0 && (
+                <p style={{ fontSize: 13, color: "#5A5247", margin: "2px 0 0" }}>
+                  Groups: {workshop.workshop_groups.map((wg: { group: { id: string; name: string } }) => wg.group.name).join(", ")}
+                </p>
+              )}
               {workshop.plan_notes && (
                 <p style={{ fontSize: 13, color: "#5A5247", margin: "10px 0 0", whiteSpace: "pre-wrap" }}>{workshop.plan_notes}</p>
               )}

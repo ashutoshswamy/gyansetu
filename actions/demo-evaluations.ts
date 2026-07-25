@@ -55,7 +55,19 @@ export async function getMyDemoEvaluations() {
     .from("demo_evaluations")
     .select("*, tour:tours(id, title)")
     .eq("volunteer_id", user.id)
+    .eq("status", "submitted")
     .order("evaluated_at", { ascending: false });
   if (error) { console.error("[getMyDemoEvaluations]", error); throw new Error("Failed to fetch evaluations"); }
   return data ?? [];
+}
+
+export async function getDemoEvaluationById(id: string) {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("demo_evaluations")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) { console.error("[getDemoEvaluationById]", error); throw new Error("Failed to fetch evaluation"); }
+  return data;
 }

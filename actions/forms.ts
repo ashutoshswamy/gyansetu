@@ -133,7 +133,7 @@ export async function submitForm(input: z.infer<typeof submissionSchema>) {
 
   if (error) { console.error("[submitForm]", error); throw new Error("Failed to submit form"); }
 
-  revalidatePath("/student/forms");
+  revalidatePath("/enrollee/forms");
   revalidatePath("/volunteer/forms");
 
   return submission;

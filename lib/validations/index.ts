@@ -311,15 +311,15 @@ export const registrationFeeSchema = z.object({
 
 export const workshopSchema = z.object({
   title: z.string().min(3).max(200),
-  workshop_type: z.enum(["science", "mathematics", "exhibition_cultural", "other"]),
+  workshop_type: z.enum(["science", "mathematics", "exhibition_country", "cultural_survey", "other"]),
   workshop_date: z.string(),
   workshop_time: z.string().optional(),
   hall_location: z.string().max(200).optional(),
-  trainer_id: z.string().uuid().optional(),
   trainer_name: z.string().max(200).optional(),
   status: z.enum(["scheduled", "completed", "cancelled"]).default("scheduled"),
   kit_ready: z.boolean().default(false),
   plan_notes: z.string().max(2000).optional(),
+  group_ids: z.array(z.string().uuid()).default([]),
 });
 
 export const workshopAttendeeSchema = z.object({
@@ -348,6 +348,7 @@ export const demoEvaluationSchema = z.object({
   tour_id: z.string().uuid().optional(),
   scores: demoEvaluationScoresSchema,
   remarks: z.string().max(2000).optional(),
+  status: z.enum(["draft", "submitted"]).default("submitted"),
 });
 
 export const localHostSchema = z.object({
@@ -355,7 +356,7 @@ export const localHostSchema = z.object({
   phone: z.string().max(20).optional(),
   email: z.string().email().optional().or(z.literal("")),
   state: z.string().max(100).optional(),
-  city: z.string().max(100).optional(),
+  district: z.string().max(100).optional(),
   address: z.string().max(500).optional(),
   group_id: z.string().uuid().optional(),
   notes: z.string().max(1000).optional(),

@@ -47,6 +47,7 @@ drop table if exists public.kit_items               cascade;
 drop table if exists public.local_hosts             cascade;
 drop table if exists public.demo_evaluations        cascade;
 drop table if exists public.workshop_attendees      cascade;
+drop table if exists public.workshop_groups         cascade;
 drop table if exists public.workshops               cascade;
 drop table if exists public.registration_fees       cascade;
 drop table if exists public.earc_files              cascade;

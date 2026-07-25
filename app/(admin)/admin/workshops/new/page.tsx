@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createWorkshop } from "@/actions/workshops";
+import { getAllGroups } from "@/actions/groups";
 import type { WorkshopType } from "@/types";
 
 const WORKSHOP_TYPES: { value: WorkshopType; label: string }[] = [
   { value: "science", label: "Science" },
   { value: "mathematics", label: "Mathematics" },
-  { value: "exhibition_cultural", label: "Exhibition & Cultural" },
+  { value: "exhibition_country", label: "Exhibition- Know our Country" },
+  { value: "cultural_survey", label: "Cultural and Survey" },
   { value: "other", label: "Other" },
 ];
 
@@ -16,11 +18,12 @@ export default function NewWorkshopPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [trainers, setTrainers] = useState<{ id: string; name: string; email: string }[]>([]);
-  const [trainerChoice, setTrainerChoice] = useState<string>("");
+  const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
+  const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
+  const [trainerChoice, setTrainerChoice] = useState<"none" | "gs_team_other">("none");
 
   useEffect(() => {
-    fetch("/api/volunteers").then(r => r.json()).then(d => setTrainers(d.volunteers ?? []));
+    getAllGroups().then(data => setGroups(data.map(g => ({ id: g.id, name: g.name }))));
   }, []);
 
   const inputStyle: React.CSSProperties = {
@@ -41,11 +44,11 @@ export default function NewWorkshopPage() {
         workshop_date: fd.get("workshop_date") as string,
         workshop_time: (fd.get("workshop_time") as string) || undefined,
         hall_location: (fd.get("hall_location") as string) || undefined,
-        trainer_id: trainerChoice === "custom" ? undefined : (fd.get("trainer_id") as string) || undefined,
-        trainer_name: trainerChoice === "custom" ? (fd.get("trainer_name") as string) || undefined : undefined,
+        trainer_name: trainerChoice === "gs_team_other" ? (fd.get("trainer_name") as string) || undefined : undefined,
         status: fd.get("status") as "scheduled" | "completed" | "cancelled",
         kit_ready: fd.get("kit_ready") === "on",
         plan_notes: (fd.get("plan_notes") as string) || undefined,
+        group_ids: selectedGroupIds,
       });
       router.push("/admin/workshops");
     } catch (err: unknown) {
@@ -104,15 +107,26 @@ export default function NewWorkshopPage() {
               <input name="hall_location" style={inputStyle} placeholder="e.g. Main Hall" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Trainer (optional)</label>
-              <select name="trainer_id" value={trainerChoice} onChange={e => setTrainerChoice(e.target.value)} style={inputStyle}>
-                <option value="">No trainer assigned</option>
-                {trainers.map(t => <option key={t.id} value={t.id}>{t.name} ({t.email})</option>)}
-                <option value="custom">Custom / Other (not a registered volunteer)</option>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Trainer</label>
+              <select name="trainer_choice" value={trainerChoice} onChange={e => setTrainerChoice(e.target.value as "none" | "gs_team_other")} style={inputStyle}>
+                <option value="none">No trainer assigned</option>
+                <option value="gs_team_other">GS Team / Other</option>
               </select>
-              {trainerChoice === "custom" && (
-                <input name="trainer_name" placeholder="Trainer's name" style={{ ...inputStyle, marginTop: 8 }} />
+              {trainerChoice === "gs_team_other" && (
+                <input name="trainer_name" placeholder="Name" style={{ ...inputStyle, marginTop: 8 }} />
               )}
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Assign to Group</label>
+              <select
+                multiple
+                value={selectedGroupIds}
+                onChange={e => setSelectedGroupIds(Array.from(e.target.selectedOptions, o => o.value))}
+                style={{ ...inputStyle, height: 110 }}
+              >
+                {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+              </select>
+              <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>Ctrl/Cmd-click to select multiple groups.</p>
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Plan Notes</label>

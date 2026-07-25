@@ -82,6 +82,19 @@ export async function getIdCard(id: string) {
   return data;
 }
 
+export async function getLatestIdCardForVolunteer(volunteerId: string) {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("id_cards")
+    .select("card_number")
+    .eq("volunteer_id", volunteerId)
+    .order("issued_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) { console.error("[getLatestIdCardForVolunteer]", error); throw new Error("Failed to fetch ID card"); }
+  return data;
+}
+
 export async function getMyIdCard() {
   const { db, user } = await requireVolunteerUser();
   const [{ data, error }, { data: profile }] = await Promise.all([

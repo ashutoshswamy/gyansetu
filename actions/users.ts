@@ -1,32 +1,14 @@
 "use server";
 
-import { requireSuperAdminUser } from "@/lib/clerk/action-auth";
+import { requireAdminUser, requireSuperAdminUser } from "@/lib/clerk/action-auth";
 import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
 import { clerkClient } from "@clerk/nextjs/server";
+import { createServerClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/types";
 
 const ASSIGNABLE_ROLES: UserRole[] = ["admin", "earc_staff"];
 
-export async function getAllUsers() {
-  const { db } = await requireSuperAdminUser();
-
-  const { data, error } = await db
-    .from("users")
-    .select("id, clerk_id, name, email, role, created_at")
-    .in("role", ["super_admin", "admin", "earc_staff"])
-    .order("created_at", { ascending: false });
-
-  if (error) throw new Error("Failed to load users");
-  return data;
-}
-
-export async function updateUserRole(clerkId: string, role: UserRole) {
-  const { db, userId } = await requireSuperAdminUser();
-
-  if (!clerkId || typeof clerkId !== "string") throw new Error("Invalid user");
-  if (!ASSIGNABLE_ROLES.includes(role)) throw new Error("Invalid role");
-  if (clerkId === userId) throw new Error("Cannot change your own role");
-
+async function applyRoleUpdate(db: ReturnType<typeof createServerClient>, clerkId: string, role: UserRole) {
   const { data: prev, error: fetchError } = await db
     .from("users")
     .select("role")
@@ -48,6 +30,65 @@ export async function updateUserRole(clerkId: string, role: UserRole) {
   }
 
   await revokeAllUserSessions(clerkId);
+}
+
+export async function getAllUsers() {
+  const { db } = await requireSuperAdminUser();
+
+  const { data, error } = await db
+    .from("users")
+    .select("id, clerk_id, name, email, role, created_at")
+    .in("role", ["super_admin", "admin", "earc_staff"])
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error("Failed to load users");
+  return data;
+}
+
+export async function updateUserRole(clerkId: string, role: UserRole) {
+  const { db, userId } = await requireSuperAdminUser();
+
+  if (!clerkId || typeof clerkId !== "string") throw new Error("Invalid user");
+  if (!ASSIGNABLE_ROLES.includes(role)) throw new Error("Invalid role");
+  if (clerkId === userId) throw new Error("Cannot change your own role");
+
+  await applyRoleUpdate(db, clerkId, role);
+}
+
+// Admins (not just super_admin) can grant/revoke the earc_staff role, but nothing else —
+// keeps admin -> admin/super_admin escalation impossible.
+export async function getEarcCandidates() {
+  const { db } = await requireAdminUser();
+
+  const { data, error } = await db
+    .from("users")
+    .select("id, clerk_id, name, email, role, created_at")
+    .in("role", ["enrollee", "volunteer", "earc_staff"])
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error("Failed to load users");
+  return data;
+}
+
+export async function setEarcStaffRole(clerkId: string, grant: boolean) {
+  const { db, userId } = await requireAdminUser();
+
+  if (!clerkId || typeof clerkId !== "string") throw new Error("Invalid user");
+  if (clerkId === userId) throw new Error("Cannot change your own role");
+
+  const { data: target, error: fetchError } = await db
+    .from("users")
+    .select("role")
+    .eq("clerk_id", clerkId)
+    .single();
+  if (fetchError || !target) throw new Error("User not found");
+  if (target.role === "admin" || target.role === "super_admin") {
+    throw new Error("Cannot change an admin's role here");
+  }
+
+  // ponytail: revoking always drops back to "enrollee", losing the original
+  // enrollee/volunteer distinction — fine for now, revisit if that matters.
+  await applyRoleUpdate(db, clerkId, grant ? "earc_staff" : "enrollee");
 }
 
 export async function deleteUser(clerkId: string) {

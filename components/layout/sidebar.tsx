@@ -76,6 +76,7 @@ const adminGroups: NavGroup[] = [
       { label: "Enrollments",      href: "/admin/students",   Icon: UserCheck },
       { label: "Volunteers",       href: "/admin/volunteers", Icon: Users },
       { label: "Profile Data",     href: "/admin/profiles",   Icon: UserCircle },
+      { label: "EARC Staff",       href: "/admin/earc-staff", Icon: KeyRound },
     ],
   },
   {
@@ -143,11 +144,11 @@ const earcNavItems: NavItem[] = [
 
 const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
   enrollee: [
-    { label: "Home",       href: "/student",         Icon: LayoutDashboard },
-    { label: "My Profile", href: "/student/profile", Icon: UserCircle },
-    { label: "Open Tours", href: "/student/tours",   Icon: Plane },
-    { label: "My Tests",   href: "/student/tests",   Icon: ClipboardList },
-    { label: "My Forms",   href: "/student/forms",   Icon: FileText },
+    { label: "Home",       href: "/enrollee",         Icon: LayoutDashboard },
+    { label: "My Profile", href: "/enrollee/profile", Icon: UserCircle },
+    { label: "Open Tours", href: "/enrollee/tours",   Icon: Plane },
+    { label: "My Tests",   href: "/enrollee/tests",   Icon: ClipboardList },
+    { label: "My Forms",   href: "/enrollee/forms",   Icon: FileText },
   ],
   volunteer: [
     { label: "Home",          href: "/volunteer",              Icon: LayoutDashboard },

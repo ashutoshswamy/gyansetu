@@ -36,7 +36,7 @@ export default async function TakeTestPage({ params }: { params: Promise<{ id: s
           <p style={{ fontSize: 14, color: "#5A5247", marginBottom: 20 }}>
             Each test can only be attempted once.
           </p>
-          <Link href="/student/tests" style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE" }}>
+          <Link href="/enrollee/tests" style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE" }}>
             Back to Tests
           </Link>
         </div>

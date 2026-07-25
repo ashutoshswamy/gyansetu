@@ -33,26 +33,36 @@ export default async function AdminDemoEvaluationsPage() {
           )}
           {evaluations.map((e) => {
             const color = scoreColor(e.total_score);
+            const isDraft = e.status === "draft";
             return (
-              <div key={e.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(74,85,190,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <ClipboardCheck size={18} style={{ color: "#4A55BE" }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{e.volunteer?.name ?? "Unknown"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4, color, background: "rgba(0,0,0,0.03)" }}>
-                      {e.total_score} / 100
-                    </span>
+              <Link key={e.id} href={isDraft ? `/admin/demo-evaluations/${e.id}/edit` : "#"} style={{ pointerEvents: isDraft ? "auto" : "none" }}>
+                <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(74,85,190,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <ClipboardCheck size={18} style={{ color: "#4A55BE" }} />
                   </div>
-                  <div style={{ fontSize: 12, color: "#9B9188" }}>
-                    {e.tour?.title ?? "General"} · Observed by {e.observer?.name ?? "-"} · {new Date(e.evaluated_at).toLocaleDateString()}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{e.volunteer?.name ?? "Unknown"}</span>
+                      {isDraft ? (
+                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4, color: "#9B9188", background: "rgba(0,0,0,0.03)" }}>
+                          DRAFT
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4, color, background: "rgba(0,0,0,0.03)" }}>
+                          {e.total_score} / 100
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#9B9188" }}>
+                      {e.tour?.title ?? "General"} · Observed by {e.observer?.name ?? "-"} · {new Date(e.evaluated_at).toLocaleDateString()}
+                      {isDraft && " · Click to resume"}
+                    </div>
+                    {e.remarks && (
+                      <p style={{ fontSize: 12, color: "#5A5247", marginTop: 6 }}>{e.remarks}</p>
+                    )}
                   </div>
-                  {e.remarks && (
-                    <p style={{ fontSize: 12, color: "#5A5247", marginTop: 6 }}>{e.remarks}</p>
-                  )}
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

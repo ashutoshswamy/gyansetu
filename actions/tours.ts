@@ -98,7 +98,7 @@ export async function applyForTour(tourId: string) {
 
   if (error) { console.error("[applyForTour]", error); throw new Error("Failed to submit application"); }
 
-  revalidatePath("/student/tours");
+  revalidatePath("/enrollee/tours");
   return data;
 }
 

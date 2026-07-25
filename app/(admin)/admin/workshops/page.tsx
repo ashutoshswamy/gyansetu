@@ -3,10 +3,11 @@ import { getAllWorkshops } from "@/actions/workshops";
 import { GraduationCap } from "lucide-react";
 
 const typeColors: Record<string, { color: string; bg: string; label: string }> = {
-  science:              { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Science" },
-  mathematics:          { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)", label: "Mathematics" },
-  exhibition_cultural:  { color: "#6B21A8", bg: "rgba(107,33,168,0.08)", label: "Exhibition & Cultural" },
-  other:                { color: "#5A5247", bg: "rgba(90,82,71,0.08)", label: "Other" },
+  science:            { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Science" },
+  mathematics:        { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)", label: "Mathematics" },
+  exhibition_country: { color: "#6B21A8", bg: "rgba(107,33,168,0.08)", label: "Exhibition- Know our Country" },
+  cultural_survey:    { color: "#B8381E", bg: "rgba(184,56,30,0.08)", label: "Cultural and Survey" },
+  other:              { color: "#5A5247", bg: "rgba(90,82,71,0.08)", label: "Other" },
 };
 
 const statusColors: Record<string, { color: string; bg: string }> = {
@@ -67,7 +68,8 @@ export default async function AdminWorkshopsPage() {
                       {new Date(w.workshop_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
                       {w.workshop_time ? ` · ${w.workshop_time}` : ""}
                       {w.hall_location ? ` · ${w.hall_location}` : ""}
-                      {w.trainer?.name || w.trainer_name ? ` · Trainer: ${w.trainer?.name ?? w.trainer_name}` : ""}
+                      {w.trainer_name ? ` · Trainer: ${w.trainer_name}` : ""}
+                      {w.groups?.length ? ` · Groups: ${w.groups.map((g: { name: string }) => g.name).join(", ")}` : ""}
                     </div>
                   </div>
                 </div>

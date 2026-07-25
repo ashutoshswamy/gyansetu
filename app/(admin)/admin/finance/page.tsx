@@ -21,9 +21,17 @@ const categoryColors: Record<string, { color: string; bg: string }> = {
 };
 
 const statusColors: Record<string, { color: string; bg: string }> = {
-  pending:  { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
-  approved: { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-  rejected: { color: "#DC2626", bg: "rgba(220,38,38,0.08)" },
+  pending:    { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
+  approved:   { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
+  rejected:   { color: "#DC2626", bg: "rgba(220,38,38,0.08)" },
+  sent_back:  { color: "#B8381E", bg: "rgba(184,56,30,0.08)" },
+};
+
+const statusLabels: Record<string, string> = {
+  pending: "pending",
+  approved: "approved",
+  rejected: "rejected",
+  sent_back: "sent back",
 };
 
 export default async function AdminFinancePage() {
@@ -80,7 +88,7 @@ export default async function AdminFinancePage() {
                         {categoryLabels[ex.category] ?? ex.category}
                       </span>
                       <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: st.color, background: st.bg, textTransform: "capitalize" }}>
-                        {ex.status}
+                        {statusLabels[ex.status] ?? ex.status}
                       </span>
                     </div>
                     <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 4px" }}>
@@ -99,7 +107,9 @@ export default async function AdminFinancePage() {
                       <ReceiptButton expense={ex} />
                     </div>
                     {ex.rejection_reason && (
-                      <p style={{ fontSize: 12, color: "#DC2626", margin: "6px 0 0" }}>Rejected: {ex.rejection_reason}</p>
+                      <p style={{ fontSize: 12, color: ex.status === "sent_back" ? "#B8381E" : "#DC2626", margin: "6px 0 0" }}>
+                        {ex.status === "sent_back" ? "Sent back" : "Rejected"}: {ex.rejection_reason}
+                      </p>
                     )}
                   </div>
                   <div className="flex flex-col items-end gap-2 flex-shrink-0">

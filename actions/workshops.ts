@@ -7,20 +7,26 @@ import { z } from "zod";
 
 export async function createWorkshop(input: WorkshopInput) {
   const { db, user } = await requireAdminUser();
-  const data = workshopSchema.parse(input);
+  const { group_ids, ...data } = workshopSchema.parse(input);
   const { data: workshop, error } = await db
     .from("workshops")
     .insert({ ...data, created_by: user.id })
     .select()
     .single();
   if (error) { console.error("[createWorkshop]", error); throw new Error("Failed to create workshop"); }
+  if (group_ids.length > 0) {
+    const { error: groupsError } = await db
+      .from("workshop_groups")
+      .insert(group_ids.map(group_id => ({ workshop_id: workshop.id, group_id })));
+    if (groupsError) { console.error("[createWorkshop groups]", groupsError); throw new Error("Failed to assign groups"); }
+  }
   revalidatePath("/admin/workshops");
   return workshop;
 }
 
 export async function updateWorkshop(id: string, input: Partial<WorkshopInput>) {
   const { db } = await requireAdminUser();
-  const data = workshopSchema.partial().parse(input);
+  const { group_ids, ...data } = workshopSchema.partial().parse(input);
   const { data: workshop, error } = await db
     .from("workshops")
     .update({ ...data, updated_at: new Date().toISOString() })
@@ -28,6 +34,16 @@ export async function updateWorkshop(id: string, input: Partial<WorkshopInput>) 
     .select()
     .single();
   if (error) { console.error("[updateWorkshop]", error); throw new Error("Failed to update workshop"); }
+  if (group_ids !== undefined) {
+    const { error: deleteError } = await db.from("workshop_groups").delete().eq("workshop_id", id);
+    if (deleteError) { console.error("[updateWorkshop groups delete]", deleteError); throw new Error("Failed to update groups"); }
+    if (group_ids.length > 0) {
+      const { error: groupsError } = await db
+        .from("workshop_groups")
+        .insert(group_ids.map(group_id => ({ workshop_id: id, group_id })));
+      if (groupsError) { console.error("[updateWorkshop groups insert]", groupsError); throw new Error("Failed to update groups"); }
+    }
+  }
   revalidatePath("/admin/workshops");
   revalidatePath("/volunteer/workshops");
   return workshop;
@@ -44,10 +60,10 @@ export async function getAllWorkshops() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("workshops")
-    .select("*, trainer:users!workshops_trainer_id_fkey(id, name, email)")
+    .select("*, trainer:users!workshops_trainer_id_fkey(id, name, email), workshop_groups(group:tour_groups(id, name))")
     .order("workshop_date", { ascending: true });
   if (error) { console.error("[getAllWorkshops]", error); throw new Error("Failed to fetch workshops"); }
-  return data ?? [];
+  return (data ?? []).map(w => ({ ...w, groups: w.workshop_groups?.map((wg: { group: { id: string; name: string } }) => wg.group) ?? [] }));
 }
 
 export async function getUpcomingWorkshops() {

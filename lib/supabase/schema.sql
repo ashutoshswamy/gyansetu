@@ -928,11 +928,11 @@ create table if not exists public.registration_fees (
   updated_at         timestamptz default now()
 );
 
--- Workshop Management (Science / Mathematics / Exhibition & Cultural)
+-- Workshop Management (Science / Mathematics / Exhibition- Know our Country / Cultural and Survey / Other)
 create table if not exists public.workshops (
   id             uuid primary key default gen_random_uuid(),
   title          text not null,
-  workshop_type  text not null check (workshop_type in ('science', 'mathematics', 'exhibition_cultural', 'other')),
+  workshop_type  text not null check (workshop_type in ('science', 'mathematics', 'exhibition_country', 'cultural_survey', 'other')),
   workshop_date  date not null,
   workshop_time  text,
   hall_location  text,
@@ -944,6 +944,14 @@ create table if not exists public.workshops (
   created_by     uuid references public.users(id) on delete set null,
   created_at     timestamptz default now(),
   updated_at     timestamptz default now()
+);
+
+create table if not exists public.workshop_groups (
+  id          uuid primary key default gen_random_uuid(),
+  workshop_id uuid references public.workshops(id) on delete cascade,
+  group_id    uuid references public.tour_groups(id) on delete cascade,
+  created_at  timestamptz default now(),
+  unique (workshop_id, group_id)
 );
 
 create table if not exists public.workshop_attendees (
@@ -966,8 +974,10 @@ create table if not exists public.demo_evaluations (
   scores        jsonb not null default '{}',
   total_score   numeric,
   remarks       text,
+  status        text not null default 'submitted' check (status in ('draft', 'submitted')),
   evaluated_at  timestamptz default now()
 );
+alter table public.demo_evaluations add column if not exists status text not null default 'submitted' check (status in ('draft', 'submitted'));
 
 -- Local Host Management
 create table if not exists public.local_hosts (
@@ -976,7 +986,7 @@ create table if not exists public.local_hosts (
   phone       text,
   email       text,
   state       text,
-  city        text,
+  district    text,
   address     text,
   group_id    uuid references public.tour_groups(id) on delete set null,
   notes       text,
@@ -1082,7 +1092,7 @@ create table if not exists public.expenses (
   amount             numeric not null,
   bill_url           text,
   description        text,
-  status             text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  status             text not null default 'pending' check (status in ('pending', 'approved', 'rejected', 'sent_back')),
   approved_by        uuid references public.users(id) on delete set null,
   approved_at        timestamptz,
   rejection_reason   text,
@@ -1143,6 +1153,7 @@ create trigger tour_reports_updated_at       before update on public.tour_report
 -- RLS
 alter table public.registration_fees   enable row level security;
 alter table public.workshops           enable row level security;
+alter table public.workshop_groups     enable row level security;
 alter table public.workshop_attendees  enable row level security;
 alter table public.demo_evaluations    enable row level security;
 alter table public.local_hosts         enable row level security;
@@ -1169,6 +1180,12 @@ create policy "admins_manage_workshops" on public.workshops for all using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
 );
 
+-- workshop_groups: all authenticated read, admin manages
+create policy "workshop_groups_read_all" on public.workshop_groups for select using (true);
+create policy "admins_manage_workshop_groups" on public.workshop_groups for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+);
+
 -- workshop_attendees: volunteer manages own row, admin manages all
 create policy "workshop_attendees_own" on public.workshop_attendees for all using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
@@ -1179,7 +1196,7 @@ create policy "admins_manage_workshop_attendees" on public.workshop_attendees fo
 
 -- demo_evaluations: volunteer reads own, admin/observer manage
 create policy "demo_evaluations_read_own" on public.demo_evaluations for select using (
-  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
+  status = 'submitted' and exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
 );
 create policy "admins_manage_demo_evaluations" on public.demo_evaluations for all using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
@@ -1318,6 +1335,9 @@ update public.expenses set category = 'miscellaneous' where category = 'other';
 alter table public.expenses drop constraint if exists expenses_category_check;
 alter table public.expenses add constraint expenses_category_check
   check (category in ('travel', 'accommodation', 'food', 'materials', 'miscellaneous'));
+alter table public.expenses drop constraint if exists expenses_status_check;
+alter table public.expenses add constraint expenses_status_check
+  check (status in ('pending', 'approved', 'rejected', 'sent_back'));
 
 -- ============================================================
 -- School Visit Reports (forms/school-form.md, Sections 1-5 only — no photos)

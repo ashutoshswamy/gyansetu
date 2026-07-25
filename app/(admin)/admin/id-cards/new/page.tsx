@@ -71,7 +71,6 @@ export default function NewIdCardPage() {
         group_id: (fd.get("group_id") as string) || undefined,
         valid_from: fd.get("valid_from") as string,
         valid_to: fd.get("valid_to") as string,
-        card_file_url: (fd.get("card_file_url") as string) || undefined,
         state: (fd.get("state") as string) || undefined,
         place: (fd.get("place") as string) || undefined,
       });
@@ -145,11 +144,6 @@ export default function NewIdCardPage() {
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid To <span style={{ color: "#DC2626" }}>*</span></label>
                 <input name="valid_to" type="date" required style={inputStyle} />
               </div>
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Card Photo/File URL Override (optional)</label>
-              <p style={{ fontSize: 11, color: "#9B9188", margin: "0 0 6px" }}>By default the card uses the volunteer&apos;s own profile photo. Only set this to override with a different image or attach a file (e.g. PDF).</p>
-              <input name="card_file_url" type="url" style={inputStyle} placeholder="https://..." />
             </div>
           </div>
           <div className="flex gap-3 mt-6">

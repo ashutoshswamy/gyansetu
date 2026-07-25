@@ -122,6 +122,69 @@ export async function rejectExpense(id: string, reason: string) {
   return { ok: true as const, expense: data };
 }
 
+export async function sendBackExpense(id: string, reason: string) {
+  const { db, user } = await requireAdminUser();
+  let parsedReason: string;
+  try {
+    parsedReason = rejectExpenseSchema.parse({ reason }).reason;
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
+
+  const { data: expense, error: fetchError } = await db
+    .from("expenses")
+    .select("id, status, submitted_by")
+    .eq("id", id)
+    .single();
+  if (fetchError || !expense) return { ok: false as const, error: "Expense not found" };
+  if (expense.status !== "pending") return { ok: false as const, error: "Expense is not pending approval" };
+  if (expense.submitted_by === user.id) return { ok: false as const, error: "Cannot send back your own expense" };
+
+  const { data, error } = await db
+    .from("expenses")
+    .update({ status: "sent_back", approved_by: user.id, approved_at: new Date().toISOString(), rejection_reason: parsedReason })
+    .eq("id", id)
+    .eq("status", "pending")
+    .select()
+    .single();
+  if (error) { console.error("[sendBackExpense]", error); return { ok: false as const, error: "Failed to send back expense" }; }
+  revalidatePath("/admin/finance");
+  revalidatePath("/volunteer/expenses");
+  return { ok: true as const, expense: data };
+}
+
+export async function resubmitExpense(id: string, input: ExpenseInput) {
+  const { db, user } = await requireVolunteerUser();
+  let data: ExpenseInput;
+  try {
+    data = expenseSchema.parse(input);
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
+
+  const { data: existing, error: fetchError } = await db
+    .from("expenses")
+    .select("id, status, submitted_by")
+    .eq("id", id)
+    .single();
+  if (fetchError || !existing) return { ok: false as const, error: "Expense not found" };
+  if (existing.submitted_by !== user.id) return { ok: false as const, error: "Not your expense" };
+  if (existing.status !== "sent_back") return { ok: false as const, error: "Expense is not sent back for revision" };
+
+  const { data: expense, error } = await db
+    .from("expenses")
+    .update({ ...data, status: "pending", rejection_reason: null, approved_by: null, approved_at: null })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) { console.error("[resubmitExpense]", error); return { ok: false as const, error: "Failed to resubmit expense" }; }
+  revalidatePath("/admin/finance");
+  revalidatePath("/volunteer/expenses");
+  return { ok: true as const, expense };
+}
+
 export async function getAllExpenses() {
   const { db } = await requireAdminUser();
   const { data, error } = await db

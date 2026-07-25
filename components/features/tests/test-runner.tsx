@@ -102,7 +102,7 @@ export function TestRunner({ test }: { test: Test }) {
 
         <div>
           <button
-            onClick={() => router.push("/student/tests")}
+            onClick={() => router.push("/enrollee/tests")}
             style={{ background: "#19140F", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: "pointer" }}
           >
             Back to Tests

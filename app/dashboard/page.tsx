@@ -11,5 +11,5 @@ export default async function DashboardRedirect() {
   if (role === "earc_staff") redirect("/earc");
 
   // null role → enrollee area
-  redirect("/student");
+  redirect("/enrollee");
 }

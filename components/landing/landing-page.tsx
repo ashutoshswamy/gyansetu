@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -9,9 +9,8 @@ import {
   Network,
   TrendingUp,
   ChevronRight,
-  Menu,
-  X,
 } from "lucide-react";
+import { SiteNavbar } from "./site-navbar";
 
 interface Testimonial {
   id: string;
@@ -78,132 +77,22 @@ function FloatingCard({
 
 /* ── Main component ── */
 export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps) {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", h, { passive: true });
-    return () => window.removeEventListener("scroll", h);
-  }, []);
-
   const whatRef = useRef<HTMLDivElement>(null);
   const howRef  = useRef<HTMLDivElement>(null);
   const whatInView = useInView(whatRef, { once: true, margin: "-80px" });
   const howInView  = useInView(howRef,  { once: true, margin: "-80px" });
 
-  const navLinks = [
-    { label: "Our Story",    href: "#our-story"     },
-    { label: "How It Works", href: "#how-it-works"  },
-    { label: "Visits",       href: "/visits"        },
-    { label: "Gallery",      href: "/gallery"       },
-    { label: "Blog",         href: "/blog"          },
-  ];
+  const storyRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: storyProgress } = useScroll({ target: storyRef, offset: ["start 0.75", "end 0.4"] });
+  const storyLineScale = useTransform(storyProgress, [0, 1], [0, 1]);
 
   return (
     <main style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
 
-      {/* ── NAV ── */}
-      <motion.nav
-        style={{
-          position: "sticky", top: 0, zIndex: 50,
-          background: scrolled ? "rgba(250,250,247,.98)" : "rgba(250,250,247,.92)",
-          backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)",
-          borderBottom: "1px solid var(--lp-border)",
-          boxShadow: scrolled ? "0 2px 28px rgba(25,20,15,.06)" : "none",
-          transition: "background .3s, box-shadow .3s",
-        }}
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 0.68, 0, 1.2] }}
-      >
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-            <Image src="/logo_wide.png" alt="Gyan Setu" width={135} height={40} style={{ height: 40, width: "auto", objectFit: "contain" }} />
-          </motion.div>
-
-          <div className="desktop-nav-links" style={{ display: "flex", gap: 30 }}>
-            {navLinks.map(({ label, href }, i) => (
-              <motion.a
-                key={label}
-                href={href}
-                className="nav-link"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.15 + i * 0.055 }}
-              >
-                {label}
-              </motion.a>
-            ))}
-          </div>
-
-          <motion.div
-            className="desktop-nav-links"
-            style={{ display: "flex", alignItems: "center", gap: 6 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.55 }}
-          >
-            {isLoggedIn ? (
-              <Link href="/dashboard" className="btn-primary">
-                Go to Home <ChevronRight size={15} />
-              </Link>
-            ) : (
-              <>
-                <Link href="/sign-in" className="btn-ghost">Sign In</Link>
-                <Link href="/sign-up" className="btn-primary">
-                  Get Started <ChevronRight size={15} />
-                </Link>
-              </>
-            )}
-          </motion.div>
-
-          <button
-            type="button"
-            className="mobile-menu-btn"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMobileOpen((v) => !v)}
-            style={{ display: "none", alignItems: "center", justifyContent: "center", width: 38, height: 38, background: "transparent", border: "1px solid var(--lp-border)", borderRadius: 8, cursor: "pointer", color: "var(--lp-text)" }}
-          >
-            {mobileOpen ? <X size={19} /> : <Menu size={19} />}
-          </button>
-        </div>
-
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            style={{ borderTop: "1px solid var(--lp-border)", background: "rgba(250,250,247,.98)" }}
-          >
-            <div style={{ padding: "16px 24px", display: "flex", flexDirection: "column", gap: 4 }}>
-              {navLinks.map(({ label, href }) => (
-                <a key={label} href={href} onClick={() => setMobileOpen(false)} className="nav-link" style={{ padding: "10px 4px" }}>
-                  {label}
-                </a>
-              ))}
-              <div style={{ display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
-                {isLoggedIn ? (
-                  <Link href="/dashboard" className="btn-primary" onClick={() => setMobileOpen(false)}>
-                    Go to Home <ChevronRight size={15} />
-                  </Link>
-                ) : (
-                  <>
-                    <Link href="/sign-in" className="btn-ghost" onClick={() => setMobileOpen(false)}>Sign In</Link>
-                    <Link href="/sign-up" className="btn-primary" onClick={() => setMobileOpen(false)}>
-                      Get Started <ChevronRight size={15} />
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </motion.nav>
+      <SiteNavbar isLoggedIn={isLoggedIn} />
 
       {/* ── HERO ── */}
-      <section style={{ minHeight: "calc(100vh - 64px)", display: "flex", alignItems: "center", position: "relative", overflow: "hidden", background: "var(--lp-bg)" }}>
+      <section style={{ minHeight: "calc(100vh - 64px)", marginTop: 64, display: "flex", alignItems: "center", position: "relative", overflow: "hidden", background: "var(--lp-bg)" }}>
         {/* Background: grid */}
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(228,223,209,.32) 1px,transparent 1px),linear-gradient(90deg,rgba(228,223,209,.32) 1px,transparent 1px)", backgroundSize: "48px 48px" }} />
 
@@ -233,12 +122,12 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <span style={{ display: "inline-block", width: 28, height: 1.5, background: "var(--lp-amber)" }} />
-              Jnana Prabodhini Educational Tours
+              Jnana Prabodhini &middot; Educational Activity Research Centre
             </motion.div>
 
             {/* Headline */}
             <h1 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(46px,6.5vw,78px)", fontWeight: 600, lineHeight: 1.06, letterSpacing: "-0.025em", color: "var(--lp-text)", margin: "0 0 8px" }}>
-              {"Explore India,".split(" ").map((w, i) => (
+              {"Gyan-".split(" ").map((w, i) => (
                 <motion.span
                   key={i}
                   style={{ display: "inline-block", marginRight: "0.22em" }}
@@ -249,14 +138,13 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                   {w}
                 </motion.span>
               ))}
-              <br />
               <motion.span
                 style={{ color: "var(--lp-navy)", fontStyle: "italic", display: "inline-block" }}
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.44, ease: [0.22, 0.68, 0, 1.2] }}
               >
-                Beyond Borders
+                Setu
               </motion.span>
               <motion.span
                 style={{ display: "block", fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(20px,2.8vw,34px)", fontWeight: 400, fontStyle: "italic", color: "var(--lp-tm)", letterSpacing: "0.01em", marginTop: 6 }}
@@ -275,7 +163,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.56 }}
             >
-              Jnana Prabodhini takes students across India to meet government officials, immerse in regional cultures, and build lifelong connections with students from every corner of the country.
+              Be a part of a unique journey of learning, service, and national integration. Join Gyan-Setu as a volunteer and create meaningful impact while experiencing India&apos;s rich cultural diversity.
             </motion.p>
 
             {/* CTAs */}
@@ -289,7 +177,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                 href={isLoggedIn ? "/dashboard" : "/sign-up"}
                 className="btn-primary"
               >
-                {isLoggedIn ? "Go to Home" : "Apply for a Tour"}
+                {isLoggedIn ? "Go to Home" : "Apply for a Visit"}
                 <ChevronRight size={16} />
               </Link>
               <a href="#how-it-works" className="btn-outline">Learn More</a>
@@ -298,10 +186,10 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             {/* Stats */}
             <div style={{ display: "flex", gap: 36, marginTop: 52 }}>
               {[
-                { val: "82,800+", lbl: "Students Connected", d: 0.82 },
-                { val: "1,585",   lbl: "Schools",            d: 0.9  },
-                { val: "13",      lbl: "States & UTs",       d: 0.98 },
-                { val: "965+",    lbl: "Volunteers",         d: 1.06 },
+                { val: "91,348", lbl: "Students Connected", d: 0.82 },
+                { val: "1,688",  lbl: "Schools Reached",     d: 0.9  },
+                { val: "14",     lbl: "States & UT",         d: 0.98 },
+                { val: "1,050",  lbl: "Volunteers Engaged",  d: 1.06 },
               ].map((s) => (
                 <AnimatedStat key={s.lbl} value={s.val} label={s.lbl} delay={s.d} />
               ))}
@@ -330,9 +218,9 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
 
               <FloatingCard delay={0.5} bobDuration={3.8}>
                 <div style={{ background: "white", border: "1px solid var(--lp-border-l)", borderRadius: 12, padding: "18px 20px", boxShadow: "0 4px 28px rgba(74,85,190,.1)" }}>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 10.5, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--lp-amber)", marginBottom: 7 }}>Tour Open</div>
-                  <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 17, fontWeight: 600, color: "var(--lp-text)", lineHeight: 1.3, marginBottom: 5 }}>Rajasthan Jnana Pravas 2025</div>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11.5, color: "var(--lp-tm)", marginBottom: 14 }}>Applications close Dec 15 · 40 seats</div>
+                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 10.5, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--lp-amber)", marginBottom: 7 }}>Visit Open</div>
+                  <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 17, fontWeight: 600, color: "var(--lp-text)", lineHeight: 1.3, marginBottom: 5 }}>Gyan-Setu Visit</div>
+                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11.5, color: "var(--lp-tm)", marginBottom: 14 }}>Applications open for volunteers</div>
                   <span style={{ display: "inline-block", background: "var(--lp-navy)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, padding: "5px 14px", borderRadius: 4, letterSpacing: "0.02em" }}>Apply Now</span>
                 </div>
               </FloatingCard>
@@ -341,14 +229,14 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                 <div style={{ background: "white", border: "1px solid var(--lp-border-l)", borderRadius: 12, padding: "18px 20px", boxShadow: "0 4px 20px rgba(74,85,190,.07)" }}>
                   <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-tm)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }}>Your Progress</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, fontWeight: 500, color: "var(--lp-text)" }}>Eligibility Test</span>
-                    <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, fontWeight: 600, color: "var(--lp-green)" }}>Passed · 84%</span>
+                    <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, fontWeight: 500, color: "var(--lp-text)" }}>Pre-Test</span>
+                    <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, fontWeight: 600, color: "var(--lp-green)" }}>Submitted</span>
                   </div>
                   <div style={{ height: 5, background: "var(--lp-surface)", borderRadius: 3, overflow: "hidden" }}>
                     <motion.div
                       style={{ height: "100%", background: "linear-gradient(90deg,var(--lp-green),rgba(42,94,58,.7))", borderRadius: 3 }}
                       initial={{ width: 0 }}
-                      animate={{ width: "84%" }}
+                      animate={{ width: "100%" }}
                       transition={{ duration: 1.3, delay: 1.4, ease: "easeOut" }}
                     />
                   </div>
@@ -364,7 +252,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                   />
                   <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,.45)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 7 }}>Status Update</div>
                   <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, fontWeight: 400, color: "white", lineHeight: 1.55, position: "relative", zIndex: 1 }}>
-                    🎉 Congratulations! You&apos;ve been selected as a Volunteer for Rajasthan Jnana Pravas 2025.
+                    🎉 Congratulations! You&apos;ve been selected as a Volunteer for a Gyan-Setu Visit.
                   </div>
                 </div>
               </FloatingCard>
@@ -382,63 +270,65 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
         <div style={{ position: "absolute", top: -60, right: -60, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle,rgba(245,165,32,.055) 0%,transparent 70%)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: -40, left: -40, width: 240, height: 240, borderRadius: "50%", background: "radial-gradient(circle,rgba(74,85,190,.04) 0%,transparent 70%)", pointerEvents: "none" }} />
 
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", textAlign: "center", position: "relative", zIndex: 1 }}>
-          <motion.h2
-            style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", marginBottom: 20 }}
-            initial={{ opacity: 0, y: 24 }}
-            animate={whatInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
-          >
-            What We Do
-          </motion.h2>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", position: "relative", zIndex: 1 }}>
+          <div className="what-grid" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start", marginBottom: 72 }}>
+            <motion.h2
+              style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: 0 }}
+              initial={{ opacity: 0, y: 24 }}
+              animate={whatInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
+            >
+              What We Do
+            </motion.h2>
 
-          <motion.p
-            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 16, color: "var(--lp-ts)", lineHeight: 1.75, maxWidth: 680, margin: "0 auto 28px" }}
-            initial={{ opacity: 0, y: 16 }}
-            animate={whatInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.14 }}
-          >
-            &ldquo;Gyan-Setu&rdquo; is a programme conducted by volunteers visiting remote parts of India.
-            This year-long programme, organised by Jnana Prabodhini&apos;s Educational Activity Research Centre (EARC),
-            consists of visits by teams of volunteers to conduct joyful, science-based workshops and camps
-            for middle school students.
-          </motion.p>
+            <div>
+              <motion.p
+                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 16, color: "var(--lp-ts)", lineHeight: 1.75, margin: "0 0 24px" }}
+                initial={{ opacity: 0, y: 16 }}
+                animate={whatInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.14 }}
+              >
+                Gyan-Setu is a year-long volunteer initiative by Jnana Prabodhini&apos;s Educational Activity Research
+                Centre (EARC). Volunteers conduct joyful, hands-on science and mathematics workshops, along with
+                career guidance sessions and the &ldquo;Know Our Country&rdquo; Exhibition, in remote, tribal, and
+                aspirational regions across India. The programme fosters scientific curiosity, knowledge exchange,
+                cultural understanding, and national integration.
+              </motion.p>
 
-          <motion.a
-            href="#how-it-works"
-            style={{ display: "inline-block", background: "var(--lp-amber)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "12px 30px", borderRadius: 5, textDecoration: "none", marginBottom: 64 }}
-            initial={{ opacity: 0, y: 12 }}
-            animate={whatInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.26 }}
-            whileHover={{ scale: 1.04, boxShadow: "0 8px 28px rgba(245,165,32,.35)" }}
-          >
-            Learn More
-          </motion.a>
+              <motion.a
+                href="#how-it-works"
+                style={{ display: "inline-block", background: "var(--lp-amber)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "12px 30px", borderRadius: 5, textDecoration: "none" }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={whatInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.26 }}
+                whileHover={{ scale: 1.04, boxShadow: "0 8px 28px rgba(245,165,32,.35)" }}
+              >
+                Learn More
+              </motion.a>
+            </div>
+          </div>
 
           <div
             className="what-grid"
-            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 48, textAlign: "center", maxWidth: 860, margin: "0 auto" }}
+            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}
           >
             {[
-              { icon: <Sun size={44} stroke="#F5A520" strokeWidth={1.5} />, desc: "Conduct joyful hands-on science workshops for school children in remote communities" },
-              { icon: <Network size={44} stroke="#F5A520" strokeWidth={1.5} />, desc: "Build a network of people and grassroot organisations to strengthen this knowledge bridge" },
-              { icon: <TrendingUp size={44} stroke="#F5A520" strokeWidth={1.5} />, desc: "Organise volunteer visits to remote parts of India for science popularisation and knowledge exchange" },
+              { icon: <Sun size={26} stroke="#F5A520" strokeWidth={1.75} />, desc: "Conduct joyful, hands-on science and mathematics workshops for middle school students" },
+              { icon: <Network size={26} stroke="#F5A520" strokeWidth={1.75} />, desc: "Build a network of volunteers, communities, and grassroots organizations to strengthen this “Knowledge Bridge”" },
+              { icon: <TrendingUp size={26} stroke="#F5A520" strokeWidth={1.75} />, desc: "Organize volunteer visits to remote, tribal, and aspirational regions of India to promote national integration through education and cultural exchange" },
             ].map((item, i) => (
               <motion.div
                 key={i}
-                style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18 }}
-                initial={{ opacity: 0, y: 36 }}
+                style={{ display: "flex", alignItems: "flex-start", gap: 16, background: "white", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "24px 22px" }}
+                initial={{ opacity: 0, y: 28 }}
                 animate={whatInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.65, delay: 0.36 + i * 0.13, ease: [0.22, 0.68, 0, 1.2] }}
+                transition={{ duration: 0.65, delay: 0.36 + i * 0.12, ease: [0.22, 0.68, 0, 1.2] }}
+                whileHover={{ y: -3, boxShadow: "0 10px 28px rgba(25,20,15,.06)" }}
               >
-                <motion.div
-                  style={{ width: 84, height: 84, borderRadius: "50%", background: "white", border: "1px solid var(--lp-border)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 16px rgba(245,165,32,.07)" }}
-                  whileHover={{ scale: 1.12, boxShadow: "0 10px 32px rgba(245,165,32,.2)" }}
-                  transition={{ duration: 0.25 }}
-                >
+                <div style={{ width: 46, height: 46, borderRadius: 10, background: "rgba(245,165,32,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   {item.icon}
-                </motion.div>
-                <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, color: "var(--lp-ts)", lineHeight: 1.7, margin: 0 }}>
+                </div>
+                <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "var(--lp-ts)", lineHeight: 1.65, margin: 0 }}>
                   {item.desc}
                 </p>
               </motion.div>
@@ -449,50 +339,100 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
 
       {/* ── OUR STORY ── */}
       <section id="our-story" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
-        <div style={{ maxWidth: 780, margin: "0 auto", padding: "88px 24px", textAlign: "center" }}>
-          <motion.span
-            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            Our Story
-          </motion.span>
-          <motion.h2
-            style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: "0 0 20px" }}
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, delay: 0.1 }}
-          >
-            Since 2013, Building Human Bridges
-          </motion.h2>
-          <motion.p
-            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, marginBottom: 18 }}
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.16 }}
-          >
-            Established in 2013 by the late Mr. Vivek Ponkshe and his students, Gyan-Setu promotes national integration
-            through educational and cultural outreach. Our journey began with a visionary idea: to bridge educational
-            gaps in India&apos;s remote, tribal, and developmentally challenged regions, using science as a tool to
-            connect, empower, and inspire.
-          </motion.p>
-          <motion.p
-            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, marginBottom: 18 }}
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.22 }}
-          >
-            Driven by the spirit of volunteerism, Gyan-Setu brings together passionate individuals — mostly college
-            students and young professionals — from across India. Through language exchange, homestays, traditional
-            meals, and shared experiences, they form lasting human bonds and a deep understanding of India&apos;s
-            social and cultural fabric, while transforming into socially responsible, culturally aware changemakers
-            for the nation.
-          </motion.p>
+        <div ref={storyRef} className="story-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "280px 1fr", gap: 64 }}>
+          <div style={{ position: "sticky", top: 100, alignSelf: "start" }}>
+            <motion.span
+              style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              Our Story
+            </motion.span>
+            <motion.h2
+              style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: "0 0 20px" }}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65, delay: 0.1 }}
+            >
+              Since 2013
+            </motion.h2>
+            <div style={{ width: 36, height: 3, background: "var(--lp-amber)", borderRadius: 2, marginBottom: 28 }} />
+
+            <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 700, color: "var(--lp-tm)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
+              Where We&apos;ve Worked
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+              {["Arunachal Pradesh", "Meghalaya", "Assam", "Manipur", "Nagaland", "Chhattisgarh", "Odisha", "Jharkhand", "Madhya Pradesh", "Ladakh", "Jammu & Kashmir"].map((state, i) => (
+                <motion.span
+                  key={state}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.35, delay: 0.3 + i * 0.04 }}
+                  whileHover={{ scale: 1.06, borderColor: "var(--lp-navy)", color: "var(--lp-navy)" }}
+                  style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11.5, color: "var(--lp-ts)", border: "1px solid var(--lp-border)", borderRadius: 20, padding: "5px 11px", cursor: "default" }}
+                >
+                  {state}
+                </motion.span>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ position: "relative" }}>
+            {/* Scroll-linked reading progress rail */}
+            <div style={{ position: "absolute", left: -33, top: 4, bottom: 4, width: 2, background: "var(--lp-border)", borderRadius: 1 }} className="story-rail">
+              <motion.div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,var(--lp-navy),var(--lp-amber))", transformOrigin: "top", scaleY: storyLineScale, borderRadius: 1 }} />
+            </div>
+
+            {[
+              "At Gyan-Setu, our journey began in 2013 with a visionary idea: to promote national integration through activity-based learning. We set out to bridge through education in India’s remote, tribal, and underserved regions, using science, mathematics and exhibition as a tool to connect, empower, and inspire.",
+              "As an initiative of Jnana Prabodhini’s Educational Activity Research Centre (EARC), we have conducted hands-on science and mathematics workshops in schools located in some of the country’s most underserved, aspirational and culturally diverse regions. From the tranquil hills of Arunachal Pradesh and Meghalaya to the vibrant cultures of Assam, Manipur, and Nagaland, and from the rugged terrains of Chhattisgarh, Odisha, Jharkhand, Madhya Pradesh, to the remote schools of Ladakh and Jammu & Kashmir, our efforts span diverse landscapes and communities.",
+            ].map((para, i) => (
+              <motion.p
+                key={i}
+                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, maxWidth: 640, marginBottom: 18 }}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 + i * 0.06 }}
+              >
+                {para}
+              </motion.p>
+            ))}
+
+            {/* Pull quote break */}
+            <motion.blockquote
+              style={{ margin: "36px 0", padding: "4px 0 4px 24px", borderLeft: "3px solid var(--lp-amber)" }}
+              initial={{ opacity: 0, x: -12 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55 }}
+            >
+              <p style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 24, fontStyle: "italic", fontWeight: 500, color: "var(--lp-navy)", lineHeight: 1.4, margin: 0, maxWidth: 560 }}>
+                Volunteers not only teach, but also learn, live, and grow with the communities they serve.
+              </p>
+            </motion.blockquote>
+
+            {[
+              "Driven by the spirit of volunteerism, Gyan-Setu brings together passionate individuals mostly college students and young professionals from across India. Through language exchange, homestays, traditional meals, and shared experiences, they form lasting human bonds and develop a deep understanding of India’s social and cultural fabric.",
+              "With the support of local partner organizations, we continue to build human bridges through knowledge exchange, nurturing curiosity, compassion, and confidence in young learners while transforming volunteers into socially responsible, culturally aware changemakers for the nation.",
+              "As we grow, we invite you to join this movement. Together, let’s create a future where every child, no matter where they live, has access to joyful learning and a sense of belonging in a united India.",
+            ].map((para, i) => (
+              <motion.p
+                key={i}
+                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, maxWidth: 640, marginBottom: 18 }}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 + i * 0.06 }}
+              >
+                {para}
+              </motion.p>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -502,8 +442,8 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
         ref={howRef}
         style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}
       >
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
-          <div style={{ textAlign: "center", marginBottom: 64 }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "88px 24px" }}>
+          <div style={{ marginBottom: 56 }}>
             <motion.span
               style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 12 }}
               initial={{ opacity: 0, y: 12 }}
@@ -522,61 +462,63 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             </motion.h2>
           </div>
 
-          <div
-            className="steps-grid"
-            style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, position: "relative" }}
-          >
+          <div>
             {[
-              { num: "01", title: "Register",               desc: "Create your account on the portal with your personal and academic details" },
-              { num: "02", title: "Apply for a Tour",       desc: "Browse upcoming Jnana Pravas tours and submit your application" },
-              { num: "03", title: "Take Eligibility Test",  desc: "Complete the online assessment: MCQ, multi-select, and written sections" },
-              { num: "04", title: "Become a Volunteer",     desc: "Selected students lead the tour as volunteers, coordinating and reporting", active: true },
-            ].map((step, i) => (
+              { num: "01", title: "Register, Apply & Pre-Test", desc: "Create your Gyan-Setu profile, complete the registration form, apply for a tour, and take the pre-test to begin your volunteer journey and attending the annual event (15 August Melawa and 26 January Katta)" },
+              { num: "02", title: "Orientation & Training", desc: "Attend the mandatory orientation, training sessions, and demo workshops to understand Gyan-Setu's mission, educational activities, and volunteer responsibilities" },
+              { num: "03", title: "Selection & Team Formation", desc: "Complete the interview and selection process. Selected volunteers are grouped into teams and assigned a state based on programme requirements" },
+              { num: "04", title: "Preparation & State Study", desc: "Prepare with your team by planning activities, coordinating logistics, and studying the history, culture, geography, language, and local context of your allotted state" },
+              { num: "05", title: "School & Community Visit", desc: "Travel to the assigned region to conduct science and mathematics workshops, career guidance sessions, the “Know Our Country” Exhibition, and participate in meaningful cultural understanding with schools and local communities" },
+              { num: "06", title: "Reflection & Continued Engagement", desc: "Submit reports and post test feedback, receive your volunteer certificate, participate in annual Gyan-Setu events (15 August Melawa and 26 January Katta), and continue as an active member of the Gyan-Setu volunteer network", active: true },
+            ].map((step, i, arr) => (
               <motion.div
                 key={i}
-                style={{ textAlign: "center", position: "relative", padding: "0 12px" }}
-                initial={{ opacity: 0, y: 28 }}
-                animate={howInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.65, delay: 0.22 + i * 0.15, ease: [0.22, 0.68, 0, 1.2] }}
+                style={{ display: "flex", gap: 28 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={howInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.55, delay: 0.15 + i * 0.09, ease: [0.22, 0.68, 0, 1.2] }}
               >
-                {/* Animated connector line */}
-                {i < 3 && (
-                  <div style={{ position: "absolute", top: 27, left: "calc(50% + 32px)", width: "calc(100% - 64px)", height: 1, background: "var(--lp-border)", overflow: "hidden" }}>
-                    <motion.div
-                      style={{ height: "100%", background: "linear-gradient(90deg,var(--lp-navy),var(--lp-amber))", transformOrigin: "left" }}
-                      initial={{ scaleX: 0 }}
-                      animate={howInView ? { scaleX: 1 } : {}}
-                      transition={{ duration: 0.85, delay: 0.55 + i * 0.2, ease: "easeOut" }}
-                    />
-                  </div>
-                )}
-
-                {/* Step circle */}
-                <motion.div
-                  style={{
-                    width: 54, height: 54, borderRadius: "50%",
-                    border: step.active ? "none" : "1.5px solid var(--lp-border)",
-                    background: step.active ? "var(--lp-navy)" : "white",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    margin: "0 auto 20px", position: "relative", zIndex: 1,
-                  }}
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {step.active && (
-                    <motion.div
-                      style={{ position: "absolute", inset: -5, borderRadius: "50%", border: "1.5px solid rgba(74,85,190,.35)" }}
-                      animate={{ scale: [1, 1.18, 1], opacity: [0.9, 0, 0.9] }}
-                      transition={{ duration: 2.8, repeat: Infinity }}
-                    />
+                {/* Rail: circle + connector */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                  <motion.div
+                    style={{
+                      width: 48, height: 48, borderRadius: "50%",
+                      border: step.active ? "none" : "1.5px solid var(--lp-border)",
+                      background: step.active ? "var(--lp-navy)" : "white",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      position: "relative", zIndex: 1, flexShrink: 0,
+                    }}
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {step.active && (
+                      <motion.div
+                        style={{ position: "absolute", inset: -5, borderRadius: "50%", border: "1.5px solid rgba(74,85,190,.35)" }}
+                        animate={{ scale: [1, 1.18, 1], opacity: [0.9, 0, 0.9] }}
+                        transition={{ duration: 2.8, repeat: Infinity }}
+                      />
+                    )}
+                    <span style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 17, fontWeight: 700, color: step.active ? "white" : "var(--lp-navy)", letterSpacing: "0.02em" }}>
+                      {step.num}
+                    </span>
+                  </motion.div>
+                  {i < arr.length - 1 && (
+                    <div style={{ width: 1, flex: 1, minHeight: 40, background: "var(--lp-border)", overflow: "hidden", marginTop: 4 }}>
+                      <motion.div
+                        style={{ width: "100%", background: "linear-gradient(180deg,var(--lp-navy),var(--lp-amber))", transformOrigin: "top" }}
+                        initial={{ scaleY: 0, height: "100%" }}
+                        animate={howInView ? { scaleY: 1 } : {}}
+                        transition={{ duration: 0.6, delay: 0.4 + i * 0.09, ease: "easeOut" }}
+                      />
+                    </div>
                   )}
-                  <span style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 19, fontWeight: 700, color: step.active ? "white" : "var(--lp-navy)", letterSpacing: "0.02em" }}>
-                    {step.num}
-                  </span>
-                </motion.div>
+                </div>
 
-                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15, fontWeight: 600, color: "var(--lp-text)", marginBottom: 8 }}>{step.title}</div>
-                <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "var(--lp-tm)", lineHeight: 1.65, maxWidth: 160, margin: "0 auto" }}>{step.desc}</p>
+                {/* Text */}
+                <div style={{ paddingBottom: i < arr.length - 1 ? 40 : 0, paddingTop: 6 }}>
+                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, fontWeight: 600, color: "var(--lp-text)", marginBottom: 8 }}>{step.title}</div>
+                  <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "var(--lp-tm)", lineHeight: 1.7, maxWidth: 560, margin: 0 }}>{step.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -586,39 +528,42 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
       {/* ── TESTIMONIALS ── */}
       <section id="testimonials" style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <motion.span
-              style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 12 }}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              Alumni Voices
-            </motion.span>
-            <motion.h2
-              style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: "0 0 16px" }}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.65, delay: 0.1 }}
-            >
-              What Our Alumni Say
-            </motion.h2>
-            <motion.p
-              style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15, color: "var(--lp-ts)", maxWidth: 520, margin: "0 auto 28px" }}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55, delay: 0.18 }}
-            >
-              Thousands of students have travelled across India with Gyan Setu. Here are their stories.
-            </motion.p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 32, marginBottom: 48, flexWrap: "wrap" }}>
+            <div>
+              <motion.span
+                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 12 }}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                Alumni Voices
+              </motion.span>
+              <motion.h2
+                style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: "0 0 12px" }}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.65, delay: 0.1 }}
+              >
+                What Our Alumni Say
+              </motion.h2>
+              <motion.p
+                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15, color: "var(--lp-ts)", maxWidth: 480, margin: 0 }}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.18 }}
+              >
+                Thousands of students have travelled across India with Gyan Setu. Here are their stories.
+              </motion.p>
+            </div>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.26 }}
+              style={{ flexShrink: 0 }}
             >
               <Link
                 href="/testimonial"
@@ -673,10 +618,10 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
 
       {/* ── ALUMNI NETWORK ── */}
       <section id="alumni" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", textAlign: "center" }}>
+        <div className="career-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 72, alignItems: "center" }}>
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -32 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
           >
@@ -684,16 +629,18 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               Alumni Network
             </span>
             <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
-              Once a Jnana Prabodhini,{" "}
-              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Always a Jnana Prabodhini</span>
+              Your Journey{" "}
+              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Doesn&apos;t End Here</span>
             </h2>
-            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, maxWidth: 560, margin: "0 auto 28px" }}>
-              If you&apos;ve been part of a Gyan Setu tour, you&apos;re part of a lifelong community. Register as an alumni to reconnect, share your journey, and help guide the next generation of volunteers.
+            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
+              Your Gyan-Setu journey doesn&apos;t end with a visit. Join our alumni network to reconnect, share your experiences, and inspire the next generation of volunteers.
             </p>
             <Link
               href="/alumni"
               style={{
-                display: "inline-block",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
                 background: "var(--lp-navy)",
                 color: "white",
                 fontFamily: "'Poppins',sans-serif",
@@ -704,14 +651,31 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                 textDecoration: "none",
               }}
             >
-              Register as Alumni
+              Register as Alumni <ChevronRight size={15} />
             </Link>
+          </motion.div>
+
+          <motion.div
+            style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", borderRadius: 16, padding: "44px 36px", position: "relative", overflow: "hidden" }}
+            initial={{ opacity: 0, x: 32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 0.68, 0, 1.2] }}
+          >
+            <div style={{ position: "absolute", top: -30, right: -20, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle,rgba(74,85,190,.06) 0%,transparent 70%)", pointerEvents: "none" }} />
+            <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 64, lineHeight: 0.6, color: "var(--lp-amber)", marginBottom: 18 }}>&ldquo;</div>
+            <p style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 26, fontStyle: "italic", fontWeight: 500, color: "var(--lp-navy)", lineHeight: 1.35, margin: "0 0 24px" }}>
+              once a Gyan-Setu Volunteer, always one.
+            </p>
+            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "var(--lp-tm)", margin: 0, letterSpacing: "0.02em" }}>
+              Reconnect. Share your story. Guide the next generation.
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── UPGRADE YOUR CAREER ── */}
-      <section id="careers" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+      {/* ── OPPORTUNITIES FOR SCHOOL STUDENTS ── */}
+      <section id="school-students" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 72, alignItems: "center" }} className="career-grid">
             <motion.div
@@ -721,17 +685,17 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
             >
               <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
-                Opportunities
+                Opportunities for School Students
               </span>
               <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
-                Upgrade Your Career<br />
-                <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>with Gyan Setu</span>
+                Explore Beyond<br />
+                <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>the Classroom</span>
               </h2>
               <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
-                Gyan Setu is more than a tour programme — it&apos;s a launchpad. Join our growing team in education, science communication, research, and programme coordination. We&apos;re looking for passionate people ready to make a difference.
+                Take part in thoughtfully designed activities that encourage scientific thinking, creativity, problem-solving, and curiosity. Complete each activity through a short assessment and continue your journey with Gyan Setu.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 36 }}>
-                {["Teaching & Education", "Science Communication", "Programme Coordination", "Research & Documentation"].map((role) => (
+                {["Scientific Thinking", "Creativity & Innovation", "Problem Solving", "Curiosity-Driven Learning"].map((role) => (
                   <div key={role} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(42,94,58,.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#2A5E3A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -740,20 +704,12 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
                   </div>
                 ))}
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-                <Link
-                  href="/careers"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-green)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
-                >
-                  Apply Now <ChevronRight size={15} />
-                </Link>
-                <Link
-                  href="/institution"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", color: "var(--lp-navy)", border: "1.5px solid var(--lp-navy)", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
-                >
-                  Apply as an Institution <ChevronRight size={15} />
-                </Link>
-              </div>
+              <Link
+                href={isLoggedIn ? "/dashboard" : "/sign-up"}
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-green)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
+              >
+                Apply Now <ChevronRight size={15} />
+              </Link>
             </motion.div>
 
             <motion.div
@@ -764,16 +720,13 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 0.68, 0, 1.2] }}
             >
               {[
-                { num: "965+", label: "Volunteers trained", desc: "across India over multiple tour cohorts" },
-                { num: "13",   label: "States covered",     desc: "giving team members diverse field experience" },
-                { num: "100%", label: "Hands-on learning",  desc: "every role involves real community impact" },
+                { num: "91,348", label: "Students Connected" },
+                { num: "1,688",  label: "Schools Reached" },
+                { num: "1,050",  label: "Volunteers Engaged" },
               ].map((stat, i) => (
-                <div key={i} style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "22px 24px", display: "flex", gap: 20, alignItems: "flex-start" }}>
+                <div key={i} style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "22px 24px", display: "flex", gap: 20, alignItems: "center" }}>
                   <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 36, fontWeight: 700, color: "var(--lp-navy)", lineHeight: 1, flexShrink: 0 }}>{stat.num}</div>
-                  <div>
-                    <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 600, color: "var(--lp-text)", marginBottom: 4 }}>{stat.label}</div>
-                    <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "var(--lp-tm)" }}>{stat.desc}</div>
-                  </div>
+                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 600, color: "var(--lp-text)" }}>{stat.label}</div>
                 </div>
               ))}
             </motion.div>
@@ -781,49 +734,96 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
         </div>
       </section>
 
+      {/* ── COLLABORATE WITH GYAN-SETU ── */}
+      <section id="institutions" style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+        <div className="career-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 72, alignItems: "center" }}>
+          <motion.div
+            initial={{ opacity: 0, x: -32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
+          >
+            <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
+              For Institutions
+            </span>
+            <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
+              Collaborate with{" "}
+              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Gyan-Setu</span>
+            </h2>
+            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
+              Collaborate to create engaging learning experiences for your students. Together, we can inspire scientific curiosity, cultural understanding, and a spirit of national integration.
+            </p>
+            <Link
+              href="/institution"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-navy)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
+            >
+              Apply Now <ChevronRight size={15} />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            style={{ display: "flex", flexDirection: "column", gap: 10 }}
+            initial={{ opacity: 0, x: 32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 0.68, 0, 1.2] }}
+          >
+            <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 700, color: "var(--lp-tm)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>What We Bring</div>
+            {["Science & Mathematics Workshops", "Career Guidance Sessions", "“Know Our Country” Exhibition"].map((item) => (
+              <div key={item} style={{ display: "flex", alignItems: "center", gap: 12, background: "white", border: "1px solid var(--lp-border)", borderRadius: 10, padding: "14px 18px" }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(74,85,190,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="var(--lp-navy)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+                <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, color: "var(--lp-text)", fontWeight: 500 }}>{item}</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── BE A SPONSOR ── */}
       <section style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "88px 24px", textAlign: "center" }}>
-          <motion.span
-            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            Partnerships
-          </motion.span>
-          <motion.h2
-            style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, delay: 0.1 }}
-          >
-            Be a Sponsor,{" "}
-            <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Shape Young India</span>
-          </motion.h2>
-          <motion.p
-            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 32 }}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, delay: 0.18 }}
-          >
-            Your sponsorship powers science workshops in remote schools, supports volunteer travel, and helps bridge knowledge gaps across India. Partner with Gyan Setu and invest in a generation of curious, connected young minds.
-          </motion.p>
+        <div className="career-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 72, alignItems: "center" }}>
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -32 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.26 }}
+            transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
           >
+            <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
+              Partnerships
+            </span>
+            <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
+              Be a Sponsor,{" "}
+              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Shape Young India</span>
+            </h2>
+            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
+              Your sponsorship powers activity-based learning workshops in remote schools, supports volunteer travel, and helps bridge knowledge gaps across India. Partner with Gyan Setu and invest in a generation of curious, connected young minds.
+            </p>
             <Link
               href="/sponsor"
               style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-amber)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
             >
               Become a Sponsor <ChevronRight size={15} />
             </Link>
+          </motion.div>
+
+          <motion.div
+            style={{ display: "flex", flexDirection: "column", gap: 16 }}
+            initial={{ opacity: 0, x: 32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 0.68, 0, 1.2] }}
+          >
+            {[
+              { num: "1,688", label: "Schools Reached" },
+              { num: "14",    label: "States & UT" },
+            ].map((stat, i) => (
+              <div key={i} style={{ background: "white", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "26px 28px", display: "flex", gap: 22, alignItems: "center" }}>
+                <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 42, fontWeight: 700, color: "var(--lp-navy)", lineHeight: 1, flexShrink: 0 }}>{stat.num}</div>
+                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 600, color: "var(--lp-text)" }}>{stat.label}</div>
+              </div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -858,7 +858,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.14 }}
           >
-            Create your account, apply for an upcoming Jnana Pravas, and take the eligibility test. Selected students travel across India as Jnana Prabodhini volunteers.
+            Create your account, apply for an upcoming Gyan-Setu Visit, and take the eligibility test. Selected volunteers travel across India as Gyan-Setu, EARC Jnana Prabodhini volunteers.
           </motion.p>
           <motion.div
             style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}

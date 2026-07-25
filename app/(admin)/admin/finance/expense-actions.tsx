@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { approveExpense, rejectExpense } from "@/actions/finance";
+import { approveExpense, rejectExpense, sendBackExpense } from "@/actions/finance";
 
 export function ExpenseActions({ id }: { id: string }) {
   const router = useRouter();
-  const [loading, setLoading] = useState<"approve" | "reject" | null>(null);
+  const [loading, setLoading] = useState<"approve" | "reject" | "sendback" | null>(null);
 
   async function handleApprove() {
     setLoading("approve");
@@ -39,6 +39,22 @@ export function ExpenseActions({ id }: { id: string }) {
     }
   }
 
+  async function handleSendBack() {
+    const reason = prompt("What needs to be fixed?");
+    if (!reason) return;
+    setLoading("sendback");
+    try {
+      const result = await sendBackExpense(id, reason);
+      if (!result.ok) { toast.error(result.error); return; }
+      toast.success("Sent back to volunteer for revision");
+      router.refresh();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to send back");
+    } finally {
+      setLoading(null);
+    }
+  }
+
   return (
     <div className="flex items-center gap-2">
       <button
@@ -51,6 +67,18 @@ export function ExpenseActions({ id }: { id: string }) {
         }}
       >
         {loading === "approve" ? "..." : "Approve"}
+      </button>
+      <button
+        onClick={handleSendBack}
+        disabled={loading !== null}
+        style={{
+          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
+          background: "transparent", color: "#F5A520",
+          border: "1.5px solid rgba(245,165,32,0.35)",
+          cursor: loading !== null ? "not-allowed" : "pointer",
+        }}
+      >
+        {loading === "sendback" ? "..." : "Send Back"}
       </button>
       <button
         onClick={handleReject}

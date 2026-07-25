@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { issueCertificate } from "@/actions/certificates";
+import { getLatestIdCardForVolunteer } from "@/actions/id-cards";
 import type { CertificateType } from "@/types";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
@@ -14,6 +15,7 @@ export default function NewCertificatePage() {
   const [error, setError] = useState<string | null>(null);
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [volunteerId, setVolunteerId] = useState("");
+  const [volunteerCode, setVolunteerCode] = useState("");
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
 
   useEffect(() => {
@@ -25,6 +27,15 @@ export default function NewCertificatePage() {
     // Fetch volunteers from supabase via a simple endpoint
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
   }, []);
+
+  function handleVolunteerChange(id: string) {
+    setVolunteerId(id);
+    setVolunteerCode("");
+    if (!id) return;
+    getLatestIdCardForVolunteer(id).then(card => {
+      if (card?.card_number) setVolunteerCode(card.card_number);
+    });
+  }
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
@@ -72,7 +83,7 @@ export default function NewCertificatePage() {
           <div className="space-y-5">
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
-              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={setVolunteerId} name="user_id" />
+              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="user_id" />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Certificate Type <span style={{ color: "#DC2626" }}>*</span></label>
@@ -102,7 +113,7 @@ export default function NewCertificatePage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer ID</label>
-                <input name="volunteer_code" placeholder="e.g. GS-2026-014" style={inputStyle} />
+                <input name="volunteer_code" value={volunteerCode} onChange={e => setVolunteerCode(e.target.value)} placeholder="e.g. GS-2026-014" style={inputStyle} />
               </div>
             </div>
             <div>

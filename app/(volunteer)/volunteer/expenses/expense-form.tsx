@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { submitExpense } from "@/actions/finance";
+import { submitExpense, resubmitExpense } from "@/actions/finance";
 import { getGroupsForSelect } from "@/actions/groups";
 import type { ExpenseInput } from "@/lib/validations";
+import type { Expense } from "@/types";
 
 const CATEGORIES: { value: ExpenseInput["category"]; label: string; hint: string }[] = [
   { value: "travel", label: "Travel & Transportation", hint: "Train, Bus, Flight, Taxi, Auto, Local Transport, Fuel" },
@@ -23,12 +24,12 @@ const SUBCATEGORY_OPTIONS: Partial<Record<ExpenseInput["category"], readonly str
 
 const VOLUNTEER_COUNT_CATEGORIES: ExpenseInput["category"][] = ["accommodation", "food"];
 
-export function ExpenseForm({ groupId }: { groupId: string | null }) {
+export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string | null; editExpense?: Expense; onDone?: () => void }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
-  const [category, setCategory] = useState<ExpenseInput["category"]>("travel");
+  const [category, setCategory] = useState<ExpenseInput["category"]>(editExpense?.category ?? "travel");
 
   useEffect(() => {
     if (groupId) return;
@@ -50,26 +51,33 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
     setSaving(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
+    const payload = {
+      group_id: groupId || (fd.get("group_id") as string),
+      category,
+      subcategory: (fd.get("subcategory") as string) || undefined,
+      volunteer_count: needsVolunteerCount ? Number(fd.get("volunteer_count")) : undefined,
+      vendor_name: (fd.get("vendor_name") as string) || undefined,
+      expense_date: fd.get("expense_date") as string,
+      amount: Number(fd.get("amount")),
+      bill_url: (fd.get("bill_url") as string) || undefined,
+      description: (fd.get("description") as string) || undefined,
+    };
     try {
-      const result = await submitExpense({
-        group_id: groupId || (fd.get("group_id") as string),
-        category,
-        subcategory: (fd.get("subcategory") as string) || undefined,
-        volunteer_count: needsVolunteerCount ? Number(fd.get("volunteer_count")) : undefined,
-        vendor_name: (fd.get("vendor_name") as string) || undefined,
-        expense_date: fd.get("expense_date") as string,
-        amount: Number(fd.get("amount")),
-        bill_url: (fd.get("bill_url") as string) || undefined,
-        description: (fd.get("description") as string) || undefined,
-      });
+      const result = editExpense
+        ? await resubmitExpense(editExpense.id, payload)
+        : await submitExpense(payload);
       if (!result.ok) {
         setError(result.error);
         toast.error(result.error);
         return;
       }
-      (e.target as HTMLFormElement).reset();
-      setCategory("travel");
-      toast.success("Expense submitted successfully");
+      toast.success(editExpense ? "Expense resubmitted for approval" : "Expense submitted successfully");
+      if (editExpense) {
+        onDone?.();
+      } else {
+        (e.target as HTMLFormElement).reset();
+        setCategory("travel");
+      }
       router.refresh();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to submit expense";
@@ -82,7 +90,7 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
 
   return (
     <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20, marginBottom: 24 }}>
-      <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 14px" }}>Submit Expense</h2>
+      <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 14px" }}>{editExpense ? "Resubmit Expense" : "Submit Expense"}</h2>
       {error && (
         <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "#DC2626" }}>
           {error}
@@ -110,7 +118,7 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
         {subOptions ? (
           <div>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Type <span style={{ color: "#DC2626" }}>*</span></label>
-            <select name="subcategory" required defaultValue="" style={inputStyle}>
+            <select name="subcategory" required defaultValue={editExpense?.subcategory ?? ""} style={inputStyle}>
               <option value="" disabled>Select type...</option>
               {subOptions.map(o => <option key={o} value={o}>{o}</option>)}
             </select>
@@ -124,6 +132,7 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
               name="subcategory"
               type="text"
               required
+              defaultValue={editExpense?.subcategory ?? ""}
               placeholder={category === "materials" ? "e.g. stationery, science materials, printing, teaching aids, banners..." : "Describe the purpose of this expense..."}
               style={inputStyle}
             />
@@ -133,38 +142,45 @@ export function ExpenseForm({ groupId }: { groupId: string | null }) {
         {needsVolunteerCount && (
           <div>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Number of Volunteers <span style={{ color: "#DC2626" }}>*</span></label>
-            <input name="volunteer_count" type="number" min="1" step="1" required placeholder="How many volunteers?" style={inputStyle} />
+            <input name="volunteer_count" type="number" min="1" step="1" required defaultValue={editExpense?.volunteer_count ?? ""} placeholder="How many volunteers?" style={inputStyle} />
           </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "#DC2626" }}>*</span></label>
-            <input name="amount" type="number" min="0" step="0.01" required placeholder="Enter amount" style={inputStyle} />
+            <input name="amount" type="number" min="0" step="0.01" required defaultValue={editExpense?.amount ?? ""} placeholder="Enter amount" style={inputStyle} />
           </div>
           <div>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Date <span style={{ color: "#DC2626" }}>*</span></label>
-            <input name="expense_date" type="date" required defaultValue={new Date().toISOString().split("T")[0]} style={inputStyle} />
+            <input name="expense_date" type="date" required defaultValue={editExpense?.expense_date ?? new Date().toISOString().split("T")[0]} style={inputStyle} />
           </div>
         </div>
 
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Name of Person / Vendor</label>
-          <input name="vendor_name" type="text" placeholder="Who was paid?" style={inputStyle} />
+          <input name="vendor_name" type="text" defaultValue={editExpense?.vendor_name ?? ""} placeholder="Who was paid?" style={inputStyle} />
         </div>
 
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Bill URL</label>
-          <input name="bill_url" type="text" placeholder="https://..." style={inputStyle} />
+          <input name="bill_url" type="text" defaultValue={editExpense?.bill_url ?? ""} placeholder="https://..." style={inputStyle} />
         </div>
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Additional Notes</label>
-          <textarea name="description" rows={2} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />
+          <textarea name="description" rows={2} defaultValue={editExpense?.description ?? ""} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />
         </div>
       </div>
-      <button type="submit" disabled={saving} style={{ marginTop: 14, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-        {saving ? "Submitting..." : "Submit Expense"}
-      </button>
+      <div className="flex gap-3">
+        <button type="submit" disabled={saving} style={{ marginTop: 14, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+          {saving ? "Saving..." : editExpense ? "Resubmit Expense" : "Submit Expense"}
+        </button>
+        {editExpense && (
+          <button type="button" onClick={onDone} style={{ marginTop: 14, background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }
