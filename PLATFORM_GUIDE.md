@@ -6,10 +6,10 @@ Simple guide for everyone using the platform: students, volunteers, staff, admin
 
 | You are... | You can... |
 |---|---|
-| **Student** | apply for tours, take eligibility tests, fill forms, view your profile & results |
+| **Enrollee** | apply for tours, take eligibility tests, fill forms, view your profile & results |
 | **Volunteer** | manage assigned tours, log daily reports, submit expenses/travel, upload photos, get certificates |
 | **Staff (EARC)** | view programme data, student data, documents |
-| **Admin** | manage everything: tours, tests, forms, students, volunteers, finance, reports |
+| **Admin** | manage everything: tours, tests, forms, enrollees, volunteers, finance, reports |
 | **Super Admin** | everything admin can, plus assign roles to others |
 
 ## Getting started
@@ -18,7 +18,7 @@ Simple guide for everyone using the platform: students, volunteers, staff, admin
 flowchart LR
     A[Sign up / Sign in] --> B[Land on your dashboard]
     B --> C{What's your role?}
-    C -->|Student| D[Student dashboard]
+    C -->|Enrollee| D[Enrollee dashboard]
     C -->|Volunteer| E[Volunteer dashboard]
     C -->|Staff| F[Staff dashboard]
     C -->|Admin| G[Admin dashboard]
@@ -26,7 +26,7 @@ flowchart LR
 
 You only see the pages meant for your role. No setup needed — sign in and you're routed automatically.
 
-## Student journey
+## Enrollee journey
 
 ```mermaid
 flowchart TD
@@ -59,8 +59,8 @@ flowchart TD
 ```mermaid
 flowchart TD
     A[Create a tour] --> B[Build eligibility test]
-    B --> C[Students apply & take test]
-    C --> D[Review results, select students]
+    B --> C[Enrollees apply & take test]
+    C --> D[Review results, select enrollees]
     D --> E[Assign volunteers to tours]
     E --> F[Track daily reports, expenses, media]
     F --> G[View analytics & generate reports]

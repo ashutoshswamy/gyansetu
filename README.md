@@ -1,6 +1,6 @@
 # Gyan Setu
 
-A full-stack platform for managing student exchange tours organized by educational institutes. Students apply for tours, take eligibility tests online, and selected students get access to volunteer resources and reporting tools.
+A full-stack platform for managing student exchange tours organized by educational institutes. Enrollees apply for tours, take eligibility tests online, and selected enrollees get access to volunteer resources and reporting tools.
 
 Replaces Google Forms and manual workflows with a centralized, role-based system.
 
@@ -10,16 +10,17 @@ Replaces Google Forms and manual workflows with a centralized, role-based system
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | Styling | TailwindCSS + shadcn/ui |
 | Auth | Clerk |
 | Database | Supabase (PostgreSQL) |
 | Storage | Supabase Storage |
-| Cache | Upstash Redis |
+| Cache / Rate limiting | Upstash Redis |
 | Validation | Zod + React Hook Form |
 | State | TanStack Query |
 | Email | Resend |
+| PDF / image export | jsPDF + html-to-image (ID cards, certificates) |
 | Deployment | Vercel |
 
 ---
@@ -28,10 +29,12 @@ Replaces Google Forms and manual workflows with a centralized, role-based system
 
 | Role | Access |
 |---|---|
-| `enrollment_user` | Public portal, tour applications, eligibility tests |
-| `volunteer` | Volunteer panel — tours, forms, daily logs, groups, media |
+| `enrollee` | Public portal, tour applications, eligibility tests |
+| `volunteer` | Volunteer panel — tours, forms, daily logs, groups, media, finance, travel, workshops |
 | `admin` / `super_admin` | Full admin console + EARC panel |
 | `earc_staff` | EARC panel only — file uploads, student/programme data |
+
+`super_admin` can additionally assign/change roles for other users.
 
 ---
 
@@ -68,6 +71,7 @@ UPSTASH_REDIS_REST_TOKEN=
 
 # Resend
 RESEND_API_KEY=
+RESEND_FROM_EMAIL=
 ```
 
 ### Setup
@@ -92,32 +96,41 @@ Open [http://localhost:3000](http://localhost:3000).
 
 To reset the database, run `lib/supabase/reset.sql` then re-run `schema.sql`.
 
+### Seed / unseed test data
+
+```bash
+npm run seed:volunteers   # or enrollees, tours, groups
+npm run unseed:volunteers # or enrollees, tours, groups
+```
+
 ---
 
 ## Project Structure
 
 ```
 app/
-  (admin)/admin/        # Admin console (admin + super_admin)
-  (earc)/earc/          # EARC panel (earc_staff + admin)
-  (student)/student/    # Student portal (enrollment_user)
-  (volunteer)/volunteer/ # Volunteer panel (volunteer + admin)
-  (auth)/               # Clerk sign-in / sign-up
-  api/                  # Route handlers + webhooks
-  blog/ gallery/ faq/   # Public-facing pages
+  (admin)/admin/          # Admin console (admin + super_admin)
+  (earc)/earc/            # EARC panel (earc_staff + admin)
+  (enrollee)/enrollee/    # Enrollee portal (enrollee role)
+  (volunteer)/volunteer/  # Volunteer panel (volunteer + admin)
+  (public)/               # Public-facing pages (blog, gallery, faq, alumni…)
+  (auth)/                 # Clerk sign-in / sign-up
+  api/                    # Route handlers + webhooks
+  dashboard/              # Post-login role router
 
-actions/                # Next.js Server Actions
+actions/                  # Next.js Server Actions
 components/
-  ui/                   # shadcn/ui primitives
-  features/             # Feature components (tours, forms, tests, earc…)
-  layout/               # Sidebar, providers
+  ui/                     # shadcn/ui primitives
+  features/                # Feature components (tours, forms, tests, earc…)
+  layout/                  # Sidebar, providers
 lib/
-  clerk/                # Auth helpers, role checks, session revocation
-  supabase/             # Client, server client, schema, reset
-  redis/                # Upstash client
-  validations/          # Zod schemas
-types/                  # Shared TypeScript types
-middleware.ts           # Clerk RBAC route protection
+  clerk/                  # Auth helpers, role checks, session revocation
+  supabase/               # Client, server client, schema, reset
+  redis/                  # Upstash client
+  validations/            # Zod schemas
+types/                    # Shared TypeScript types
+scripts/                  # Seed / unseed scripts
+middleware.ts             # Clerk RBAC route protection
 ```
 
 ---
