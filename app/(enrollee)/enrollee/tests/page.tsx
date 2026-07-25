@@ -79,7 +79,7 @@ export default async function StudentTestsPage() {
                       )}
                     </>
                   ) : (
-                    <Link href={`/student/tests/${test.id}`}>
+                    <Link href={`/enrollee/tests/${test.id}`}>
                       <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
                         Start Test
                       </button>

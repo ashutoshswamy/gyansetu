@@ -53,7 +53,7 @@ export default async function StudentToursPage() {
                   Applied
                 </button>
               ) : (
-                <Link href={`/student/tours/${tour.id}`} style={{ display: "block" }}>
+                <Link href={`/enrollee/tours/${tour.id}`} style={{ display: "block" }}>
                   <button style={{ width: "100%", background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 0", borderRadius: 5, border: "none", cursor: "pointer" }}>
                     View &amp; Apply
                   </button>

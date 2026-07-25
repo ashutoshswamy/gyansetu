@@ -180,7 +180,7 @@ export default async function EnrollmentDashboard() {
                         {test.duration_minutes} min · Pass: {test.passing_score}%
                       </p>
                     </div>
-                    <Link href={`/student/tests/${test.id}`}>
+                    <Link href={`/enrollee/tests/${test.id}`}>
                       <button
                         style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer", flexShrink: 0, marginLeft: 12 }}
                       >
@@ -222,7 +222,7 @@ export default async function EnrollmentDashboard() {
                   <p className="text-xs mb-3" style={{ color: "#9B9188" }}>
                     {tour.destination} · {new Date(tour.start_date).toLocaleDateString()}
                   </p>
-                  <Link href={`/student/tours/${tour.id}`} style={{ display: "block" }}>
+                  <Link href={`/enrollee/tours/${tour.id}`} style={{ display: "block" }}>
                     <button
                       style={{ width: "100%", background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}
                     >

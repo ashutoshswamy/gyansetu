@@ -91,7 +91,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
                     Next step: take the eligibility test to become eligible for this tour.
                   </p>
                   <a
-                    href={`/student/tests/${eligibilityTest.id}`}
+                    href={`/enrollee/tests/${eligibilityTest.id}`}
                     style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "white", background: "#4A55BE", padding: "9px 18px", borderRadius: 6, textDecoration: "none" }}
                   >
                     Go to Eligibility Test →
