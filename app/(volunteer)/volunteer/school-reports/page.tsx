@@ -155,7 +155,7 @@ export default function SchoolReportsPage() {
     if (asFinal) {
       for (const f of OBSERVATION_FIELDS) {
         const wc = wordCount(observations[f.key] ?? "");
-        if (wc < 250) { setError(`"${f.label}" must be at least 250 words (currently ${wc}).`); return; }
+        if (wc < 50) { setError(`"${f.label}" must be at least 50 words (currently ${wc}).`); return; }
       }
     }
 
@@ -364,7 +364,7 @@ export default function SchoolReportsPage() {
 
             {/* Section 4: Reflection & Observations */}
             <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>4. Reflection & Observations</h2>
-            <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 12px" }}>Minimum 250 words each (required to submit final)</p>
+            <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 12px" }}>Minimum 50 words each (required to submit final)</p>
             <div className="space-y-4 mb-6">
               {OBSERVATION_FIELDS.map(f => {
                 const text = observations[f.key] ?? "";
@@ -373,13 +373,13 @@ export default function SchoolReportsPage() {
                   <div key={f.key}>
                     <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
                       <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247" }}>{f.label} <span style={{ color: "#DC2626" }}>*</span></label>
-                      <span style={{ fontSize: 11, color: wc >= 250 ? "#2A5E3A" : "#9B9188" }}>{wc} / 250 words</span>
+                      <span style={{ fontSize: 11, color: wc >= 50 ? "#2A5E3A" : "#9B9188" }}>{wc} / 50 words</span>
                     </div>
                     <textarea
                       value={text}
                       onChange={e => setObservations(o => ({ ...o, [f.key]: e.target.value }))}
                       rows={4}
-                      placeholder="Minimum 250 words..."
+                      placeholder="Minimum 50 words..."
                       style={{ ...inputStyle, resize: "vertical" }}
                     />
                   </div>

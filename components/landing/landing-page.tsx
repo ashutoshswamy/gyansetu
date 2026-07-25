@@ -10,7 +10,17 @@ import {
   TrendingUp,
   ChevronRight,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { SiteNavbar } from "./site-navbar";
+
+const HeroCarousel = dynamic(() => import("./hero-carousel").then((m) => m.HeroCarousel), {
+  ssr: false,
+  loading: () => (
+    <div style={{ width: "100%", maxWidth: 400, marginLeft: "auto" }}>
+      <div style={{ width: "100%", aspectRatio: "4 / 5", borderRadius: 16, background: "#F3F0E8", border: "1px solid var(--lp-border)" }} />
+    </div>
+  ),
+});
 
 interface Testimonial {
   id: string;
@@ -42,35 +52,6 @@ function AnimatedStat({ value, label, delay = 0 }: { value: string; label: strin
       <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 11.5, color: "var(--lp-tm)", marginTop: 5, fontWeight: 400 }}>
         {label}
       </div>
-    </motion.div>
-  );
-}
-
-/* ── Floating hero card ── */
-function FloatingCard({
-  children,
-  delay = 0,
-  bobDuration = 3.5,
-  style,
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  bobDuration?: number;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 48, y: 16 }}
-      animate={{ opacity: 1, x: 0, y: 0 }}
-      transition={{ duration: 0.85, delay, ease: [0.22, 0.68, 0, 1.2] }}
-      style={style}
-    >
-      <motion.div
-        animate={{ y: [0, -7, 0] }}
-        transition={{ duration: bobDuration, repeat: Infinity, ease: "easeInOut", delay: delay * 0.4 }}
-      >
-        {children}
-      </motion.div>
     </motion.div>
   );
 }
@@ -196,68 +177,19 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
             </div>
           </div>
 
-          {/* Right: hero visual */}
+          {/* Right: hero visual — photo carousel from the field */}
           <div
             className="hero-visual"
-            style={{ position: "relative", width: "100%", height: 460, display: "flex", alignItems: "center", justifyContent: "flex-end" }}
+            style={{ position: "relative", width: "100%", height: 540, display: "flex", alignItems: "center", justifyContent: "flex-end" }}
           >
-            {/* Panel BG */}
             <motion.div
-              style={{ position: "absolute", inset: 0, borderRadius: 18, background: "linear-gradient(148deg,#F3F0E8 0%,#fff 100%)", border: "1px solid var(--lp-border)", overflow: "hidden" }}
+              style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.25, ease: [0.22, 0.68, 0, 1.2] }}
             >
-              <div style={{ position: "absolute", inset: 0, opacity: 0.38, backgroundImage: "linear-gradient(var(--lp-border) 1px,transparent 1px),linear-gradient(90deg,var(--lp-border) 1px,transparent 1px)", backgroundSize: "40px 40px" }} />
-              <div style={{ position: "absolute", top: -50, right: -50, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle,rgba(74,85,190,.1) 0%,transparent 70%)" }} />
-              <div style={{ position: "absolute", bottom: -40, left: -40, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle,rgba(245,165,32,.08) 0%,transparent 70%)" }} />
+              <HeroCarousel />
             </motion.div>
-
-            {/* Cards */}
-            <div style={{ position: "relative", padding: "28px 24px", display: "flex", flexDirection: "column", gap: 14, zIndex: 1, width: "100%" }}>
-
-              <FloatingCard delay={0.5} bobDuration={3.8}>
-                <div style={{ background: "white", border: "1px solid var(--lp-border-l)", borderRadius: 12, padding: "18px 20px", boxShadow: "0 4px 28px rgba(74,85,190,.1)" }}>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 10.5, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--lp-amber)", marginBottom: 7 }}>Visit Open</div>
-                  <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 17, fontWeight: 600, color: "var(--lp-text)", lineHeight: 1.3, marginBottom: 5 }}>Gyan-Setu Visit</div>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11.5, color: "var(--lp-tm)", marginBottom: 14 }}>Applications open for volunteers</div>
-                  <span style={{ display: "inline-block", background: "var(--lp-navy)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, padding: "5px 14px", borderRadius: 4, letterSpacing: "0.02em" }}>Apply Now</span>
-                </div>
-              </FloatingCard>
-
-              <FloatingCard delay={0.68} bobDuration={4.2}>
-                <div style={{ background: "white", border: "1px solid var(--lp-border-l)", borderRadius: 12, padding: "18px 20px", boxShadow: "0 4px 20px rgba(74,85,190,.07)" }}>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-tm)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }}>Your Progress</div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, fontWeight: 500, color: "var(--lp-text)" }}>Pre-Test</span>
-                    <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, fontWeight: 600, color: "var(--lp-green)" }}>Submitted</span>
-                  </div>
-                  <div style={{ height: 5, background: "var(--lp-surface)", borderRadius: 3, overflow: "hidden" }}>
-                    <motion.div
-                      style={{ height: "100%", background: "linear-gradient(90deg,var(--lp-green),rgba(42,94,58,.7))", borderRadius: 3 }}
-                      initial={{ width: 0 }}
-                      animate={{ width: "100%" }}
-                      transition={{ duration: 1.3, delay: 1.4, ease: "easeOut" }}
-                    />
-                  </div>
-                </div>
-              </FloatingCard>
-
-              <FloatingCard delay={0.86} bobDuration={3.5}>
-                <div style={{ background: "var(--lp-navy)", borderRadius: 12, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
-                  <motion.div
-                    style={{ position: "absolute", top: -20, right: -20, width: 80, height: 80, borderRadius: "50%", background: "rgba(255,255,255,.06)" }}
-                    animate={{ scale: [1, 1.4, 1] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,.45)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 7 }}>Status Update</div>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, fontWeight: 400, color: "white", lineHeight: 1.55, position: "relative", zIndex: 1 }}>
-                    🎉 Congratulations! You&apos;ve been selected as a Volunteer for a Gyan-Setu Visit.
-                  </div>
-                </div>
-              </FloatingCard>
-
-            </div>
           </div>
         </div>
       </section>

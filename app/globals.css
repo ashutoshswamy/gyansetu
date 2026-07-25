@@ -209,7 +209,7 @@
 
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr !important; }
-  .hero-visual { display: none !important; }
+  .hero-visual { height: auto !important; justify-content: center !important; padding: 8px 0 0 !important; }
   .desktop-nav-links { display: none !important; }
   .mobile-menu-btn { display: flex !important; }
   .what-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
