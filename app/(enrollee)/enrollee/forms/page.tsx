@@ -32,7 +32,7 @@ export default async function StudentFormsPage() {
                 {form.description && <p style={{ fontSize: 12, color: "#5A5247", margin: "0 0 4px" }}>{form.description}</p>}
                 <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>{form.fields?.length ?? 0} fields</p>
               </div>
-              <Link href={`/student/forms/${form.id}`}>
+              <Link href={`/enrollee/forms/${form.id}`}>
                 <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
                   Fill Form
                 </button>
