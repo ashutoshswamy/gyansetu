@@ -163,44 +163,49 @@
   font-size: 14px; font-weight: 600;
   color: white; text-decoration: none; padding: 10px 24px; border-radius: 6px;
   background: var(--lp-navy); display: inline-flex; align-items: center; gap: 8px;
-  transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
 }
 .btn-primary:hover {
   background: var(--lp-navy-h);
   box-shadow: 0 6px 24px rgba(74, 85, 190, 0.32);
   transform: translateY(-1px);
 }
+.btn-primary:active { transform: translateY(0) scale(0.97); box-shadow: 0 2px 10px rgba(74, 85, 190, 0.28); }
 
 .btn-ghost {
   font-size: 14px; font-weight: 500;
   color: var(--lp-ts); text-decoration: none; padding: 10px 18px; border-radius: 6px;
-  transition: color 0.18s, background 0.18s;
+  transition: color 0.18s, background 0.18s, transform 0.12s;
 }
 .btn-ghost:hover { color: var(--lp-navy); background: rgba(74, 85, 190, 0.06); }
+.btn-ghost:active { transform: scale(0.97); }
 
 .btn-outline {
   font-size: 14px; font-weight: 500;
   color: var(--lp-navy); text-decoration: none; padding: 10px 24px; border-radius: 6px;
   border: 1.5px solid rgba(74, 85, 190, 0.3); display: inline-block;
-  transition: border-color 0.18s, background 0.18s;
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
 }
 .btn-outline:hover { border-color: var(--lp-navy); background: rgba(74, 85, 190, 0.04); }
+.btn-outline:active { transform: scale(0.97); }
 
 .btn-white {
   font-size: 14px; font-weight: 600;
   color: var(--lp-navy); text-decoration: none; padding: 13px 32px; border-radius: 6px;
   background: white; display: inline-block;
-  transition: box-shadow 0.18s, transform 0.18s;
+  transition: box-shadow 0.18s, transform 0.12s;
 }
 .btn-white:hover { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18); transform: translateY(-2px); }
+.btn-white:active { transform: translateY(0) scale(0.97); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16); }
 
 .btn-outline-white {
   font-size: 14px; font-weight: 500;
   color: rgba(255, 255, 255, 0.8); text-decoration: none; padding: 13px 32px; border-radius: 6px;
   border: 1.5px solid rgba(255, 255, 255, 0.28); display: inline-block;
-  transition: border-color 0.18s, color 0.18s;
+  transition: border-color 0.18s, color 0.18s, transform 0.12s;
 }
 .btn-outline-white:hover { border-color: rgba(255, 255, 255, 0.7); color: white; }
+.btn-outline-white:active { transform: scale(0.97); }
 
 .footer-link {
   font-size: 13px; color: var(--lp-tm); text-decoration: none; transition: color 0.18s;
@@ -222,6 +227,40 @@
 }
 @media (max-width: 600px) {
   .footer-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+}
+
+/* ── Global micro-interactions for raw <button>/<input> elements ──
+   Most of the app renders plain <button>/<input> with inline `style={{}}`,
+   which can't express :hover/:active/:focus. These rules add that feedback
+   everywhere at once instead of touching every call site. */
+button, input, textarea, select {
+  transition: transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s ease, filter 0.15s ease;
+}
+button:not(:disabled) { cursor: pointer; }
+button:not(:disabled):hover { filter: brightness(1.06); }
+button:not(:disabled):active { transform: scale(0.97); filter: brightness(0.97); }
+button:disabled { cursor: not-allowed; }
+button:focus-visible {
+  outline: 2px solid var(--lp-navy);
+  outline-offset: 2px;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not(:disabled):hover:not(:focus),
+textarea:not(:disabled):hover:not(:focus),
+select:not(:disabled):hover:not(:focus) {
+  border-color: rgba(74, 85, 190, 0.45) !important;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+  border-color: var(--lp-navy) !important;
+  box-shadow: 0 0 0 3px rgba(74, 85, 190, 0.15);
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button, input, textarea, select { transition: none !important; }
+  button:not(:disabled):active { transform: none !important; }
 }
 
 /* Generic 2-column form row used by public lead-gen and admin forms */
