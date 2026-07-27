@@ -22,7 +22,7 @@ interface GroupMember {
 interface GroupDetail {
   name: string;
   state_allocated?: string;
-  tours?: { title: string };
+  tours?: { id: string; title: string };
   tour_group_members?: GroupMember[];
 }
 
@@ -39,18 +39,17 @@ export default function GroupDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
-  }, []);
-
-  // We need to find which tour this group belongs to fetch all groups and find this one
-  useEffect(() => {
-    // Fallback: we'll just load from the page, can't call getGroupsByTour without tour_id
-    // Instead use a direct API approach
     fetch(`/api/groups/${groupId}`)
       .then(r => r.json())
       .then(d => { setGroup(d); setLoading(false); })
       .catch(() => setLoading(false));
   }, [groupId]);
+
+  // Only volunteers approved for this group's tour are eligible members
+  useEffect(() => {
+    if (!group?.tours?.id) return;
+    fetch(`/api/volunteers?tourId=${group.tours.id}`).then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
+  }, [group?.tours?.id]);
 
   async function handleAddMember() {
     if (!newUserId) return;

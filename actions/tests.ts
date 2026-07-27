@@ -280,6 +280,12 @@ export async function approveTestResult(attemptId: string) {
       .eq("tour_id", tourId)
       .eq("student_id", student.id);
     if (appError) console.error("[approveTestResult] failed to advance application to selected", appError);
+
+    // Surface the approved tour on the volunteer's portal
+    const { error: assignError } = await db
+      .from("volunteer_assignments")
+      .upsert({ tour_id: tourId, volunteer_id: student.id }, { onConflict: "tour_id,volunteer_id", ignoreDuplicates: true });
+    if (assignError) console.error("[approveTestResult] failed to create volunteer assignment", assignError);
   }
 
   // 5. Force re-auth (best-effort — stale JWT expires naturally if this fails)
@@ -292,7 +298,10 @@ export async function approveTestResult(attemptId: string) {
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");
   revalidatePath("/admin/tours");
+  revalidatePath("/admin/volunteers");
   revalidatePath("/enrollee/tours");
+  revalidatePath("/volunteer");
+  revalidatePath("/volunteer/tours");
 }
 
 export async function demoteVolunteer(userId: string) {
@@ -343,6 +352,13 @@ export async function demoteVolunteer(userId: string) {
       .in("tour_id", tourIds)
       .eq("status", "selected");
     if (appError) console.error("[demoteVolunteer] failed to revert applications to shortlisted", appError);
+
+    const { error: unassignError } = await db
+      .from("volunteer_assignments")
+      .delete()
+      .eq("volunteer_id", userId)
+      .in("tour_id", tourIds);
+    if (unassignError) console.error("[demoteVolunteer] failed to remove volunteer assignments", unassignError);
   }
 
   // 4. Force re-auth
@@ -355,7 +371,10 @@ export async function demoteVolunteer(userId: string) {
   revalidatePath("/admin/tests");
   revalidatePath("/admin/students");
   revalidatePath("/admin/tours");
+  revalidatePath("/admin/volunteers");
   revalidatePath("/enrollee/tours");
+  revalidatePath("/volunteer");
+  revalidatePath("/volunteer/tours");
 }
 
 export async function rejectTestResult(attemptId: string) {
