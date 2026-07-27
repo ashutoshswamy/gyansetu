@@ -70,11 +70,16 @@ export async function getAllGroups() {
   return data ?? [];
 }
 
+// Scoped to the current user's own group memberships — this feeds group-select
+// dropdowns in volunteer-facing forms (expenses, school reports), where showing
+// every group in the system would let a volunteer submit data against a group
+// they aren't part of.
 export async function getGroupsForSelect() {
-  const { db } = await getAuthenticatedUser();
+  const { db, user } = await getAuthenticatedUser();
   const { data, error } = await db
     .from("tour_groups")
-    .select("id, name, tours(title)")
+    .select("id, name, tours(title), tour_group_members!inner(user_id)")
+    .eq("tour_group_members.user_id", user.id)
     .order("created_at", { ascending: false });
   if (error) { console.error("[getGroupsForSelect]", error); throw new Error("Failed to fetch groups"); }
   return data ?? [];
