@@ -6,6 +6,7 @@ import { upsertVolunteerProfile, getMyVolunteerProfile } from "@/actions/profile
 import { AlertCircle, CheckCircle, Info } from "lucide-react";
 import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
 import { FileUploadField } from "@/components/features/file-upload-field";
+import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { VolunteerProfile } from "@/types";
 
 const inputStyle: React.CSSProperties = {
@@ -64,6 +65,8 @@ export function VolunteerProfileForm({ variant }: Props) {
   const [otherLangValue, setOtherLangValue] = useState("");
   const [permState, setPermState] = useState("");
   const [permCity, setPermCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [permDistrict, setPermDistrict] = useState("");
 
   useEffect(() => {
     getMyVolunteerProfile().then(d => {
@@ -71,6 +74,7 @@ export function VolunteerProfileForm({ variant }: Props) {
       if (d?.date_of_birth) setDob(d.date_of_birth);
       if (d?.state) setSelectedState(d.state);
       if (d?.city) setSelectedCity(d.city);
+      if (d?.district) setDistrict(d.district);
       if (d?.photo_url) setPhotoUrl(d.photo_url);
       if (d) setSameAddress(d.permanent_address_same ?? true);
       setIsCurrentlyWorking(!!d?.company_name || d?.current_status === "working_professional" || d?.current_status === "both");
@@ -138,7 +142,6 @@ export function VolunteerProfileForm({ variant }: Props) {
 
     const permHouseNo = str("perm_house_no");
     const permStreet = str("perm_street");
-    const permDistrict = str("perm_district");
     const permPincode = str("perm_pincode");
     const permanentAddressCombined = [
       permHouseNo, permStreet, permCity, permDistrict, permState, permPincode ? `- ${permPincode}` : undefined,
@@ -160,7 +163,7 @@ export function VolunteerProfileForm({ variant }: Props) {
         street: str("street"),
         state: selectedState || undefined,
         city: selectedCity || undefined,
-        district: str("district"),
+        district: district || undefined,
         pincode: str("pincode"),
         address: str("address"),
         permanent_address_same: sameAddress,
@@ -353,7 +356,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                  <F label="District" required><input name="district" required placeholder="Enter district" defaultValue={profile?.district ?? ""} style={inputStyle} /></F>
+                  <F label="District" required><DistrictSelect key={selectedState} state={selectedState} value={district} onChange={setDistrict} required style={inputStyle} /></F>
                   <F label="PIN Code" required hint="6 digits"><input name="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} defaultValue={profile?.pincode ?? ""} style={inputStyle} /></F>
                 </div>
                 <F label="Additional Address Notes"><textarea name="address" rows={2} placeholder="Enter additional address notes" defaultValue={profile?.address ?? ""} style={{ ...inputStyle, resize: "vertical", marginTop: 16 }} /></F>
@@ -395,7 +398,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                       </F>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                      <F label="District" required><input name="perm_district" required={!sameAddress} placeholder="Enter district" style={inputStyle} /></F>
+                      <F label="District" required><DistrictSelect key={permState} state={permState} value={permDistrict} onChange={setPermDistrict} required={!sameAddress} style={inputStyle} /></F>
                       <F label="PIN Code" required hint="6 digits"><input name="perm_pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required={!sameAddress} placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} style={inputStyle} /></F>
                     </div>
                   </div>

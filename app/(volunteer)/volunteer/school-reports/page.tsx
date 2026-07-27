@@ -5,6 +5,7 @@ import { School, Plus, X } from "lucide-react";
 import { getGroupsForSelect } from "@/actions/groups";
 import { submitSchoolReport, getGroupSchoolReports, getGroupMembersForSchoolReport } from "@/actions/school-reports";
 import { INDIAN_STATES } from "@/lib/locations";
+import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { SchoolReportSession } from "@/types";
 
 type Group = { id: string; name: string; tours?: { title: string } | null };
@@ -269,8 +270,8 @@ export default function SchoolReportsPage() {
               <input value={streetArea} onChange={e => setStreetArea(e.target.value)} placeholder="Street / Area" style={inputStyle} />
               <input value={villageTown} onChange={e => setVillageTown(e.target.value)} placeholder="Village / Town" style={inputStyle} />
               <input value={talukaTehsil} onChange={e => setTalukaTehsil(e.target.value)} placeholder="Taluka / Tehsil" style={inputStyle} />
-              <input value={district} onChange={e => setDistrict(e.target.value)} placeholder="District" style={inputStyle} />
-              <select value={state} onChange={e => setState(e.target.value)} style={inputStyle}>
+              <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} style={inputStyle} />
+              <select value={state} onChange={e => { setState(e.target.value); setDistrict(""); }} style={inputStyle}>
                 <option value="">Select state...</option>
                 {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>

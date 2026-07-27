@@ -5,12 +5,15 @@ import { useRouter } from "next/navigation";
 import { createLocalHost } from "@/actions/local-hosts";
 import { createClientClient } from "@/lib/supabase/client";
 import { INDIAN_STATES } from "@/lib/locations";
+import { DistrictSelect } from "@/components/features/forms/district-select";
 
 export default function NewLocalHostPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<{ id: string; name: string; tours?: { title: string }[] | null }[]>([]);
+  const [state, setState] = useState("");
+  const [district, setDistrict] = useState("");
 
   useEffect(() => {
     createClientClient()
@@ -36,8 +39,8 @@ export default function NewLocalHostPage() {
         name: fd.get("name") as string,
         phone: (fd.get("phone") as string) || undefined,
         email: (fd.get("email") as string) || undefined,
-        state: (fd.get("state") as string) || undefined,
-        district: (fd.get("district") as string) || undefined,
+        state: state || undefined,
+        district: district || undefined,
         address: (fd.get("address") as string) || undefined,
         group_id: (fd.get("group_id") as string) || undefined,
         notes: (fd.get("notes") as string) || undefined,
@@ -81,14 +84,14 @@ export default function NewLocalHostPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
-                <select name="state" defaultValue="" style={inputStyle}>
+                <select value={state} onChange={e => { setState(e.target.value); setDistrict(""); }} style={inputStyle}>
                   <option value="">Select state</option>
                   {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>District</label>
-                <input name="district" placeholder="Enter district" style={inputStyle} />
+                <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} style={inputStyle} />
               </div>
             </div>
             <div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getMyTourReports, submitTourReport } from "@/actions/tour-reports";
 import { FileBarChart, Plus, X } from "lucide-react";
 import { INDIAN_STATES } from "@/lib/locations";
+import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { TourReport, TourReportHost, TourReportLogisticsScores } from "@/types";
 
 type TourReportRow = TourReport & { tour?: { id: string; title: string } | null };
@@ -206,11 +207,11 @@ export default function VolunteerTourReportPage() {
                   <input value={h.contact_person_name} onChange={e => updateHost(i, "contact_person_name", e.target.value)} placeholder="Contact Person Name" style={inputStyle} />
                   <input value={h.designation} onChange={e => updateHost(i, "designation", e.target.value)} placeholder="Designation" style={inputStyle} />
                   <input value={h.mobile_number} onChange={e => updateHost(i, "mobile_number", e.target.value)} type="tel" placeholder="Mobile Number" style={inputStyle} />
-                  <select value={h.state} onChange={e => updateHost(i, "state", e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
+                  <select value={h.state} onChange={e => { updateHost(i, "state", e.target.value); updateHost(i, "district", ""); }} style={{ ...inputStyle, appearance: "none" }}>
                     <option value="">Select state...</option>
                     {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
-                  <input value={h.district} onChange={e => updateHost(i, "district", e.target.value)} placeholder="District" style={inputStyle} />
+                  <DistrictSelect key={h.state} state={h.state} value={h.district} onChange={v => updateHost(i, "district", v)} style={inputStyle} />
                   <input value={h.block_taluk} onChange={e => updateHost(i, "block_taluk", e.target.value)} placeholder="Block / Taluk (if possible)" style={inputStyle} />
                   <input value={h.village_city} onChange={e => updateHost(i, "village_city", e.target.value)} placeholder="Village / City" style={inputStyle} />
                 </div>
