@@ -146,6 +146,11 @@ const earcNavItems: NavItem[] = [
   { label: "Documents",      href: "/earc/documents",         Icon: FolderOpen },
 ];
 
+const earcPanelGroup: NavGroup = {
+  label: "EARC Panel",
+  items: earcNavItems,
+};
+
 const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
   enrollee: [
     { label: "Home",       href: "/enrollee",         Icon: LayoutDashboard },
@@ -315,7 +320,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   const accentColor = iconAccentColor[role];
   const isAdmin = role === "admin" || role === "super_admin";
   const isEarc = role === "earc_staff";
-  const groups = role === "super_admin" ? [...adminGroups, superAdminGroup] : adminGroups;
+  const groups = role === "super_admin" ? [...adminGroups, earcPanelGroup, superAdminGroup] : [...adminGroups, earcPanelGroup];
 
   const { user } = useUser();
   const { signOut } = useClerk();

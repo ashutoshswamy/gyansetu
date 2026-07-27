@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import Link from "next/link";
-import { Plane, CheckSquare, ArrowRight, Calendar, MapPin } from "lucide-react";
+import { Plane, CheckSquare, ArrowRight, Calendar, MapPin, ClipboardList, ClipboardCheck } from "lucide-react";
 import type { DynamicForm } from "@/types";
 
 type AssignmentRow = {
@@ -34,12 +34,16 @@ export default async function VolunteerDashboard() {
   const [
     { data: assignments },
     { data: forms },
+    { data: testAttempts },
   ] = await Promise.all([
     db.from("volunteer_assignments").select("*, tours(id, title, destination, start_date, end_date, status)").eq("volunteer_id", uid),
     db.from("dynamic_forms").select("id, title, fields, tour_id, tours(title)").eq("target_role", "volunteer").eq("status", "active").eq("is_template", false),
+    db.from("test_attempts").select("id, status").eq("student_id", uid),
   ]);
 
   const activeTours = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open");
+  const testsTaken = testAttempts?.length ?? 0;
+  const testsApproved = (testAttempts ?? []).filter((t: { status: string }) => t.status === "approved").length;
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
@@ -60,6 +64,8 @@ export default async function VolunteerDashboard() {
           <StatCard label="Tour Assignments" value={assignments?.length ?? 0}  icon={<Plane size={18} />}      accent="emerald" />
           <StatCard label="Active Tours"      value={activeTours.length}        icon={<Calendar size={18} />}   accent="sky"     sub="currently ongoing" />
           <StatCard label="Pending Forms"     value={forms?.length ?? 0}        icon={<CheckSquare size={18} />} accent="amber"   sub="need completion" />
+          <StatCard label="Tests Taken"       value={testsTaken}                 icon={<ClipboardList size={18} />} accent="indigo" />
+          <StatCard label="Tests Approved"    value={testsApproved}              icon={<ClipboardCheck size={18} />} accent="emerald" />
         </div>
 
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

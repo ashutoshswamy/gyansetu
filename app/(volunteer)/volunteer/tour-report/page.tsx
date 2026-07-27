@@ -121,7 +121,7 @@ export default function VolunteerTourReportPage() {
       for (const f of OBSERVATION_FIELDS) {
         if (!f.required) continue;
         const wc = wordCount(observations[f.key] ?? "");
-        if (wc < 150) { setError(`"${f.label}" must be at least 150 words (currently ${wc}).`); return; }
+        if (wc < 50) { setError(`"${f.label}" must be at least 50 words (currently ${wc}).`); return; }
       }
       for (const f of LOGISTICS_FIELDS) {
         if (!scores[f.key]) { setError(`Please rate "${f.label}".`); return; }
@@ -236,7 +236,7 @@ export default function VolunteerTourReportPage() {
 
           {/* Section 4: Observations */}
           <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>4. Observations</h2>
-          <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 12px" }}>Minimum 150 words each (except where marked optional)</p>
+          <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 12px" }}>Minimum 50 words each (except where marked optional)</p>
           <div className="space-y-4 mb-6">
             {OBSERVATION_FIELDS.map(f => {
               const text = observations[f.key] ?? "";
@@ -248,14 +248,14 @@ export default function VolunteerTourReportPage() {
                       {f.label} {f.required && <span style={{ color: "#DC2626" }}>*</span>}
                     </label>
                     {f.required && (
-                      <span style={{ fontSize: 11, color: wc >= 150 ? "#2A5E3A" : "#9B9188" }}>{wc} / 150 words</span>
+                      <span style={{ fontSize: 11, color: wc >= 50 ? "#2A5E3A" : "#9B9188" }}>{wc} / 50 words</span>
                     )}
                   </div>
                   <textarea
                     value={text}
                     onChange={e => setObservations(o => ({ ...o, [f.key]: e.target.value }))}
                     rows={4}
-                    placeholder={f.required ? "Minimum 150 words..." : "Optional..."}
+                    placeholder={f.required ? "Minimum 50 words..." : "Optional..."}
                     style={{ ...inputStyle, resize: "vertical" }}
                   />
                 </div>
