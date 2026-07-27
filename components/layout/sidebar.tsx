@@ -49,85 +49,85 @@ import {
   LogOut,
   Radio,
   Globe,
+  HelpCircle,
 } from "lucide-react";
 
-type NavItem = { label: string; href: string; Icon: React.ElementType };
+type NavItem = { label: string; href: string; Icon: React.ElementType; description: string };
 type NavGroup = { label: string; items: NavItem[] };
 
 const adminGroups: NavGroup[] = [
   {
     label: "Overview",
     items: [
-      { label: "Home", href: "/admin", Icon: LayoutDashboard },
-      { label: "Analytics", href: "/admin/analytics", Icon: BarChart2 },
+      { label: "Home", href: "/admin", Icon: LayoutDashboard, description: "Dashboard snapshot of tours, enrollments, and pending actions across the programme." },
+      { label: "Analytics", href: "/admin/analytics", Icon: BarChart2, description: "Aggregate charts and trends across tours, volunteers, and enrollments." },
     ],
   },
   {
     label: "Tours & Travel",
     items: [
-      { label: "Tours",     href: "/admin/tours",     Icon: Plane },
-      { label: "Visits",    href: "/admin/visits",    Icon: MapPin },
-      { label: "Groups",    href: "/admin/groups",    Icon: UsersRound },
-      { label: "Volunteer Locations", href: "/admin/locations", Icon: Radio },
-
-      { label: "Events",    href: "/admin/events",    Icon: Calendar },
+      { label: "Tours",     href: "/admin/tours",     Icon: Plane, description: "Create and manage tours — destination, dates, capacity, and status." },
+      { label: "Visits",    href: "/admin/visits",    Icon: MapPin, description: "Manage public-facing visit listings shown on the website." },
+      { label: "Groups",    href: "/admin/groups",    Icon: UsersRound, description: "Organize volunteers into state-wise teams within a tour; assign mentors." },
+      { label: "Volunteer Locations", href: "/admin/locations", Icon: Radio, description: "Live map of volunteer-reported locations during an active tour." },
+      { label: "Events",    href: "/admin/events",    Icon: Calendar, description: "Manage Katta, Melawa, trainings and other events; track RSVPs." },
     ],
   },
   {
     label: "People",
     items: [
-      { label: "Enrollments",      href: "/admin/students",   Icon: UserCheck },
-      { label: "Volunteers",       href: "/admin/volunteers", Icon: Users },
-      { label: "Profile Data",     href: "/admin/profiles",   Icon: UserCircle },
-      { label: "EARC Staff",       href: "/admin/earc-staff", Icon: KeyRound },
+      { label: "Enrollments",      href: "/admin/students",   Icon: UserCheck, description: "Review tour applications and move enrollees through shortlist/selection." },
+      { label: "Volunteers",       href: "/admin/volunteers", Icon: Users, description: "Directory of active volunteers and their assignment details." },
+      { label: "Profile Data",     href: "/admin/profiles",   Icon: UserCircle, description: "Full volunteer profile records — contact, education, emergency info." },
+      { label: "EARC Staff",       href: "/admin/earc-staff", Icon: KeyRound, description: "Grant or revoke EARC staff access for a user." },
     ],
   },
   {
     label: "Assessment",
     items: [
-      { label: "Tests", href: "/admin/tests", Icon: ClipboardList },
-      { label: "Forms", href: "/admin/forms", Icon: FileText },
-      { label: "Demo Evaluations", href: "/admin/demo-evaluations", Icon: ClipboardCheck },
+      { label: "Tests", href: "/admin/tests", Icon: ClipboardList, description: "Build eligibility tests, grade subjective answers, approve/reject results." },
+      { label: "Forms", href: "/admin/forms", Icon: FileText, description: "Create custom forms for enrollees/volunteers and review submissions." },
+      { label: "Demo Evaluations", href: "/admin/demo-evaluations", Icon: ClipboardCheck, description: "Score volunteers' practice teaching demos before a tour." },
     ],
   },
   {
     label: "Volunteer Journey",
     items: [
-      { label: "Registration Fees", href: "/admin/registration-fees", Icon: Wallet },
-      { label: "Workshops",         href: "/admin/workshops",         Icon: GraduationCap },
-      { label: "ID Cards",          href: "/admin/id-cards",          Icon: IdCard },
-      { label: "Local Hosts",       href: "/admin/local-hosts",       Icon: Home },
-      { label: "Kit Assembly",      href: "/admin/kits",              Icon: Package },
-      { label: "Travel & Tickets",  href: "/admin/travel",            Icon: Train },
-      { label: "Finance",           href: "/admin/finance",           Icon: Receipt },
-      { label: "Daily Logs",        href: "/admin/daily-logs",        Icon: BookOpen },
-      { label: "Tour Reports",      href: "/admin/tour-reports",      Icon: FileBarChart },
-      { label: "School Reports",    href: "/admin/school-reports",    Icon: School },
+      { label: "Registration Fees", href: "/admin/registration-fees", Icon: Wallet, description: "Track who has paid the volunteer registration fee." },
+      { label: "Workshops",         href: "/admin/workshops",         Icon: GraduationCap, description: "Schedule training workshops and review volunteer attendance." },
+      { label: "ID Cards",          href: "/admin/id-cards",          Icon: IdCard, description: "Issue and print volunteer identity cards for a tour/group." },
+      { label: "Local Hosts",       href: "/admin/local-hosts",       Icon: Home, description: "Directory of local contacts/hosts supporting a tour on the ground." },
+      { label: "Kit Assembly",      href: "/admin/kits",              Icon: Package, description: "Track packing and distribution of teaching kits per group." },
+      { label: "Travel & Tickets",  href: "/admin/travel",            Icon: Train, description: "Manage travel tickets per group — confirm bookings, approve itineraries." },
+      { label: "Finance",           href: "/admin/finance",           Icon: Receipt, description: "Review and approve volunteer expense claims and advances." },
+      { label: "Daily Logs",        href: "/admin/daily-logs",        Icon: BookOpen, description: "Read volunteers' daily reflection logs submitted during a tour." },
+      { label: "Tour Reports",      href: "/admin/tour-reports",      Icon: FileBarChart, description: "Per-location reports on hosts, logistics, and observations after a visit." },
+      { label: "School Reports",    href: "/admin/school-reports",    Icon: School, description: "School-visit reports filed by volunteers, browsable by tour and group." },
     ],
   },
   {
     label: "Content",
     items: [
-      { label: "Gallery",    href: "/admin/gallery",    Icon: Images },
-      { label: "Media",      href: "/admin/media",      Icon: Image },
-      { label: "Blog",       href: "/admin/blog",       Icon: Rss },
-      { label: "Newsletter", href: "/admin/newsletter", Icon: Newspaper },
+      { label: "Gallery",    href: "/admin/gallery",    Icon: Images, description: "Manage photo gallery categories and images shown on the website." },
+      { label: "Media",      href: "/admin/media",      Icon: Image, description: "Uploaded media library shared across the app." },
+      { label: "Blog",       href: "/admin/blog",       Icon: Rss, description: "Write and publish blog posts to the public site." },
+      { label: "Newsletter", href: "/admin/newsletter", Icon: Newspaper, description: "Upload and publish newsletter issues." },
     ],
   },
   {
     label: "Awards",
     items: [
-      { label: "Certificates", href: "/admin/certificates", Icon: Award },
+      { label: "Certificates", href: "/admin/certificates", Icon: Award, description: "Generate participation/leadership certificates for volunteers." },
     ],
   },
   {
     label: "Outreach",
     items: [
-      { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquare },
-      { label: "Sponsors",     href: "/admin/sponsors",     Icon: Handshake },
-      { label: "Careers",      href: "/admin/careers",      Icon: Briefcase },
-      { label: "Alumni",       href: "/admin/alumni",       Icon: GraduationCap },
-      { label: "Institutions", href: "/admin/institutions", Icon: Landmark },
+      { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquare, description: "Manage volunteer/alumni testimonials shown on the website." },
+      { label: "Sponsors",     href: "/admin/sponsors",     Icon: Handshake, description: "Review sponsorship inquiries submitted through the public site." },
+      { label: "Careers",      href: "/admin/careers",      Icon: Briefcase, description: "Review job/career applications submitted through the public site." },
+      { label: "Alumni",       href: "/admin/alumni",       Icon: GraduationCap, description: "Directory of alumni registrations and their tour history." },
+      { label: "Institutions", href: "/admin/institutions", Icon: Landmark, description: "Review partnership inquiries from schools and institutions." },
     ],
   },
 ];
@@ -135,15 +135,15 @@ const adminGroups: NavGroup[] = [
 const superAdminGroup: NavGroup = {
   label: "Super Admin",
   items: [
-    { label: "Role Assignment", href: "/admin/super-admin", Icon: KeyRound },
+    { label: "Role Assignment", href: "/admin/super-admin", Icon: KeyRound, description: "Promote or change any user's role — the highest level of access control." },
   ],
 };
 
 const earcNavItems: NavItem[] = [
-  { label: "Home",           href: "/earc",                   Icon: LayoutDashboard },
-  { label: "Student Data",   href: "/earc/student-data",      Icon: GraduationCap },
-  { label: "Programme Data", href: "/earc/programme-data",    Icon: BookMarked },
-  { label: "Documents",      href: "/earc/documents",         Icon: FolderOpen },
+  { label: "Home",           href: "/earc",                   Icon: LayoutDashboard, description: "EARC panel overview — quick links to student data, programme data, and documents." },
+  { label: "Student Data",   href: "/earc/student-data",      Icon: GraduationCap, description: "Records of students reached through Gyan Setu programmes." },
+  { label: "Programme Data", href: "/earc/programme-data",    Icon: BookMarked, description: "Aggregate programme statistics used for EARC's own reporting." },
+  { label: "Documents",      href: "/earc/documents",         Icon: FolderOpen, description: "Shared research/administrative documents for EARC staff." },
 ];
 
 const earcPanelGroup: NavGroup = {
@@ -153,31 +153,31 @@ const earcPanelGroup: NavGroup = {
 
 const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
   enrollee: [
-    { label: "Home",       href: "/enrollee",         Icon: LayoutDashboard },
-    { label: "My Profile", href: "/enrollee/profile", Icon: UserCircle },
-    { label: "Open Tours", href: "/enrollee/tours",   Icon: Plane },
-    { label: "My Tests",   href: "/enrollee/tests",   Icon: ClipboardList },
-    { label: "My Forms",   href: "/enrollee/forms",   Icon: FileText },
+    { label: "Home",       href: "/enrollee",         Icon: LayoutDashboard, description: "Your enrollee dashboard — application status and next steps at a glance." },
+    { label: "My Profile", href: "/enrollee/profile", Icon: UserCircle, description: "Fill in your personal, education, and emergency-contact details. Required before applying to tours." },
+    { label: "Open Tours", href: "/enrollee/tours",   Icon: Plane, description: "Browse open tours and apply. You must be 18+ with a complete profile." },
+    { label: "My Tests",   href: "/enrollee/tests",   Icon: ClipboardList, description: "Take the eligibility test for a tour you've applied to. Passing sends you for admin approval." },
+    { label: "My Forms",   href: "/enrollee/forms",   Icon: FileText, description: "Any additional forms an admin has assigned you to fill out." },
   ],
   volunteer: [
-    { label: "Home",          href: "/volunteer",              Icon: LayoutDashboard },
-    { label: "My Profile",    href: "/volunteer/profile",      Icon: UserCircle },
-    { label: "My Tours",      href: "/volunteer/tours",        Icon: Plane },
-    { label: "Registration Fee", href: "/volunteer/registration-fee", Icon: Wallet },
-    { label: "Tasks & Forms", href: "/volunteer/forms",        Icon: CheckSquare },
-    { label: "Workshops",     href: "/volunteer/workshops",    Icon: GraduationCap },
-    { label: "Events",        href: "/volunteer/events",       Icon: Calendar },
-    { label: "My Group",      href: "/volunteer/groups",       Icon: UsersRound },
-    { label: "Demo Evaluation", href: "/volunteer/demo-evaluations", Icon: ClipboardCheck },
-    { label: "Daily Log",     href: "/volunteer/daily-log",    Icon: BookOpen },
-    { label: "School Details", href: "/volunteer/school-reports", Icon: School },
-    { label: "Travel",        href: "/volunteer/travel",       Icon: Train },
-    { label: "Location",      href: "/volunteer/location",     Icon: Radio },
-    { label: "Expenses",      href: "/volunteer/expenses",     Icon: Wallet },
-    { label: "Tour Report",   href: "/volunteer/tour-report",  Icon: FileBarChart },
-    { label: "Media",         href: "/volunteer/media",        Icon: Image },
-    { label: "Certificates",  href: "/volunteer/certificates", Icon: Award },
-    { label: "ID Card",       href: "/volunteer/id-card",      Icon: IdCard },
+    { label: "Home",          href: "/volunteer",              Icon: LayoutDashboard, description: "Your volunteer dashboard — tour assignments, pending forms, and test history." },
+    { label: "My Profile",    href: "/volunteer/profile",      Icon: UserCircle, description: "Your full volunteer record — contact, address, education, work, and emergency info." },
+    { label: "My Tours",      href: "/volunteer/tours",        Icon: Plane, description: "Tours you're assigned to, with dates and destination details." },
+    { label: "Registration Fee", href: "/volunteer/registration-fee", Icon: Wallet, description: "Check whether your volunteer registration fee has been recorded as paid." },
+    { label: "Tasks & Forms", href: "/volunteer/forms",        Icon: CheckSquare, description: "Complete forms assigned to you by an admin." },
+    { label: "Workshops",     href: "/volunteer/workshops",    Icon: GraduationCap, description: "See scheduled training workshops and mark your attendance (RSVP before, attended/not after)." },
+    { label: "Events",        href: "/volunteer/events",       Icon: Calendar, description: "Katta, Melawa and other events — RSVP as attending, not attending, or maybe." },
+    { label: "My Group",      href: "/volunteer/groups",       Icon: UsersRound, description: "Your assigned tour group, teammates, and group leader/role." },
+    { label: "Demo Evaluation", href: "/volunteer/demo-evaluations", Icon: ClipboardCheck, description: "View your practice-teaching demo scores and readiness feedback." },
+    { label: "Daily Log",     href: "/volunteer/daily-log",    Icon: BookOpen, description: "Submit a short daily reflection log during an active tour (min. 50 words per question)." },
+    { label: "School Details", href: "/volunteer/school-reports", Icon: School, description: "Fill a report for each school visited — details, sessions conducted, and reflections." },
+    { label: "Travel",        href: "/volunteer/travel",       Icon: Train, description: "View your group's train tickets and post live location/travel updates." },
+    { label: "Location",      href: "/volunteer/location",     Icon: Radio, description: "Share your current location with admins during a tour." },
+    { label: "Expenses",      href: "/volunteer/expenses",     Icon: Wallet, description: "Submit bills for reimbursement and track their approval status." },
+    { label: "Tour Report",   href: "/volunteer/tour-report",  Icon: FileBarChart, description: "File a detailed report per location visited — hosts, logistics ratings, observations." },
+    { label: "Media",         href: "/volunteer/media",        Icon: Image, description: "Upload photos/videos from the tour to the shared media library." },
+    { label: "Certificates",  href: "/volunteer/certificates", Icon: Award, description: "Download certificates issued to you for completed tours." },
+    { label: "ID Card",       href: "/volunteer/id-card",      Icon: IdCard, description: "View and download your volunteer identity card." },
   ],
 };
 
@@ -326,6 +326,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   const { signOut } = useClerk();
   const [progress, setProgress] = useState<{ completed: number; total: number } | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (prevPathname !== pathname) {
     setPrevPathname(pathname);
@@ -338,6 +339,8 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   const flatItems = isEarc
     ? earcNavItems
     : (flatNavItems[role as "enrollee" | "volunteer"] ?? []);
+
+  const helpGroups: NavGroup[] = isAdmin ? groups : [{ label: config.label, items: flatItems }];
 
   useEffect(() => {
     if (role !== "volunteer" || !user?.id) return;
@@ -535,6 +538,70 @@ export function Sidebar({ role }: { role: SidebarRole }) {
         </div>
       </div>
       </aside>
+
+      <button
+        onClick={() => setHelpOpen(true)}
+        aria-label="Help"
+        title="Help"
+        className="fixed z-40 flex items-center justify-center rounded-full shadow-lg"
+        style={{ bottom: 20, right: 20, width: 46, height: 46, background: accentColor, border: "none", cursor: "pointer" }}
+      >
+        <HelpCircle className="w-5 h-5" style={{ color: "white" }} />
+      </button>
+
+      {helpOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
+          style={{ background: "rgba(25,20,15,0.45)" }}
+          onClick={() => setHelpOpen(false)}
+        >
+          <div
+            className="w-full max-w-2xl my-8 sm:my-0 rounded-xl"
+            style={{ background: "#FFFFFF", border: "1px solid #E4DFD1", maxHeight: "85vh", display: "flex", flexDirection: "column" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: "1px solid #E4DFD1" }}>
+              <div>
+                <p style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", margin: 0 }}>
+                  {config.label} Panel
+                </p>
+                <h2 style={{ fontSize: 17, fontWeight: 700, color: "#19140F", margin: "2px 0 0" }}>What each section does</h2>
+              </div>
+              <button
+                onClick={() => setHelpOpen(false)}
+                aria-label="Close help"
+                className="flex items-center justify-center rounded flex-shrink-0"
+                style={{ width: 30, height: 30, background: "none", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
+              >
+                <X className="w-4 h-4" style={{ color: "#5A5247" }} />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto px-5 py-4 space-y-5">
+              {helpGroups.map((group) => (
+                <div key={group.label}>
+                  {isAdmin && (
+                    <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: accentColor, marginBottom: 8 }}>
+                      {group.label}
+                    </p>
+                  )}
+                  <div className="space-y-3">
+                    {group.items.map((item) => (
+                      <div key={item.href} className="flex items-start gap-3">
+                        <item.Icon className="w-4 h-4 flex-shrink-0" style={{ color: accentColor, marginTop: 2 }} />
+                        <div>
+                          <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", margin: 0 }}>{item.label}</p>
+                          <p style={{ fontSize: 12.5, color: "#5A5247", margin: "2px 0 0", lineHeight: 1.5 }}>{item.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
