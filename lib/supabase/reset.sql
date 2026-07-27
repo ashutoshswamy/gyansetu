@@ -40,6 +40,7 @@ drop table if exists public.tour_reports            cascade;
 drop table if exists public.expenses                cascade;
 drop table if exists public.expense_advances        cascade;
 drop table if exists public.location_updates        cascade;
+drop table if exists public.volunteer_locations     cascade;
 drop table if exists public.travel_tickets          cascade;
 drop table if exists public.id_cards                cascade;
 drop table if exists public.kit_assignments         cascade;

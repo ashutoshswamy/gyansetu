@@ -47,6 +47,7 @@ import {
   Landmark,
   School,
   LogOut,
+  Radio,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -66,6 +67,7 @@ const adminGroups: NavGroup[] = [
       { label: "Tours",     href: "/admin/tours",     Icon: Plane },
       { label: "Visits",    href: "/admin/visits",    Icon: MapPin },
       { label: "Groups",    href: "/admin/groups",    Icon: UsersRound },
+      { label: "Volunteer Locations", href: "/admin/locations", Icon: Radio },
 
       { label: "Events",    href: "/admin/events",    Icon: Calendar },
     ],
@@ -163,6 +165,7 @@ const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
     { label: "Daily Log",     href: "/volunteer/daily-log",    Icon: BookOpen },
     { label: "School Details", href: "/volunteer/school-reports", Icon: School },
     { label: "Travel",        href: "/volunteer/travel",       Icon: Train },
+    { label: "Location",      href: "/volunteer/location",     Icon: Radio },
     { label: "Expenses",      href: "/volunteer/expenses",     Icon: Wallet },
     { label: "Tour Report",   href: "/volunteer/tour-report",  Icon: FileBarChart },
     { label: "Media",         href: "/volunteer/media",        Icon: Image },

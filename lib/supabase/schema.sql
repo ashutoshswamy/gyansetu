@@ -1070,6 +1070,17 @@ alter table public.location_updates add column if not exists to_location   text;
 alter table public.location_updates drop column if exists latitude;
 alter table public.location_updates drop column if exists longitude;
 
+-- Live Volunteer Location Sharing (one row per volunteer, upserted while sharing is active)
+create table if not exists public.volunteer_locations (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null unique references public.users(id) on delete cascade,
+  latitude     double precision,
+  longitude    double precision,
+  accuracy     double precision,
+  is_sharing   boolean not null default false,
+  updated_at   timestamptz not null default now()
+);
+
 -- Financial Management: advances, expenses, bill approval
 create table if not exists public.expense_advances (
   id         uuid primary key default gen_random_uuid(),
@@ -1236,6 +1247,16 @@ create policy "volunteers_insert_location_updates" on public.location_updates fo
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('volunteer', 'admin', 'super_admin'))
 );
 create policy "admins_manage_location_updates" on public.location_updates for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+);
+
+alter table public.volunteer_locations enable row level security;
+
+-- volunteer_locations: volunteer manages own row, admin reads all
+create policy "volunteer_locations_own" on public.volunteer_locations for all using (
+  user_id = (select id from public.users where clerk_id = auth.uid()::text)
+);
+create policy "admins_read_volunteer_locations" on public.volunteer_locations for select using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
 );
 

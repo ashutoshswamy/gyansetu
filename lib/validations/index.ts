@@ -411,6 +411,12 @@ export const locationUpdateSchema = z.object({
   status_type: z.enum(["current_location", "train_delay", "arrival_estimate", "other"]).optional(),
 });
 
+export const myLocationSchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  accuracy: z.number().optional(),
+});
+
 export const expenseAdvanceSchema = z.object({
   group_id: z.string().uuid(),
   amount: z.number().positive(),
@@ -558,6 +564,7 @@ export type KitAssignmentInput = z.infer<typeof kitAssignmentSchema>;
 export type IdCardInput = z.infer<typeof idCardSchema>;
 export type TravelTicketInput = z.infer<typeof travelTicketSchema>;
 export type LocationUpdateInput = z.infer<typeof locationUpdateSchema>;
+export type MyLocationInput = z.infer<typeof myLocationSchema>;
 export type ExpenseAdvanceInput = z.infer<typeof expenseAdvanceSchema>;
 export type ExpenseInput = z.infer<typeof expenseSchema>;
 export type TourReportInput = z.infer<typeof tourReportSchema>;
