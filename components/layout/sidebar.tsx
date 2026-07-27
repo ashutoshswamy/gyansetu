@@ -48,6 +48,7 @@ import {
   School,
   LogOut,
   Radio,
+  Globe,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -452,6 +453,14 @@ export function Sidebar({ role }: { role: SidebarRole }) {
             {config.label}
           </span>
         </div>
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 mt-2.5 px-0.5"
+          style={{ fontSize: 12, color: "#9B9188", textDecoration: "none" }}
+        >
+          <Globe className="w-3.5 h-3.5" />
+          <span style={{ fontFamily: "var(--font-poppins), sans-serif" }}>Back to Website</span>
+        </Link>
       </div>
 
       {/* Nav */}

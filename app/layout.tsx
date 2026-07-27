@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider signInFallbackRedirectUrl="/dashboard" signUpFallbackRedirectUrl="/dashboard">
       <html
         lang="en"
         className={`${poppins.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
