@@ -2,7 +2,7 @@ import { getAllUsers } from "@/actions/users";
 import { requireSuperAdminUser } from "@/lib/clerk/action-auth";
 import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
-import { RoleSelect, DeleteUserButton } from "./role-select";
+import { RoleSelect, DeleteUserButton, SyncDeletedUsersButton } from "./role-select";
 import type { UserRole } from "@/types";
 
 const ROLE_GROUPS: { key: UserRole; label: string }[] = [
@@ -31,14 +31,17 @@ export default async function SuperAdminPage() {
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
-            Super Admin
-          </p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Role Assignment</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
-            Assign admin &amp; EARC staff roles &middot; {shownCount} total
-          </p>
+        <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
+          <div>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+              Super Admin
+            </p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Role Assignment</h1>
+            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+              Assign admin &amp; EARC staff roles &middot; {shownCount} total
+            </p>
+          </div>
+          <SyncDeletedUsersButton />
         </div>
 
         {shownCount === 0 ? (

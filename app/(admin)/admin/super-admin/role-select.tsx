@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateUserRole, deleteUser } from "@/actions/users";
+import { updateUserRole, deleteUser, syncDeletedUsers } from "@/actions/users";
 import type { UserRole } from "@/types";
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
@@ -94,6 +94,51 @@ export function DeleteUserButton({ clerkId, name }: { clerkId: string; name: str
         {loading ? "Deleting…" : "Delete"}
       </button>
       {error && <span style={{ fontSize: 12, fontWeight: 600, color: "#B8381E" }}>{error}</span>}
+    </div>
+  );
+}
+
+export function SyncDeletedUsersButton() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  async function handleSync() {
+    if (!confirm("Check Clerk for users that no longer exist and remove their leftover Supabase records? This cannot be undone.")) return;
+    setLoading(true);
+    setResult(null);
+    try {
+      const { removed, names } = await syncDeletedUsers();
+      setResult({
+        type: "success",
+        text: removed === 0 ? "No orphaned users found." : `Removed ${removed}: ${names.join(", ")}`,
+      });
+      router.refresh();
+    } catch (err: unknown) {
+      setResult({ type: "error", text: err instanceof Error ? err.message : "Sync failed" });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <button
+        onClick={handleSync}
+        disabled={loading}
+        style={{
+          fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 6,
+          border: "1.5px solid #E4DFD1", color: "#5A5247", background: "white",
+          cursor: loading ? "not-allowed" : "pointer",
+        }}
+      >
+        {loading ? "Checking Clerk…" : "Sync Deleted Users"}
+      </button>
+      {result && (
+        <span style={{ fontSize: 12, fontWeight: 600, color: result.type === "success" ? "#2A5E3A" : "#B8381E" }}>
+          {result.text}
+        </span>
+      )}
     </div>
   );
 }
