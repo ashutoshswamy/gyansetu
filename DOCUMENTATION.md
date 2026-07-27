@@ -54,7 +54,7 @@ Incoming Browser Request
 
 ### Key Architectural Concepts
 
-- **Server-First Data Fetching**: Page components directly invoke `createServerClient()` from `lib/supabase/server.ts` to perform database queries securely without client-side API roundtrips.
+- **Server-First Data Fetching**: Page components directly invoke `createServerClient()` from [`lib/supabase/server.ts`](./lib/supabase/server.ts) to perform database queries securely without client-side API roundtrips.
 - **Type-Safe Mutations via Server Actions**: All state mutations (create, update, delete, status transitions) are exported as `"use server"` functions inside `actions/`.
 - **Dual-Source Role Fallback & Healing**: Primary role authority is stored in Clerk user metadata (`publicMetadata.role`) and embedded in the JWT (`sessionClaims.metadata.role`). If the metadata claim is absent, `action-auth.ts` queries the Supabase `users` table, syncing back to Clerk or self-healing missing records.
 
@@ -93,14 +93,14 @@ When a user's role is modified (e.g., test result approved promoting an enrollee
 This forces the user's client browser to perform a silent token refresh / re-login, guaranteeing that outdated role claims in existing JWTs cannot bypass updated permissions.
 
 Triggered during:
-- `approveTestResult` & `demoteVolunteer` in [`actions/tests.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/tests.ts)
-- `updateUserRole` & `setEarcStaffRole` in [`actions/users.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/users.ts)
+- `approveTestResult` & `demoteVolunteer` in [`actions/tests.ts`](./actions/tests.ts)
+- `updateUserRole` & `setEarcStaffRole` in [`actions/users.ts`](./actions/users.ts)
 
 ---
 
 ## Middleware & Route Protection
 
-Global request filtering and route security are enforced in [`middleware.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/middleware.ts):
+Global request filtering and route security are enforced in [`middleware.ts`](./middleware.ts):
 
 1. **Global Sliding Window Rate Limiting**: All non-webhook HTTP requests are rate-limited via Upstash Redis (`200 requests / 1 minute` per client IP). Requests exceeding the quota return HTTP 429.
 2. **Public Route Pass-Through**: Specified paths bypass authentication checks (`/`, `/sign-in`, `/sign-up`, `/gallery`, `/visits`, `/blog`, `/newsletter`, `/faq`, `/testimonial`, `/sponsor`, `/careers`, `/institution`, `/alumni`, `/api/webhooks(.*)`).
@@ -219,7 +219,7 @@ Global request filtering and route security are enforced in [`middleware.ts`](fi
 
 ## Database Schema Reference
 
-All tables reside in the Supabase PostgreSQL `public` schema (`lib/supabase/schema.sql`).
+All tables reside in the Supabase PostgreSQL `public` schema ([`lib/supabase/schema.sql`](./lib/supabase/schema.sql)).
 
 ### Core Identity & Tour Management
 
@@ -280,21 +280,21 @@ All Server Actions are located in `actions/` and operate under strict authorizat
 
 | Module | Primary Exported Functions | Auth Requirement |
 | --- | --- | --- |
-| [`tours.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/tours.ts) | `createTour`, `updateTour`, `deleteTour`, `applyForTour` | Admin / Enrollee |
-| [`tests.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/tests.ts) | `createTest`, `submitTestAttempt`, `saveSubjectiveEvaluation`, `approveTestResult`, `demoteVolunteer` | Admin / Enrollee |
-| [`forms.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/forms.ts) | `createForm`, `updateForm`, `deleteForm`, `submitForm` | Admin / Authenticated |
-| [`groups.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/groups.ts) | `createGroup`, `updateGroup`, `deleteGroup`, `addGroupMember`, `getMyGroup` | Admin / Volunteer |
-| [`daily-logs.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/daily-logs.ts) | `createDailyLog`, `updateDailyLog`, `getAllDailyLogs`, `uploadMedia` | Volunteer / Admin |
-| [`school-reports.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/school-reports.ts) | `submitSchoolReport`, `updateSchoolReport`, `getGroupSchoolReports` | Volunteer / Admin |
-| [`tour-reports.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/tour-reports.ts) | `submitTourReport`, `updateTourReport`, `approveTourReport` | Volunteer / Admin |
-| [`demo-evaluations.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/demo-evaluations.ts) | `createDemoEvaluation`, `updateDemoEvaluation`, `getAllDemoEvaluations` | Admin / Volunteer |
-| [`finance.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/finance.ts) | `createExpenseAdvance`, `submitExpense`, `approveExpense`, `rejectExpense`, `sendBackExpense` | Volunteer / Admin |
-| [`travel.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/travel.ts) | `createTravelTicket`, `postLocationUpdate`, `getLocationUpdatesForGroup` | Admin / Volunteer |
-| [`workshops.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/workshops.ts) | `createWorkshop`, `setWorkshopAttendance`, `submitMissedWorkshopSummary`, `decideMakeup` | Admin / Volunteer |
-| [`earc.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/earc.ts) | `createSchoolProfile`, `createStudentProfile`, `exportSchoolProfilesCsv`, `exportStudentProfilesCsv` | EARC Staff / Admin |
-| [`certificates.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/certificates.ts) | `issueCertificate`, `revokeCertificate`, `getMyCertificates` | Admin / Volunteer |
-| [`id-cards.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/id-cards.ts) | `createIdCard`, `deleteIdCard`, `getMyIdCard` | Admin / Volunteer |
-| [`users.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/users.ts) | `getAllUsers`, `updateUserRole`, `setEarcStaffRole`, `deleteUser` | Admin / Super Admin |
+| [`tours.ts`](./actions/tours.ts) | `createTour`, `updateTour`, `deleteTour`, `applyForTour` | Admin / Enrollee |
+| [`tests.ts`](./actions/tests.ts) | `createTest`, `submitTestAttempt`, `saveSubjectiveEvaluation`, `approveTestResult`, `demoteVolunteer` | Admin / Enrollee |
+| [`forms.ts`](./actions/forms.ts) | `createForm`, `updateForm`, `deleteForm`, `submitForm` | Admin / Authenticated |
+| [`groups.ts`](./actions/groups.ts) | `createGroup`, `updateGroup`, `deleteGroup`, `addGroupMember`, `getMyGroup` | Admin / Volunteer |
+| [`daily-logs.ts`](./actions/daily-logs.ts) | `createDailyLog`, `updateDailyLog`, `getAllDailyLogs`, `uploadMedia` | Volunteer / Admin |
+| [`school-reports.ts`](./actions/school-reports.ts) | `submitSchoolReport`, `updateSchoolReport`, `getGroupSchoolReports` | Volunteer / Admin |
+| [`tour-reports.ts`](./actions/tour-reports.ts) | `submitTourReport`, `updateTourReport`, `approveTourReport` | Volunteer / Admin |
+| [`demo-evaluations.ts`](./actions/demo-evaluations.ts) | `createDemoEvaluation`, `updateDemoEvaluation`, `getAllDemoEvaluations` | Admin / Volunteer |
+| [`finance.ts`](./actions/finance.ts) | `createExpenseAdvance`, `submitExpense`, `approveExpense`, `rejectExpense`, `sendBackExpense` | Volunteer / Admin |
+| [`travel.ts`](./actions/travel.ts) | `createTravelTicket`, `postLocationUpdate`, `getLocationUpdatesForGroup` | Admin / Volunteer |
+| [`workshops.ts`](./actions/workshops.ts) | `createWorkshop`, `setWorkshopAttendance`, `submitMissedWorkshopSummary`, `decideMakeup` | Admin / Volunteer |
+| [`earc.ts`](./actions/earc.ts) | `createSchoolProfile`, `createStudentProfile`, `exportSchoolProfilesCsv`, `exportStudentProfilesCsv` | EARC Staff / Admin |
+| [`certificates.ts`](./actions/certificates.ts) | `issueCertificate`, `revokeCertificate`, `getMyCertificates` | Admin / Volunteer |
+| [`id-cards.ts`](./actions/id-cards.ts) | `createIdCard`, `deleteIdCard`, `getMyIdCard` | Admin / Volunteer |
+| [`users.ts`](./actions/users.ts) | `getAllUsers`, `updateUserRole`, `setEarcStaffRole`, `deleteUser` | Admin / Super Admin |
 
 ---
 
@@ -326,7 +326,7 @@ Supabase Storage is partitioned into 6 dedicated public buckets:
 | `earc-files` | Yes | Legacy EARC attachments |
 | `documents` | Yes | Expense receipts, travel tickets, profile photographs, ID card assets |
 
-Direct uploads are handled using [`actions/upload.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/upload.ts) or Supabase client storage helpers.
+Direct uploads are handled using [`actions/upload.ts`](./actions/upload.ts) or Supabase client storage helpers.
 
 ---
 
@@ -340,7 +340,7 @@ Direct uploads are handled using [`actions/upload.ts`](file:///Users/ashutoshswa
 
 ## Email & Notification Infrastructure
 
-- **Transactional Email**: Handled via the [Resend](https://resend.com/) API using `sendEmail()` in [`actions/notifications.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/actions/notifications.ts). Triggered on tour application status changes and role updates.
+- **Transactional Email**: Handled via the [Resend](https://resend.com/) API using `sendEmail()` in [`actions/notifications.ts`](./actions/notifications.ts). Triggered on tour application status changes and role updates.
 - **In-App Notification Feed**: Stored in the `notifications` table and rendered via `/api/notifications`.
 
 ---
@@ -351,7 +351,7 @@ Direct uploads are handled using [`actions/upload.ts`](file:///Users/ashutoshswa
 
 To provision a fresh database instance:
 1. Open the Supabase SQL Editor for your project.
-2. Copy and execute the complete [`lib/supabase/schema.sql`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/supabase/schema.sql) file.
+2. Copy and execute the complete [`lib/supabase/schema.sql`](./lib/supabase/schema.sql) file.
 
 ### 2. Idempotent Schema Design
 
@@ -366,5 +366,5 @@ To provision a fresh database instance:
 > Running reset.sql will permanently delete all stored data, tables, types, and functions.
 
 To wipe and re-initialize a database:
-1. Execute [`lib/supabase/reset.sql`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/supabase/reset.sql) in the Supabase SQL Editor.
-2. Re-run [`lib/supabase/schema.sql`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/supabase/schema.sql).
+1. Execute [`lib/supabase/reset.sql`](./lib/supabase/reset.sql) in the Supabase SQL Editor.
+2. Re-run [`lib/supabase/schema.sql`](./lib/supabase/schema.sql).

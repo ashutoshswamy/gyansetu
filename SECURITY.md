@@ -23,7 +23,7 @@ Gyan Setu enforces a **defense-in-depth** security architecture to protect stude
                            ▼
 ┌────────────────────────────────────────────────────────┐
 │ Layer 5: Database Row Level Security (Supabase RLS)    │
-└────────────────────────────────────────────────────────┘
+└──────────────────────────┬─────────────────────────────┘
 ```
 
 ---
@@ -40,12 +40,12 @@ Gyan Setu enforces a **defense-in-depth** security architecture to protect stude
 
 To eliminate the risk of privilege escalation or unauthorized access via stale JWT claims, the application enforces **Instant Session Revocation**:
 
-- When a user's role is promoted (e.g., an `enrollee` passes an eligibility test and is approved as a `volunteer`), or demoted by an admin, the system immediately invokes `revokeAllUserSessions(clerkUserId)` via the Clerk API ([`lib/clerk/revoke-sessions.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/clerk/revoke-sessions.ts)).
+- When a user's role is promoted (e.g., an `enrollee` passes an eligibility test and is approved as a `volunteer`), or demoted by an admin, the system immediately invokes `revokeAllUserSessions(clerkUserId)` via the Clerk API ([`lib/clerk/revoke-sessions.ts`](./lib/clerk/revoke-sessions.ts)).
 - This revokes all active session tokens across all devices, forcing the user's browser to perform an immediate re-authentication and fetch an updated JWT containing the newly assigned role.
 
 ### 2.3 Dual-Source Role Verification & Self-Healing
 
-- [`lib/clerk/action-auth.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/clerk/action-auth.ts) implements a resilient fallback mechanism.
+- [`lib/clerk/action-auth.ts`](./lib/clerk/action-auth.ts) implements a resilient fallback mechanism.
 - If a user's JWT lacks a role claim, the system queries the Supabase `users` database table directly.
 - If a user row is missing from Supabase (e.g., due to an interrupted webhook), the system automatically backfills the user record using Clerk profile details, ensuring zero unauthorized access or unhandled crashes.
 
@@ -79,7 +79,7 @@ const { db, user } = await requireSuperAdminUser(); // Requires super_admin
 
 Volunteers are restricted to viewing and managing logistics (travel tickets, location logs, kit distribution, host families) **only for groups to which they are explicitly assigned**:
 
-- Guarded via `assertGroupAccess(db, user, groupId)` in [`lib/clerk/action-auth.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/clerk/action-auth.ts).
+- Guarded via `assertGroupAccess(db, user, groupId)` in [`lib/clerk/action-auth.ts`](./lib/clerk/action-auth.ts).
 - Admin and Super Admin roles bypass group isolation to enable system-wide management.
 
 ---
@@ -88,7 +88,7 @@ Volunteers are restricted to viewing and managing logistics (travel tickets, loc
 
 ### 4.1 Rate Limiting & Denial of Service Protection
 
-- **Global IP Rate Limiting**: Enforced in [`middleware.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/middleware.ts) using Upstash Redis sliding window algorithm set at **200 requests per minute per IP address**.
+- **Global IP Rate Limiting**: Enforced in [`middleware.ts`](./middleware.ts) using Upstash Redis sliding window algorithm set at **200 requests per minute per IP address**.
 - **Test Submission Rate Limiting**: Per-user sliding window rate limiting prevents automated script submissions on eligibility tests.
 
 ### 4.2 Webhook Signature Verification
@@ -98,7 +98,7 @@ Volunteers are restricted to viewing and managing logistics (travel tickets, loc
 
 ### 4.3 Input Validation & Type Safety
 
-- All incoming request payloads in Server Actions are parsed and validated against strict **Zod schemas** ([`lib/validations/index.ts`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/validations/index.ts)).
+- All incoming request payloads in Server Actions are parsed and validated against strict **Zod schemas** ([`lib/validations/index.ts`](./lib/validations/index.ts)).
 - Malformed, oversized, or extra fields are rejected at the application boundary prior to database operations.
 
 ### 4.4 SQL Injection & XSS Prevention

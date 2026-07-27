@@ -38,10 +38,10 @@
 | --- | --- |
 | **Framework** | [Next.js 16](https://nextjs.org/) (App Router, Server Components & Server Actions) |
 | **Language** | [TypeScript](https://www.typescriptlang.org/) (Strict Mode) |
-| **Styling & UI** | [TailwindCSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Framer Motion](https://www.framer.com/motion/), [Lucide Icons](https://lucide.dev/) |
+| **Styling & UI** | [TailwindCSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Framer Motion](https://motion.dev/), [Lucide Icons](https://lucide.dev/) |
 | **Authentication** | [Clerk Auth](https://clerk.com/) (JWT session claims + webhook sync) |
 | **Database & RLS** | [Supabase](https://supabase.com/) (PostgreSQL with Row Level Security) |
-| **Storage** | [Supabase Storage](https://supabase.com/storage) (Media, Documents, ID cards, Certificates) |
+| **Storage** | [Supabase Storage](https://supabase.com/docs/guides/storage) (Media, Documents, ID cards, Certificates) |
 | **Caching & Rate Limiting** | [Upstash Redis](https://upstash.com/) (Sliding-window IP rate limiting & query caching) |
 | **Validation & Forms** | [Zod](https://zod.dev/) & [React Hook Form](https://react-hook-form.com/) |
 | **Data Fetching** | [TanStack Query v5](https://tanstack.com/query/latest) |
@@ -108,7 +108,7 @@ RESEND_FROM_EMAIL=Gyan Setu <noreply@yourdomain.com>
    ```
 
 2. **Provision Database Schema**:
-   Run the contents of [`lib/supabase/schema.sql`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/lib/supabase/schema.sql) inside the Supabase SQL Editor.
+   Run the contents of [`lib/supabase/schema.sql`](./lib/supabase/schema.sql) inside the Supabase SQL Editor.
    *(Note: `schema.sql` is idempotent and safe to re-run on existing databases).*
 
 3. **Start Development Server**:
@@ -173,5 +173,5 @@ gyan-setu/
 
 ## Documentation & References
 
-- Technical Architectural Reference: [`DOCUMENTATION.md`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/DOCUMENTATION.md)
-- Security Specification & Threat Model: [`SECURITY.md`](file:///Users/ashutoshswamy/Documents/Web%20Dev%20Clients/Gyan%20Setu/gyan-setu/SECURITY.md)
+- Technical Architectural Reference: [`DOCUMENTATION.md`](./DOCUMENTATION.md)
+- Security Specification & Threat Model: [`SECURITY.md`](./SECURITY.md)
