@@ -572,3 +572,46 @@ export type ExpenseAdvanceInput = z.infer<typeof expenseAdvanceSchema>;
 export type ExpenseInput = z.infer<typeof expenseSchema>;
 export type TourReportInput = z.infer<typeof tourReportSchema>;
 export type SchoolReportInput = z.infer<typeof schoolReportSchema>;
+
+// ── EARC data-collection forms (forms/Backend Form 1.md) ───────────────────
+
+const studentStrengthRowSchema = z.object({
+  standard: z.string().min(1),
+  boys: z.number().int().min(0),
+  girls: z.number().int().min(0),
+});
+
+export const earcSchoolProfileSchema = z.object({
+  academic_year: z.enum(["2024-25", "2025-26", "2026-27", "2027-28", "2028-29", "2029-30"]),
+  project: z.enum(["Chhote Scientists", "Vikas Mitra", "Pradnya Vikas", "Anubha Shala", "LearEng", "Padhai Se Dosti", "Others"]),
+  school_name: z.string().min(2).max(200),
+  state: z.string().min(1),
+  district: z.string().min(1),
+  taluka_block: z.string().min(1),
+  village_city: z.string().min(1).max(200),
+  school_type: z.enum(["Government", "Private", "Ashram School", "Other"]),
+  module: z.enum(["Facilitator", "Teacher Training"]),
+  mode: z.enum(["Online", "Offline"]),
+  contact_number: phoneSchema.optional(),
+  student_strength: z.array(studentStrengthRowSchema).min(1),
+  num_teachers_involved: z.number().int().min(0),
+  location_type: z.enum(["Urban", "Rural", "Tribal", "Semi-Urban"]),
+  medium_of_instruction: z.enum(["English", "Marathi", "Hindi", "Other"]),
+  duration_per_session: z.enum(["0.5 hr", "1 hr", "1.5 hrs", "2 hrs", "2.5 hrs", "3 hrs"]),
+  num_sessions_conducted: z.number().int().min(0),
+});
+
+export const earcStudentProfileSchema = z.object({
+  first_name: z.string().min(1).max(100),
+  middle_name: z.string().max(100).optional(),
+  last_name: z.string().min(1).max(100),
+  mobile_number: phoneSchema.optional(),
+  date_of_birth: z.string().optional(),
+  gender: z.enum(["Male", "Female", "Other"]),
+  blood_group: z.string().max(10).optional(),
+  apaar_id: z.string().max(50).optional(),
+  aadhaar_number: z.string().max(20).optional(),
+});
+
+export type EarcSchoolProfileInput = z.infer<typeof earcSchoolProfileSchema>;
+export type EarcStudentProfileInput = z.infer<typeof earcStudentProfileSchema>;

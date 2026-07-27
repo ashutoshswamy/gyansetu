@@ -30,9 +30,7 @@ import {
   MessageSquare,
   Handshake,
   Briefcase,
-  FolderOpen,
   GraduationCap,
-  BookMarked,
   Wallet,
   IdCard,
   Package,
@@ -140,10 +138,8 @@ const superAdminGroup: NavGroup = {
 };
 
 const earcNavItems: NavItem[] = [
-  { label: "Home",           href: "/earc",                   Icon: LayoutDashboard, description: "EARC panel overview — quick links to student data, programme data, and documents." },
-  { label: "Student Data",   href: "/earc/student-data",      Icon: GraduationCap, description: "Records of students reached through Gyan Setu programmes." },
-  { label: "Programme Data", href: "/earc/programme-data",    Icon: BookMarked, description: "Aggregate programme statistics used for EARC's own reporting." },
-  { label: "Documents",      href: "/earc/documents",         Icon: FolderOpen, description: "Shared research/administrative documents for EARC staff." },
+  { label: "School Profile",  href: "/earc/school-profile",  Icon: School, description: "Collect standardized school-visit data for EARC projects — location, sessions, student strength." },
+  { label: "Student Profile", href: "/earc/student-profile", Icon: GraduationCap, description: "Collect individual student records — name, DOB, gender, and identifiers." },
 ];
 
 const earcPanelGroup: NavGroup = {
