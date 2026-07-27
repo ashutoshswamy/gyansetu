@@ -8,6 +8,8 @@ import type { UserRole } from "@/types";
 const ROLE_GROUPS: { key: UserRole; label: string }[] = [
   { key: "super_admin", label: "Super Admin" },
   { key: "admin", label: "Admin" },
+  { key: "volunteer", label: "Volunteer" },
+  { key: "enrollee", label: "Enrollee" },
   { key: "earc_staff", label: "EARC Staff" },
 ];
 
@@ -38,7 +40,7 @@ export default async function SuperAdminPage() {
             </p>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Role Assignment</h1>
             <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
-              Assign admin &amp; EARC staff roles &middot; {shownCount} total
+              Assign admin, volunteer, enrollee &amp; EARC staff roles &middot; {shownCount} total
             </p>
           </div>
           <SyncDeletedUsersButton />

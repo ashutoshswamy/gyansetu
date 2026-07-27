@@ -7,6 +7,8 @@ import type { UserRole } from "@/types";
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: "admin", label: "Admin" },
+  { value: "volunteer", label: "Volunteer" },
+  { value: "enrollee", label: "Enrollee" },
   { value: "earc_staff", label: "EARC Staff" },
 ];
 

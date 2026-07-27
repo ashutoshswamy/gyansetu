@@ -7,7 +7,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import type { UserRole } from "@/types";
 
-const ASSIGNABLE_ROLES: UserRole[] = ["admin", "earc_staff"];
+const ASSIGNABLE_ROLES: UserRole[] = ["admin", "volunteer", "enrollee", "earc_staff"];
 
 async function applyRoleUpdate(db: ReturnType<typeof createServerClient>, clerkId: string, role: UserRole) {
   const { data: prev, error: fetchError } = await db
@@ -39,11 +39,11 @@ export async function getAllUsers() {
   const { data, error } = await db
     .from("users")
     .select("id, clerk_id, name, email, role, created_at")
-    .in("role", ["super_admin", "admin", "earc_staff"])
     .order("created_at", { ascending: false });
 
   if (error) throw new Error("Failed to load users");
-  return data;
+  // Null role = enrollee whose Clerk JWT hasn't synced yet.
+  return (data ?? []).map((u) => ({ ...u, role: u.role ?? "enrollee" }));
 }
 
 export async function updateUserRole(clerkId: string, role: UserRole) {
