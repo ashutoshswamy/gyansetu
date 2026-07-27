@@ -94,7 +94,7 @@ This forces the user's client browser to perform a silent token refresh / re-log
 
 Triggered during:
 - `approveTestResult` & `demoteVolunteer` in [`actions/tests.ts`](./actions/tests.ts)
-- `updateUserRole` & `setEarcStaffRole` in [`actions/users.ts`](./actions/users.ts)
+- `updateUserRole`, `setEarcStaffRole`, & `applyRoleUpdate` in [`actions/users.ts`](./actions/users.ts)
 
 ---
 
@@ -294,7 +294,7 @@ All Server Actions are located in `actions/` and operate under strict authorizat
 | [`earc.ts`](./actions/earc.ts) | `createSchoolProfile`, `createStudentProfile`, `exportSchoolProfilesCsv`, `exportStudentProfilesCsv` | EARC Staff / Admin |
 | [`certificates.ts`](./actions/certificates.ts) | `issueCertificate`, `revokeCertificate`, `getMyCertificates` | Admin / Volunteer |
 | [`id-cards.ts`](./actions/id-cards.ts) | `createIdCard`, `deleteIdCard`, `getMyIdCard` | Admin / Volunteer |
-| [`users.ts`](./actions/users.ts) | `getAllUsers`, `updateUserRole`, `setEarcStaffRole`, `deleteUser` | Admin / Super Admin |
+| [`users.ts`](./actions/users.ts) | `getAllUsers`, `updateUserRole`, `setEarcStaffRole`, `syncDeletedUsers`, `deleteUser` | Admin / Super Admin |
 
 ---
 
