@@ -1,11 +1,13 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Calendar, MapPin, Tag, Clock } from "lucide-react";
+import { Calendar, MapPin, Tag, Clock, CheckCircle2, XCircle, HelpCircle, CalendarDays } from "lucide-react";
 import type { Event } from "@/types";
 import { DeleteEventButton } from "@/components/features/events/delete-event-button";
+import { StatCard } from "@/components/features/dashboard/stat-card";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
+  melawa:       { color: "#C0392B", bg: "rgba(192,57,43,0.08)" },
   training:     { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
   workshop:     { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
   meeting:      { color: "#9B9188", bg: "rgba(90,82,71,0.08)" },
@@ -26,13 +28,18 @@ type EventWithTour = Omit<Event, "tour"> & { tours?: { id: string; title: string
 
 export default async function AdminEventsPage() {
   const db = createServerClient();
-  const { data: events } = await db
-    .from("events")
-    .select("*, tours(id, title)")
-    .order("event_date", { ascending: true });
+  const [{ data: events }, { data: attendees }] = await Promise.all([
+    db.from("events").select("*, tours(id, title)").order("event_date", { ascending: true }),
+    db.from("event_attendees").select("rsvp_status"),
+  ]);
 
   const upcoming = (events ?? []).filter((e: EventWithTour) => e.status === "upcoming");
   const past = (events ?? []).filter((e: EventWithTour) => e.status !== "upcoming");
+
+  const totalCount = (events ?? []).length;
+  const attendingCount = (attendees ?? []).filter(a => a.rsvp_status === "confirmed").length;
+  const notAttendingCount = (attendees ?? []).filter(a => a.rsvp_status === "absent").length;
+  const maybeCount = (attendees ?? []).filter(a => a.rsvp_status === "maybe").length;
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
@@ -52,6 +59,13 @@ export default async function AdminEventsPage() {
               + New Event
             </button>
           </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <StatCard label="Total Events" value={totalCount} icon={<CalendarDays size={20} />} accent="indigo" />
+          <StatCard label="Attending" value={attendingCount} icon={<CheckCircle2 size={20} />} accent="emerald" />
+          <StatCard label="Not Attending" value={notAttendingCount} icon={<XCircle size={20} />} accent="rose" />
+          <StatCard label="Maybe Attending" value={maybeCount} icon={<HelpCircle size={20} />} accent="amber" />
         </div>
 
         {/* Upcoming */}

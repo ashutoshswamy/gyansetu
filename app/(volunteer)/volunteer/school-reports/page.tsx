@@ -24,6 +24,7 @@ const LOCATION_CATEGORIES = ["Rural", "Semi-Urban", "Urban"] as const;
 const MEDIUMS = ["Marathi", "Hindi", "English", "Assamese", "Urdu", "Other"] as const;
 const STANDARDS = ["Below 5th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"] as const;
 const LANGUAGES = ["Hindi", "English", "Both (English - Marathi)"] as const;
+const THEMES = ["Science", "Mathematics", "Exhibition", "Other"] as const;
 const RATINGS = ["Excellent", "Good", "Satisfactory", "Needs Improvement"] as const;
 
 const EMPTY_SESSION: SchoolReportSession = { standard: "", division: "", num_students: undefined, theme_topic: "", duration_minutes: undefined, language_used: "", combined_session: false };
@@ -275,14 +276,14 @@ export default function SchoolReportsPage() {
                 <option value="">Select state...</option>
                 {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
-              <input value={pincode} onChange={e => setPincode(e.target.value)} type="text" inputMode="numeric" placeholder="PIN Code" style={inputStyle} />
+              <input value={pincode} onChange={e => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))} type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="PIN Code (6 digits)" style={inputStyle} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <input value={principalName} onChange={e => setPrincipalName(e.target.value)} placeholder="Principal Name" style={inputStyle} />
-              <input value={principalMobile} onChange={e => setPrincipalMobile(e.target.value)} type="tel" placeholder="Principal Mobile Number" style={inputStyle} />
+              <input value={principalMobile} onChange={e => setPrincipalMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Principal Mobile Number (10 digits)" style={inputStyle} />
               <input value={coordinatorName} onChange={e => setCoordinatorName(e.target.value)} placeholder="School Coordinator / Science Teacher Name" style={inputStyle} />
-              <input value={coordinatorMobile} onChange={e => setCoordinatorMobile(e.target.value)} type="tel" placeholder="Coordinator Contact Number" style={inputStyle} />
+              <input value={coordinatorMobile} onChange={e => setCoordinatorMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Coordinator Contact Number (10 digits)" style={inputStyle} />
             </div>
 
             {/* Section 2: Visit Details */}
@@ -294,7 +295,7 @@ export default function SchoolReportsPage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Number of Volunteers Present</label>
-                <input value={volunteersPresent} onChange={e => setVolunteersPresent(e.target.value)} type="number" min="0" style={inputStyle} />
+                <input value={volunteersPresent} onChange={e => setVolunteersPresent(e.target.value ? String(Math.min(50, Number(e.target.value))) : "")} type="number" min="0" max="50" style={inputStyle} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Arrival Time</label>
@@ -330,7 +331,9 @@ export default function SchoolReportsPage() {
             <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>3. Session Details</h2>
             <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 12px" }}>Add one row for each session conducted.</p>
             <div className="space-y-4 mb-3">
-              {sessions.map((s, i) => (
+              {sessions.map((s, i) => {
+                const inheritedFromCombined = i > 0 && !!sessions[i - 1].combined_session;
+                return (
                 <div key={i} style={{ border: "1px solid #E4DFD1", borderRadius: 8, padding: 16, position: "relative" }}>
                   {sessions.length > 1 && (
                     <button type="button" onClick={() => setSessions(prev => prev.filter((_, idx) => idx !== i))} style={{ position: "absolute", top: 10, right: 10, background: "none", border: "none", cursor: "pointer", color: "#9B9188" }}>
@@ -344,22 +347,46 @@ export default function SchoolReportsPage() {
                       {STANDARDS.map(st => <option key={st} value={st}>{st}</option>)}
                     </select>
                     <input value={s.division ?? ""} onChange={e => updateSession(i, "division", e.target.value)} placeholder="Division" style={inputStyle} />
-                    <input value={s.num_students ?? ""} onChange={e => updateSession(i, "num_students", e.target.value ? Number(e.target.value) : "")} type="number" min="0" placeholder="No. of Students" style={inputStyle} />
-                    <input value={s.theme_topic ?? ""} onChange={e => updateSession(i, "theme_topic", e.target.value)} placeholder="Theme / Topic (e.g. Science, Maths, Exhibition...)" style={inputStyle} />
-                    <input value={s.duration_minutes ?? ""} onChange={e => updateSession(i, "duration_minutes", e.target.value ? Number(e.target.value) : "")} type="number" min="0" placeholder="Duration (Minutes)" style={inputStyle} />
-                    <select value={s.language_used ?? ""} onChange={e => updateSession(i, "language_used", e.target.value)} style={inputStyle}>
-                      <option value="">Language Used...</option>
-                      {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-                    </select>
+                    <input value={s.num_students ?? ""} onChange={e => updateSession(i, "num_students", e.target.value ? Math.min(500, Number(e.target.value)) : "")} type="number" min="0" max="500" placeholder="No. of Students" style={inputStyle} />
+                    {!inheritedFromCombined && (
+                      <>
+                        <select value={s.theme_topic ?? ""} onChange={e => updateSession(i, "theme_topic", e.target.value)} style={inputStyle}>
+                          <option value="">Theme / Topic...</option>
+                          {THEMES.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                        <input value={s.duration_minutes ?? ""} onChange={e => updateSession(i, "duration_minutes", e.target.value ? Math.min(480, Number(e.target.value)) : "")} type="number" min="0" max="480" placeholder="Duration (Minutes)" style={inputStyle} />
+                        <select value={s.language_used ?? ""} onChange={e => updateSession(i, "language_used", e.target.value)} style={inputStyle}>
+                          <option value="">Language Used...</option>
+                          {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                        </select>
+                      </>
+                    )}
                   </div>
+                  {inheritedFromCombined && (
+                    <p style={{ fontSize: 11, color: "#9B9188", marginTop: 8 }}>
+                      Theme / Topic, Duration and Language carried over from the combined session above.
+                    </p>
+                  )}
                   <label className="flex items-center gap-2" style={{ fontSize: 12, color: "#5A5247", marginTop: 10 }}>
                     <input type="checkbox" checked={!!s.combined_session} onChange={e => updateSession(i, "combined_session", e.target.checked)} />
                     Combined session (conducted for all students together)
                   </label>
                 </div>
-              ))}
+                );
+              })}
             </div>
-            <button type="button" onClick={() => setSessions(prev => [...prev, { ...EMPTY_SESSION }])} className="flex items-center gap-1.5" style={{ fontSize: 12, fontWeight: 600, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", marginBottom: 24 }}>
+            <button
+              type="button"
+              onClick={() => setSessions(prev => {
+                const last = prev[prev.length - 1];
+                const next: SchoolReportSession = last?.combined_session
+                  ? { ...EMPTY_SESSION, theme_topic: last.theme_topic, duration_minutes: last.duration_minutes, language_used: last.language_used }
+                  : { ...EMPTY_SESSION };
+                return [...prev, next];
+              })}
+              className="flex items-center gap-1.5"
+              style={{ fontSize: 12, fontWeight: 600, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", marginBottom: 24 }}
+            >
               <Plus size={14} /> Add another session
             </button>
 

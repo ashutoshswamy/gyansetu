@@ -74,7 +74,7 @@ export default function NewLocalHostPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Phone</label>
-                <input name="phone" style={inputStyle} placeholder="+91..." />
+                <input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} onInput={e => { e.currentTarget.value = e.currentTarget.value.replace(/\D/g, "").slice(0, 10); }} style={inputStyle} placeholder="10-digit phone number" />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Email</label>

@@ -79,7 +79,14 @@ export async function getIdCard(id: string) {
     .eq("id", id)
     .single();
   if (error) { console.error("[getIdCard]", error); throw new Error("Failed to fetch ID card"); }
-  return data;
+  if (!data?.group_id) return data;
+  const { data: member } = await db
+    .from("tour_group_members")
+    .select("role_in_group")
+    .eq("group_id", data.group_id)
+    .eq("user_id", data.volunteer_id)
+    .maybeSingle();
+  return { ...data, role_in_group: member?.role_in_group };
 }
 
 export async function getLatestIdCardForVolunteer(volunteerId: string, tourId?: string) {
@@ -107,5 +114,16 @@ export async function getMyIdCard() {
     db.from("users").select("name, volunteer_profiles!volunteer_profiles_user_id_fkey(photo_url)").eq("id", user.id).maybeSingle(),
   ]);
   if (error) { console.error("[getMyIdCard]", error); throw new Error("Failed to fetch ID card"); }
-  return data ? { ...data, name: profile?.name, photo_url: (profile as { volunteer_profiles?: { photo_url?: string } })?.volunteer_profiles?.photo_url } : data;
+  if (!data) return data;
+  let role_in_group: string | undefined;
+  if (data.group_id) {
+    const { data: member } = await db
+      .from("tour_group_members")
+      .select("role_in_group")
+      .eq("group_id", data.group_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    role_in_group = member?.role_in_group;
+  }
+  return { ...data, role_in_group, name: profile?.name, photo_url: (profile as { volunteer_profiles?: { photo_url?: string } })?.volunteer_profiles?.photo_url };
 }

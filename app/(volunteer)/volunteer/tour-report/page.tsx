@@ -206,7 +206,7 @@ export default function VolunteerTourReportPage() {
                   <input value={h.organisation} onChange={e => updateHost(i, "organisation", e.target.value)} placeholder="Organisation" style={inputStyle} />
                   <input value={h.contact_person_name} onChange={e => updateHost(i, "contact_person_name", e.target.value)} placeholder="Contact Person Name" style={inputStyle} />
                   <input value={h.designation} onChange={e => updateHost(i, "designation", e.target.value)} placeholder="Designation" style={inputStyle} />
-                  <input value={h.mobile_number} onChange={e => updateHost(i, "mobile_number", e.target.value)} type="tel" placeholder="Mobile Number" style={inputStyle} />
+                  <input value={h.mobile_number} onChange={e => updateHost(i, "mobile_number", e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Mobile Number (10 digits)" style={inputStyle} />
                   <select value={h.state} onChange={e => { updateHost(i, "state", e.target.value); updateHost(i, "district", ""); }} style={{ ...inputStyle, appearance: "none" }}>
                     <option value="">Select state...</option>
                     {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}

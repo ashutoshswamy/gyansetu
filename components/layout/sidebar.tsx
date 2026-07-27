@@ -102,6 +102,7 @@ const adminGroups: NavGroup[] = [
       { label: "Finance",           href: "/admin/finance",           Icon: Receipt },
       { label: "Daily Logs",        href: "/admin/daily-logs",        Icon: BookOpen },
       { label: "Tour Reports",      href: "/admin/tour-reports",      Icon: FileBarChart },
+      { label: "School Reports",    href: "/admin/school-reports",    Icon: School },
     ],
   },
   {

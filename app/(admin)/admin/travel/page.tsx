@@ -43,25 +43,30 @@ export default async function AdminTravelPage() {
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F" }}>{t.group?.name ?? "Unknown group"}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
                         {t.confirmation_status}
                       </span>
+                      {t.itinerary_approved && (
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#2A5E3A", background: "rgba(42,94,58,0.08)" }}>
+                          Itinerary Approved
+                        </span>
+                      )}
                     </div>
-                    <p style={{ fontSize: 13, color: "#5A5247", margin: 0 }}>
+                    <p style={{ fontSize: 14, color: "#19140F", margin: "6px 0 2px" }}>
                       {t.departure_station || "?"} &rarr; {t.arrival_station || "?"}
                       {t.train_number ? ` · Train ${t.train_number}` : ""}
                       {t.train_name ? ` (${t.train_name})` : ""}
                       {t.pnr ? ` · PNR ${t.pnr}` : ""}
                     </p>
-                    <p style={{ fontSize: 12, color: "#9B9188", margin: "4px 0 0" }}>
+                    <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>
                       {t.departure_at ? new Date(t.departure_at).toLocaleString() : "No departure time"}
                       {t.arrival_at ? ` → ${new Date(t.arrival_at).toLocaleString()}` : ""}
                     </p>
                     {t.note && (
-                      <p style={{ fontSize: 12, color: "#5A5247", margin: "4px 0 0", whiteSpace: "pre-wrap" }}>{t.note}</p>
+                      <p style={{ fontSize: 13, color: "#5A5247", margin: "6px 0 0", whiteSpace: "pre-wrap" }}>{t.note}</p>
                     )}
                     {t.ticket_file_url && (
-                      <a href={t.ticket_file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4A55BE", marginTop: 4, display: "inline-block" }}>
+                      <a href={t.ticket_file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4A55BE", marginTop: 6, display: "inline-block" }}>
                         View ticket file
                       </a>
                     )}

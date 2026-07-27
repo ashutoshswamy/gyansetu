@@ -137,7 +137,7 @@ export default function CareersPage() {
             <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="phone" style={labelStyle}>Phone</label>
-                <input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 98765 43210" style={inputStyle} />
+                <input id="phone" name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={form.phone} onChange={(e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10); handleChange(e); }} placeholder="10-digit phone number" style={inputStyle} />
               </div>
               <div>
                 <label htmlFor="age" style={labelStyle}>Age <span style={{ color: "#C0392B" }}>*</span></label>

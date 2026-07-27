@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Users, MapPin, Star } from "lucide-react";
+import { DeleteGroupButton } from "@/components/features/groups/delete-group-button";
 
 interface GroupMember {
   id: string;
@@ -76,11 +77,19 @@ export default async function AdminGroupsPage() {
                         </div>
                       )}
                     </div>
-                    <Link href={`/admin/groups/${group.id}`}>
-                      <button style={{ background: "transparent", color: "#4A55BE", fontSize: 12, fontWeight: 500, padding: "5px 12px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                        Manage
-                      </button>
-                    </Link>
+                    <div className="flex gap-2">
+                      <Link href={`/admin/groups/${group.id}`}>
+                        <button style={{ background: "transparent", color: "#4A55BE", fontSize: 12, fontWeight: 500, padding: "5px 12px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
+                          Manage
+                        </button>
+                      </Link>
+                      <Link href={`/admin/groups/${group.id}/edit`}>
+                        <button style={{ background: "transparent", color: "#4A55BE", fontSize: 12, fontWeight: 500, padding: "5px 12px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
+                          Edit
+                        </button>
+                      </Link>
+                      <DeleteGroupButton groupId={group.id} />
+                    </div>
                   </div>
 
                   {group.users && (

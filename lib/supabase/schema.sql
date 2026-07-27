@@ -1469,3 +1469,10 @@ alter table public.tour_reports alter column location_name set not null;
 alter table public.tour_reports drop constraint if exists tour_reports_overall_recommendation_check;
 alter table public.tour_reports add constraint tour_reports_overall_recommendation_check
   check (overall_recommendation in ('Highly Recommended', 'Recommended', 'Can be Considered', 'Not Recommended'));
+
+-- ============================================================
+-- MIGRATION: add 'melawa' event type
+-- ============================================================
+alter table public.events drop constraint if exists events_event_type_check;
+alter table public.events add constraint events_event_type_check
+  check (event_type in ('katta', 'melawa', 'training', 'workshop', 'meeting', 'demo', 'presentation', 'celebration', 'other'));

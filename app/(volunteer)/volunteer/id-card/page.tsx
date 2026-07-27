@@ -31,6 +31,7 @@ export default async function VolunteerIdCardPage() {
               tour_title: card.tour?.title,
               tour_destination: card.tour?.destination,
               group_name: card.group?.name,
+              role_in_group: card.role_in_group,
               card_file_url: card.card_file_url,
             }}
           />

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { createEvent, updateEvent } from "@/actions/events";
 import type { EventType } from "@/types";
 
-const EVENT_TYPES = ["katta", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"] as const;
+const EVENT_TYPES = ["katta", "melawa", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"] as const;
 const EVENT_STATUSES = ["upcoming", "ongoing", "completed", "cancelled"] as const;
 
 type Tour = { id: string; title: string };

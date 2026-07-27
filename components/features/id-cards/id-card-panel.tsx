@@ -15,8 +15,15 @@ export interface IdCardPanelData {
   tour_title?: string | null;
   tour_destination?: string | null;
   group_name?: string | null;
+  role_in_group?: string | null;
   card_file_url?: string | null;
 }
+
+const ROLE_LABELS: Record<string, string> = {
+  volunteer: "Volunteer",
+  group_leader: "Group Leader",
+  project_member: "Project Member",
+};
 
 function looksLikeImage(url: string) {
   return /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url);
@@ -129,6 +136,7 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
               <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: INK, margin: "0 0 5px", lineHeight: 1.2 }}>{data.name}</p>
+              {field("Role", data.role_in_group ? (ROLE_LABELS[data.role_in_group] ?? data.role_in_group) : undefined)}
               {field("State", data.state)}
               {field("Place", data.place)}
               {field("Valid From", new Date(data.valid_from).toLocaleDateString("en-IN"))}
@@ -177,8 +185,7 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
           </ul>
           <div style={{ marginTop: "auto", borderTop: `1px solid ${HAIRLINE}`, paddingTop: 7 }}>
             <p style={{ fontFamily: sans, fontSize: 8, fontWeight: 700, color: INK, margin: "0 0 2px" }}>Gyan Setu &ndash; EARC, Jnana Prabodhini</p>
-            <p style={{ fontFamily: sans, fontSize: 7.5, color: MUTED, margin: 0 }}>Email: ____________________</p>
-            <p style={{ fontFamily: sans, fontSize: 7.5, color: MUTED, margin: 0 }}>Phone: ____________________</p>
+            <p style={{ fontFamily: sans, fontSize: 7.5, color: MUTED, margin: 0 }}>Email: gyansetu@jnanaprabhodhini.org</p>
           </div>
         </div>
       </div>

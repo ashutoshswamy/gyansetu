@@ -17,6 +17,7 @@ const rsvpLabels: Record<string, { color: string; bg: string; label: string }> =
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
+  melawa:       { color: "#C0392B", bg: "rgba(192,57,43,0.08)" },
   training:     { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
   workshop:     { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
   meeting:      { color: "#9B9188", bg: "rgba(90,82,71,0.08)" },

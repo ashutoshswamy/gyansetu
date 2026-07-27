@@ -1,6 +1,6 @@
 "use server";
 
-import { requireVolunteerUser, assertGroupAccess } from "@/lib/clerk/action-auth";
+import { requireVolunteerUser, requireAdminUser, assertGroupAccess } from "@/lib/clerk/action-auth";
 import { schoolReportSchema, type SchoolReportInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -42,6 +42,16 @@ export async function getGroupSchoolReports(groupId: string) {
     .eq("group_id", groupId)
     .order("created_at", { ascending: false });
   if (error) { console.error("[getGroupSchoolReports]", error); throw new Error("Failed to fetch school reports"); }
+  return data ?? [];
+}
+
+export async function getAllSchoolReports() {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("school_reports")
+    .select("*, group:tour_groups(id, name, tour_id, tours(id, title)), submitter:users!school_reports_submitted_by_fkey(id, name, email)")
+    .order("created_at", { ascending: false });
+  if (error) { console.error("[getAllSchoolReports]", error); throw new Error("Failed to fetch school reports"); }
   return data ?? [];
 }
 

@@ -139,7 +139,7 @@ export interface DashboardStats {
 
 // SOP Phase Extensions
 
-export type EventType = "katta" | "training" | "workshop" | "meeting" | "demo" | "presentation" | "celebration" | "other";
+export type EventType = "katta" | "melawa" | "training" | "workshop" | "meeting" | "demo" | "presentation" | "celebration" | "other";
 
 export interface Event {
   id: string;

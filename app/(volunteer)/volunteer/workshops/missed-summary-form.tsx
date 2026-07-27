@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { submitMissedWorkshopSummary } from "@/actions/workshops";
 
-export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
+export function MissedSummaryForm({ workshopId, isPast }: { workshopId: string; isPast: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [summary, setSummary] = useState("");
@@ -37,7 +37,7 @@ export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
         onClick={() => setOpen(true)}
         style={{ fontSize: 11, fontWeight: 600, minHeight: 40, padding: "0 14px", borderRadius: 4, background: "transparent", color: "#F5A520", border: "1.5px solid rgba(245,165,32,0.35)", cursor: "pointer" }}
       >
-        I didn&apos;t attend
+        {isPast ? "I didn't attend" : "I will not attend"}
       </button>
     );
   }
@@ -53,7 +53,7 @@ export function MissedSummaryForm({ workshopId }: { workshopId: string }) {
         value={summary}
         onChange={e => setSummary(e.target.value)}
         rows={3}
-        placeholder="Explain why you missed this workshop (emergency reason)..."
+        placeholder={isPast ? "Explain why you missed this workshop (emergency reason)..." : "Let us know why you won't be able to attend..."}
         style={{ width: "100%", padding: "8px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none", background: "#FAFAF7", color: "#19140F", boxSizing: "border-box", resize: "vertical" }}
       />
       <div className="flex items-center gap-3" style={{ marginTop: 8 }}>

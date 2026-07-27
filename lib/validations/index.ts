@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+const phoneSchema = z.string().regex(/^\d{10}$/, "Enter a valid 10-digit phone number");
+const pincodeSchema = z.string().regex(/^\d{6}$/, "Enter a valid 6-digit pincode");
+
 export const tourSchema = z.object({
   title: z.string().min(3).max(200),
   description: z.string().min(10),
@@ -75,7 +78,7 @@ export type TestAttemptInput = z.infer<typeof testAttemptSchema>;
 export const eventSchema = z.object({
   title: z.string().min(3).max(200),
   description: z.string().optional(),
-  event_type: z.enum(["katta", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"]),
+  event_type: z.enum(["katta", "melawa", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"]),
   tour_id: z.string().uuid().optional(),
   event_date: z.string(),
   event_time: z.string().optional(),
@@ -140,7 +143,7 @@ export const newsletterSchema = z.object({
 });
 
 export const volunteerProfileSchema = z.object({
-  phone: z.string().max(20).optional(),
+  phone: phoneSchema.optional(),
   address: z.string().max(500).optional(),
   date_of_birth: z.string().optional(),
   state: z.string().max(100).optional(),
@@ -157,7 +160,7 @@ export const volunteerProfileSchema = z.object({
       "Bio must be at most 100 words"
     ),
   emergency_contact_name: z.string().max(200).optional(),
-  emergency_contact_phone: z.string().max(20).optional(),
+  emergency_contact_phone: phoneSchema.optional(),
   emergency_contact_relation: z.string().max(100).optional(),
   medical_notes: z.string().max(1000).optional(),
   consent_given: z.boolean().optional(),
@@ -169,11 +172,11 @@ export const volunteerProfileSchema = z.object({
   blood_group: z.string().max(10).optional(),
   aadhaar_number: z.string().max(20).optional(),
   photo_url: z.string().max(1000).min(1, "Profile photograph is required"),
-  alternate_phone: z.string().max(20).optional(),
+  alternate_phone: phoneSchema.optional(),
   house_no: z.string().max(200).optional(),
   street: z.string().max(200).optional(),
   district: z.string().max(100).optional(),
-  pincode: z.string().max(10).optional(),
+  pincode: pincodeSchema.optional(),
   permanent_address_same: z.boolean().optional(),
   permanent_address: z.string().max(500).optional(),
   current_status: z.enum(["student", "working_professional", "both", "other"]).optional(),
@@ -211,14 +214,14 @@ export const sponsorInquirySchema = z.object({
   organization_name: z.string().min(2).max(200),
   contact_name: z.string().min(2).max(100),
   email: z.string().email(),
-  phone: z.string().max(20).optional(),
+  phone: phoneSchema.optional(),
   message: z.string().max(2000).optional(),
 });
 
 export const careerInquirySchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
-  phone: z.string().max(20).optional(),
+  phone: phoneSchema.optional(),
   age: z.number().int().min(1).max(120),
   standard: z.string().max(100).optional(),
   state: z.string().max(100).optional(),
@@ -265,8 +268,8 @@ export const alumniRegistrationSchema = z.object({
   course_status: z.enum(["pursuing", "completed"]).optional(),
   year_semester: z.string().max(50).optional(),
   // Section 4: contact details
-  mobile_number: z.string().max(20).optional(),
-  alternate_mobile_number: z.string().max(20).optional(),
+  mobile_number: phoneSchema.optional(),
+  alternate_mobile_number: phoneSchema.optional(),
   linkedin_url: z.string().max(300).optional().or(z.literal("")),
   preferred_communication: z.array(z.string()).optional(),
   // Section 5: engagement with Gyan Setu
@@ -287,7 +290,7 @@ export const institutionInquirySchema = z.object({
   institution_name: z.string().min(2).max(200),
   contact_name: z.string().min(2).max(100),
   email: z.string().email(),
-  phone: z.string().max(20).optional(),
+  phone: phoneSchema.optional(),
   institution_type: z.string().max(100).optional(),
   city: z.string().max(100).optional(),
   student_count: z.string().max(50).optional(),
@@ -353,7 +356,7 @@ export const demoEvaluationSchema = z.object({
 
 export const localHostSchema = z.object({
   name: z.string().min(2).max(200),
-  phone: z.string().max(20).optional(),
+  phone: phoneSchema.optional(),
   email: z.string().email().optional().or(z.literal("")),
   state: z.string().max(100).optional(),
   district: z.string().max(100).optional(),
@@ -465,7 +468,7 @@ const tourReportHostSchema = z.object({
   organisation: z.string().max(200).optional(),
   contact_person_name: z.string().max(200).optional(),
   designation: z.string().max(200).optional(),
-  mobile_number: z.string().max(20).optional(),
+  mobile_number: phoneSchema.optional().or(z.literal("")),
   state: z.string().max(100).optional(),
   district: z.string().max(100).optional(),
   block_taluk: z.string().max(100).optional(),
@@ -524,11 +527,11 @@ export const schoolReportSchema = z.object({
   taluka_tehsil: z.string().max(200).optional(),
   district: z.string().max(200).optional(),
   state: z.string().max(100).optional(),
-  pincode: z.string().max(10).optional(),
+  pincode: pincodeSchema.optional(),
   principal_name: z.string().max(200).optional(),
-  principal_mobile: z.string().max(20).optional(),
+  principal_mobile: phoneSchema.optional(),
   coordinator_name: z.string().max(200).optional(),
-  coordinator_mobile: z.string().max(20).optional(),
+  coordinator_mobile: phoneSchema.optional(),
   // Section 2: Visit Details
   visit_date: z.string().optional(),
   arrival_time: z.string().optional(),

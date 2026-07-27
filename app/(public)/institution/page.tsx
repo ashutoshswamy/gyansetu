@@ -170,9 +170,12 @@ export default function InstitutionPage() {
                   id="phone"
                   name="phone"
                   type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
+                  maxLength={10}
                   value={form.phone}
-                  onChange={handleChange}
-                  placeholder="+91 98765 43210"
+                  onChange={(e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10); handleChange(e); }}
+                  placeholder="10-digit phone number"
                   style={inputStyle}
                 />
               </div>
