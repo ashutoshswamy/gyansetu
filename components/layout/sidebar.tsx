@@ -4,7 +4,7 @@ import Link from "next/link";
 import NextImage from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import type { UserRole } from "@/types";
 import { createClientClient } from "@/lib/supabase/client";
 import {
@@ -17,7 +17,6 @@ import {
   BarChart2,
   CheckSquare,
   ChevronRight,
-  ChevronDown,
   Calendar,
   UsersRound,
   BookOpen,
@@ -47,6 +46,7 @@ import {
   KeyRound,
   Landmark,
   School,
+  LogOut,
 } from "lucide-react";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType };
@@ -236,16 +236,19 @@ function NavLink({
   return (
     <Link
       href={item.href}
-      className="flex items-center justify-between px-3 py-[7px] rounded text-sm transition-all duration-150"
+      className="sb-navlink flex items-center justify-between px-3 py-[7px] rounded text-sm transition-all duration-150"
       style={
-        active
-          ? { background: "rgba(74,85,190,0.07)", borderLeft: "2px solid #4A55BE", color: "#4A55BE" }
-          : { borderLeft: "2px solid transparent", color: "#5A5247" }
+        {
+          ...(active
+            ? { background: "rgba(74,85,190,0.07)", borderLeft: "2px solid #4A55BE", color: "#4A55BE" }
+            : { borderLeft: "2px solid transparent", color: "#5A5247" }),
+          "--sb-accent": accentColor,
+        } as unknown as React.CSSProperties
       }
     >
       <div className="flex items-center gap-2.5">
         <item.Icon
-          className="w-4 h-4 flex-shrink-0"
+          className="sb-navlink-icon w-4 h-4 flex-shrink-0"
           style={{ color: active ? accentColor : "#9B9188" }}
         />
         <span className="font-medium text-[13px]" style={{ fontFamily: "var(--font-poppins), sans-serif" }}>
@@ -274,7 +277,8 @@ function CollapsibleGroup({
     <div style={{ marginBottom: 2 }}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-3 py-1.5 rounded transition-colors duration-150"
+        aria-expanded={open}
+        className="sb-group-btn w-full flex items-center justify-between px-3 py-1.5 rounded transition-colors duration-150"
         style={{ background: "none", border: "none", cursor: "pointer" }}
       >
         <span
@@ -283,10 +287,10 @@ function CollapsibleGroup({
         >
           {group.label}
         </span>
-        {open
-          ? <ChevronDown className="w-3 h-3" style={{ color: "#C4BDB5" }} />
-          : <ChevronRight className="w-3 h-3" style={{ color: "#C4BDB5" }} />
-        }
+        <ChevronRight
+          className="sb-chevron w-3 h-3"
+          style={{ color: "#C4BDB5", transform: open ? "rotate(90deg)" : "rotate(0deg)" }}
+        />
       </button>
 
       {open && (
@@ -309,6 +313,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   const groups = role === "super_admin" ? [...adminGroups, superAdminGroup] : adminGroups;
 
   const { user } = useUser();
+  const { signOut } = useClerk();
   const [progress, setProgress] = useState<{ completed: number; total: number } | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -493,11 +498,22 @@ export function Sidebar({ role }: { role: SidebarRole }) {
 
       {/* User */}
       <div className="px-4 py-4" style={{ borderTop: "1px solid #E4DFD1" }}>
-        <div className="flex items-center gap-3">
-          <UserButton appearance={{ elements: { avatarBox: "w-7 h-7" } }} />
-          <p className="text-xs" style={{ color: "#9B9188", fontFamily: "var(--font-poppins), sans-serif" }}>
-            Account
-          </p>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <UserButton appearance={{ elements: { avatarBox: "w-7 h-7" } }} />
+            <p className="text-xs truncate" style={{ color: "#9B9188", fontFamily: "var(--font-poppins), sans-serif" }}>
+              Account
+            </p>
+          </div>
+          <button
+            onClick={() => signOut({ redirectUrl: "/" })}
+            aria-label="Log out"
+            title="Log out"
+            className="flex items-center justify-center rounded flex-shrink-0"
+            style={{ width: 28, height: 28, background: "none", border: "1.5px solid #E4DFD1" }}
+          >
+            <LogOut className="w-3.5 h-3.5" style={{ color: "#9B9188" }} />
+          </button>
         </div>
       </div>
       </aside>

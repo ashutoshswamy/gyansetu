@@ -261,7 +261,20 @@ select:focus {
 @media (prefers-reduced-motion: reduce) {
   button, input, textarea, select { transition: none !important; }
   button:not(:disabled):active { transform: none !important; }
+  .sb-navlink, .sb-navlink:hover, .sb-navlink:active, .sb-chevron { transition: none !important; transform: none !important; }
 }
+
+/* ── Sidebar nav micro-interactions (admin/volunteer/enrollee/earc share this component) ── */
+.sb-navlink:hover {
+  background: rgba(0, 0, 0, 0.035);
+  color: var(--sb-accent) !important;
+  transform: translateX(2px);
+}
+.sb-navlink:hover .sb-navlink-icon { color: var(--sb-accent) !important; }
+.sb-navlink:active { transform: translateX(2px) scale(0.98); }
+
+.sb-group-btn:hover { background: rgba(0, 0, 0, 0.035); }
+.sb-chevron { transition: transform 0.2s ease; }
 
 /* Generic 2-column form row used by public lead-gen and admin forms */
 .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
