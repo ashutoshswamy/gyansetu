@@ -45,7 +45,7 @@ async function resolveUserWithRole() {
           email,
           name: `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim(),
           avatar_url: clerkUser.imageUrl,
-          role: clerkRole,
+          role: clerkRole ?? "enrollee",
         })
         .select("id, role")
         .single();
@@ -69,7 +69,9 @@ async function resolveUserWithRole() {
     return { db, user: { ...dbUser, role: clerkRole }, userId };
   }
 
-  return { db, user: dbUser, userId };
+  // Both null — new users default to enrollee; heal Supabase so this doesn't recur.
+  await db.from("users").update({ role: "enrollee" }).eq("clerk_id", userId);
+  return { db, user: { ...dbUser, role: "enrollee" }, userId };
 }
 
 export async function requireAdminUser() {

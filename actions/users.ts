@@ -63,11 +63,13 @@ export async function getEarcCandidates() {
   const { data, error } = await db
     .from("users")
     .select("id, clerk_id, name, email, role, created_at")
-    .in("role", ["enrollee", "volunteer", "earc_staff"])
+    .or("role.is.null,role.in.(enrollee,volunteer,earc_staff)")
     .order("created_at", { ascending: false });
 
   if (error) throw new Error("Failed to load users");
-  return data;
+  // Rows with a null role are enrollees whose Clerk JWT hasn't synced yet —
+  // display them as such rather than leaking the raw null.
+  return (data ?? []).map(u => ({ ...u, role: u.role ?? "enrollee" }));
 }
 
 export async function setEarcStaffRole(clerkId: string, grant: boolean) {

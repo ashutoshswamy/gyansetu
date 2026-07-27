@@ -16,6 +16,9 @@ vi.mock("@/lib/supabase/server", () => ({
           maybeSingle: () => mockMaybeSingle(),
         }),
       }),
+      update: () => ({
+        eq: () => Promise.resolve({ error: null }),
+      }),
     }),
   }),
 }));
