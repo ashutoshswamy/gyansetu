@@ -7,6 +7,7 @@ import { getGroupVolunteerLocations } from "@/actions/locations";
 import { createClientClient } from "@/lib/supabase/client";
 import { ArrowLeft, Radio } from "lucide-react";
 import type { VolunteerLocation } from "@/components/features/locations/volunteer-map";
+import { VolunteerLocationTable } from "@/components/features/locations/volunteer-location-table";
 
 const VolunteerMap = dynamic(
   () => import("@/components/features/locations/volunteer-map").then((m) => m.VolunteerMap),
@@ -21,9 +22,18 @@ export default function AdminLocationsGroupPage() {
 
   const [locations, setLocations] = useState<VolunteerLocation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [groupLabel, setGroupLabel] = useState<{ groupName: string; tourTitle: string } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
+
+    fetch(`/api/groups/${groupId}`)
+      .then((r) => r.json())
+      .then((data: { name?: string; tours?: { title?: string } }) => {
+        if (!isMounted || !data?.name) return;
+        setGroupLabel({ groupName: data.name, tourTitle: data.tours?.title ?? "Untitled Tour" });
+      })
+      .catch(() => {});
 
     async function refresh() {
       const data = await getGroupVolunteerLocations(groupId);
@@ -58,9 +68,11 @@ export default function AdminLocationsGroupPage() {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
             <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
-              Volunteer Locations
+              {groupLabel ? groupLabel.tourTitle : "Volunteer Locations"}
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Live Map</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>
+              {groupLabel ? groupLabel.groupName : "Live Map"}
+            </h1>
           </div>
           <div className="flex items-center gap-1.5" style={{ fontSize: 13, color: "#2A5E3A" }}>
             <Radio size={13} />
@@ -79,6 +91,8 @@ export default function AdminLocationsGroupPage() {
             <VolunteerMap locations={locations} />
           )}
         </div>
+
+        {!loading && <div className="mt-6"><VolunteerLocationTable locations={locations} /></div>}
       </div>
     </div>
   );

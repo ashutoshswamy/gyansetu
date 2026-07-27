@@ -37,7 +37,7 @@ export default async function VolunteerToursPage() {
     .from("volunteer_assignments")
     .select("*, tours(id, title, destination, start_date, end_date, capacity, status, description)")
     .eq("volunteer_id", user?.id ?? "")
-    .order("created_at", { ascending: false });
+    .order("assigned_at", { ascending: false });
 
   const active   = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open");
   const past     = (assignments ?? []).filter((a: AssignmentRow) => ["completed", "closed"].includes(a.tours?.status ?? ""));

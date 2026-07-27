@@ -127,3 +127,38 @@ export async function updateApplicationStatus(
   revalidatePath("/admin/students");
   return data;
 }
+
+export async function assignVolunteerToTour(tourId: string, volunteerId: string, roleDescription?: string) {
+  const { db } = await requireAdminUser();
+
+  const { error } = await db
+    .from("volunteer_assignments")
+    .upsert(
+      { tour_id: tourId, volunteer_id: volunteerId, role_description: roleDescription || null },
+      { onConflict: "tour_id,volunteer_id" }
+    );
+
+  if (error) { console.error("[assignVolunteerToTour]", error); throw new Error("Failed to assign volunteer"); }
+
+  revalidatePath(`/admin/tours/${tourId}`);
+  revalidatePath("/admin/volunteers");
+  revalidatePath("/volunteer");
+  revalidatePath("/volunteer/tours");
+}
+
+export async function removeVolunteerFromTour(tourId: string, volunteerId: string) {
+  const { db } = await requireAdminUser();
+
+  const { error } = await db
+    .from("volunteer_assignments")
+    .delete()
+    .eq("tour_id", tourId)
+    .eq("volunteer_id", volunteerId);
+
+  if (error) { console.error("[removeVolunteerFromTour]", error); throw new Error("Failed to remove volunteer"); }
+
+  revalidatePath(`/admin/tours/${tourId}`);
+  revalidatePath("/admin/volunteers");
+  revalidatePath("/volunteer");
+  revalidatePath("/volunteer/tours");
+}

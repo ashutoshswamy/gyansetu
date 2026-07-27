@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { TourManageClient } from "./tour-manage-client";
+import { VolunteerAssign } from "./volunteer-assign";
 import { MapPin, Calendar, Users, ArrowLeft } from "lucide-react";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
@@ -35,13 +36,16 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
   const { id } = await params;
   const db = createServerClient();
 
-  const [{ data: tour }, { data: applications }, { data: tests }] = await Promise.all([
+  const [{ data: tour }, { data: applications }, { data: tests }, { data: volunteerAssignments }] = await Promise.all([
     db.from("tours").select("*").eq("id", id).single(),
     db.from("tour_applications")
       .select("*, users!tour_applications_student_id_fkey(id, name, email, avatar_url)")
       .eq("tour_id", id)
       .order("submitted_at", { ascending: false }),
     db.from("eligibility_tests").select("id, title, status").eq("tour_id", id),
+    db.from("volunteer_assignments")
+      .select("id, role_description, users(id, name, email)")
+      .eq("tour_id", id),
   ]);
 
   if (!tour) notFound();
@@ -110,6 +114,12 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
             </div>
           </div>
         )}
+
+        {/* Volunteers */}
+        <VolunteerAssign
+          tourId={id}
+          assignments={(volunteerAssignments ?? []) as unknown as { id: string; role_description?: string; users?: { id: string; name: string; email: string } }[]}
+        />
 
         {/* Applications */}
         <div>
