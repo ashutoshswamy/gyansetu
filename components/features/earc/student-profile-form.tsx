@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createStudentProfile } from "@/actions/earc";
 import type { EarcStudentProfileInput } from "@/lib/validations";
+import { BLOOD_GROUPS, STANDARDS } from "@/lib/constants/earc";
 
 const GENDERS = ["Male", "Female", "Other"] as const;
 
@@ -38,12 +39,13 @@ export function StudentProfileForm({ onSaved }: { onSaved?: () => void }) {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
+  const [standard, setStandard] = useState("");
   const [apaarId, setApaarId] = useState("");
   const [aadhaarNumber, setAadhaarNumber] = useState("");
 
   function resetForm() {
     setFirstName(""); setMiddleName(""); setLastName(""); setMobileNumber("");
-    setDob(""); setGender(""); setBloodGroup(""); setApaarId(""); setAadhaarNumber("");
+    setDob(""); setGender(""); setBloodGroup(""); setStandard(""); setApaarId(""); setAadhaarNumber("");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -58,7 +60,8 @@ export function StudentProfileForm({ onSaved }: { onSaved?: () => void }) {
         mobile_number: mobileNumber || undefined,
         date_of_birth: dob || undefined,
         gender: gender as EarcStudentProfileInput["gender"],
-        blood_group: bloodGroup || undefined,
+        blood_group: (bloodGroup || undefined) as EarcStudentProfileInput["blood_group"],
+        standard: standard as EarcStudentProfileInput["standard"],
         apaar_id: apaarId || undefined,
         aadhaar_number: aadhaarNumber || undefined,
       };
@@ -118,7 +121,19 @@ export function StudentProfileForm({ onSaved }: { onSaved?: () => void }) {
           </select>
         </F>
         <F label="Blood Group" hint="Optional">
-          <input value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} placeholder="e.g. O+" style={inputStyle} />
+          <select value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} style={inputStyle}>
+            <option value="">Select blood group...</option>
+            {BLOOD_GROUPS.map(b => <option key={b} value={b}>{b}</option>)}
+          </select>
+        </F>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <F label="Standard" required>
+          <select value={standard} onChange={e => setStandard(e.target.value)} required style={inputStyle}>
+            <option value="">Select standard...</option>
+            {STANDARDS.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
         </F>
       </div>
 

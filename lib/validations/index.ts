@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BLOOD_GROUPS, STANDARDS } from "@/lib/constants/earc";
 
 const phoneSchema = z.string().regex(/^\d{10}$/, "Enter a valid 10-digit phone number");
 const pincodeSchema = z.string().regex(/^\d{6}$/, "Enter a valid 6-digit pincode");
@@ -608,7 +609,8 @@ export const earcStudentProfileSchema = z.object({
   mobile_number: phoneSchema.optional(),
   date_of_birth: z.string().optional(),
   gender: z.enum(["Male", "Female", "Other"]),
-  blood_group: z.string().max(10).optional(),
+  blood_group: z.enum(BLOOD_GROUPS).optional(),
+  standard: z.enum(STANDARDS),
   apaar_id: z.string().max(50).optional(),
   aadhaar_number: z.string().max(20).optional(),
 });

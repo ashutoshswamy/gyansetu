@@ -939,7 +939,8 @@ create table if not exists public.earc_students (
   mobile_number   text,
   date_of_birth   date,
   gender          text        not null check (gender in ('Male', 'Female', 'Other')),
-  blood_group     text,
+  blood_group     text        check (blood_group in ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Don''t Know')),
+  standard        text        not null check (standard in ('1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th')),
   apaar_id        text,
   aadhaar_number  text,
   created_by      uuid        references public.users(id) on delete set null,
@@ -1527,3 +1528,14 @@ alter table public.tour_reports add constraint tour_reports_overall_recommendati
 alter table public.events drop constraint if exists events_event_type_check;
 alter table public.events add constraint events_event_type_check
   check (event_type in ('katta', 'melawa', 'training', 'workshop', 'meeting', 'demo', 'presentation', 'celebration', 'other'));
+
+-- ============================================================
+-- MIGRATION: earc_students -> blood_group dropdown + standard field
+-- ============================================================
+alter table public.earc_students drop constraint if exists earc_students_blood_group_check;
+alter table public.earc_students add constraint earc_students_blood_group_check
+  check (blood_group in ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Don''t Know'));
+alter table public.earc_students add column if not exists standard text;
+alter table public.earc_students drop constraint if exists earc_students_standard_check;
+alter table public.earc_students add constraint earc_students_standard_check
+  check (standard is null or standard in ('1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th'));

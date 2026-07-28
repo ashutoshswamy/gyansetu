@@ -110,8 +110,33 @@ export async function exportStudentProfilesCsv() {
 
   const columns = [
     "id", "first_name", "middle_name", "last_name", "mobile_number", "date_of_birth", "gender",
-    "blood_group", "apaar_id", "aadhaar_number", "submitted_by", "created_at",
+    "blood_group", "standard", "apaar_id", "aadhaar_number", "submitted_by", "created_at",
   ];
 
   return toCsv(rows, columns);
+}
+
+export async function bulkCreateStudentProfiles(inputs: EarcStudentProfileInput[]) {
+  const { db, user } = await requireEarcUser();
+
+  const results = { created: 0, failed: [] as { row: number; error: string }[] };
+  const validRows: (EarcStudentProfileInput & { created_by: string })[] = [];
+
+  inputs.forEach((input, i) => {
+    const parsed = earcStudentProfileSchema.safeParse(input);
+    if (!parsed.success) {
+      results.failed.push({ row: i + 2, error: parsed.error.issues.map(e => e.message).join("; ") });
+      return;
+    }
+    validRows.push({ ...parsed.data, created_by: user.id });
+  });
+
+  if (validRows.length > 0) {
+    const { error, data } = await db.from("earc_students").insert(validRows).select("id");
+    if (error) { console.error("[bulkCreateStudentProfiles]", error); throw new Error("Failed to save uploaded student profiles"); }
+    results.created = data?.length ?? validRows.length;
+  }
+
+  revalidatePath("/earc/student-profile");
+  return results;
 }
