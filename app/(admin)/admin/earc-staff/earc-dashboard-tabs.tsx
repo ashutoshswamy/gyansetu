@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, School, GraduationCap } from "lucide-react";
+import { ShieldCheck, School, GraduationCap, LayoutDashboard } from "lucide-react";
 import { EarcStaffTable } from "./earc-staff-table";
+import { EarcAnalytics } from "@/components/features/earc/earc-analytics";
 import { ExportCsvButton } from "@/components/features/earc/export-csv-button";
 import { exportSchoolProfilesCsv, exportStudentProfilesCsv } from "@/actions/earc";
 
@@ -55,6 +56,7 @@ interface StudentProfileRow {
 }
 
 const TABS = [
+  { key: "analytics", label: "Dashboard", icon: LayoutDashboard },
   { key: "roles", label: "Role Management", icon: ShieldCheck },
   { key: "schools", label: "School Profiles", icon: School },
   { key: "students", label: "Student Profiles", icon: GraduationCap },
@@ -70,7 +72,7 @@ export function EarcDashboardTabs({
   schoolProfiles: SchoolProfileRow[];
   studentProfiles: StudentProfileRow[];
 }) {
-  const [tab, setTab] = useState<TabKey>("roles");
+  const [tab, setTab] = useState<TabKey>("analytics");
 
   return (
     <div>
@@ -98,6 +100,10 @@ export function EarcDashboardTabs({
           );
         })}
       </div>
+
+      {tab === "analytics" && (
+        <EarcAnalytics schoolProfiles={schoolProfiles} studentProfiles={studentProfiles} />
+      )}
 
       {tab === "roles" && (
         users.length === 0 ? (

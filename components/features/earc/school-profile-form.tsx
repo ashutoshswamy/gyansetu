@@ -8,6 +8,7 @@ import { createSchoolProfile } from "@/actions/earc";
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { EarcSchoolProfileInput } from "@/lib/validations";
+import { STANDARDS } from "@/lib/constants/earc";
 
 const ACADEMIC_YEARS = ["2024-25", "2025-26", "2026-27", "2027-28", "2028-29", "2029-30"] as const;
 const PROJECTS = ["Chhote Scientists", "Vikas Mitra", "Pradnya Vikas", "Anubha Shala", "LearEng", "Padhai Se Dosti", "Others"] as const;
@@ -209,7 +210,10 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
           <div className="space-y-2">
             {rows.map((r, i) => (
               <div key={i} className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center" style={{ border: "1px solid #E4DFD1", borderRadius: 6, padding: 8, position: "relative" }}>
-                <input value={r.standard} onChange={e => updateRow(i, "standard", e.target.value)} placeholder="Std. (e.g. 5th)" style={inputStyle} />
+                <select value={r.standard} onChange={e => updateRow(i, "standard", e.target.value)} style={inputStyle}>
+                  <option value="">Select std...</option>
+                  {STANDARDS.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
                 <input value={r.boys} onChange={e => updateRow(i, "boys", e.target.value)} type="number" min="0" placeholder="Boys" style={inputStyle} />
                 <input value={r.girls} onChange={e => updateRow(i, "girls", e.target.value)} type="number" min="0" placeholder="Girls" style={inputStyle} />
                 <div className="flex items-center justify-between">

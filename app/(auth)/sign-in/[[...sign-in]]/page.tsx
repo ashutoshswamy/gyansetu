@@ -1,7 +1,12 @@
 import { SignIn } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 
-export default function SignInPage() {
+export default async function SignInPage() {
+  const { userId } = await auth();
+  if (userId) redirect("/dashboard");
+
   return (
     <div
       className="min-h-screen flex items-center justify-center relative"

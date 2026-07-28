@@ -138,6 +138,7 @@ const superAdminGroup: NavGroup = {
 };
 
 const earcNavItems: NavItem[] = [
+  { label: "Dashboard",       href: "/earc/dashboard",       Icon: LayoutDashboard, description: "Charts and KPIs across all submitted school and student data." },
   { label: "School Profile",  href: "/earc/school-profile",  Icon: School, description: "Collect standardized school-visit data for EARC projects — location, sessions, student strength." },
   { label: "Student Profile", href: "/earc/student-profile", Icon: GraduationCap, description: "Collect individual student records — name, DOB, gender, and identifiers." },
 ];
