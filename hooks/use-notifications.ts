@@ -17,8 +17,10 @@ export function useNotifications() {
   });
 
   useEffect(() => {
+    // ponytail: unique topic per mount — NotificationBell renders twice (desktop + mobile sidebar),
+    // and a shared topic name makes the second .on() throw after the first .subscribe().
     const channel = supabase
-      .channel("notifications-realtime")
+      .channel(`notifications-realtime-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "notifications" }, () => {
         queryClient.invalidateQueries({ queryKey: ["notifications"] });
       })

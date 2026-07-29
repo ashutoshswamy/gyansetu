@@ -45,6 +45,7 @@ drop table if exists public.location_updates        cascade;
 drop table if exists public.volunteer_locations     cascade;
 drop table if exists public.travel_tickets          cascade;
 drop table if exists public.id_cards                cascade;
+drop table if exists public.kit_packing_checks      cascade;
 drop table if exists public.kit_assignments         cascade;
 drop table if exists public.kit_items               cascade;
 drop table if exists public.local_hosts             cascade;
