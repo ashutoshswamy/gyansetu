@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/layout/sidebar";
+import { TopBar } from "@/components/layout/topbar";
 import { RealtimeRefresher } from "@/components/features/realtime-refresher";
 import { getUserRole } from "@/lib/clerk/roles";
 import { redirect } from "next/navigation";
@@ -33,7 +34,10 @@ export default async function VolunteerLayout({
     <div className="flex min-h-screen" style={{ background: "#FAFAF7" }}>
       <RealtimeRefresher tables={["notifications", "events", "dynamic_forms", "tour_groups", "tour_group_members", "volunteer_assignments", "daily_logs"]} />
       <Sidebar role="volunteer" />
-      <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">{children}</main>
+      <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0 flex flex-col">
+        <TopBar role="volunteer" />
+        {children}
+      </main>
     </div>
   );
 }

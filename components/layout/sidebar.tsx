@@ -542,7 +542,6 @@ export function Sidebar({ role }: { role: SidebarRole }) {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-          {role === "volunteer" && <NotificationBell />}
           <button
             onClick={() => signOut({ redirectUrl: "/" })}
             aria-label="Log out"
