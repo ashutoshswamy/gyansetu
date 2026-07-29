@@ -143,3 +143,18 @@ export async function submitForm(input: z.infer<typeof submissionSchema>) {
 
   return submission;
 }
+
+// The caller's own submissions, optionally scoped to one tour's forms — feeds
+// /enrollee/history/[tourId]. Scoped by submitted_by = caller, so it's safe for any role.
+export async function getMyFormSubmissions(tourId?: string) {
+  const { db, user } = await getAuthenticatedUser();
+  let query = db
+    .from("form_submissions")
+    .select("*, dynamic_forms!inner(id, title, tour_id, fields)")
+    .eq("submitted_by", user.id);
+  if (tourId) query = query.eq("dynamic_forms.tour_id", tourId);
+
+  const { data, error } = await query.order("submitted_at", { ascending: false });
+  if (error) { console.error("[getMyFormSubmissions]", error); throw new Error("Failed to fetch submissions"); }
+  return data ?? [];
+}

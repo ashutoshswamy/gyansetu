@@ -8,7 +8,7 @@ export default async function StudentToursPage() {
   const db = createServerClient();
 
   const [{ data: tours }, { data: user }] = await Promise.all([
-    db.from("tours").select("*").eq("status", "open").order("start_date"),
+    db.from("tours").select("*").eq("status", "open").eq("participant_visible", true).order("start_date"),
     db.from("users").select("id").eq("clerk_id", userId!).single(),
   ]);
 

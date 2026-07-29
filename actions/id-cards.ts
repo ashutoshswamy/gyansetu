@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
+import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { idCardSchema, type IdCardInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -101,13 +101,20 @@ export async function getLatestIdCardForVolunteer(volunteerId: string, tourId?: 
   return data;
 }
 
-export async function getMyIdCard() {
-  const { db, user } = await requireVolunteerUser();
+// getAuthenticatedUser (not requireVolunteerUser) — scoped to the caller's own id, and
+// an enrollee demoted after their tour ended still needs to see the card they were
+// issued on it. Optional tourId scopes to one specific past tour (for /enrollee/history);
+// omitted, it defaults to the most recently issued card (unchanged /volunteer/id-card behavior).
+export async function getMyIdCard(tourId?: string) {
+  const { db, user } = await getAuthenticatedUser();
+  let cardQuery = db
+    .from("id_cards")
+    .select("*, tour:tours(id, title, destination), group:tour_groups(id, name)")
+    .eq("volunteer_id", user.id);
+  if (tourId) cardQuery = cardQuery.eq("tour_id", tourId);
+
   const [{ data, error }, { data: profile }] = await Promise.all([
-    db
-      .from("id_cards")
-      .select("*, tour:tours(id, title, destination), group:tour_groups(id, name)")
-      .eq("volunteer_id", user.id)
+    cardQuery
       .order("issued_at", { ascending: false })
       .limit(1)
       .maybeSingle(),

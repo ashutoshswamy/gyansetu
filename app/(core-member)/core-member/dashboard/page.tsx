@@ -37,6 +37,7 @@ interface Assignment {
       start_date?: string;
       end_date?: string;
       status: string;
+      participant_visible: boolean;
     } | null;
     tour_group_members?: Member[];
   } | null;
@@ -46,7 +47,9 @@ export default async function CoreMemberDashboardPage() {
   await requireCoreMemberUser();
   const assignments = (await getMyCoreMemberAssignments()) as Assignment[];
 
-  const current = assignments.filter(a => ["open", "draft"].includes(a.tour_groups?.tours?.status ?? ""));
+  const current = assignments.filter(a =>
+    ["open", "draft"].includes(a.tour_groups?.tours?.status ?? "") && a.tour_groups?.tours?.participant_visible !== false
+  );
   const history = assignments.filter(a => ["closed", "completed"].includes(a.tour_groups?.tours?.status ?? ""));
 
   return (
@@ -65,13 +68,17 @@ export default async function CoreMemberDashboardPage() {
           </div>
         ) : (
           <div className="space-y-10">
-            {current.length > 0 && (
+            {current.length > 0 ? (
               <section>
                 <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#9B9188", marginBottom: 12 }}>Current</p>
                 <div className="space-y-5">
                   {current.map(a => <CurrentGroupCard key={a.id} assignment={a} />)}
                 </div>
               </section>
+            ) : (
+              <div className="py-10 text-center rounded-xl" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+                <p style={{ fontSize: 14, color: "#9B9188" }}>You are not currently part of any tour.</p>
+              </div>
             )}
 
             {history.length > 0 && (

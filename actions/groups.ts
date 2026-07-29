@@ -166,7 +166,7 @@ export async function getMyCoreMemberAssignments() {
   const { db, user } = await requireCoreMemberUser();
   const { data, error } = await db
     .from("tour_group_members")
-    .select("*, tour_groups!inner(*, tours(id, title, destination, start_date, end_date, status), tour_group_members(*, users(id, name, email)))")
+    .select("*, tour_groups!inner(*, tours(id, title, destination, start_date, end_date, status, participant_visible), tour_group_members(*, users(id, name, email)))")
     .eq("user_id", user.id)
     .eq("role_in_group", "group_core_member")
     .order("created_at", { ascending: false });

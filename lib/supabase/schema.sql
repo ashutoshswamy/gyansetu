@@ -49,6 +49,9 @@ create table if not exists public.tours (
   end_date             date not null,
   capacity             integer not null check (capacity > 0),
   status               text not null default 'draft' check (status in ('draft', 'open', 'closed', 'completed')),
+  -- false = tour was reactivated "for admin only": status is back to open/editable
+  -- but stays out of volunteer/enrollee-facing lists (see tour_end_demotions below).
+  participant_visible  boolean not null default true,
   eligibility_test_id  uuid,
   created_by           uuid references public.users(id) on delete set null,
   created_at           timestamptz default now(),
@@ -135,6 +138,17 @@ create table if not exists public.volunteer_assignments (
   role_description text,
   assigned_at      timestamptz default now(),
   unique (tour_id, volunteer_id)
+);
+
+-- Tracks volunteers auto-demoted to enrollee because their tour ended, so
+-- "Reactivate for everyone" can restore exactly the people this caused, and
+-- nobody else (e.g. someone demoted for an unrelated reason).
+create table if not exists public.tour_end_demotions (
+  id         uuid primary key default gen_random_uuid(),
+  tour_id    uuid not null references public.tours(id) on delete cascade,
+  user_id    uuid not null references public.users(id) on delete cascade,
+  demoted_at timestamptz not null default now(),
+  unique(tour_id, user_id)
 );
 
 -- Volunteer Profiles (also used by enrollees; promoted users keep same row)
@@ -489,6 +503,7 @@ alter table public.test_attempts         enable row level security;
 alter table public.dynamic_forms         enable row level security;
 alter table public.form_submissions      enable row level security;
 alter table public.volunteer_assignments enable row level security;
+alter table public.tour_end_demotions    enable row level security;
 alter table public.volunteer_profiles    enable row level security;
 alter table public.alumni_profiles       enable row level security;
 alter table public.events                enable row level security;
@@ -572,6 +587,11 @@ create policy "volunteers_read_own_assignments" on public.volunteer_assignments 
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.id = volunteer_id)
 );
 create policy "admins_manage_assignments" on public.volunteer_assignments for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+);
+
+-- tour_end_demotions
+create policy "admins_manage_tour_end_demotions" on public.tour_end_demotions for all using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
 );
 

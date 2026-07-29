@@ -20,6 +20,7 @@ export interface Tour {
   end_date: string;
   capacity: number;
   status: "draft" | "open" | "closed" | "completed";
+  participant_visible: boolean;
   eligibility_test_id?: string;
   created_by: string;
   created_at: string;

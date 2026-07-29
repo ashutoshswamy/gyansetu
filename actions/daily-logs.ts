@@ -54,8 +54,11 @@ export async function deleteDailyLog(id: string) {
   revalidatePath("/volunteer/daily-log");
 }
 
+// getAuthenticatedUser (not requireVolunteerUser) — the query is already scoped to the
+// caller's own id, and an enrollee demoted after their tour ended still needs to read
+// their own historical logs from the /enrollee/history view.
 export async function getMyDailyLogs(tourId?: string) {
-  const { db, user } = await requireVolunteerUser();
+  const { db, user } = await getAuthenticatedUser();
   let query = db
     .from("daily_logs")
     .select("*, tours(id, title)")

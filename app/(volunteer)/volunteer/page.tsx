@@ -8,7 +8,7 @@ import type { DynamicForm } from "@/types";
 type AssignmentRow = {
   id: string;
   role_description?: string;
-  tours?: { title: string; destination: string; start_date: string; end_date: string; status: string } | null;
+  tours?: { title: string; destination: string; start_date: string; end_date: string; status: string; participant_visible: boolean } | null;
 };
 type FormRow = Pick<DynamicForm, "id" | "title" | "fields"> & { tours?: { title: string } | null };
 
@@ -36,12 +36,12 @@ export default async function VolunteerDashboard() {
     { data: forms },
     { data: testAttempts },
   ] = await Promise.all([
-    db.from("volunteer_assignments").select("*, tours(id, title, destination, start_date, end_date, status)").eq("volunteer_id", uid),
+    db.from("volunteer_assignments").select("*, tours(id, title, destination, start_date, end_date, status, participant_visible)").eq("volunteer_id", uid),
     db.from("dynamic_forms").select("id, title, fields, tour_id, tours(title)").eq("target_role", "volunteer").eq("status", "active").eq("is_template", false),
     db.from("test_attempts").select("id, status").eq("student_id", uid),
   ]);
 
-  const activeTours = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open");
+  const activeTours = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open" && a.tours?.participant_visible !== false);
   const testsTaken = testAttempts?.length ?? 0;
   const testsApproved = (testAttempts ?? []).filter((t: { status: string }) => t.status === "approved").length;
 

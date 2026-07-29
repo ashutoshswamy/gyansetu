@@ -39,6 +39,7 @@ export default async function EnrollmentDashboard() {
         .from("tours")
         .select("id, title, destination, start_date, capacity, status")
         .eq("status", "open")
+        .eq("participant_visible", true)
         .order("start_date")
         .limit(6),
       db
@@ -54,16 +55,23 @@ export default async function EnrollmentDashboard() {
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
-            Student Portal
-          </p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>
-            Welcome, {user?.name ?? "Enrollee"}
-          </h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
-            Track your tour applications and eligibility tests
-          </p>
+        <div className="mb-8 flex items-start justify-between flex-wrap gap-4">
+          <div>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+              Student Portal
+            </p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>
+              Welcome, {user?.name ?? "Enrollee"}
+            </h1>
+            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+              Track your tour applications and eligibility tests
+            </p>
+          </div>
+          <Link href="/enrollee/history">
+            <button style={{ background: "white", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
+              Tour History
+            </button>
+          </Link>
         </div>
 
         {/* Stats */}

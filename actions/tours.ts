@@ -2,6 +2,7 @@
 
 import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { createNotification } from "@/actions/notifications";
+import { applyRoleUpdate } from "@/actions/users";
 import { isEnrolleeRole } from "@/lib/clerk/roles";
 import { auth } from "@clerk/nextjs/server";
 import { tourSchema, type TourInput } from "@/lib/validations";
@@ -52,6 +53,92 @@ export async function updateTour(id: string, input: Partial<TourInput>) {
   revalidatePath(`/admin/tours/${id}`);
 
   return tour;
+}
+
+// Ends a tour: status -> completed, and demotes any assigned "volunteer" back to
+// "enrollee" — but only if this was their last active (open/draft) assignment, so
+// someone double-booked across tours doesn't lose access to the other one.
+// group_core_member is left untouched entirely (core members keep the role; the
+// tour just moves to their dashboard's history, per product decision).
+export async function endTour(tourId: string) {
+  const { db } = await requireAdminUser();
+
+  const { error: statusError } = await db
+    .from("tours")
+    .update({ status: "completed", updated_at: new Date().toISOString() })
+    .eq("id", tourId);
+  if (statusError) { console.error("[endTour]", statusError); throw new Error("Failed to end tour"); }
+
+  const { data: assignments, error: assignError } = await db
+    .from("volunteer_assignments")
+    .select("volunteer_id, users(id, clerk_id, role)")
+    .eq("tour_id", tourId);
+  if (assignError) { console.error("[endTour]", assignError); throw new Error("Failed to load assignments"); }
+
+  for (const a of assignments ?? []) {
+    const assignee = a.users as unknown as { id: string; clerk_id: string; role: string | null } | null;
+    if (!assignee || assignee.role !== "volunteer") continue;
+
+    const { data: otherAssignments } = await db
+      .from("volunteer_assignments")
+      .select("tour_id, tours(status)")
+      .eq("volunteer_id", assignee.id)
+      .neq("tour_id", tourId);
+
+    const stillActiveElsewhere = (otherAssignments ?? []).some((row) =>
+      ["open", "draft"].includes((row.tours as { status?: string } | null)?.status ?? "")
+    );
+    if (stillActiveElsewhere) continue;
+
+    await applyRoleUpdate(db, assignee.clerk_id, "enrollee");
+    await db.from("tour_end_demotions").upsert(
+      { tour_id: tourId, user_id: assignee.id },
+      { onConflict: "tour_id,user_id" }
+    );
+  }
+
+  await invalidateCache(CACHE_KEYS.activeTours);
+  revalidatePath("/admin/tours");
+  revalidatePath(`/admin/tours/${tourId}`);
+  revalidatePath("/volunteer");
+  revalidatePath("/volunteer/tours");
+  revalidatePath("/enrollee");
+}
+
+// Reopens a completed tour. "admin" mode flips status back to open for admin editing
+// only (kept out of volunteer/enrollee-facing lists via participant_visible=false, no
+// role changes). "all" mode makes it fully visible again and restores every volunteer
+// who was demoted because of this specific tour's End Tour (tour_end_demotions).
+export async function reactivateTour(tourId: string, mode: "admin" | "all") {
+  const { db } = await requireAdminUser();
+
+  const { error: statusError } = await db
+    .from("tours")
+    .update({ status: "open", participant_visible: mode === "all", updated_at: new Date().toISOString() })
+    .eq("id", tourId);
+  if (statusError) { console.error("[reactivateTour]", statusError); throw new Error("Failed to reactivate tour"); }
+
+  if (mode === "all") {
+    const { data: demotions, error: demotionsError } = await db
+      .from("tour_end_demotions")
+      .select("user_id, users(clerk_id)")
+      .eq("tour_id", tourId);
+    if (demotionsError) { console.error("[reactivateTour]", demotionsError); throw new Error("Failed to load demotions"); }
+
+    for (const d of demotions ?? []) {
+      const clerkId = (d.users as unknown as { clerk_id: string } | null)?.clerk_id;
+      if (clerkId) await applyRoleUpdate(db, clerkId, "volunteer");
+    }
+
+    await db.from("tour_end_demotions").delete().eq("tour_id", tourId);
+  }
+
+  await invalidateCache(CACHE_KEYS.activeTours);
+  revalidatePath("/admin/tours");
+  revalidatePath(`/admin/tours/${tourId}`);
+  revalidatePath("/volunteer");
+  revalidatePath("/volunteer/tours");
+  revalidatePath("/enrollee");
 }
 
 export async function deleteTour(id: string) {

@@ -12,6 +12,7 @@ type AssignmentRow = {
     end_date: string;
     capacity: number;
     status: string;
+    participant_visible: boolean;
     description?: string;
   } | null;
 };
@@ -35,13 +36,13 @@ export default async function VolunteerToursPage() {
 
   const { data: assignments } = await db
     .from("volunteer_assignments")
-    .select("*, tours(id, title, destination, start_date, end_date, capacity, status, description)")
+    .select("*, tours(id, title, destination, start_date, end_date, capacity, status, participant_visible, description)")
     .eq("volunteer_id", user?.id ?? "")
     .order("assigned_at", { ascending: false });
 
-  const active   = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open");
+  const active   = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open" && a.tours?.participant_visible !== false);
   const past     = (assignments ?? []).filter((a: AssignmentRow) => ["completed", "closed"].includes(a.tours?.status ?? ""));
-  const upcoming = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "draft");
+  const upcoming = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "draft" && a.tours?.participant_visible !== false);
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
