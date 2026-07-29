@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdminUser, requireVolunteerUser, assertGroupAccess } from "@/lib/clerk/action-auth";
+import { notifyGroupMembers } from "@/actions/notifications";
 import { localHostSchema, type LocalHostInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -13,6 +14,12 @@ export async function createLocalHost(input: LocalHostInput) {
     .select()
     .single();
   if (error) { console.error("[createLocalHost]", error); throw new Error("Failed to create local host"); }
+
+  if (data.group_id) {
+    await notifyGroupMembers(data.group_id, "Local host added", "A local host has been added for your group.")
+      .catch(err => console.error("[createLocalHost notify]", err));
+  }
+
   revalidatePath("/admin/local-hosts");
   return host;
 }

@@ -61,6 +61,7 @@ export default function NewCertificatePage() {
     setLoading(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
+    const durationDays = fd.get("duration_of_visit_days") as string;
     try {
       const cert = await issueCertificate({
         user_id: fd.get("user_id") as string,
@@ -69,7 +70,7 @@ export default function NewCertificatePage() {
         notes: fd.get("notes") as string || undefined,
         state: fd.get("state") as string || undefined,
         place: fd.get("place") as string || undefined,
-        duration_of_visit: fd.get("duration_of_visit") as string || undefined,
+        duration_of_visit: durationDays ? `${durationDays} Day${durationDays === "1" ? "" : "s"}` : undefined,
         volunteer_code: fd.get("volunteer_code") as string || undefined,
       });
       router.push(`/admin/certificates/${cert.id}`);
@@ -129,8 +130,8 @@ export default function NewCertificatePage() {
                 <input name="place" value={idCard?.place ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit</label>
-                <input name="duration_of_visit" placeholder="e.g. 5 Days" style={inputStyle} />
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit (days)</label>
+                <input name="duration_of_visit_days" type="number" min={1} step={1} placeholder="e.g. 5" style={inputStyle} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer ID</label>

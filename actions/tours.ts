@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
+import { createNotification } from "@/actions/notifications";
 import { isEnrolleeRole } from "@/lib/clerk/roles";
 import { auth } from "@clerk/nextjs/server";
 import { tourSchema, type TourInput } from "@/lib/validations";
@@ -139,6 +140,13 @@ export async function assignVolunteerToTour(tourId: string, volunteerId: string,
     );
 
   if (error) { console.error("[assignVolunteerToTour]", error); throw new Error("Failed to assign volunteer"); }
+
+  const { data: tour } = await db.from("tours").select("title").eq("id", tourId).maybeSingle();
+  await createNotification({
+    user_id: volunteerId,
+    title: "Assigned to a tour",
+    message: tour?.title ? `You've been assigned to "${tour.title}".` : "You've been assigned to a tour.",
+  }).catch(err => console.error("[assignVolunteerToTour notify]", err));
 
   revalidatePath(`/admin/tours/${tourId}`);
   revalidatePath("/admin/volunteers");

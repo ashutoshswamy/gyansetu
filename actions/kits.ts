@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdminUser, requireVolunteerUser, assertGroupAccess } from "@/lib/clerk/action-auth";
+import { notifyGroupMembers } from "@/actions/notifications";
 import { kitItemSchema, kitAssignmentSchema, type KitItemInput, type KitAssignmentInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -40,6 +41,10 @@ export async function upsertKitAssignment(input: KitAssignmentInput) {
     .select()
     .single();
   if (error) { console.error("[upsertKitAssignment]", error); throw new Error("Failed to save kit assignment"); }
+
+  await notifyGroupMembers(data.group_id, "Kit assigned", "A teaching kit has been assigned to your group.")
+    .catch(err => console.error("[upsertKitAssignment notify]", err));
+
   revalidatePath("/admin/kits");
   return assignment;
 }

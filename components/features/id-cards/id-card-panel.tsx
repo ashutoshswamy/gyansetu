@@ -93,7 +93,7 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
     <div style={{ background: "white", border: `1px solid ${HAIRLINE}`, borderRadius: 12, padding: 24 }}>
       <div ref={cardRef} style={{ display: "flex", gap: 20, flexWrap: "wrap", background: "#F4F0E4", padding: 16 }}>
         {/* Front */}
-        <div style={faceStyle}>
+        <div style={{ ...faceStyle, display: "flex", flexDirection: "column" }}>
           <div style={{ background: INDIGO, padding: "8px 12px", display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ lineHeight: 1.15, minWidth: 0 }}>
               <p style={{ fontFamily: sans, fontSize: 7, fontWeight: 600, letterSpacing: "0.1em", color: INDIGO_TEXT, textTransform: "uppercase", margin: 0 }}>
@@ -120,7 +120,7 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: 11, padding: "10px 12px", position: "relative" }}>
+          <div style={{ display: "flex", gap: 11, padding: "10px 12px", flex: 1, minHeight: 0 }}>
             <div style={{ flexShrink: 0 }}>
               {photo ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -146,10 +146,8 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
 
           <div
             style={{
-              position: "absolute",
-              left: 12,
-              right: 12,
-              bottom: 8,
+              flexShrink: 0,
+              margin: "0 12px 8px",
               borderTop: `1px solid ${GOLD_LIGHT}`,
               paddingTop: 5,
               display: "flex",
@@ -175,6 +173,7 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
               "This is an official Gyan Setu Volunteer Identity Card issued by Jnana Prabodhini – EARC.",
               "Carry this card during all official Gyan Setu programmes, visits, workshops, and events.",
               "This card is personal, non-transferable, and valid only for the period shown on the front.",
+              "Project Head's signature is mandatory on the ID card.",
               "If found, please contact the Gyan Setu team using the details below.",
             ].map((line, i) => (
               <li key={i} style={{ display: "flex", gap: 6, marginBottom: 5 }}>

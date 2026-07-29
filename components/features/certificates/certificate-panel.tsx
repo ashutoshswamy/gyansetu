@@ -152,6 +152,21 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
               {field("Volunteer ID", data.volunteer_code)}
             </div>
 
+            <div style={{ display: "flex", justifyContent: "center", gap: 60, flexWrap: "wrap", margin: "0 0 22px" }}>
+              {[
+                { title: "Project Head", org: "Gyan Setu - EARC" },
+                { title: "Head of Department", org: "Educational Activity Research Centre - EARC" },
+              ].map((sig) => (
+                <div key={sig.title} style={{ width: 180 }}>
+                  <div style={{ height: 50 }} />
+                  <div style={{ borderTop: `1px solid ${INK}`, paddingTop: 6 }}>
+                    <p style={{ fontFamily: sans, fontSize: 12, fontWeight: 600, margin: 0, color: INK }}>{sig.title}</p>
+                    <p style={{ fontFamily: sans, fontSize: 10.5, color: MUTED, margin: "2px 0 0" }}>{sig.org}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <div style={{ borderTop: `1px solid ${HAIRLINE}`, paddingTop: 16 }}>
               <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 600, margin: 0, color: INK }}>Issued by: Project Head &ndash; Swapnil Indapurkar</p>
               <p style={{ fontFamily: sans, fontSize: 9.5, color: MUTED, fontStyle: "italic", margin: "2px 0 0" }}>

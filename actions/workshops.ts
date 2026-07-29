@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
+import { notifyGroupMembers } from "@/actions/notifications";
 import { workshopSchema, workshopAttendeeSchema, type WorkshopInput, type WorkshopAttendeeInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -19,6 +20,13 @@ export async function createWorkshop(input: WorkshopInput) {
       .from("workshop_groups")
       .insert(group_ids.map(group_id => ({ workshop_id: workshop.id, group_id })));
     if (groupsError) { console.error("[createWorkshop groups]", groupsError); throw new Error("Failed to assign groups"); }
+
+    await Promise.all(
+      group_ids.map(group_id =>
+        notifyGroupMembers(group_id, "Workshop scheduled", `Your group has been scheduled for "${workshop.title}".`)
+          .catch(err => console.error("[createWorkshop notify]", err))
+      )
+    );
   }
   revalidatePath("/admin/workshops");
   return workshop;

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Notification } from "@/types";
-import { markNotificationRead } from "@/actions/notifications";
+import { markNotificationRead, markAllNotificationsRead } from "@/actions/notifications";
 import { supabase } from "@/lib/supabase/client";
 
 export function useNotifications() {
@@ -34,6 +34,14 @@ export function useMarkRead() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: markNotificationRead,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+  });
+}
+
+export function useMarkAllRead() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: markAllNotificationsRead,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
   });
 }

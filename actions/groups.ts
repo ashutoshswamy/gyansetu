@@ -2,6 +2,7 @@
 
 import { requireAdminUser, getAuthenticatedUser, requireCoreMemberUser } from "@/lib/clerk/action-auth";
 import { applyRoleUpdate } from "@/actions/users";
+import { createNotification } from "@/actions/notifications";
 import { tourGroupSchema, type TourGroupInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -47,6 +48,14 @@ export async function addGroupMember(groupId: string, userId: string, roleInGrou
     .from("tour_group_members")
     .insert({ group_id: groupId, user_id: userId, role_in_group: roleInGroup });
   if (error) { console.error("[addGroupMember]", error); throw new Error("Failed to add group member"); }
+
+  const { data: group } = await db.from("tour_groups").select("name").eq("id", groupId).maybeSingle();
+  await createNotification({
+    user_id: userId,
+    title: "Added to a group",
+    message: group?.name ? `You've been added to the group "${group.name}".` : "You've been added to a group.",
+  }).catch(err => console.error("[addGroupMember notify]", err));
+
   revalidatePath("/admin/groups");
 }
 
@@ -136,6 +145,15 @@ export async function setGroupCoreMember(groupId: string, userId: string, grant:
   if (error) { console.error("[setGroupCoreMember]", error); throw new Error("Failed to update group role"); }
 
   await applyRoleUpdate(db, target.clerk_id, grant ? "group_core_member" : "volunteer");
+
+  if (grant) {
+    await createNotification({
+      user_id: userId,
+      title: "Made group core member",
+      message: "You've been made the core member for this group's visit.",
+    }).catch(err => console.error("[setGroupCoreMember notify]", err));
+  }
+
   revalidatePath(`/admin/groups/${groupId}`);
 }
 

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import type { UserRole } from "@/types";
 import { createClientClient } from "@/lib/supabase/client";
+import { NotificationBell } from "@/components/features/notifications/notification-bell";
 import {
   LayoutDashboard,
   Plane,
@@ -431,15 +432,18 @@ export function Sidebar({ role }: { role: SidebarRole }) {
         style={{ height: 56, background: "#FFFFFF", borderBottom: "1px solid #E4DFD1" }}
       >
         <NextImage src="/logo_wide.png" alt="Gyan Setu" width={100} height={30} style={{ height: 30, width: "auto", objectFit: "contain" }} />
-        <button
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
-          className="flex items-center justify-center rounded"
-          style={{ width: 36, height: 36, background: "none", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
-        >
-          {mobileOpen ? <X className="w-4 h-4" style={{ color: "#19140F" }} /> : <Menu className="w-4 h-4" style={{ color: "#19140F" }} />}
-        </button>
+        <div className="flex items-center gap-2">
+          {role === "volunteer" && <NotificationBell />}
+          <button
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            className="flex items-center justify-center rounded"
+            style={{ width: 36, height: 36, background: "none", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
+          >
+            {mobileOpen ? <X className="w-4 h-4" style={{ color: "#19140F" }} /> : <Menu className="w-4 h-4" style={{ color: "#19140F" }} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile backdrop */}
@@ -537,6 +541,8 @@ export function Sidebar({ role }: { role: SidebarRole }) {
               Account
             </p>
           </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+          {role === "volunteer" && <NotificationBell />}
           <button
             onClick={() => signOut({ redirectUrl: "/" })}
             aria-label="Log out"
@@ -546,6 +552,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
           >
             <LogOut className="w-3.5 h-3.5" style={{ color: "#9B9188" }} />
           </button>
+          </div>
         </div>
       </div>
       </aside>

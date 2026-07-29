@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdminUser, requireVolunteerUser, assertGroupAccess } from "@/lib/clerk/action-auth";
+import { notifyGroupMembers } from "@/actions/notifications";
 import { travelTicketSchema, locationUpdateSchema, type TravelTicketInput, type LocationUpdateInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
@@ -15,6 +16,10 @@ export async function createTravelTicket(input: TravelTicketInput) {
     .select()
     .single();
   if (error) { console.error("[createTravelTicket]", error); throw new Error("Failed to create travel ticket"); }
+
+  await notifyGroupMembers(data.group_id, "Travel ticket added", "A travel ticket has been added for your group.")
+    .catch(err => console.error("[createTravelTicket notify]", err));
+
   revalidatePath("/admin/travel");
   return ticket;
 }
