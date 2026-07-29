@@ -297,7 +297,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
               Where We&apos;ve Worked
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
-              {["Arunachal Pradesh", "Meghalaya", "Assam", "Manipur", "Nagaland", "Chhattisgarh", "Odisha", "Jharkhand", "Madhya Pradesh", "Ladakh", "Jammu & Kashmir"].map((state, i) => (
+              {["Arunachal Pradesh", "Assam", "Chhattisgarh", "Jammu & Kashmir", "Jharkhand", "Ladakh", "Madhya Pradesh", "Manipur", "Meghalaya", "Nagaland", "Odisha"].map((state, i) => (
                 <motion.span
                   key={state}
                   initial={{ opacity: 0, scale: 0.9 }}

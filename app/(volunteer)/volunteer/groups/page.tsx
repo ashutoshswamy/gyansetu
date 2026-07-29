@@ -3,7 +3,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { Users, MapPin, Star, Home, Package } from "lucide-react";
 import type { TourGroupMember, TourGroup } from "@/types";
 import { getLocalHostForMyGroup } from "@/actions/local-hosts";
-import { getKitAssignmentForMyGroup } from "@/actions/kits";
+import { getKitAssignmentForMyGroup, getKitChecklistForGroup } from "@/actions/kits";
+import { KitChecklist } from "@/components/features/kits/kit-checklist";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -20,9 +21,9 @@ type MembershipRow = TourGroupMember & {
 
 async function GroupCard({ m }: { m: MembershipRow }) {
   const g = m.tour_groups;
-  const [localHost, kitAssignment] = g?.id
-    ? await Promise.all([getLocalHostForMyGroup(g.id), getKitAssignmentForMyGroup(g.id)])
-    : [null, null];
+  const [localHost, kitAssignment, kitChecklist] = g?.id
+    ? await Promise.all([getLocalHostForMyGroup(g.id), getKitAssignmentForMyGroup(g.id), getKitChecklistForGroup(g.id)])
+    : [null, null, []];
 
   return (
     <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "20px 24px" }}>
@@ -93,6 +94,12 @@ async function GroupCard({ m }: { m: MembershipRow }) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {kitAssignment && kitChecklist.length > 0 && g?.id && (
+        <div style={{ marginTop: 12 }}>
+          <KitChecklist groupId={g.id} items={kitChecklist} />
         </div>
       )}
     </div>

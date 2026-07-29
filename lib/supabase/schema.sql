@@ -1058,6 +1058,13 @@ create table if not exists public.kit_items (
   notes                 text,
   created_at            timestamptz default now()
 );
+-- material_type drives how a group's Total Qty Required is calculated:
+-- reusable = quantity_per_school as-is (packed once, not multiplied); consumable =
+-- quantity_per_school × the group's school_count (see kit_assignments.school_count).
+alter table public.kit_items add column if not exists material_type text not null default 'consumable';
+alter table public.kit_items drop constraint if exists kit_items_material_type_check;
+alter table public.kit_items add constraint kit_items_material_type_check
+  check (material_type in ('reusable', 'consumable'));
 
 create table if not exists public.kit_assignments (
   id               uuid primary key default gen_random_uuid(),
@@ -1070,6 +1077,17 @@ create table if not exists public.kit_assignments (
   created_by       uuid references public.users(id) on delete set null,
   created_at       timestamptz default now(),
   updated_at       timestamptz default now()
+);
+
+-- Per-material packing checklist a volunteer works through for their group's kit —
+-- one row per (group, kit_item) once toggled; absence of a row means unchecked.
+create table if not exists public.kit_packing_checks (
+  id           uuid primary key default gen_random_uuid(),
+  group_id     uuid references public.tour_groups(id) on delete cascade,
+  kit_item_id  uuid references public.kit_items(id) on delete cascade,
+  checked      boolean not null default false,
+  checked_at   timestamptz,
+  unique (group_id, kit_item_id)
 );
 
 -- ID Card Generation
@@ -1224,6 +1242,7 @@ alter table public.demo_evaluations    enable row level security;
 alter table public.local_hosts         enable row level security;
 alter table public.kit_items           enable row level security;
 alter table public.kit_assignments     enable row level security;
+alter table public.kit_packing_checks  enable row level security;
 alter table public.id_cards            enable row level security;
 alter table public.travel_tickets      enable row level security;
 alter table public.location_updates    enable row level security;
@@ -1281,6 +1300,10 @@ create policy "admins_manage_kit_items" on public.kit_items for all using (
 create policy "kit_assignments_read_all" on public.kit_assignments for select using (true);
 create policy "admins_manage_kit_assignments" on public.kit_assignments for all using (
   exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('admin', 'super_admin'))
+);
+create policy "kit_packing_checks_read_all" on public.kit_packing_checks for select using (true);
+create policy "volunteers_manage_kit_packing_checks" on public.kit_packing_checks for all using (
+  exists (select 1 from public.users u where u.clerk_id = auth.uid()::text and u.role in ('volunteer', 'admin', 'super_admin'))
 );
 
 -- id_cards: volunteer reads own, admin manages

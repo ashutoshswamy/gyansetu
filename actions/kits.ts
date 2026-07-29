@@ -16,6 +16,15 @@ export async function createKitItem(input: KitItemInput) {
   return item;
 }
 
+export async function updateKitItem(id: string, input: Partial<KitItemInput>) {
+  const { db } = await requireAdminUser();
+  const data = kitItemSchema.partial().parse(input);
+  const { data: item, error } = await db.from("kit_items").update(data).eq("id", id).select().single();
+  if (error) { console.error("[updateKitItem]", error); throw new Error("Failed to update kit item"); }
+  revalidatePath("/admin/kits");
+  return item;
+}
+
 export async function deleteKitItem(id: string) {
   const { db } = await requireAdminUser();
   const { error } = await db.from("kit_items").delete().eq("id", id);
@@ -82,4 +91,44 @@ export async function getKitAssignmentForMyGroup(groupId: string) {
     .maybeSingle();
   if (error) { console.error("[getKitAssignmentForMyGroup]", error); throw new Error("Failed to fetch kit assignment"); }
   return data;
+}
+
+// Packing checklist for a group: every catalog material, each with the Total Qty
+// Required for that group's school_count (reusable = quantity_per_school as-is,
+// consumable = quantity_per_school × school_count) plus whether it's been checked off.
+export async function getKitChecklistForGroup(groupId: string) {
+  const { db, user } = await requireVolunteerUser();
+  await assertGroupAccess(db, user, groupId);
+
+  const [{ data: items, error: itemsError }, { data: assignment, error: assignmentError }, { data: checks, error: checksError }] = await Promise.all([
+    db.from("kit_items").select("*").order("category", { ascending: true }),
+    db.from("kit_assignments").select("school_count").eq("group_id", groupId).maybeSingle(),
+    db.from("kit_packing_checks").select("kit_item_id, checked").eq("group_id", groupId),
+  ]);
+  if (itemsError) { console.error("[getKitChecklistForGroup]", itemsError); throw new Error("Failed to fetch kit items"); }
+  if (assignmentError) { console.error("[getKitChecklistForGroup]", assignmentError); throw new Error("Failed to fetch kit assignment"); }
+  if (checksError) { console.error("[getKitChecklistForGroup]", checksError); throw new Error("Failed to fetch checklist"); }
+
+  const schoolCount = assignment?.school_count ?? 1;
+  const checkedByItem = new Map((checks ?? []).map(c => [c.kit_item_id, c.checked]));
+
+  return (items ?? []).map(item => ({
+    ...item,
+    total_qty: item.material_type === "reusable" ? item.quantity_per_school : item.quantity_per_school * schoolCount,
+    checked: checkedByItem.get(item.id) ?? false,
+  }));
+}
+
+export async function toggleKitChecklistItem(groupId: string, kitItemId: string, checked: boolean) {
+  const { db, user } = await requireVolunteerUser();
+  await assertGroupAccess(db, user, groupId);
+
+  const { error } = await db
+    .from("kit_packing_checks")
+    .upsert(
+      { group_id: groupId, kit_item_id: kitItemId, checked, checked_at: checked ? new Date().toISOString() : null },
+      { onConflict: "group_id,kit_item_id" }
+    );
+  if (error) { console.error("[toggleKitChecklistItem]", error); throw new Error("Failed to update checklist"); }
+  revalidatePath("/volunteer/groups");
 }

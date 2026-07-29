@@ -369,6 +369,7 @@ export const localHostSchema = z.object({
 export const kitItemSchema = z.object({
   name: z.string().min(2).max(200),
   category: z.string().max(100).optional(),
+  material_type: z.enum(["reusable", "consumable"]).default("consumable"),
   quantity_per_school: z.number().int().positive().default(1),
   notes: z.string().max(500).optional(),
 });
