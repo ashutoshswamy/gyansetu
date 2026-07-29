@@ -2,7 +2,11 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { RealtimeRefresher } from "@/components/features/realtime-refresher";
 import { getUserRole } from "@/lib/clerk/roles";
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { createServerClient } from "@/lib/supabase/server";
+import type { UserRole } from "@/types";
+
+const VOLUNTEER_ALLOWED: UserRole[] = ["volunteer", "admin", "super_admin"];
 
 export default async function VolunteerLayout({
   children,
@@ -12,8 +16,18 @@ export default async function VolunteerLayout({
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const role = await getUserRole();
-  if (role !== "volunteer" && role !== "admin" && role !== "super_admin") redirect("/dashboard");
+  let role = await getUserRole();
+
+  if (!role || !VOLUNTEER_ALLOWED.includes(role)) {
+    const db = createServerClient();
+    const { data: dbUser } = await db.from("users").select("role").eq("clerk_id", userId).maybeSingle();
+    const dbRole = dbUser?.role as UserRole | null;
+    if (!dbRole || !VOLUNTEER_ALLOWED.includes(dbRole)) redirect("/dashboard");
+
+    role = dbRole;
+    const clerk = await clerkClient();
+    await clerk.users.updateUserMetadata(userId, { publicMetadata: { role: dbRole } });
+  }
 
   return (
     <div className="flex min-h-screen" style={{ background: "#FAFAF7" }}>

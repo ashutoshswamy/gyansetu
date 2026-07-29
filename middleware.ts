@@ -64,9 +64,13 @@ export default clerkMiddleware(async (auth, req) => {
     }
   }
 
-  // Volunteer routes: only volunteer/admin/super_admin pass. Block null-role users.
+  // Volunteer routes: only volunteer/admin/super_admin pass. Null role bypasses here on
+  // purpose — (volunteer)/layout.tsx re-verifies against Supabase for users whose Clerk
+  // JWT hasn't synced yet (e.g. right after a role change forces session revocation).
   if (isVolunteerRoute(req) && role !== "volunteer" && role !== "admin" && role !== "super_admin") {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    if (role !== null && role !== undefined) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
   }
 
   // Enrollee routes: block admins.
