@@ -377,6 +377,28 @@ export async function demoteVolunteer(userId: string) {
   revalidatePath("/volunteer/tours");
 }
 
+// Deletes the attempt outright (not just a status change) so the DB's
+// unique(test_id, student_id) constraint frees up and the student can retake the test —
+// e.g. after a role churned through earc_staff and back, or admin wants a genuine redo.
+// If the attempt was approved, the resulting volunteer role/assignment is untouched here;
+// call demoteVolunteer first if that also needs unwinding.
+export async function voidTestAttempt(attemptId: string) {
+  const { db } = await requireAdminUser();
+
+  const { data: attempt, error: fetchError } = await db
+    .from("test_attempts")
+    .select("id, test_id")
+    .eq("id", attemptId)
+    .single();
+  if (fetchError || !attempt) throw new Error("Attempt not found");
+
+  const { error } = await db.from("test_attempts").delete().eq("id", attemptId);
+  if (error) { console.error("[voidTestAttempt]", error); throw new Error("Failed to void attempt"); }
+
+  revalidatePath("/admin/tests");
+  revalidatePath(`/admin/tests/${attempt.test_id}`);
+}
+
 export async function rejectTestResult(attemptId: string) {
   const { db } = await requireAdminUser();
 

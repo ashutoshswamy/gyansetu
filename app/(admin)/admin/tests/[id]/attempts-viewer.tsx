@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ExportButton } from "@/components/features/export-button";
 import { ApproveRejectButtons } from "../approve-button";
+import { VoidAttemptButton } from "../void-attempt-button";
 import { saveSubjectiveEvaluation, editTestResult } from "@/actions/tests";
 import { useRouter } from "next/navigation";
 import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
@@ -243,9 +244,12 @@ export function TestAttemptsViewer({
                     </p>
                   </div>
 
-                  {selectedAttempt.status === "pending_approval" && (
-                    <ApproveRejectButtons attemptId={selectedAttempt.id} />
-                  )}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {selectedAttempt.status === "pending_approval" && (
+                      <ApproveRejectButtons attemptId={selectedAttempt.id} />
+                    )}
+                    <VoidAttemptButton attemptId={selectedAttempt.id} />
+                  </div>
                 </div>
 
                 {/* Score Summary */}
