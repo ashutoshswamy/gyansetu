@@ -60,12 +60,16 @@ const faceStyle: React.CSSProperties = {
 function field(label: string, value?: string | null) {
   return (
     <div style={{ marginBottom: 3.5 }}>
-      <span style={{ fontFamily: sans, fontSize: 7.5, fontWeight: 600, color: MUTED, textTransform: "uppercase", letterSpacing: "0.07em" }}>
-        {label}{" "}
+      <span style={{ fontFamily: sans, fontSize: 7.5, fontWeight: 600, color: MUTED, textTransform: "uppercase", letterSpacing: "0.07em", display: "block" }}>
+        {label}
       </span>
-      <span style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 600, color: INK }}>{value || "—"}</span>
+      <span style={{ fontFamily: sans, fontSize: 10, fontWeight: 600, color: INK, whiteSpace: "nowrap" }}>{value || "—"}</span>
     </div>
   );
+}
+
+function shortDate(d: string) {
+  return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "2-digit" });
 }
 
 export function IdCardPanel({ data }: { data: IdCardPanelData }) {
@@ -101,23 +105,20 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
               </p>
               <p style={{ fontFamily: display, fontStyle: "italic", fontSize: 17, fontWeight: 700, color: PARCHMENT, margin: "1px 0 0" }}>Gyan Setu</p>
             </div>
-            <p
+            <div
               style={{
                 marginLeft: "auto",
-                fontFamily: sans,
-                fontSize: 6.5,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                color: INDIGO_TEXT,
-                textTransform: "uppercase",
-                textAlign: "right",
-                lineHeight: 1.3,
+                flexShrink: 0,
+                background: PARCHMENT,
+                borderRadius: 4,
+                padding: "3px 6px",
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              Volunteer
-              <br />
-              Identity Card
-            </p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo_wide.png" alt="Gyan Setu" style={{ height: 14, width: "auto", display: "block" }} />
+            </div>
           </div>
 
           <div style={{ display: "flex", gap: 11, padding: "10px 12px", flex: 1, minHeight: 0 }}>
@@ -139,8 +140,6 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
               {field("Role", data.role_in_group ? (ROLE_LABELS[data.role_in_group] ?? data.role_in_group) : undefined)}
               {field("State", data.state)}
               {field("Place", data.place)}
-              {field("Valid From", new Date(data.valid_from).toLocaleDateString("en-IN"))}
-              {field("Valid To", new Date(data.valid_to).toLocaleDateString("en-IN"))}
             </div>
           </div>
 
@@ -165,6 +164,10 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
 
         {/* Back */}
         <div style={{ ...faceStyle, padding: "12px 14px", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+            <span style={{ fontFamily: sans, fontSize: 7, fontWeight: 600, color: MUTED, textTransform: "uppercase", letterSpacing: "0.07em" }}>Validity</span>
+            <span style={{ fontFamily: sans, fontSize: 8.5, fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>{shortDate(data.valid_from)} – {shortDate(data.valid_to)}</span>
+          </div>
           <p style={{ fontFamily: sans, fontSize: 8.5, fontWeight: 700, color: INK, letterSpacing: "0.06em", textTransform: "uppercase", margin: "0 0 7px" }}>
             Terms of Use
           </p>
@@ -176,9 +179,9 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
               "Project Head's signature is mandatory on the ID card.",
               "If found, please contact the Gyan Setu team using the details below.",
             ].map((line, i) => (
-              <li key={i} style={{ display: "flex", gap: 6, marginBottom: 5 }}>
+              <li key={i} style={{ display: "flex", gap: 6, marginBottom: 4 }}>
                 <span style={{ width: 4, height: 4, marginTop: 4, background: GOLD, flexShrink: 0, transform: "rotate(45deg)" }} />
-                <span style={{ fontFamily: sans, fontSize: 8, color: "#4A4235", lineHeight: 1.5 }}>{line}</span>
+                <span style={{ fontFamily: sans, fontSize: 7.5, color: "#4A4235", lineHeight: 1.4 }}>{line}</span>
               </li>
             ))}
           </ul>

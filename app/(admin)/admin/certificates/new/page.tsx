@@ -16,9 +16,21 @@ export default function NewCertificatePage() {
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [volunteerId, setVolunteerId] = useState("");
   const [tourId, setTourId] = useState("");
-  const [idCard, setIdCard] = useState<{ card_number: string; state?: string | null; place?: string | null } | null>(null);
+  const [idCard, setIdCard] = useState<{ card_number: string; state?: string | null; place?: string | null; valid_from?: string; valid_to?: string } | null>(null);
   const [idCardChecked, setIdCardChecked] = useState(false);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
+  const [durationDays, setDurationDays] = useState("");
+
+  // Default the duration from the ID card's validity span (inclusive day count) — admin can
+  // still override for partial attendance, but the card is the source of truth for the visit.
+  useEffect(() => {
+    if (!idCard?.valid_from || !idCard?.valid_to) {
+      setDurationDays("");
+      return;
+    }
+    const days = Math.round((new Date(idCard.valid_to).getTime() - new Date(idCard.valid_from).getTime()) / 86400000) + 1;
+    setDurationDays(days > 0 ? String(days) : "");
+  }, [idCard]);
 
   useEffect(() => {
     Promise.all([
@@ -61,7 +73,6 @@ export default function NewCertificatePage() {
     setLoading(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
-    const durationDays = fd.get("duration_of_visit_days") as string;
     try {
       const cert = await issueCertificate({
         user_id: fd.get("user_id") as string,
@@ -131,7 +142,16 @@ export default function NewCertificatePage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit (days)</label>
-                <input name="duration_of_visit_days" type="number" min={1} step={1} placeholder="e.g. 5" style={inputStyle} />
+                <input
+                  name="duration_of_visit_days"
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={durationDays}
+                  onChange={e => setDurationDays(e.target.value)}
+                  placeholder="From ID card validity"
+                  style={inputStyle}
+                />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer ID</label>

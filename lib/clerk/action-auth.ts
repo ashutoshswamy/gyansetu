@@ -149,3 +149,24 @@ export async function assertGroupAccess(
     throw new Error("Unauthorized");
   }
 }
+
+// Gates the core-member per-volunteer detail view: the caller must actually be the
+// group_core_member OF THIS GROUP (not just any member of it, unlike assertGroupAccess),
+// and the target volunteer must themselves be a member of that same group — otherwise a
+// core member could pull up any volunteer in the system by guessing an id.
+export async function assertCoreMemberOverVolunteer(
+  db: ReturnType<typeof createServerClient>,
+  user: { id: string; role: string | null },
+  groupId: string,
+  volunteerId: string
+) {
+  if (user.role === "admin" || user.role === "super_admin") return;
+  if (user.role !== "group_core_member") throw new Error("Unauthorized");
+
+  const [{ data: mine }, { data: target }] = await Promise.all([
+    db.from("tour_group_members").select("id").eq("group_id", groupId).eq("user_id", user.id).eq("role_in_group", "group_core_member").maybeSingle(),
+    db.from("tour_group_members").select("id").eq("group_id", groupId).eq("user_id", volunteerId).maybeSingle(),
+  ]);
+
+  if (!mine || !target) throw new Error("Unauthorized");
+}

@@ -3,6 +3,7 @@ import { getSchoolProfiles, exportSchoolProfilesCsv } from "@/actions/earc";
 import { School } from "lucide-react";
 import { SchoolProfileForm } from "@/components/features/earc/school-profile-form";
 import { ExportCsvButton } from "@/components/features/earc/export-csv-button";
+import { SchoolBulkUploadButton } from "@/components/features/earc/school-bulk-upload-button";
 
 interface StrengthRow {
   standard: string;
@@ -56,6 +57,15 @@ export default async function SchoolProfilePage() {
 
         <div className="mb-8">
           <SchoolProfileForm />
+        </div>
+
+        <div className="mb-8" style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 16 }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", margin: "0 0 8px" }}>Bulk Upload</p>
+          <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 10px" }}>
+            Have data for many schools? Download the template, fill it in the same format as the form above, then upload it here.
+            The <code>student_strength</code> column takes JSON, e.g. <code>{`[{"standard":"5th","boys":10,"girls":8}]`}</code>.
+          </p>
+          <SchoolBulkUploadButton />
         </div>
 
         <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 12px" }}>Submitted Profiles</h2>

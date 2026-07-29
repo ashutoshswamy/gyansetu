@@ -116,6 +116,33 @@ export async function exportStudentProfilesCsv() {
   return toCsv(rows, columns);
 }
 
+export async function bulkCreateSchoolProfiles(inputs: EarcSchoolProfileInput[]) {
+  const { db, user } = await requireEarcUser();
+
+  const results = { created: 0, failed: [] as { row: number; error: string }[] };
+  const validRows: (EarcSchoolProfileInput & { created_by: string; total_students: number; total_input_hours: number })[] = [];
+
+  inputs.forEach((input, i) => {
+    const parsed = earcSchoolProfileSchema.safeParse(input);
+    if (!parsed.success) {
+      results.failed.push({ row: i + 2, error: parsed.error.issues.map(e => e.message).join("; ") });
+      return;
+    }
+    const total_students = parsed.data.student_strength.reduce((sum, row) => sum + row.boys + row.girls, 0);
+    const total_input_hours = durationHours(parsed.data.duration_per_session) * parsed.data.num_sessions_conducted;
+    validRows.push({ ...parsed.data, created_by: user.id, total_students, total_input_hours });
+  });
+
+  if (validRows.length > 0) {
+    const { error, data } = await db.from("earc_school_profiles").insert(validRows).select("id");
+    if (error) { console.error("[bulkCreateSchoolProfiles]", error); throw new Error("Failed to save uploaded school profiles"); }
+    results.created = data?.length ?? validRows.length;
+  }
+
+  revalidatePath("/earc/school-profile");
+  return results;
+}
+
 export async function bulkCreateStudentProfiles(inputs: EarcStudentProfileInput[]) {
   const { db, user } = await requireEarcUser();
 

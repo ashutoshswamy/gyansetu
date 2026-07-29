@@ -6,7 +6,7 @@ import { createIdCard } from "@/actions/id-cards";
 import { getGroupsByTour } from "@/actions/groups";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
-type Group = { id: string; name: string; tour_group_members?: { users?: { id: string } | null }[] };
+type Group = { id: string; name: string; state_allocated?: string | null; tour_group_members?: { users?: { id: string } | null }[] };
 
 export default function NewIdCardPage() {
   const router = useRouter();
@@ -19,6 +19,10 @@ export default function NewIdCardPage() {
   const [tourId, setTourId] = useState("");
   const [groups, setGroups] = useState<Group[]>([]);
   const [groupId, setGroupId] = useState("");
+  // State/Place aren't admin-typed — they come from the group's allocated state and the
+  // tour's destination, same as the certificate form already pulls its fields from the ID card.
+  const place = tours.find(t => t.id === tourId)?.destination ?? "";
+  const state = groups.find(g => g.id === groupId)?.state_allocated ?? "";
 
   useEffect(() => {
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
@@ -71,8 +75,8 @@ export default function NewIdCardPage() {
         group_id: (fd.get("group_id") as string) || undefined,
         valid_from: fd.get("valid_from") as string,
         valid_to: fd.get("valid_to") as string,
-        state: (fd.get("state") as string) || undefined,
-        place: (fd.get("place") as string) || undefined,
+        state: state || undefined,
+        place: place || undefined,
       });
       router.push("/admin/id-cards");
     } catch (err: unknown) {
@@ -128,13 +132,16 @@ export default function NewIdCardPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
-                <input name="state" placeholder="e.g. Maharashtra" style={inputStyle} />
+                <input name="state" value={state} readOnly placeholder="From group's allocated state" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
-                <input name="place" placeholder="e.g. Nashik" style={inputStyle} />
+                <input name="place" value={place} readOnly placeholder="From tour's destination" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
               </div>
             </div>
+            {tourId && !groupId && (
+              <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>No group selected — State stays blank until one is assigned (group carries the allocated state).</p>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>

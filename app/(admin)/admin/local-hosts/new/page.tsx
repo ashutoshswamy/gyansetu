@@ -11,17 +11,26 @@ export default function NewLocalHostPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [groups, setGroups] = useState<{ id: string; name: string; tours?: { title: string }[] | null }[]>([]);
-  const [state, setState] = useState("");
+  const [groups, setGroups] = useState<{ id: string; name: string; state_allocated?: string | null; tours?: { title: string }[] | null }[]>([]);
+  const [groupId, setGroupId] = useState("");
+  const [manualState, setManualState] = useState("");
   const [district, setDistrict] = useState("");
 
   useEffect(() => {
     createClientClient()
       .from("tour_groups")
-      .select("id, name, tours(title)")
+      .select("id, name, state_allocated, tours(title)")
       .order("created_at", { ascending: false })
       .then(({ data }) => setGroups(data ?? []));
   }, []);
+
+  // Location follows the linked group (which carries its allocated state) — only fall back
+  // to a manual pick when no group is linked, or that group has no state set yet.
+  const selectedGroup = groups.find(g => g.id === groupId);
+  const groupState = selectedGroup?.state_allocated ?? "";
+  const state = groupState || manualState;
+
+  useEffect(() => { setDistrict(""); }, [state]);
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
@@ -81,13 +90,25 @@ export default function NewLocalHostPage() {
                 <input name="email" type="email" style={inputStyle} placeholder="host@example.com" />
               </div>
             </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Linked Group (optional)</label>
+              <select name="group_id" value={groupId} onChange={e => setGroupId(e.target.value)} style={inputStyle}>
+                <option value="">None</option>
+                {groups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.[0]?.title ? ` — ${g.tours[0].title}` : ""}</option>)}
+              </select>
+              <p style={{ fontSize: 11, color: "#9B9188", margin: "6px 0 0" }}>State follows the group's allocated state below. Link a group to fill it in automatically.</p>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
-                <select value={state} onChange={e => { setState(e.target.value); setDistrict(""); }} style={inputStyle}>
-                  <option value="">Select State/Union Territory</option>
-                  {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                {groupState ? (
+                  <input value={groupState} readOnly placeholder="From linked group" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
+                ) : (
+                  <select value={manualState} onChange={e => setManualState(e.target.value)} style={inputStyle}>
+                    <option value="">Select State/Union Territory</option>
+                    {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                )}
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>District</label>
@@ -97,13 +118,6 @@ export default function NewLocalHostPage() {
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Address</label>
               <textarea name="address" rows={2} placeholder="Enter address" style={{ ...inputStyle, resize: "vertical" }} />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Linked Group (optional)</label>
-              <select name="group_id" style={inputStyle}>
-                <option value="">None</option>
-                {groups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.[0]?.title ? ` — ${g.tours[0].title}` : ""}</option>)}
-              </select>
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>

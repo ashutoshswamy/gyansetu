@@ -93,7 +93,7 @@ export async function getLatestIdCardForVolunteer(volunteerId: string, tourId?: 
   const { db } = await requireAdminUser();
   let query = db
     .from("id_cards")
-    .select("card_number, state, place")
+    .select("card_number, state, place, valid_from, valid_to")
     .eq("volunteer_id", volunteerId);
   if (tourId) query = query.eq("tour_id", tourId);
   const { data, error } = await query.order("issued_at", { ascending: false }).limit(1).maybeSingle();

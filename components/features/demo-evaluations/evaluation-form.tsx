@@ -23,7 +23,7 @@ export const SCORE_FIELDS = [
 type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
 
 // score 0-10, 10 whole stars, one star = one point
-function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+export function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
     <div className="flex items-center gap-1 flex-wrap">
       {Array.from({ length: 10 }, (_, i) => i + 1).map(star => (

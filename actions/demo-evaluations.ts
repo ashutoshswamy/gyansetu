@@ -2,11 +2,8 @@
 
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
 import { demoEvaluationSchema, type DemoEvaluationInput } from "@/lib/validations";
+import { totalOf } from "@/lib/demo-evaluation-utils";
 import { revalidatePath } from "next/cache";
-
-function totalOf(scores: DemoEvaluationInput["scores"]) {
-  return Object.values(scores).reduce((sum, v) => sum + v, 0);
-}
 
 export async function createDemoEvaluation(input: DemoEvaluationInput) {
   const { db, user } = await requireAdminUser();

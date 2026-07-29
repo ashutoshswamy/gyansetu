@@ -1,6 +1,7 @@
 import { requireCoreMemberUser } from "@/lib/clerk/action-auth";
 import { getMyCoreMemberAssignments } from "@/actions/groups";
 import { Users, MapPin, Calendar, UsersRound } from "lucide-react";
+import Link from "next/link";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -132,11 +133,21 @@ function CurrentGroupCard({ assignment }: { assignment: Assignment }) {
                   <span style={{ fontSize: 13, fontWeight: 500, color: "#19140F" }}>{m.users?.name}</span>
                   <span style={{ fontSize: 12, color: "#9B9188", marginLeft: 8 }}>{m.users?.email}</span>
                 </div>
-                {m.role_in_group && (
-                  <span style={{ fontSize: 11, fontWeight: 600, color: "#4A55BE", padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>
-                    {ROLE_LABELS[m.role_in_group] ?? m.role_in_group}
-                  </span>
-                )}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {m.role_in_group && (
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "#4A55BE", padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>
+                      {ROLE_LABELS[m.role_in_group] ?? m.role_in_group}
+                    </span>
+                  )}
+                  {m.users?.id && (
+                    <Link
+                      href={`/core-member/volunteer/${m.users.id}?group=${assignment.group_id}`}
+                      style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", padding: "3px 8px", border: "1.5px solid #E4DFD1", borderRadius: 4, textDecoration: "none" }}
+                    >
+                      View
+                    </Link>
+                  )}
+                </div>
               </div>
             ))}
           </div>
