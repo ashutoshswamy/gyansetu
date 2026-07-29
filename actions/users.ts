@@ -7,9 +7,9 @@ import { createServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import type { UserRole } from "@/types";
 
-const ASSIGNABLE_ROLES: UserRole[] = ["admin", "volunteer", "enrollee", "earc_staff"];
+const ASSIGNABLE_ROLES: UserRole[] = ["admin", "volunteer", "enrollee", "earc_staff", "group_core_member"];
 
-async function applyRoleUpdate(db: ReturnType<typeof createServerClient>, clerkId: string, role: UserRole) {
+export async function applyRoleUpdate(db: ReturnType<typeof createServerClient>, clerkId: string, role: UserRole) {
   const { data: prev, error: fetchError } = await db
     .from("users")
     .select("role")

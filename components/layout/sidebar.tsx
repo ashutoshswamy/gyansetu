@@ -148,6 +148,10 @@ const earcPanelGroup: NavGroup = {
   items: earcNavItems,
 };
 
+const coreMemberNavItems: NavItem[] = [
+  { label: "Dashboard", href: "/core-member/dashboard", Icon: LayoutDashboard, description: "Your current visit and group, the volunteers in it, and your past group assignments." },
+];
+
 const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
   enrollee: [
     { label: "Home",       href: "/enrollee",         Icon: LayoutDashboard, description: "Your enrollee dashboard — application status and next steps at a glance." },
@@ -208,6 +212,12 @@ const roleConfig: Record<
     bgColor: "rgba(184,56,30,0.08)",
     textColor: "#B8381E",
   },
+  group_core_member: {
+    label: "Core Member",
+    dotColor: "#0E7C86",
+    bgColor: "rgba(14,124,134,0.08)",
+    textColor: "#0E7C86",
+  },
   super_admin: {
     label: "Super Admin",
     dotColor: "#8A2BE2",
@@ -221,6 +231,7 @@ const iconAccentColor: Record<SidebarRole, string> = {
   enrollee: "#1E5A8A",
   volunteer: "#2A5E3A",
   earc_staff: "#B8381E",
+  group_core_member: "#0E7C86",
   super_admin: "#8A2BE2",
 };
 
@@ -317,6 +328,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
   const accentColor = iconAccentColor[role];
   const isAdmin = role === "admin" || role === "super_admin";
   const isEarc = role === "earc_staff";
+  const isCoreMember = role === "group_core_member";
   const groups = role === "super_admin" ? [...adminGroups, earcPanelGroup, superAdminGroup] : [...adminGroups, earcPanelGroup];
 
   const { user } = useUser();
@@ -335,6 +347,8 @@ export function Sidebar({ role }: { role: SidebarRole }) {
 
   const flatItems = isEarc
     ? earcNavItems
+    : isCoreMember
+    ? coreMemberNavItems
     : (flatNavItems[role as "enrollee" | "volunteer"] ?? []);
 
   const helpGroups: NavGroup[] = isAdmin ? groups : [{ label: config.label, items: flatItems }];

@@ -83,7 +83,7 @@ export default function EditGroupPage() {
               <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Team Rajasthan" style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State Allocated</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory Allocated</label>
               <input value={form.state_allocated} onChange={e => setForm(f => ({ ...f, state_allocated: e.target.value }))} placeholder="e.g. Rajasthan" style={inputStyle} />
             </div>
             <div>

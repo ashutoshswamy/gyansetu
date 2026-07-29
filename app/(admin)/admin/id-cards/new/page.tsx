@@ -127,7 +127,7 @@ export default function NewIdCardPage() {
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>Card number is generated automatically from the tour, group, and issue sequence.</p>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
                 <input name="state" placeholder="e.g. Maharashtra" style={inputStyle} />
               </div>
               <div>

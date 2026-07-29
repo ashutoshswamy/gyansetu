@@ -34,6 +34,7 @@ const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 const isVolunteerRoute = createRouteMatcher(["/volunteer(.*)"]);
 const isEnrolleeRoute = createRouteMatcher(["/enrollee(.*)"]);
 const isEarcRoute = createRouteMatcher(["/earc(.*)"]);
+const isCoreMemberRoute = createRouteMatcher(["/core-member(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (!isWebhookRoute(req)) {
@@ -75,6 +76,11 @@ export default clerkMiddleware(async (auth, req) => {
 
   // EARC routes: only earc_staff/admin/super_admin pass.
   if (isEarcRoute(req) && role !== "earc_staff" && role !== "admin" && role !== "super_admin") {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+
+  // Core member routes: only group_core_member/admin/super_admin pass.
+  if (isCoreMemberRoute(req) && role !== "group_core_member" && role !== "admin" && role !== "super_admin") {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 });

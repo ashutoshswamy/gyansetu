@@ -83,9 +83,9 @@ export default function NewLocalHostPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
                 <select value={state} onChange={e => { setState(e.target.value); setDistrict(""); }} style={inputStyle}>
-                  <option value="">Select state</option>
+                  <option value="">Select State/Union Territory</option>
                   {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>

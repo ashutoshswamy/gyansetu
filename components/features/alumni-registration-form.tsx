@@ -299,7 +299,7 @@ export function AlumniRegistrationForm() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="City"><input name="work_city" placeholder="Enter city" value={form.work_city} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="State"><input name="work_state" placeholder="Enter state" value={form.work_state} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="State/Union Territory"><input name="work_state" placeholder="Enter state" value={form.work_state} onChange={handleChange} style={inputStyle} /></F>
                 </div>
               </div>
 
@@ -316,7 +316,7 @@ export function AlumniRegistrationForm() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="City" required><input name="edu_city" required placeholder="Enter city" value={form.edu_city} onChange={handleChange} style={inputStyle} /></F>
-                  <F label="State" required><input name="edu_state" required placeholder="Enter state" value={form.edu_state} onChange={handleChange} style={inputStyle} /></F>
+                  <F label="State/Union Territory" required><input name="edu_state" required placeholder="Enter state" value={form.edu_state} onChange={handleChange} style={inputStyle} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="Course Name" required hint="e.g. B.Tech, B.Com, MBA"><input name="course_name" required placeholder="Enter course name" value={form.course_name} onChange={handleChange} style={inputStyle} /></F>

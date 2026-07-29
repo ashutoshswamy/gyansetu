@@ -66,7 +66,7 @@ export default function NewGroupPage() {
               <input name="name" required placeholder="e.g. Team Rajasthan" style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State Allocated</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory Allocated</label>
               <input name="state_allocated" placeholder="e.g. Rajasthan" style={inputStyle} />
             </div>
             <div>

@@ -9,6 +9,7 @@ export default async function DashboardRedirect() {
   if (role === "admin" || role === "super_admin") redirect("/admin");
   if (role === "volunteer") redirect("/volunteer");
   if (role === "earc_staff") redirect("/earc");
+  if (role === "group_core_member") redirect("/core-member");
 
   // null role → enrollee area
   redirect("/enrollee");

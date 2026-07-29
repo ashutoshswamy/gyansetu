@@ -116,6 +116,17 @@ export async function requireEarcUser() {
   return { db, user, userId };
 }
 
+export async function requireCoreMemberUser() {
+  const { db, user, userId } = await resolveUserWithRole();
+
+  const allowed: string[] = ["group_core_member", "admin", "super_admin"];
+  if (!user.role || !allowed.includes(user.role)) {
+    throw new Error("Unauthorized");
+  }
+
+  return { db, user, userId };
+}
+
 export async function getAuthenticatedUser() {
   return resolveUserWithRole();
 }

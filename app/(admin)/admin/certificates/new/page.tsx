@@ -121,7 +121,7 @@ export default function NewCertificatePage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
                 <input name="state" value={idCard?.state ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
               </div>
               <div>

@@ -273,7 +273,7 @@ export default function SchoolReportsPage() {
               <input value={talukaTehsil} onChange={e => setTalukaTehsil(e.target.value)} placeholder="Taluka / Tehsil" style={inputStyle} />
               <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} style={inputStyle} />
               <select value={state} onChange={e => { setState(e.target.value); setDistrict(""); }} style={inputStyle}>
-                <option value="">Select state...</option>
+                <option value="">Select State/Union Territory...</option>
                 {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
               <input value={pincode} onChange={e => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))} type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="PIN Code (6 digits)" style={inputStyle} />

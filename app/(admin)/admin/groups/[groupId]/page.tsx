@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { addGroupMember, removeGroupMember } from "@/actions/groups";
-import { Users, MapPin, Trash2, ArrowLeft } from "lucide-react";
+import { addGroupMember, removeGroupMember, setGroupCoreMember } from "@/actions/groups";
+import { Users, MapPin, Trash2, ArrowLeft, ShieldCheck } from "lucide-react";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
   group_leader: "Group Leader",
   project_member: "Project Member",
+  group_core_member: "Core Member",
 };
 
 interface GroupMember {
@@ -76,6 +77,20 @@ export default function GroupDetailPage() {
       setGroup(d);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to remove member");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleToggleCoreMember(userId: string, roleInGroup?: string) {
+    setSaving(true);
+    setError(null);
+    try {
+      await setGroupCoreMember(groupId, userId, roleInGroup !== "group_core_member");
+      const d = await fetch(`/api/groups/${groupId}`).then(r => r.json());
+      setGroup(d);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to update core member");
     } finally {
       setSaving(false);
     }
@@ -170,12 +185,23 @@ export default function GroupDetailPage() {
                     <span style={{ fontSize: 12, color: "#9B9188", marginLeft: 8 }}>{m.users?.email}</span>
                     {m.role_in_group && <span style={{ fontSize: 12, color: "#4A55BE", marginLeft: 8, padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</span>}
                   </div>
-                  <button
-                    onClick={() => handleRemoveMember(m.user_id)}
-                    style={{ background: "none", border: "none", cursor: "pointer", color: "#DC2626", padding: 4 }}
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleToggleCoreMember(m.user_id, m.role_in_group)}
+                      disabled={saving}
+                      className="flex items-center gap-1.5"
+                      style={{ background: "none", border: "none", cursor: saving ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 600, color: m.role_in_group === "group_core_member" ? "#B8381E" : "#2A5E3A" }}
+                    >
+                      <ShieldCheck size={13} />
+                      {m.role_in_group === "group_core_member" ? "Remove Core Member" : "Make Core Member"}
+                    </button>
+                    <button
+                      onClick={() => handleRemoveMember(m.user_id)}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: "#DC2626", padding: 4 }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

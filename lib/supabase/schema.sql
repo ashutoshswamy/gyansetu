@@ -1,8 +1,10 @@
 -- Gyan Setu — complete Supabase schema
 -- Run fresh in Supabase SQL editor (idempotent: uses IF NOT EXISTS / OR REPLACE)
 --
--- Roles: enrollee | volunteer | admin | earc_staff | super_admin
+-- Roles: enrollee | volunteer | admin | earc_staff | group_core_member | super_admin
 -- enrollee: default role on signup (assigned via Clerk publicMetadata, same as any other role).
+-- group_core_member: a volunteer promoted to lead a specific tour group's visit; granted from the
+-- group's member list (see tour_group_members.role_in_group), not a standalone staff roster.
 -- super_admin: all admin access + can reassign any user's role.
 
 -- ============================================================
@@ -31,7 +33,7 @@ create table if not exists public.users (
   clerk_id    text unique not null,
   email       text unique not null,
   name        text not null,
-  role        text default 'enrollee' check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'super_admin')),
+  role        text default 'enrollee' check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'group_core_member', 'super_admin')),
   avatar_url  text,
   created_at  timestamptz default now(),
   updated_at  timestamptz default now()

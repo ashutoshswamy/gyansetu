@@ -166,9 +166,9 @@ export default function CareersPage() {
 
             <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
-                <label htmlFor="state" style={labelStyle}>State</label>
+                <label htmlFor="state" style={labelStyle}>State/Union Territory</label>
                 <select id="state" name="state" value={form.state} onChange={handleChange} style={{ ...inputStyle, appearance: "none" }}>
-                  <option value="">Select state</option>
+                  <option value="">Select State/Union Territory</option>
                   {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>

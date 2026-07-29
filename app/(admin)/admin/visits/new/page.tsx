@@ -166,7 +166,7 @@ export default function NewVisitPage() {
                 />
               </div>
               <div style={fieldStyle}>
-                <label style={labelStyle}>State</label>
+                <label style={labelStyle}>State/Union Territory</label>
                 <input
                   style={inputStyle}
                   type="text"
