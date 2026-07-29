@@ -30,7 +30,11 @@ export default function NewLocalHostPage() {
   const groupState = selectedGroup?.state_allocated ?? "";
   const state = groupState || manualState;
 
-  useEffect(() => { setDistrict(""); }, [state]);
+  const [lastState, setLastState] = useState(state);
+  if (state !== lastState) {
+    setLastState(state);
+    setDistrict("");
+  }
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
@@ -96,7 +100,7 @@ export default function NewLocalHostPage() {
                 <option value="">None</option>
                 {groups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.[0]?.title ? ` — ${g.tours[0].title}` : ""}</option>)}
               </select>
-              <p style={{ fontSize: 11, color: "#9B9188", margin: "6px 0 0" }}>State follows the group's allocated state below. Link a group to fill it in automatically.</p>
+              <p style={{ fontSize: 11, color: "#9B9188", margin: "6px 0 0" }}>State follows the group&apos;s allocated state below. Link a group to fill it in automatically.</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

@@ -20,17 +20,19 @@ export default function NewCertificatePage() {
   const [idCardChecked, setIdCardChecked] = useState(false);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
   const [durationDays, setDurationDays] = useState("");
+  const [lastIdCard, setLastIdCard] = useState(idCard);
 
   // Default the duration from the ID card's validity span (inclusive day count) — admin can
   // still override for partial attendance, but the card is the source of truth for the visit.
-  useEffect(() => {
+  if (idCard !== lastIdCard) {
+    setLastIdCard(idCard);
     if (!idCard?.valid_from || !idCard?.valid_to) {
       setDurationDays("");
-      return;
+    } else {
+      const days = Math.round((new Date(idCard.valid_to).getTime() - new Date(idCard.valid_from).getTime()) / 86400000) + 1;
+      setDurationDays(days > 0 ? String(days) : "");
     }
-    const days = Math.round((new Date(idCard.valid_to).getTime() - new Date(idCard.valid_from).getTime()) / 86400000) + 1;
-    setDurationDays(days > 0 ? String(days) : "");
-  }, [idCard]);
+  }
 
   useEffect(() => {
     Promise.all([
@@ -42,14 +44,17 @@ export default function NewCertificatePage() {
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
   }, []);
 
-  useEffect(() => {
-    if (!volunteerId) {
-      setIdCard(null);
-      setIdCardChecked(false);
-      return;
-    }
-    let cancelled = false;
+  const fetchKey = `${volunteerId}:${tourId}`;
+  const [lastFetchKey, setLastFetchKey] = useState(fetchKey);
+  if (fetchKey !== lastFetchKey) {
+    setLastFetchKey(fetchKey);
+    setIdCard(null);
     setIdCardChecked(false);
+  }
+
+  useEffect(() => {
+    if (!volunteerId) return;
+    let cancelled = false;
     getLatestIdCardForVolunteer(volunteerId, tourId || undefined).then(card => {
       if (cancelled) return;
       setIdCard(card ?? null);

@@ -11,6 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useAuth } from "@clerk/nextjs";
 import { SiteNavbar } from "./site-navbar";
 
 const HeroCarousel = dynamic(() => import("./hero-carousel").then((m) => m.HeroCarousel), {
@@ -31,7 +32,6 @@ interface Testimonial {
 }
 
 interface LandingPageProps {
-  isLoggedIn: boolean;
   testimonials?: Testimonial[];
 }
 
@@ -57,7 +57,8 @@ function AnimatedStat({ value, label, delay = 0 }: { value: string; label: strin
 }
 
 /* ── Main component ── */
-export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps) {
+export function LandingPage({ testimonials = [] }: LandingPageProps) {
+  const { isSignedIn: isLoggedIn } = useAuth();
   const whatRef = useRef<HTMLDivElement>(null);
   const howRef  = useRef<HTMLDivElement>(null);
   const whatInView = useInView(whatRef, { once: true, margin: "-80px" });
@@ -70,7 +71,7 @@ export function LandingPage({ isLoggedIn, testimonials = [] }: LandingPageProps)
   return (
     <main style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
 
-      <SiteNavbar isLoggedIn={isLoggedIn} />
+      <SiteNavbar />
 
       {/* ── HERO ── */}
       <section style={{ minHeight: "calc(100vh - 64px)", marginTop: 64, display: "flex", alignItems: "center", position: "relative", overflow: "hidden", background: "var(--lp-bg)" }}>

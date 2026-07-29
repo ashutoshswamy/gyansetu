@@ -26,6 +26,8 @@ const makeupColors: Record<string, { color: string; bg: string; label: string }>
 };
 
 export default async function VolunteerWorkshopsPage() {
+  // eslint-disable-next-line react-hooks/purity -- server component, re-executes fresh per request; not a re-render concern
+  const now = Date.now();
   const [workshops, myAttendance] = await Promise.all([
     getUpcomingWorkshops(),
     getMyWorkshopAttendance(),
@@ -69,7 +71,7 @@ export default async function VolunteerWorkshopsPage() {
             const sc = statusColors[status] ?? statusColors.pending;
             const awaitingResponse = status === "pending";
             const workshopDateTime = new Date(w.workshop_time ? `${w.workshop_date}T${w.workshop_time}` : `${w.workshop_date}T23:59:59`);
-            const isPast = workshopDateTime.getTime() < Date.now();
+            const isPast = workshopDateTime.getTime() < now;
             return (
               <div key={w.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px" }}>
                 <div className="flex items-start gap-4">

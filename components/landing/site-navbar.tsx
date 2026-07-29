@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Show } from "@clerk/nextjs";
 import { ChevronRight, Menu, X } from "lucide-react";
 
 const navLinks = [
@@ -14,7 +15,7 @@ const navLinks = [
   { label: "Blog",         href: "/blog"           },
 ];
 
-export function SiteNavbar({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function SiteNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -67,18 +68,21 @@ export function SiteNavbar({ isLoggedIn }: { isLoggedIn: boolean }) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.55 }}
         >
-          {isLoggedIn ? (
+          <Show
+            when="signed-in"
+            fallback={
+              <>
+                <Link href="/sign-in" className="btn-ghost">Sign In</Link>
+                <Link href="/sign-up" className="btn-primary">
+                  Get Started <ChevronRight size={15} />
+                </Link>
+              </>
+            }
+          >
             <Link href="/dashboard" className="btn-primary">
               Go to Home <ChevronRight size={15} />
             </Link>
-          ) : (
-            <>
-              <Link href="/sign-in" className="btn-ghost">Sign In</Link>
-              <Link href="/sign-up" className="btn-primary">
-                Get Started <ChevronRight size={15} />
-              </Link>
-            </>
-          )}
+          </Show>
         </motion.div>
 
         <button
@@ -107,18 +111,21 @@ export function SiteNavbar({ isLoggedIn }: { isLoggedIn: boolean }) {
               </a>
             ))}
             <div style={{ display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
-              {isLoggedIn ? (
+              <Show
+                when="signed-in"
+                fallback={
+                  <>
+                    <Link href="/sign-in" className="btn-ghost" onClick={() => setMobileOpen(false)}>Sign In</Link>
+                    <Link href="/sign-up" className="btn-primary" onClick={() => setMobileOpen(false)}>
+                      Get Started <ChevronRight size={15} />
+                    </Link>
+                  </>
+                }
+              >
                 <Link href="/dashboard" className="btn-primary" onClick={() => setMobileOpen(false)}>
                   Go to Home <ChevronRight size={15} />
                 </Link>
-              ) : (
-                <>
-                  <Link href="/sign-in" className="btn-ghost" onClick={() => setMobileOpen(false)}>Sign In</Link>
-                  <Link href="/sign-up" className="btn-primary" onClick={() => setMobileOpen(false)}>
-                    Get Started <ChevronRight size={15} />
-                  </Link>
-                </>
-              )}
+              </Show>
             </div>
           </div>
         </motion.div>

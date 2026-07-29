@@ -45,6 +45,8 @@ function formatDate(dateStr: string | null) {
   });
 }
 
+export const revalidate = 60;
+
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const db = createServerClient();

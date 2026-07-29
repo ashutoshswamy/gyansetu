@@ -25,6 +25,8 @@ function formatDate(dateStr: string | null) {
   });
 }
 
+export const revalidate = 60;
+
 export default async function NewsletterPage() {
   const db = createServerClient();
   const { data: newsletters } = await db

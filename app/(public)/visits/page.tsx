@@ -168,6 +168,8 @@ function Section({ title, visits }: { title: string; visits: Visit[] }) {
   );
 }
 
+export const revalidate = 60;
+
 export default async function VisitsPage() {
   const db = createServerClient();
   const { data: visits } = await db
