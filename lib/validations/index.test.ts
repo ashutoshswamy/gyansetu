@@ -6,7 +6,6 @@ import {
   testAttemptSchema,
   certificateSchema,
   visitSchema,
-  careerInquirySchema,
 } from "./index";
 
 describe("tourSchema", () => {
@@ -152,19 +151,5 @@ describe("visitSchema", () => {
 
   it("rejects a non-empty, non-URL timetable_url", () => {
     expect(() => visitSchema.parse({ ...valid, timetable_url: "not a url" })).toThrow();
-  });
-});
-
-describe("careerInquirySchema", () => {
-  it("rejects an invalid email", () => {
-    expect(() =>
-      careerInquirySchema.parse({ name: "A Student", email: "not-an-email", age: 20 })
-    ).toThrow();
-  });
-
-  it("rejects an age outside 1-120", () => {
-    expect(() =>
-      careerInquirySchema.parse({ name: "A Student", email: "a@example.com", age: 0 })
-    ).toThrow();
   });
 });

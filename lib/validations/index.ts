@@ -219,18 +219,6 @@ export const sponsorInquirySchema = z.object({
   message: z.string().max(2000).optional(),
 });
 
-export const careerInquirySchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  phone: phoneSchema.optional(),
-  age: z.number().int().min(1).max(120),
-  standard: z.string().max(100).optional(),
-  state: z.string().max(100).optional(),
-  city: z.string().max(100).optional(),
-  area_of_interest: z.string().max(200).optional(),
-  message: z.string().max(2000).optional(),
-});
-
 const alumniVisitSchema = z.object({
   year: z.string().max(10).optional(),
   month: z.string().max(20).optional(),

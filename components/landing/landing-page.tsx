@@ -607,66 +607,6 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ── OPPORTUNITIES FOR SCHOOL STUDENTS ── */}
-      <section id="school-students" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 72, alignItems: "center" }} className="career-grid">
-            <motion.div
-              initial={{ opacity: 0, x: -32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
-            >
-              <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
-                Opportunities for School Students
-              </span>
-              <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
-                Explore Beyond<br />
-                <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>the Classroom</span>
-              </h2>
-              <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
-                Take part in thoughtfully designed activities that encourage scientific thinking, creativity, problem-solving, and curiosity. Complete each activity through a short assessment and continue your journey with Gyan Setu.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 36 }}>
-                {["Scientific Thinking", "Creativity & Innovation", "Problem Solving", "Curiosity-Driven Learning"].map((role) => (
-                  <div key={role} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(42,94,58,.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#2A5E3A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
-                    <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, color: "var(--lp-ts)" }}>{role}</span>
-                  </div>
-                ))}
-              </div>
-              <Link
-                href={isLoggedIn ? "/dashboard" : "/sign-up"}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-green)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
-              >
-                Apply Now <ChevronRight size={15} />
-              </Link>
-            </motion.div>
-
-            <motion.div
-              style={{ display: "flex", flexDirection: "column", gap: 16 }}
-              initial={{ opacity: 0, x: 32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 0.68, 0, 1.2] }}
-            >
-              {[
-                { num: "91,348", label: "Students Connected" },
-                { num: "1,688",  label: "Schools Reached" },
-                { num: "1,050",  label: "Volunteers Engaged" },
-              ].map((stat, i) => (
-                <div key={i} style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "22px 24px", display: "flex", gap: 20, alignItems: "center" }}>
-                  <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 36, fontWeight: 700, color: "var(--lp-navy)", lineHeight: 1, flexShrink: 0 }}>{stat.num}</div>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 600, color: "var(--lp-text)" }}>{stat.label}</div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* ── COLLABORATE WITH GYAN-SETU ── */}
       <section id="institutions" style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
         <div className="career-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 72, alignItems: "center" }}>
@@ -869,7 +809,6 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                 { label: "Register as Alumni", href: "/alumni" },
                 { label: "Share Your Story", href: "/testimonial" },
                 { label: "Be a Sponsor", href: "/sponsor" },
-                { label: "Careers", href: "/careers" },
                 { label: isLoggedIn ? "Home" : "Sign In", href: isLoggedIn ? "/dashboard" : "/sign-in" },
               ].map(({ label, href }) => (
                 <a key={label} href={href} style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}

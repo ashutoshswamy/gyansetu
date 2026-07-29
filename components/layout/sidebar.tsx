@@ -30,7 +30,6 @@ import {
   Rss,
   MessageSquare,
   Handshake,
-  Briefcase,
   GraduationCap,
   Wallet,
   IdCard,
@@ -124,7 +123,6 @@ const adminGroups: NavGroup[] = [
     items: [
       { label: "Testimonials", href: "/admin/testimonials", Icon: MessageSquare, description: "Manage volunteer/alumni testimonials shown on the website." },
       { label: "Sponsors",     href: "/admin/sponsors",     Icon: Handshake, description: "Review sponsorship inquiries submitted through the public site." },
-      { label: "Careers",      href: "/admin/careers",      Icon: Briefcase, description: "Review job/career applications submitted through the public site." },
       { label: "Alumni",       href: "/admin/alumni",       Icon: GraduationCap, description: "Directory of alumni registrations and their tour history." },
       { label: "Institutions", href: "/admin/institutions", Icon: Landmark, description: "Review partnership inquiries from schools and institutions." },
     ],
