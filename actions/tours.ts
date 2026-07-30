@@ -167,6 +167,16 @@ export async function applyForTour(tourId: string) {
 
   if (!isEnrolleeRole(user.role)) throw new Error("Only unenrolled users can apply for tours");
 
+  const { data: existingApplication } = await db
+    .from("tour_applications")
+    .select("id")
+    .eq("student_id", user.id)
+    .maybeSingle();
+
+  if (existingApplication) {
+    throw new Error("You have already applied for a tour. Only one tour application is allowed.");
+  }
+
   const { data: profile } = await db
     .from("volunteer_profiles")
     .select("date_of_birth")

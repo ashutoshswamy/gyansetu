@@ -849,6 +849,30 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             </p>
           </div>
         </div>
+
+        {/* Giant wordmark sign-off */}
+        <div style={{ padding: "32px 24px 80px", overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", lineHeight: 0.82 }}>
+            <span
+              style={{
+                fontFamily: F_DISPLAY, fontWeight: 900, letterSpacing: "-0.02em",
+                fontSize: "clamp(52px, 13vw, 200px)",
+                color: "transparent", WebkitTextStroke: "1.5px rgba(251,247,236,.22)",
+              }}
+            >
+              gyan
+            </span>
+            <span
+              style={{
+                fontFamily: F_DISPLAY, fontWeight: 900, letterSpacing: "-0.02em",
+                fontSize: "clamp(52px, 13vw, 200px)",
+                color: "var(--gs-paper)",
+              }}
+            >
+              setu
+            </span>
+          </div>
+        </div>
       </footer>
 
     </main>

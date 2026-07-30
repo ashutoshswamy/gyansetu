@@ -18,6 +18,7 @@ export default async function StudentToursPage() {
     .eq("student_id", user?.id ?? "");
 
   const appliedSet = new Set((myApplications ?? []).map((a) => a.tour_id));
+  const hasAnyApplication = (myApplications ?? []).length > 0;
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
@@ -51,6 +52,10 @@ export default async function StudentToursPage() {
               {appliedSet.has(tour.id) ? (
                 <button disabled style={{ width: "100%", background: "transparent", color: "#9B9188", fontSize: 13, fontWeight: 500, padding: "8px 0", borderRadius: 5, border: "1px solid #E4DFD1", cursor: "default" }}>
                   Applied
+                </button>
+              ) : hasAnyApplication ? (
+                <button disabled style={{ width: "100%", background: "transparent", color: "#9B9188", fontSize: 13, fontWeight: 500, padding: "8px 0", borderRadius: 5, border: "1px solid #E4DFD1", cursor: "default" }}>
+                  Already applied elsewhere
                 </button>
               ) : (
                 <Link href={`/enrollee/tours/${tour.id}`} style={{ display: "block" }}>

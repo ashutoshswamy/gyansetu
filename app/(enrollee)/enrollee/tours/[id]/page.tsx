@@ -23,10 +23,13 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
 
   if (error || !tour) notFound();
 
-  const [{ data: application }, { data: profile }] = await Promise.all([
-    db.from("tour_applications").select("id, status").eq("tour_id", id).eq("student_id", user?.id ?? "").single(),
+  const [{ data: applications }, { data: profile }] = await Promise.all([
+    db.from("tour_applications").select("id, tour_id, status").eq("student_id", user?.id ?? ""),
     db.from("volunteer_profiles").select("date_of_birth").eq("user_id", user?.id ?? "").maybeSingle(),
   ]);
+
+  const application = applications?.find((a) => a.tour_id === id) ?? null;
+  const appliedElsewhere = (applications ?? []).some((a) => a.tour_id !== id);
 
   let eligibilityTest: { id: string; status: string } | null = null;
   let hasAttempt = false;
@@ -103,6 +106,12 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
                 </p>
               )
             )}
+          </div>
+        ) : appliedElsewhere ? (
+          <div style={{ background: "#F3F0E8", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px" }}>
+            <p style={{ fontSize: 14, color: "#9B9188", margin: 0 }}>
+              You&apos;ve already applied for another tour. Only one tour application is allowed per enrollee.
+            </p>
           </div>
         ) : ageBlock ? (
           <div style={{ background: "rgba(184,56,30,0.06)", border: "1px solid rgba(184,56,30,0.2)", borderRadius: 10, padding: "16px 20px" }}>
