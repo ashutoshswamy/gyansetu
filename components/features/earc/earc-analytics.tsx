@@ -1,39 +1,30 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { STANDARDS } from "@/lib/constants/earc";
+import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
+import {
+  CHART_SPECTRUM, tooltipStyle, legendStyle, gridProps, axisTick, axisTickMono,
+  fmt, count, sortBy, SectionEyebrow, ChartCard, SingleBar, DonutCard, LedgerStat, Ledger, bandSelectStyle,
+} from "@/components/features/analytics/chart-kit";
 
-const BLUE = "#2a78d6";
-const ORANGE = "#eb6834";
-const GRID = "#E4DFD1";
-const TICK = "#9B9188";
-
-const INK = "#19140F";
-const INK_SOFT = "#5A5247";
-const MUTED = "#9B9188";
-const LINE = "#E4DFD1";
-const PAPER = "#FAFAF7";
-const BRAND = "#2A5E3A";
-const BRAND_DEEP = "#122E1B";
-const GOLD = "#C29A4C";
-
-const serif = "var(--font-cormorant), Georgia, serif";
-const sans = "var(--font-poppins), sans-serif";
-const mono = "var(--font-geist-mono), monospace";
+const MODULE_ORDER = ["Teacher Training", "Facilitator"];
 
 interface StrengthRow { standard: string; boys: number; girls: number }
 interface SchoolProfileRow {
   id: string;
   academic_year: string;
   project: string;
+  state: string;
   district: string;
+  taluka_block: string;
   school_type: string;
   location_type: string;
   medium_of_instruction: string;
+  module: string;
+  mode: string;
   student_strength: StrengthRow[];
   num_teachers_involved: number;
   num_sessions_conducted: number;
@@ -46,111 +37,6 @@ interface StudentProfileRow {
   blood_group?: string | null;
 }
 
-function count(rows: string[]): { name: string; value: number }[] {
-  const m = new Map<string, number>();
-  for (const r of rows) m.set(r, (m.get(r) ?? 0) + 1);
-  return [...m.entries()].map(([name, value]) => ({ name, value }));
-}
-
-function sortBy<T>(rows: T[], order: readonly string[], key: (r: T) => string): T[] {
-  return [...rows].sort((a, b) => {
-    const ia = order.indexOf(key(a)); const ib = order.indexOf(key(b));
-    if (ia === -1 && ib === -1) return key(a).localeCompare(key(b));
-    if (ia === -1) return 1;
-    if (ib === -1) return -1;
-    return ia - ib;
-  });
-}
-
-function fmt(n: number): string {
-  return n.toLocaleString("en-IN");
-}
-
-const tooltipStyle = { background: "white", border: `1px solid ${LINE}`, borderRadius: 8, fontSize: 12, color: INK, fontFamily: sans };
-
-function SectionEyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-2 mb-3">
-      <span style={{ width: 18, height: 2, background: GOLD, display: "inline-block" }} />
-      <span style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: INK_SOFT }}>
-        {children}
-      </span>
-    </div>
-  );
-}
-
-function ChartCard({
-  title, data, children, tableColumns,
-}: {
-  title: string;
-  data: Record<string, string | number>[];
-  children: React.ReactNode;
-  tableColumns: { key: string; label: string }[];
-}) {
-  return (
-    <div style={{ background: "white", border: `1px solid ${LINE}`, borderRadius: 12, padding: "16px 16px 8px" }}>
-      <p style={{ fontFamily: sans, fontSize: 13, fontWeight: 600, color: INK, margin: "0 0 12px" }}>{title}</p>
-      {data.length === 0 ? (
-        <p style={{ fontFamily: sans, fontSize: 12, color: MUTED, padding: "24px 0", textAlign: "center" }}>No data yet.</p>
-      ) : (
-        <div style={{ width: "100%", height: 220 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            {children as React.ReactElement}
-          </ResponsiveContainer>
-        </div>
-      )}
-      {data.length > 0 && (
-        <details style={{ margin: "8px 0 4px" }}>
-          <summary style={{ fontFamily: sans, fontSize: 11, color: MUTED, cursor: "pointer" }}>View as table</summary>
-          <table style={{ width: "100%", fontFamily: mono, fontSize: 12, marginTop: 8, borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ borderBottom: `1px solid ${LINE}` }}>
-                {tableColumns.map(c => <th key={c.key} className="text-left p-1" style={{ color: INK_SOFT, fontWeight: 500 }}>{c.label}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #F3F0E8" }}>
-                  {tableColumns.map(c => <td key={c.key} className="p-1" style={{ color: INK }}>{row[c.key]}</td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </details>
-      )}
-    </div>
-  );
-}
-
-function SingleBar({ title, data }: { title: string; data: { name: string; value: number }[] }) {
-  return (
-    <ChartCard title={title} data={data} tableColumns={[{ key: "name", label: "Category" }, { key: "value", label: "Count" }]}>
-      <BarChart data={data} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="20%">
-        <CartesianGrid vertical={false} stroke={GRID} />
-        <XAxis dataKey="name" tick={{ fill: TICK, fontSize: 11, fontFamily: sans }} axisLine={{ stroke: GRID }} tickLine={false} interval={0} angle={data.length > 6 ? -30 : 0} textAnchor={data.length > 6 ? "end" : "middle"} height={data.length > 6 ? 50 : 24} />
-        <YAxis tick={{ fill: TICK, fontSize: 11, fontFamily: mono }} axisLine={false} tickLine={false} allowDecimals={false} />
-        <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "#F3F0E8" }} />
-        <Bar dataKey="value" fill={BLUE} radius={[4, 4, 0, 0]} maxBarSize={24} />
-      </BarChart>
-    </ChartCard>
-  );
-}
-
-function LedgerStat({ label, value, first }: { label: string; value: string; first?: boolean }) {
-  return (
-    <div className="flex-1 min-w-[120px]" style={{ padding: "14px 20px", borderLeft: first ? "none" : `1px solid ${LINE}` }}>
-      <p style={{ fontFamily: sans, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: MUTED, margin: "0 0 6px" }}>{label}</p>
-      <p style={{ fontFamily: sans, fontSize: 24, fontWeight: 700, color: INK, margin: 0 }}>{value}</p>
-    </div>
-  );
-}
-
-const bandSelectStyle: React.CSSProperties = {
-  fontFamily: sans, fontSize: 12.5, padding: "7px 12px", borderRadius: 6,
-  background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.24)",
-  color: "#F4F1E8", outline: "none",
-};
-
 export function EarcAnalytics({
   schoolProfiles, studentProfiles,
 }: {
@@ -159,7 +45,10 @@ export function EarcAnalytics({
 }) {
   const [academicYear, setAcademicYear] = useState("");
   const [project, setProject] = useState("");
+  const [moduleFilter, setModuleFilter] = useState("");
+  const [state, setState] = useState("");
   const [district, setDistrict] = useState("");
+  const [block, setBlock] = useState("");
   const [presenting, setPresenting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -189,13 +78,33 @@ export function EarcAnalytics({
 
   const years = useMemo(() => [...new Set(schoolProfiles.map(s => s.academic_year))].sort(), [schoolProfiles]);
   const projects = useMemo(() => [...new Set(schoolProfiles.map(s => s.project))].sort(), [schoolProfiles]);
-  const districts = useMemo(() => [...new Set(schoolProfiles.map(s => s.district))].sort(), [schoolProfiles]);
+  const modules = useMemo(() => [...new Set(schoolProfiles.map(s => s.module))].sort(), [schoolProfiles]);
 
-  const filtered = useMemo(() => schoolProfiles.filter(s =>
+  // Geography cascades — each level's options are scoped by the facets and
+  // geo-levels above it, so District only ever lists districts that actually
+  // exist within the selected State (and so on down to Block).
+  const upperMatch = useMemo(() => (s: SchoolProfileRow) =>
     (!academicYear || s.academic_year === academicYear) &&
     (!project || s.project === project) &&
-    (!district || s.district === district)
-  ), [schoolProfiles, academicYear, project, district]);
+    (!moduleFilter || s.module === moduleFilter),
+  [academicYear, project, moduleFilter]);
+
+  const states = useMemo(() => [...new Set(schoolProfiles.filter(upperMatch).map(s => s.state))].sort(),
+    [schoolProfiles, upperMatch]);
+  const districts = useMemo(() => [...new Set(schoolProfiles.filter(s => upperMatch(s) && (!state || s.state === state)).map(s => s.district))].sort(),
+    [schoolProfiles, upperMatch, state]);
+  const blocks = useMemo(() => [...new Set(schoolProfiles.filter(s => upperMatch(s) && (!state || s.state === state) && (!district || s.district === district)).map(s => s.taluka_block))].sort(),
+    [schoolProfiles, upperMatch, state, district]);
+
+  function onStateChange(v: string) { setState(v); setDistrict(""); setBlock(""); }
+  function onDistrictChange(v: string) { setDistrict(v); setBlock(""); }
+
+  const filtered = useMemo(() => schoolProfiles.filter(s =>
+    upperMatch(s) &&
+    (!state || s.state === state) &&
+    (!district || s.district === district) &&
+    (!block || s.taluka_block === block)
+  ), [schoolProfiles, upperMatch, state, district, block]);
 
   const totalStudents = filtered.reduce((sum, s) => sum + s.student_strength.reduce((a, r) => a + r.boys + r.girls, 0), 0);
   const totalSessions = filtered.reduce((sum, s) => sum + s.num_sessions_conducted, 0);
@@ -204,6 +113,9 @@ export function EarcAnalytics({
 
   const allTimeStudents = schoolProfiles.reduce((sum, s) => sum + s.student_strength.reduce((a, r) => a + r.boys + r.girls, 0), 0);
   const allTimeSchools = schoolProfiles.length;
+  const allTimeStates = useMemo(() => new Set(schoolProfiles.map(s => s.state)).size, [schoolProfiles]);
+  const allTimeDistricts = useMemo(() => new Set(schoolProfiles.map(s => s.district)).size, [schoolProfiles]);
+  const allTimeBlocks = useMemo(() => new Set(schoolProfiles.map(s => s.taluka_block)).size, [schoolProfiles]);
 
   const studentsByStandard = useMemo(() => {
     const m = new Map<string, { boys: number; girls: number }>();
@@ -217,10 +129,33 @@ export function EarcAnalytics({
     return sortBy(rows, STANDARDS, r => r.name);
   }, [filtered]);
 
+  // Flagship breakdown: students reached per module, split by standard —
+  // stacked (not grouped) to keep reading as "total per module" at a glance.
+  const studentsByModule = useMemo(() => {
+    const perModule = new Map<string, Map<string, number>>();
+    for (const s of filtered) {
+      const inner = perModule.get(s.module) ?? new Map<string, number>();
+      for (const row of s.student_strength) inner.set(row.standard, (inner.get(row.standard) ?? 0) + row.boys + row.girls);
+      perModule.set(s.module, inner);
+    }
+    const standardsPresent = sortBy([...new Set(filtered.flatMap(s => s.student_strength.map(r => r.standard)))], STANDARDS, x => x);
+    const rows = sortBy(
+      [...perModule.entries()].map(([name, inner]) => {
+        const row: Record<string, string | number> = { name };
+        for (const std of standardsPresent) row[std] = inner.get(std) ?? 0;
+        return row;
+      }),
+      MODULE_ORDER, r => r.name as string
+    );
+    return { rows, standards: standardsPresent };
+  }, [filtered]);
+
+  const schoolsByState = useMemo(() => count(filtered.map(s => s.state)), [filtered]);
   const schoolsByProject = useMemo(() => count(filtered.map(s => s.project)), [filtered]);
   const schoolsByType = useMemo(() => count(filtered.map(s => s.school_type)), [filtered]);
   const schoolsByLocation = useMemo(() => count(filtered.map(s => s.location_type)), [filtered]);
   const schoolsByMedium = useMemo(() => count(filtered.map(s => s.medium_of_instruction)), [filtered]);
+  const schoolsByMode = useMemo(() => count(filtered.map(s => s.mode)), [filtered]);
 
   const sessionsByYear = useMemo(() => {
     const m = new Map<string, number>();
@@ -239,65 +174,91 @@ export function EarcAnalytics({
   return (
     <div
       ref={containerRef}
-      style={presenting ? { position: "fixed", inset: 0, zIndex: 100, background: PAPER, overflowY: "auto", padding: "28px 32px 48px" } : undefined}
+      className={fontVars}
+      style={{
+        ...pageVars, fontFamily: F_BODY,
+        ...(presenting ? { position: "fixed", inset: 0, zIndex: 100, background: "var(--gs-paper-deep)", overflowY: "auto", padding: "28px 32px 48px" } : {}),
+      }}
     >
       <div className="flex justify-end mb-3">
         <button
           type="button"
           onClick={presenting ? exitPresent : enterPresent}
           className="flex items-center gap-1.5"
-          style={{ fontFamily: sans, fontSize: 12, fontWeight: 600, color: INK_SOFT, background: "white", border: `1px solid ${LINE}`, padding: "7px 14px", borderRadius: 6, cursor: "pointer" }}
+          style={{ fontFamily: F_BODY, fontSize: 12, fontWeight: 600, color: "var(--gs-text-soft)", background: "var(--gs-paper)", border: "1px solid var(--gs-line)", padding: "7px 14px", borderRadius: 4, cursor: "pointer" }}
         >
           {presenting ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
           {presenting ? "Exit presentation" : "Present"}
         </button>
       </div>
 
-      {/* Cover band — signature moment */}
-      <div style={{ background: BRAND_DEEP, borderRadius: 14, padding: "32px 36px", marginBottom: 28, position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse at top right, ${BRAND} 0%, transparent 55%)`, opacity: 0.35, pointerEvents: "none" }} aria-hidden="true" />
+      {/* Cover band — signature moment, shared visual language with the site's hero */}
+      <div style={{ background: "var(--gs-ink)", borderRadius: 8, padding: "32px 36px", marginBottom: 20, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(var(--gs-line-ink) 1px,transparent 1px),linear-gradient(90deg,var(--gs-line-ink) 1px,transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none" }} aria-hidden="true" />
+        <div style={{ position: "absolute", width: 420, height: 420, borderRadius: "50%", background: "radial-gradient(circle,rgba(232,163,61,.14) 0%,transparent 65%)", top: "-20%", right: "-8%", pointerEvents: "none" }} aria-hidden="true" />
         <div style={{ position: "relative" }}>
           <div className="flex items-center justify-between flex-wrap gap-2 mb-5">
-            <span style={{ fontFamily: serif, fontStyle: "italic", fontSize: 15, letterSpacing: "0.06em", color: GOLD }}>
+            <span style={{ fontFamily: F_DISPLAY, fontStyle: "italic", fontSize: 15, letterSpacing: "0.02em", color: "var(--gs-marigold)" }}>
               EARC &middot; Impact Report
             </span>
-            <span style={{ fontFamily: mono, fontSize: 11, color: "rgba(244,241,232,0.55)" }}>as of {generatedAt}</span>
+            <span style={{ fontFamily: F_MONO, fontSize: 11, color: "rgba(251,247,236,.5)" }}>as of {generatedAt}</span>
           </div>
-          <div style={{ height: 1, background: `linear-gradient(90deg, ${GOLD}, transparent 70%)`, opacity: 0.5, marginBottom: 20 }} />
+          <div style={{ height: 1, background: "linear-gradient(90deg, var(--gs-marigold), transparent 70%)", opacity: 0.6, marginBottom: 20 }} />
 
-          <p style={{ fontFamily: sans, fontWeight: 800, fontSize: "clamp(40px, 6vw, 68px)", lineHeight: 1, color: "#FFFFFF", margin: "0 0 10px" }}>
+          <p style={{ fontFamily: F_DISPLAY, fontWeight: 600, fontSize: "clamp(40px, 6vw, 68px)", lineHeight: 1, color: "var(--gs-paper)", margin: "0 0 10px" }}>
             {fmt(allTimeStudents)}
           </p>
-          <p style={{ fontFamily: sans, fontSize: 15, color: "rgba(244,241,232,0.75)", margin: "0 0 24px", maxWidth: 480 }}>
-            students reached across <strong style={{ color: "#F4F1E8" }}>{fmt(allTimeSchools)} schools</strong>, cumulative across all programme years.
+          <p style={{ fontFamily: F_BODY, fontSize: 15, color: "rgba(251,247,236,.75)", margin: "0 0 24px", maxWidth: 480 }}>
+            students reached across <strong style={{ color: "var(--gs-paper)" }}>{fmt(allTimeSchools)} schools</strong>, cumulative across all programme years.
           </p>
 
           <div className="flex flex-wrap gap-2 items-center">
             <select value={academicYear} onChange={e => setAcademicYear(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: INK }}>All academic years</option>
-              {years.map(y => <option key={y} value={y} style={{ color: INK }}>{y}</option>)}
+              <option value="" style={{ color: "var(--gs-text)" }}>All academic years</option>
+              {years.map(y => <option key={y} value={y} style={{ color: "var(--gs-text)" }}>{y}</option>)}
             </select>
             <select value={project} onChange={e => setProject(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: INK }}>All projects</option>
-              {projects.map(p => <option key={p} value={p} style={{ color: INK }}>{p}</option>)}
+              <option value="" style={{ color: "var(--gs-text)" }}>All projects</option>
+              {projects.map(p => <option key={p} value={p} style={{ color: "var(--gs-text)" }}>{p}</option>)}
             </select>
-            <select value={district} onChange={e => setDistrict(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: INK }}>All districts</option>
-              {districts.map(d => <option key={d} value={d} style={{ color: INK }}>{d}</option>)}
+            <select value={moduleFilter} onChange={e => setModuleFilter(e.target.value)} style={bandSelectStyle}>
+              <option value="" style={{ color: "var(--gs-text)" }}>All modules</option>
+              {modules.map(m => <option key={m} value={m} style={{ color: "var(--gs-text)" }}>{m}</option>)}
+            </select>
+            <select value={state} onChange={e => onStateChange(e.target.value)} style={bandSelectStyle}>
+              <option value="" style={{ color: "var(--gs-text)" }}>All states</option>
+              {states.map(s => <option key={s} value={s} style={{ color: "var(--gs-text)" }}>{s}</option>)}
+            </select>
+            <select value={district} onChange={e => onDistrictChange(e.target.value)} style={bandSelectStyle}>
+              <option value="" style={{ color: "var(--gs-text)" }}>All districts</option>
+              {districts.map(d => <option key={d} value={d} style={{ color: "var(--gs-text)" }}>{d}</option>)}
+            </select>
+            <select value={block} onChange={e => setBlock(e.target.value)} style={bandSelectStyle}>
+              <option value="" style={{ color: "var(--gs-text)" }}>All blocks</option>
+              {blocks.map(b => <option key={b} value={b} style={{ color: "var(--gs-text)" }}>{b}</option>)}
             </select>
           </div>
         </div>
       </div>
 
+      <SectionEyebrow>Programme coverage &middot; all years, all projects</SectionEyebrow>
+      <Ledger>
+        <LedgerStat label="States" value={fmt(allTimeStates)} first />
+        <LedgerStat label="Districts" value={fmt(allTimeDistricts)} />
+        <LedgerStat label="Blocks" value={fmt(allTimeBlocks)} />
+        <LedgerStat label="Schools" value={fmt(allTimeSchools)} />
+      </Ledger>
+
+      <div className="mt-6" />
       <SectionEyebrow>Filtered summary</SectionEyebrow>
-      <div className="flex flex-wrap mb-3" style={{ background: "white", border: `1px solid ${LINE}`, borderRadius: 12 }}>
+      <Ledger>
         <LedgerStat label="Schools" value={fmt(filtered.length)} first />
         <LedgerStat label="Students" value={fmt(totalStudents)} />
         <LedgerStat label="Sessions" value={fmt(totalSessions)} />
         <LedgerStat label="Input hours" value={fmt(totalHours)} />
         <LedgerStat label="Teachers" value={fmt(totalTeachers)} />
-      </div>
-      <p style={{ fontFamily: sans, fontSize: 11, color: MUTED, margin: "0 0 24px" }}>
+      </Ledger>
+      <p style={{ fontFamily: F_BODY, fontSize: 11, color: "var(--gs-text-mute)", margin: "8px 0 24px" }}>
         Filters scope school-reported figures above and the charts below. Individual student records carry no school link, so gender and blood-group figures reflect all records.
       </p>
 
@@ -305,26 +266,48 @@ export function EarcAnalytics({
         <SectionEyebrow>Programme reach</SectionEyebrow>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <ChartCard
+            title="Students by module (by standard)"
+            data={studentsByModule.rows}
+            tableColumns={[{ key: "name", label: "Module" }, ...studentsByModule.standards.map(s => ({ key: s, label: s }))]}
+          >
+            <BarChart data={studentsByModule.rows} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="30%">
+              <CartesianGrid vertical={false} {...gridProps} />
+              <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} />
+              <YAxis tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)" }} />
+              <Legend wrapperStyle={legendStyle} />
+              {studentsByModule.standards.map((std, i) => (
+                <Bar
+                  key={std} dataKey={std} stackId="m" name={std} fill={CHART_SPECTRUM[i % CHART_SPECTRUM.length]} maxBarSize={72}
+                  radius={i === studentsByModule.standards.length - 1 ? [3, 3, 0, 0] : undefined}
+                />
+              ))}
+            </BarChart>
+          </ChartCard>
+
+          <ChartCard
             title="Student strength by standard (boys vs girls)"
             data={studentsByStandard}
             tableColumns={[{ key: "name", label: "Standard" }, { key: "boys", label: "Boys" }, { key: "girls", label: "Girls" }]}
           >
             <BarChart data={studentsByStandard} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="20%">
-              <CartesianGrid vertical={false} stroke={GRID} />
-              <XAxis dataKey="name" tick={{ fill: TICK, fontSize: 11, fontFamily: sans }} axisLine={{ stroke: GRID }} tickLine={false} />
-              <YAxis tick={{ fill: TICK, fontSize: 11, fontFamily: mono }} axisLine={false} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "#F3F0E8" }} />
-              <Legend wrapperStyle={{ fontSize: 12, color: INK_SOFT, fontFamily: sans }} />
+              <CartesianGrid vertical={false} {...gridProps} />
+              <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} />
+              <YAxis tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)" }} />
+              <Legend wrapperStyle={legendStyle} />
               {/* ponytail: recharts stacked bars render segments flush; skipping the 2px inter-segment gap spec, low visual cost at this scale */}
-              <Bar dataKey="boys" stackId="s" name="Boys" fill={BLUE} maxBarSize={24} />
-              <Bar dataKey="girls" stackId="s" name="Girls" fill={ORANGE} radius={[4, 4, 0, 0]} maxBarSize={24} />
+              <Bar dataKey="boys" stackId="s" name="Boys" fill="var(--gs-marigold)" maxBarSize={24} />
+              <Bar dataKey="girls" stackId="s" name="Girls" fill="var(--gs-rust)" radius={[3, 3, 0, 0]} maxBarSize={24} />
             </BarChart>
           </ChartCard>
 
+          <DonutCard title="Schools by state" data={schoolsByState} />
           <SingleBar title="Schools by project" data={schoolsByProject} />
           <SingleBar title="Schools by type" data={schoolsByType} />
-          <SingleBar title="Schools by location type" data={schoolsByLocation} />
-          <SingleBar title="Schools by medium of instruction" data={schoolsByMedium} />
+          <DonutCard title="Schools by location type" data={schoolsByLocation} />
+          <DonutCard title="Schools by medium of instruction" data={schoolsByMedium} />
+          <DonutCard title="Schools by mode" data={schoolsByMode} />
         </div>
       </div>
 

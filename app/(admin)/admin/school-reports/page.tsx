@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { getAllSchoolReports } from "@/actions/school-reports";
-import { School } from "lucide-react";
+import { School, LayoutDashboard } from "lucide-react";
 import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
 
 interface GroupMemberRow {
@@ -83,10 +84,20 @@ export default async function AdminSchoolReportsPage() {
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>School Reports</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{totalReports} school visit reports</p>
+        <div className="flex items-start justify-between gap-4 flex-wrap mb-8">
+          <div>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>School Reports</h1>
+            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{totalReports} school visit reports</p>
+          </div>
+          <Link
+            href="/admin/school-reports/dashboard"
+            className="flex items-center gap-1.5"
+            style={{ fontSize: 13, fontWeight: 600, color: "white", background: "#19140F", padding: "9px 16px", borderRadius: 6, textDecoration: "none" }}
+          >
+            <LayoutDashboard size={14} />
+            Dashboard
+          </Link>
         </div>
 
         {groups.length === 0 && (
