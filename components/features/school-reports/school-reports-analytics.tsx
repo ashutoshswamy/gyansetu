@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
 import {
-  fmt, count, sortBy, SectionEyebrow, ChartCard, SingleBar, DonutCard, LedgerStat, Ledger, bandSelectStyle,
+  fmt, count, sortBy, SectionEyebrow, ChartCard, SingleBar, PieCard, LedgerStat, Ledger, bandSelectStyle,
   tooltipStyle, legendStyle, gridProps, axisTick, axisTickMono,
 } from "@/components/features/analytics/chart-kit";
 
@@ -137,11 +137,11 @@ export function SchoolReportsAnalytics({ reports }: { reports: ReportForAnalytic
       <div className="mb-8">
         <SectionEyebrow>Report breakdown</SectionEyebrow>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <DonutCard title="Reports by status" data={byStatus} />
+          <PieCard title="Reports by status" data={byStatus} />
           <SingleBar title="Reports by tour" data={byTour} />
-          <DonutCard title="Schools by type" data={bySchoolType} />
+          <PieCard title="Schools by type" data={bySchoolType} />
           <SingleBar title="Schools by location" data={byLocation} />
-          <DonutCard title="Medium of instruction" data={byMedium} />
+          <PieCard title="Medium of instruction" data={byMedium} />
           <SingleBar title="Overall rating" data={byRating} />
         </div>
       </div>

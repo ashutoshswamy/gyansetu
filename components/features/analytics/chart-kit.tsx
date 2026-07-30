@@ -177,32 +177,23 @@ export function StackedBar({
   );
 }
 
-// Proportion-of-whole facets read as a donut; the center total keeps the
-// same mono-numeral language as the ledger stats. cx is fixed (not the
+// Proportion-of-whole facets read as a solid pie. cx is fixed (not the
 // recharts default 50%) — with a side legend, letting recharts auto-center
 // the pie against the full plot width leaves it hugging the left edge with
 // a dead gap before the legend. A fixed cx plus a capped chart width keep
-// the donut and its matching centerLabel in a stable, predictable spot
-// regardless of legend width or how wide the surrounding grid cell is.
-export function DonutCard({ title, data, cap = 6 }: { title: string; data: { name: string; value: number }[]; cap?: number }) {
+// the pie in a stable, predictable spot regardless of legend width or how
+// wide the surrounding grid cell is.
+export function PieCard({ title, data, cap = 6 }: { title: string; data: { name: string; value: number }[]; cap?: number }) {
   const capped = topNWithOthers(data, cap);
-  const total = capped.reduce((a, d) => a + d.value, 0);
   return (
     <ChartCard
       title={title}
       data={capped}
       tableColumns={BREAKDOWN_TABLE_COLUMNS}
-      centerLabelLeft="38%"
       maxWidth={380}
-      centerLabel={
-        <>
-          <div style={{ fontFamily: F_MONO, fontSize: 20, fontWeight: 600, color: "var(--gs-text)" }}>{fmt(total)}</div>
-          <div style={{ fontFamily: F_BODY, fontSize: 9.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-text-mute)" }}>total</div>
-        </>
-      }
     >
       <PieChart>
-        <Pie data={capped} dataKey="value" nameKey="name" cx="38%" cy="50%" innerRadius="56%" outerRadius="82%" paddingAngle={2} strokeWidth={0}>
+        <Pie data={capped} dataKey="value" nameKey="name" cx="38%" cy="50%" outerRadius="82%" paddingAngle={2} strokeWidth={0}>
           {capped.map((d, i) => <Cell key={d.name} fill={d.name === "Others" ? "var(--gs-line)" : CHART_SPECTRUM[i % CHART_SPECTRUM.length]} />)}
         </Pie>
         <Tooltip contentStyle={tooltipStyle} />
