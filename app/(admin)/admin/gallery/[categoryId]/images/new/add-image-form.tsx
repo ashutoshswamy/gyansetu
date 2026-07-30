@@ -19,7 +19,10 @@ export default function AddImageForm({ categoryId }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!url.trim()) return;
+    if (!url.trim()) {
+      toast.error("Image URL is required.");
+      return;
+    }
 
     setLoading(true);
     setError(null);

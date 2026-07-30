@@ -36,11 +36,18 @@ export default async function AdminCertificatesPage() {
             <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Certificates</h1>
             <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{(certs ?? []).length} certificates issued</p>
           </div>
-          <Link href="/admin/certificates/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + Issue Certificate
-            </button>
-          </Link>
+          <div className="flex gap-3">
+            <Link href="/admin/certificates/bulk">
+              <button style={{ background: "white", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid #4A55BE", cursor: "pointer" }}>
+                Bulk Generate
+              </button>
+            </Link>
+            <Link href="/admin/certificates/new">
+              <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
+                + Issue Certificate
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Stats */}

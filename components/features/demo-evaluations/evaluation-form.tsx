@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Star } from "lucide-react";
 import { createDemoEvaluation, updateDemoEvaluation } from "@/actions/demo-evaluations";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
@@ -89,7 +90,9 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
       }
       router.push("/admin/demo-evaluations");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save evaluation");
+      const message = err instanceof Error ? err.message : "Failed to save evaluation";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

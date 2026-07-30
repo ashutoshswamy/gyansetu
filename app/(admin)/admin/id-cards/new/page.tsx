@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createIdCard } from "@/actions/id-cards";
 import { getGroupsByTour } from "@/actions/groups";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
@@ -80,7 +81,9 @@ export default function NewIdCardPage() {
       });
       router.push("/admin/id-cards");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to issue ID card");
+      const message = err instanceof Error ? err.message : "Failed to issue ID card";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

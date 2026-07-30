@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { updateGroup } from "@/actions/groups";
 
 export default function EditGroupPage() {
@@ -43,7 +44,9 @@ export default function EditGroupPage() {
       });
       router.push("/admin/groups");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to update group");
+      const message = err instanceof Error ? err.message : "Failed to update group";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }

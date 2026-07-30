@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createWorkshop } from "@/actions/workshops";
 import { getAllGroups } from "@/actions/groups";
 import type { WorkshopType } from "@/types";
@@ -52,7 +53,9 @@ export default function NewWorkshopPage() {
       });
       router.push("/admin/workshops");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create workshop");
+      const message = err instanceof Error ? err.message : "Failed to create workshop";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

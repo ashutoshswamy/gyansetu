@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createRegistrationFee } from "@/actions/registration-fees";
 import type { RegistrationFeeInput } from "@/lib/validations";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
@@ -40,7 +41,9 @@ export default function NewRegistrationFeePage() {
       });
       router.push("/admin/registration-fees");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to record registration fee");
+      const message = err instanceof Error ? err.message : "Failed to record registration fee";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

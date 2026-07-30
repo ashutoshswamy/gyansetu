@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
-import { idCardSchema, type IdCardInput } from "@/lib/validations";
+import { idCardSchema, bulkIdCardSchema, type IdCardInput, type BulkIdCardInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
 function destCode(destination: string) {
@@ -52,6 +52,53 @@ export async function createIdCard(input: IdCardInput) {
   if (error) { console.error("[createIdCard]", error); throw new Error("Failed to issue ID card"); }
   revalidatePath("/admin/id-cards");
   return card;
+}
+
+// Issues one ID card per volunteer for the same tour/group/validity window — the
+// per-volunteer id_cards insert loop stays sequential (not Promise.all) because
+// generateCardNumber derives each card's sequence number from a count() query, and
+// concurrent inserts would race on that count and hand out duplicate numbers.
+// Volunteers who already hold a card for this exact tour+group are skipped rather
+// than re-issued, so re-running the bulk action after adding a few stragglers is safe.
+export async function bulkCreateIdCards(input: BulkIdCardInput) {
+  const { db, user } = await requireAdminUser();
+  const data = bulkIdCardSchema.parse(input);
+
+  let existingQuery = db
+    .from("id_cards")
+    .select("volunteer_id")
+    .eq("tour_id", data.tour_id)
+    .in("volunteer_id", data.volunteer_ids);
+  existingQuery = data.group_id ? existingQuery.eq("group_id", data.group_id) : existingQuery.is("group_id", null);
+  const { data: existing } = await existingQuery;
+  const alreadyIssued = new Set((existing ?? []).map((r) => r.volunteer_id));
+
+  let issued = 0;
+  const failed: { volunteer_id: string; error: string }[] = [];
+  for (const volunteer_id of data.volunteer_ids) {
+    if (alreadyIssued.has(volunteer_id)) continue;
+    try {
+      const card_number = await generateCardNumber(db, data.tour_id, data.group_id);
+      const { error } = await db.from("id_cards").insert({
+        volunteer_id,
+        tour_id: data.tour_id,
+        group_id: data.group_id,
+        valid_from: data.valid_from,
+        valid_to: data.valid_to,
+        state: data.state,
+        place: data.place,
+        card_number,
+        issued_by: user.id,
+      });
+      if (error) throw new Error(error.message);
+      issued++;
+    } catch (err) {
+      failed.push({ volunteer_id, error: err instanceof Error ? err.message : "Failed to issue card" });
+    }
+  }
+
+  revalidatePath("/admin/id-cards");
+  return { issued, skipped: alreadyIssued.size, failed };
 }
 
 export async function deleteIdCard(id: string) {

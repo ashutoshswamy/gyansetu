@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createCategory } from "@/actions/gallery";
 
 export default function NewGalleryCategory() {
@@ -13,7 +14,10 @@ export default function NewGalleryCategory() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      toast.error("Category name is required.");
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -22,7 +26,9 @@ export default function NewGalleryCategory() {
       await createCategory(name, description);
       router.push("/admin/gallery");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setError(message);
+      toast.error(message);
       setLoading(false);
     }
   }

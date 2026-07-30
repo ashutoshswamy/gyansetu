@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { assignVolunteerToTour, removeVolunteerFromTour } from "@/actions/tours";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import { Trash2 } from "lucide-react";
@@ -37,7 +38,9 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
       setRole("");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to assign volunteer");
+      const message = err instanceof Error ? err.message : "Failed to assign volunteer";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }

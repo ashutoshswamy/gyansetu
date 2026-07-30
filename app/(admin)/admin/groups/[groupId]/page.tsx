@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { addGroupMember, removeGroupMember, setGroupCoreMember } from "@/actions/groups";
 import { Users, MapPin, Trash2, ArrowLeft, ShieldCheck } from "lucide-react";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
@@ -63,7 +64,9 @@ export default function GroupDetailPage() {
       const d = await fetch(`/api/groups/${groupId}`).then(r => r.json());
       setGroup(d);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to add member");
+      const message = err instanceof Error ? err.message : "Failed to add member";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -76,7 +79,9 @@ export default function GroupDetailPage() {
       const d = await fetch(`/api/groups/${groupId}`).then(r => r.json());
       setGroup(d);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to remove member");
+      const message = err instanceof Error ? err.message : "Failed to remove member";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -90,7 +95,9 @@ export default function GroupDetailPage() {
       const d = await fetch(`/api/groups/${groupId}`).then(r => r.json());
       setGroup(d);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to update core member");
+      const message = err instanceof Error ? err.message : "Failed to update core member";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }

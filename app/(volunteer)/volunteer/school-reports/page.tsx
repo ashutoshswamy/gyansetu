@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { toast } from "sonner";
 import { School, Plus, X } from "lucide-react";
 import { getGroupsForSelect } from "@/actions/groups";
 import { submitSchoolReport, getGroupSchoolReports, getGroupMembersForSchoolReport } from "@/actions/school-reports";
@@ -147,17 +148,22 @@ export default function SchoolReportsPage() {
     setRating(""); setFollowUpRequired(""); setFollowUpDate(""); setRemarks(""); setAsFinal(false);
   }
 
+  function fail(message: string) {
+    setError(message);
+    toast.error(message);
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
-    if (!groupId) { setError("Select a group first."); return; }
-    if (!schoolName.trim()) { setError("School name is required."); return; }
+    if (!groupId) { fail("Select a group first."); return; }
+    if (!schoolName.trim()) { fail("School name is required."); return; }
 
     if (asFinal) {
       for (const f of OBSERVATION_FIELDS) {
         const wc = wordCount(observations[f.key] ?? "");
-        if (wc < 50) { setError(`"${f.label}" must be at least 50 words (currently ${wc}).`); return; }
+        if (wc < 50) { fail(`"${f.label}" must be at least 50 words (currently ${wc}).`); return; }
       }
     }
 
@@ -202,7 +208,7 @@ export default function SchoolReportsPage() {
       setReports(prev => [report, ...prev]);
       resetForm();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to submit school report");
+      fail(err instanceof Error ? err.message : "Failed to submit school report");
     } finally {
       setSaving(false);
     }

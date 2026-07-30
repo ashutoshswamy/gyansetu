@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { getLocalHost, updateLocalHost } from "@/actions/local-hosts";
 import { createClientClient } from "@/lib/supabase/client";
 import { INDIAN_STATES } from "@/lib/locations";
@@ -69,7 +70,9 @@ export default function EditLocalHostPage() {
       });
       router.push("/admin/local-hosts");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to update local host");
+      const message = err instanceof Error ? err.message : "Failed to update local host";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }

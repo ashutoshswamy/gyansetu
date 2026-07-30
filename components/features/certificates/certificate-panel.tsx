@@ -168,7 +168,7 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
             </div>
 
             <div style={{ borderTop: `1px solid ${HAIRLINE}`, paddingTop: 16 }}>
-              <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 600, margin: 0, color: INK }}>Issued by: Project Head &ndash; Swapnil Indapurkar</p>
+              <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 600, margin: 0, color: INK }}>Issued by Gyan-Setu EARC</p>
               <p style={{ fontFamily: sans, fontSize: 9.5, color: MUTED, fontStyle: "italic", margin: "2px 0 0" }}>
                 This is a digitally generated certificate and is valid without a physical signature or seal.
               </p>

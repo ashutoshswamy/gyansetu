@@ -53,7 +53,9 @@ function FileImageInput({
       const url = await uploadFileToStorage(fd, "media", `forms/${field.id}`);
       onChange(url);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      const message = err instanceof Error ? err.message : "Upload failed";
+      setError(message);
+      toast.error(message);
     } finally {
       setUploading(false);
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { applyForTour } from "@/actions/tours";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +17,9 @@ export function ApplyButton({ tourId }: { tourId: string }) {
       await applyForTour(tourId);
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Application failed");
+      const message = e instanceof Error ? e.message : "Application failed";
+      setError(message);
+      toast.error(message);
       setLoading(false);
     }
   }

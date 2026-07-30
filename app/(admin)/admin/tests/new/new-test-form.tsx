@@ -108,7 +108,9 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isTemplate && tourIds.length === 0) {
-      setError("Select at least one tour, or mark this as a Template.");
+      const msg = "Select at least one tour, or mark this as a Template.";
+      setError(msg);
+      toast.error(msg);
       return;
     }
     if (status === "active" && !isTemplate) {

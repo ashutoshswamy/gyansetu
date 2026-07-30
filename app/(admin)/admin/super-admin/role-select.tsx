@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { updateUserRole, deleteUser, syncDeletedUsers } from "@/actions/users";
 import type { UserRole } from "@/types";
 
@@ -25,7 +26,9 @@ export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole 
       setStatus({ type: "success", text: "Role updated" });
       router.refresh();
     } catch (err: unknown) {
-      setStatus({ type: "error", text: err instanceof Error ? err.message : "Failed to update role" });
+      const message = err instanceof Error ? err.message : "Failed to update role";
+      setStatus({ type: "error", text: message });
+      toast.error(message);
     } finally {
       setLoading(false);
       setTimeout(() => setStatus(null), 3000);
@@ -76,7 +79,9 @@ export function DeleteUserButton({ clerkId, name }: { clerkId: string; name: str
       await deleteUser(clerkId);
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to delete user");
+      const message = err instanceof Error ? err.message : "Failed to delete user";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

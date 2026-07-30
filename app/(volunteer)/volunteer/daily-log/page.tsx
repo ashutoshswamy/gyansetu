@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { createDailyLog, getMyDailyLogs } from "@/actions/daily-logs";
 import { BookOpen, Plus, X, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
@@ -60,7 +61,9 @@ export default function VolunteerDailyLogPage() {
     for (const q of QUESTIONS) {
       const text = (fd.get(q.key) as string) || "";
       if (wordCount(text) < 50) {
-        setError(`"${q.label}" must be at least 50 words (currently ${wordCount(text)}).`);
+        const msg = `"${q.label}" must be at least 50 words (currently ${wordCount(text)}).`;
+        setError(msg);
+        toast.error(msg);
         return;
       }
     }
@@ -80,7 +83,9 @@ export default function VolunteerDailyLogPage() {
       setShowForm(false);
       (e.target as HTMLFormElement).reset();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create daily log");
+      const message = err instanceof Error ? err.message : "Failed to create daily log";
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }

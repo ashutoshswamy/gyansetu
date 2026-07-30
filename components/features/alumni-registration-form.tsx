@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, ArrowRight } from "lucide-react";
 import { submitAlumniRegistration } from "@/actions/alumni-registration";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, btnMarigold, btnInk, Eyebrow } from "@/components/landing/theme";
 
@@ -19,6 +19,15 @@ const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Don't K
 
 const emptyVisit: Visit = { year: "", month: "", location: "", role: "" };
 
+const TABS = [
+  { id: "personal", num: "01", label: "Personal Info" },
+  { id: "visits", num: "02", label: "Visit History" },
+  { id: "work", num: "03", label: "Education / Work" },
+  { id: "contact", num: "04", label: "Contact" },
+  { id: "engagement", num: "05", label: "Engagement" },
+  { id: "additional", num: "06", label: "Additional Info" },
+] as const;
+
 /* ── Field-journal input style — matches the landing page's paper/dashed-line identity ── */
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "9px 12px", fontSize: 14,
@@ -32,6 +41,12 @@ const FIELD_FOCUS_CSS = `
   .gs-field:focus { border-color: var(--gs-rust) !important; box-shadow: 0 0 0 3px rgba(184,73,46,.12); }
 `;
 
+/* Faint ruled-ledger lines behind the card — inputs sit on solid paper so the rule only
+   reads in the gaps between fields, echoing the register/logbook this form fills out. */
+const RULED_PAPER_BG: React.CSSProperties = {
+  backgroundImage: "repeating-linear-gradient(to bottom, transparent, transparent 36px, var(--gs-line) 37px, transparent 38px)",
+};
+
 function F({ label, hint, required, children }: { label: string; hint?: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
@@ -44,24 +59,24 @@ function F({ label, hint, required, children }: { label: string; hint?: string; 
   );
 }
 
-/* Numbered ticket-stub label — mirrors the "GS·0N" markers used in the landing page's itinerary. */
-function SectionTag({ num, label }: { num: string; label: string }) {
+/* Ledger-entry section header — a large italic folio number stands in for the small
+   "GS·0N" pill, closer to a register book's running page numbers than an app tab. */
+function SectionHeader({ num, label, hint }: { num: string; label: string; hint?: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-      <span style={{ fontFamily: F_MONO, fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", color: "var(--gs-paper)", background: "var(--gs-rust)", padding: "3px 8px", borderRadius: 3 }}>
-        GS·{num}
-      </span>
-      <span style={{ fontFamily: F_MONO, fontSize: 11, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gs-text-mute)" }}>
-        {label}
-      </span>
+    <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 22, paddingBottom: 14, borderBottom: "1px dashed var(--gs-line)" }}>
+      <span style={{ fontFamily: F_DISPLAY, fontStyle: "italic", fontSize: 32, fontWeight: 600, color: "var(--gs-rust)", lineHeight: 1 }}>{num}</span>
+      <div>
+        <h2 style={{ fontFamily: F_DISPLAY, fontSize: 19, fontWeight: 600, color: "var(--gs-text)", margin: 0 }}>{label}</h2>
+        {hint && <p style={{ fontFamily: F_BODY, fontSize: 12.5, color: "var(--gs-text-mute)", margin: "4px 0 0" }}>{hint}</p>}
+      </div>
     </div>
   );
 }
 
 function NextSectionButton({ onClick }: { onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} style={{ ...btnInk, marginTop: 24 }}>
-      Next Section
+    <button type="button" onClick={onClick} style={{ ...btnInk, marginTop: 24, display: "inline-flex", alignItems: "center", gap: 8 }}>
+      Next Section <ArrowRight size={14} />
     </button>
   );
 }
@@ -92,7 +107,7 @@ export function AlumniRegistrationForm() {
   const [preferredCommunication, setPreferredCommunication] = useState<string[]>([]);
   const [preferredContribution, setPreferredContribution] = useState<string[]>([]);
   const [areasOfInterest, setAreasOfInterest] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<"personal" | "visits" | "work" | "contact" | "engagement" | "additional">("personal");
+  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]["id"]>("personal");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -114,6 +129,16 @@ export function AlumniRegistrationForm() {
 
   function toggle(list: string[], setList: (v: string[]) => void, value: string) {
     setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
+  }
+
+  // Which nav tabs have their required fields filled — drives the checkmark on the
+  // ledger index. Visits/Engagement/Additional carry no required fields, so they're
+  // left unmarked rather than showing a misleading "done" before the user opens them.
+  function isTabComplete(tab: (typeof TABS)[number]["id"]): boolean | null {
+    if (tab === "personal") return !!(form.first_name && form.last_name && form.gender && form.date_of_birth);
+    if (tab === "work") return !!(form.institution && form.qualification && form.edu_city && form.edu_state && form.course_name && form.stream && form.course_status);
+    if (tab === "contact") return !!(form.mobile_number && form.email);
+    return null;
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -183,14 +208,7 @@ export function AlumniRegistrationForm() {
     }
   }
 
-  const tabs = [
-    { id: "personal" as const, label: "Personal Info" },
-    { id: "visits" as const, label: "Visit History" },
-    { id: "work" as const, label: "Education / Work" },
-    { id: "contact" as const, label: "Contact" },
-    { id: "engagement" as const, label: "Engagement" },
-    { id: "additional" as const, label: "Additional Info" },
-  ];
+  const activeIndex = TABS.findIndex((t) => t.id === activeTab);
 
   if (status === "success") {
     return (
@@ -223,28 +241,50 @@ export function AlumniRegistrationForm() {
           <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", marginTop: 10, lineHeight: 1.65, maxWidth: 560 }}>
             Once a Jnana Prabodhini, always a Jnana Prabodhini — reconnect and stay part of the Gyan Setu family.
           </p>
+          <p style={{ fontFamily: F_MONO, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-text-mute)", marginTop: 14 }}>
+            6 Sections · About 8–10 Minutes
+          </p>
         </div>
 
-        {/* Tabs */}
-        <div style={{ display: "flex", gap: 4, marginBottom: 24, background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: 4, flexWrap: "wrap" }}>
-          {tabs.map((t, i) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setActiveTab(t.id)}
-              style={{
-                flex: 1, minWidth: 110, padding: "9px 6px", fontFamily: F_MONO, fontSize: 11, fontWeight: 600,
-                letterSpacing: "0.04em", textTransform: "uppercase", borderRadius: 3, border: "none", cursor: "pointer",
-                background: activeTab === t.id ? "var(--gs-marigold)" : "transparent",
-                color: activeTab === t.id ? "var(--gs-ink)" : "var(--gs-text-mute)",
-              }}
-            >
-              {String(i + 1).padStart(2, "0")} · {t.label}
-            </button>
-          ))}
+        {/* Ledger index — running folio numbers instead of app-style pills, with a
+            thin progress rule underneath tracking how far through the register you are. */}
+        <div style={{ marginBottom: 22 }}>
+          <div style={{ display: "flex", gap: 2, overflowX: "auto" }}>
+            {TABS.map((t) => {
+              const active = activeTab === t.id;
+              const complete = isTabComplete(t.id);
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setActiveTab(t.id)}
+                  style={{
+                    display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4,
+                    padding: "8px 16px 12px", minWidth: 112, textAlign: "left", flexShrink: 0,
+                    background: "transparent", border: "none",
+                    borderBottom: active ? "2px solid var(--gs-rust)" : "2px solid transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontFamily: F_DISPLAY, fontStyle: "italic", fontSize: 18, fontWeight: 600, color: active ? "var(--gs-rust)" : "var(--gs-text-mute)" }}>
+                      {t.num}
+                    </span>
+                    {complete && <CheckCircle size={12} color="var(--gs-rust)" />}
+                  </span>
+                  <span style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: active ? "var(--gs-text)" : "var(--gs-text-mute)" }}>
+                    {t.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <div style={{ height: 2, background: "var(--gs-line)", position: "relative" }}>
+            <div style={{ position: "absolute", inset: 0, width: `${((activeIndex + 1) / TABS.length) * 100}%`, background: "var(--gs-rust)", transition: "width .25s ease" }} />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate style={{ background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 6, padding: 28 }}>
+        <form onSubmit={handleSubmit} noValidate style={{ ...RULED_PAPER_BG, background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 6, padding: 28 }}>
           {status === "error" && (
             <div style={{ background: "rgba(184,73,46,.08)", border: "1px solid rgba(184,73,46,.3)", borderRadius: 4, padding: "10px 14px", marginBottom: 20, fontFamily: F_BODY, fontSize: 13, color: "var(--gs-rust)", display: "flex", gap: 8, alignItems: "center" }}>
               <AlertCircle size={14} /> {errorMsg}
@@ -252,7 +292,7 @@ export function AlumniRegistrationForm() {
           )}
 
           <div className="space-y-5" data-tab="personal" style={{ display: activeTab === "personal" ? undefined : "none" }}>
-              <SectionTag num="01" label="Personal Information" />
+              <SectionHeader num="01" label="Personal Information" />
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <F label="First Name" required><input name="first_name" required placeholder="Enter first name" value={form.first_name} onChange={handleChange} className="gs-field" style={inputStyle} /></F>
                 <F label="Middle Name"><input name="middle_name" placeholder="Enter middle name" value={form.middle_name} onChange={handleChange} className="gs-field" style={inputStyle} /></F>
@@ -277,37 +317,46 @@ export function AlumniRegistrationForm() {
           </div>
 
           <div className="space-y-3" data-tab="visits" style={{ display: activeTab === "visits" ? undefined : "none" }}>
-              <SectionTag num="02" label="Gyan-Setu Visit History" />
-              <p style={{ fontFamily: F_BODY, fontSize: 13, color: "var(--gs-text-soft)", marginBottom: 4 }}>Add every Gyan Setu tour you&apos;ve been part of.</p>
-              {visits.map((v, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1.4fr_1fr_auto]" style={{ gap: 8, alignItems: "end" }}>
-                  <F label="Year">
-                    <select value={v.year} onChange={(e) => updateVisit(i, "year", e.target.value)} className="gs-field" style={{ ...inputStyle, appearance: "none" }}>
-                      <option value="">Year</option>
-                      {Array.from({ length: 25 }, (_, y) => new Date().getFullYear() - y).map((y) => <option key={y} value={String(y)}>{y}</option>)}
-                    </select>
-                  </F>
-                  <F label="Month">
-                    <select value={v.month} onChange={(e) => updateVisit(i, "month", e.target.value)} className="gs-field" style={{ ...inputStyle, appearance: "none" }}>
-                      <option value="">Month</option>
-                      {MONTHS.map((m) => <option key={m}>{m}</option>)}
-                    </select>
-                  </F>
-                  <F label="Location of Visit"><input value={v.location} onChange={(e) => updateVisit(i, "location", e.target.value)} placeholder="State / District / Project" className="gs-field" style={inputStyle} /></F>
-                  <F label="Role">
-                    <select value={v.role} onChange={(e) => updateVisit(i, "role", e.target.value)} className="gs-field" style={{ ...inputStyle, appearance: "none" }}>
-                      <option value="">Role</option>
-                      {VISIT_ROLES.map((r) => <option key={r}>{r}</option>)}
-                    </select>
-                  </F>
-                  {visits.length > 1 && (
-                    <button type="button" onClick={() => setVisits((prev) => prev.filter((_, idx) => idx !== i))}
-                      style={{ height: 34, padding: "0 10px", fontFamily: F_BODY, fontSize: 12, color: "var(--gs-rust)", background: "transparent", border: "1px solid rgba(184,73,46,.35)", borderRadius: 4, cursor: "pointer" }}>
-                      Remove
-                    </button>
-                  )}
-                </div>
-              ))}
+              <SectionHeader num="02" label="Gyan-Setu Visit History" hint="Add every Gyan Setu tour you've been part of." />
+              <div className="space-y-3">
+                {visits.map((v, i) => (
+                  <div key={i} style={{ position: "relative", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "16px 16px 14px", background: "var(--gs-paper-deep)" }}>
+                    <div style={{ position: "absolute", top: 10, right: 10, width: 20, height: 20, borderRadius: "50%", border: "1.5px dashed var(--gs-rust)", opacity: 0.5 }} />
+                    <p style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-text-mute)", margin: "0 0 12px" }}>
+                      Visit {String(i + 1).padStart(2, "0")}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <F label="Year">
+                        <select value={v.year} onChange={(e) => updateVisit(i, "year", e.target.value)} className="gs-field" style={{ ...inputStyle, appearance: "none" }}>
+                          <option value="">Year</option>
+                          {Array.from({ length: 25 }, (_, y) => new Date().getFullYear() - y).map((y) => <option key={y} value={String(y)}>{y}</option>)}
+                        </select>
+                      </F>
+                      <F label="Month">
+                        <select value={v.month} onChange={(e) => updateVisit(i, "month", e.target.value)} className="gs-field" style={{ ...inputStyle, appearance: "none" }}>
+                          <option value="">Month</option>
+                          {MONTHS.map((m) => <option key={m}>{m}</option>)}
+                        </select>
+                      </F>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ marginTop: 12 }}>
+                      <F label="Location of Visit"><input value={v.location} onChange={(e) => updateVisit(i, "location", e.target.value)} placeholder="State / District / Project" className="gs-field" style={inputStyle} /></F>
+                      <F label="Role">
+                        <select value={v.role} onChange={(e) => updateVisit(i, "role", e.target.value)} className="gs-field" style={{ ...inputStyle, appearance: "none" }}>
+                          <option value="">Role</option>
+                          {VISIT_ROLES.map((r) => <option key={r}>{r}</option>)}
+                        </select>
+                      </F>
+                    </div>
+                    {visits.length > 1 && (
+                      <button type="button" onClick={() => setVisits((prev) => prev.filter((_, idx) => idx !== i))}
+                        style={{ marginTop: 12, height: 32, padding: "0 12px", fontFamily: F_BODY, fontSize: 12, color: "var(--gs-rust)", background: "transparent", border: "1px solid rgba(184,73,46,.35)", borderRadius: 4, cursor: "pointer" }}>
+                        Remove Visit
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
               <button type="button" onClick={() => setVisits((prev) => [...prev, { ...emptyVisit }])}
                 style={{ fontFamily: F_BODY, fontSize: 12.5, fontWeight: 600, color: "var(--gs-rust)", background: "transparent", border: "none", padding: "6px 0", cursor: "pointer" }}>
                 + Add another visit
@@ -316,7 +365,7 @@ export function AlumniRegistrationForm() {
           </div>
 
           <div className="space-y-5" data-tab="work" style={{ display: activeTab === "work" ? undefined : "none" }}>
-              <SectionTag num="03" label="Education & Professional Details" />
+              <SectionHeader num="03" label="Education & Professional Details" />
               <div style={{ borderBottom: "1px dashed var(--gs-line)", paddingBottom: 16 }}>
                 <p style={{ fontFamily: F_MONO, fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-text-mute)", marginBottom: 12 }}>Professional Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -369,7 +418,7 @@ export function AlumniRegistrationForm() {
           </div>
 
           <div className="space-y-5" data-tab="contact" style={{ display: activeTab === "contact" ? undefined : "none" }}>
-              <SectionTag num="04" label="Contact Details" />
+              <SectionHeader num="04" label="Contact Details" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Mobile Number" required hint="Exactly 10 digits"><input name="mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter mobile number" value={form.mobile_number} onChange={handleDigitsChange(10)} className="gs-field" style={inputStyle} /></F>
                 <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_mobile_number" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate mobile number" value={form.alternate_mobile_number} onChange={handleDigitsChange(10)} className="gs-field" style={inputStyle} /></F>
@@ -391,7 +440,7 @@ export function AlumniRegistrationForm() {
           </div>
 
           <div className="space-y-5" data-tab="engagement" style={{ display: activeTab === "engagement" ? undefined : "none" }}>
-              <SectionTag num="05" label="Engagement" />
+              <SectionHeader num="05" label="Engagement" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Interested in Volunteering">
                   <select name="interested_volunteering" value={form.interested_volunteering} onChange={handleChange} className="gs-field" style={{ ...inputStyle, appearance: "none" }}>
@@ -427,7 +476,7 @@ export function AlumniRegistrationForm() {
           </div>
 
           <div className="space-y-5" data-tab="additional" style={{ display: activeTab === "additional" ? undefined : "none" }}>
-              <SectionTag num="06" label="Additional Information" />
+              <SectionHeader num="06" label="Additional Information" />
               <F label="Why would you like to stay connected with Gyan Setu?"><textarea name="why_stay_connected" placeholder="Your answer" value={form.why_stay_connected} onChange={handleChange} rows={3} className="gs-field" style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Skills that you can contribute"><textarea name="skills_contribute" placeholder="Your answer" value={form.skills_contribute} onChange={handleChange} rows={3} className="gs-field" style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Any suggestions for strengthening the Alumni Network?"><textarea name="suggestions" placeholder="Your suggestions" value={form.suggestions} onChange={handleChange} rows={3} className="gs-field" style={{ ...inputStyle, resize: "vertical" }} /></F>

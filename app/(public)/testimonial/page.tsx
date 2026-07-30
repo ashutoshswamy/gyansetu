@@ -22,7 +22,10 @@ export default function TestimonialPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim() || !form.message.trim()) return;
+    if (!form.name.trim() || !form.message.trim()) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
     setStatus("loading");
     setErrorMsg("");
     try {
@@ -166,7 +169,7 @@ export default function TestimonialPage() {
                 id="message"
                 name="message"
                 required
-                maxLength={100}
+                maxLength={250}
                 value={form.message}
                 onChange={handleChange}
                 placeholder="Share your experience..."
@@ -174,7 +177,7 @@ export default function TestimonialPage() {
                 style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
               />
               <p style={{ fontFamily: F_MONO, fontSize: 11, color: "var(--gs-text-mute)", marginTop: 6, textAlign: "right" }}>
-                {form.message.length}/100
+                {form.message.length}/250
               </p>
             </div>
 

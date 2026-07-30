@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createTravelTicket } from "@/actions/travel";
 import { getAllGroups } from "@/actions/groups";
 import type { TravelTicketInput } from "@/lib/validations";
@@ -44,7 +45,9 @@ export default function NewTravelTicketPage() {
       });
       router.push("/admin/travel");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create travel ticket");
+      const message = err instanceof Error ? err.message : "Failed to create travel ticket";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createVisit } from "@/actions/visits";
 
 type FormState = {
@@ -65,15 +66,20 @@ export default function NewVisitPage() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  function fail(message: string) {
+    setError(message);
+    toast.error(message);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    if (!form.title.trim()) { setError("Title is required."); return; }
-    if (!form.destination.trim()) { setError("Destination is required."); return; }
-    if (!form.start_date) { setError("Start date is required."); return; }
-    if (!form.end_date) { setError("End date is required."); return; }
-    if (form.end_date < form.start_date) { setError("End date must be on or after start date."); return; }
+    if (!form.title.trim()) { fail("Title is required."); return; }
+    if (!form.destination.trim()) { fail("Destination is required."); return; }
+    if (!form.start_date) { fail("Start date is required."); return; }
+    if (!form.end_date) { fail("End date is required."); return; }
+    if (form.end_date < form.start_date) { fail("End date must be on or after start date."); return; }
 
     setSubmitting(true);
     try {
@@ -90,7 +96,7 @@ export default function NewVisitPage() {
       });
       router.push("/admin/visits");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create visit. Please try again.");
+      fail(err instanceof Error ? err.message : "Failed to create visit. Please try again.");
     } finally {
       setSubmitting(false);
     }

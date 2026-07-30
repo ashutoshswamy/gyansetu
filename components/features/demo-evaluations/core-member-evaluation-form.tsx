@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { SCORE_FIELDS, StarRating } from "@/components/features/demo-evaluations/evaluation-form";
 import { createDemoEvaluationForVolunteer, updateDemoEvaluationForVolunteer } from "@/actions/core-member";
 import type { DemoEvaluation } from "@/types";
@@ -55,7 +56,9 @@ export function CoreMemberEvaluationForm({
       router.refresh();
       onDone();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save evaluation");
+      const message = err instanceof Error ? err.message : "Failed to save evaluation";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

@@ -115,7 +115,9 @@ export function VolunteerProfileForm({ variant }: Props) {
       const tab = invalid.closest<HTMLElement>("[data-tab]")?.dataset.tab as typeof activeTab | undefined;
       if (tab && tab !== activeTab) setActiveTab(tab);
       const fieldLabel = invalid.closest("div")?.querySelector("label")?.textContent?.replace("*", "").trim() || invalid.name || "a field";
-      setError(`Please fill in "${fieldLabel}" — required field.`);
+      const msg = `Please fill in "${fieldLabel}" — required field.`;
+      setError(msg);
+      toast.error(msg);
       requestAnimationFrame(() => {
         invalid.scrollIntoView({ behavior: "smooth", block: "center" });
         invalid.focus();
@@ -132,7 +134,9 @@ export function VolunteerProfileForm({ variant }: Props) {
     const bioText = (fd.get("bio") as string) || "";
     const bioWordCount = bioText.trim().split(/\s+/).filter(Boolean).length;
     if (bioWordCount > 100) {
-      setError(`Bio must be at most 100 words (currently ${bioWordCount}).`);
+      const msg = `Bio must be at most 100 words (currently ${bioWordCount}).`;
+      setError(msg);
+      toast.error(msg);
       setSaving(false);
       return;
     }

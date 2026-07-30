@@ -86,7 +86,12 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
     setError(null);
 
     const strengthRows = rows.filter(r => r.standard.trim());
-    if (strengthRows.length === 0) { setError("Add at least one row to Student Strength."); return; }
+    if (strengthRows.length === 0) {
+      const msg = "Add at least one row to Student Strength.";
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
 
     setSaving(true);
     try {

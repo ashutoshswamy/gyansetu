@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createLocalHost } from "@/actions/local-hosts";
 import { createClientClient } from "@/lib/supabase/client";
 import { INDIAN_STATES } from "@/lib/locations";
@@ -65,7 +66,9 @@ export default function NewLocalHostPage() {
       });
       router.push("/admin/local-hosts");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create local host");
+      const message = err instanceof Error ? err.message : "Failed to create local host";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

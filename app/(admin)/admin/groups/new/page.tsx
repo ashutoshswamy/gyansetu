@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createGroup } from "@/actions/groups";
 
 export default function NewGroupPage() {
@@ -28,7 +29,9 @@ export default function NewGroupPage() {
       });
       router.push("/admin/groups");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create group");
+      const message = err instanceof Error ? err.message : "Failed to create group";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

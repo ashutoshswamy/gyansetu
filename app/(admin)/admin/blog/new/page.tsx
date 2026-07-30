@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createPost } from "@/actions/blog";
 import { FileUploadField } from "@/components/features/file-upload-field";
 
@@ -69,13 +70,18 @@ export default function NewBlogPostPage() {
     }));
   }
 
+  function fail(message: string) {
+    setError(message);
+    toast.error(message);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    if (!form.title.trim()) { setError("Title is required."); return; }
-    if (!form.slug.trim()) { setError("Slug is required."); return; }
-    if (!form.content.trim()) { setError("Content is required."); return; }
+    if (!form.title.trim()) { fail("Title is required."); return; }
+    if (!form.slug.trim()) { fail("Slug is required."); return; }
+    if (!form.content.trim()) { fail("Content is required."); return; }
 
     setLoading(true);
     try {
@@ -89,7 +95,7 @@ export default function NewBlogPostPage() {
       });
       router.push("/admin/blog");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      fail(err instanceof Error ? err.message : "Something went wrong.");
       setLoading(false);
     }
   }

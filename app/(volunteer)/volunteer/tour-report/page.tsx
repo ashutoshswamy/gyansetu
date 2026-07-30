@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { getMyTourReports, submitTourReport } from "@/actions/tour-reports";
 import { FileBarChart, Plus, X } from "lucide-react";
 import { INDIAN_STATES } from "@/lib/locations";
@@ -110,25 +111,30 @@ export default function VolunteerTourReportPage() {
     setRemarks(""); setAsFinal(false);
   }
 
+  function fail(message: string) {
+    setError(message);
+    toast.error(message);
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
-    if (!tourId) { setError("Select a tour."); return; }
-    if (!locationName.trim()) { setError("Location is required."); return; }
+    if (!tourId) { fail("Select a tour."); return; }
+    if (!locationName.trim()) { fail("Location is required."); return; }
 
     if (asFinal) {
       for (const f of OBSERVATION_FIELDS) {
         if (!f.required) continue;
         const wc = wordCount(observations[f.key] ?? "");
-        if (wc < 50) { setError(`"${f.label}" must be at least 50 words (currently ${wc}).`); return; }
+        if (wc < 50) { fail(`"${f.label}" must be at least 50 words (currently ${wc}).`); return; }
       }
       for (const f of LOGISTICS_FIELDS) {
-        if (!scores[f.key]) { setError(`Please rate "${f.label}".`); return; }
+        if (!scores[f.key]) { fail(`Please rate "${f.label}".`); return; }
       }
-      if (!recommendation) { setError("Select an overall recommendation."); return; }
-      if (!suitableResidential) { setError("Select whether the location suits residential camps."); return; }
-      if (!followUpRequired) { setError("Select whether follow-up is required."); return; }
+      if (!recommendation) { fail("Select an overall recommendation."); return; }
+      if (!suitableResidential) { fail("Select whether the location suits residential camps."); return; }
+      if (!followUpRequired) { fail("Select whether follow-up is required."); return; }
     }
 
     setSaving(true);
@@ -154,7 +160,7 @@ export default function VolunteerTourReportPage() {
       setReports(prev => [report, ...prev]);
       resetForm();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to submit tour report");
+      fail(err instanceof Error ? err.message : "Failed to submit tour report");
     } finally {
       setSaving(false);
     }

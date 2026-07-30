@@ -33,7 +33,9 @@ export default function VolunteerLocationPage() {
 
   function handleStart() {
     if (!("geolocation" in navigator)) {
-      setError("Geolocation is not supported on this device/browser.");
+      const msg = "Geolocation is not supported on this device/browser.";
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -68,7 +70,9 @@ export default function VolunteerLocationPage() {
         }
       },
       (geoError) => {
-        setError(geoError.message || "Unable to access your location. Check location permissions.");
+        const msg = geoError.message || "Unable to access your location. Check location permissions.";
+        setError(msg);
+        toast.error(msg);
         setStarting(false);
         if (watchIdRef.current != null) navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;

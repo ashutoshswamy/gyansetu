@@ -27,7 +27,10 @@ export default function SponsorPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.organization_name.trim() || !form.contact_name.trim() || !form.email.trim()) return;
+    if (!form.organization_name.trim() || !form.contact_name.trim() || !form.email.trim()) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
     setStatus("loading");
     setErrorMsg("");
     try {

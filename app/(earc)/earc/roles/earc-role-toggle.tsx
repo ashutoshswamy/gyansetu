@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { setEarcStaffRole } from "@/actions/users";
 
 export function EarcRoleToggle({ clerkId, isEarcStaff }: { clerkId: string; isEarcStaff: boolean }) {
@@ -16,7 +17,9 @@ export function EarcRoleToggle({ clerkId, isEarcStaff }: { clerkId: string; isEa
       await setEarcStaffRole(clerkId, !isEarcStaff);
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to update role");
+      const message = err instanceof Error ? err.message : "Failed to update role";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

@@ -13,7 +13,10 @@ export function MissedSummaryForm({ workshopId, isPast }: { workshopId: string; 
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit() {
-    if (!summary.trim()) return;
+    if (!summary.trim()) {
+      toast.error("Please enter a reason.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {

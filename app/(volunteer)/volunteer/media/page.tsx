@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { uploadMedia, getMediaByTour, getTodayUploadCount } from "@/actions/daily-logs";
 import { uploadFileToStorage } from "@/actions/upload";
 import { Image as ImageIcon, Upload } from "lucide-react";
@@ -42,7 +43,9 @@ export default function VolunteerMediaPage() {
   async function handleUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (todayCount >= 2) {
-      setError("Daily upload limit reached. You can only upload 2 media files per day.");
+      const msg = "Daily upload limit reached. You can only upload 2 media files per day.";
+      setError(msg);
+      toast.error(msg);
       return;
     }
     setUploading(true);
@@ -75,7 +78,9 @@ export default function VolunteerMediaPage() {
       setTodayCount(prev => prev + 1);
       if (fileRef.current) fileRef.current.value = "";
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      const message = err instanceof Error ? err.message : "Upload failed";
+      setError(message);
+      toast.error(message);
     } finally {
       setUploading(false);
     }

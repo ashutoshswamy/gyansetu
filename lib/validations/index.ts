@@ -106,6 +106,14 @@ export const certificateSchema = z.object({
   volunteer_code: z.string().optional(),
 });
 
+export const bulkCertificateSchema = z.object({
+  tour_id: z.string().uuid().optional(),
+  certificate_type: z.enum(["participation", "excellence", "leadership", "mentor"]),
+  volunteer_ids: z.array(z.string().uuid()).min(1, "Select at least one volunteer"),
+  notes: z.string().optional(),
+  duration_of_visit: z.string().optional(),
+});
+
 const minWords = (n: number) => (val: string) => val.trim().split(/\s+/).filter(Boolean).length >= n;
 
 export const dailyLogSchema = z.object({
@@ -121,6 +129,7 @@ export const dailyLogSchema = z.object({
 export type EventInput = z.infer<typeof eventSchema>;
 export type TourGroupInput = z.infer<typeof tourGroupSchema>;
 export type CertificateInput = z.infer<typeof certificateSchema>;
+export type BulkCertificateInput = z.infer<typeof bulkCertificateSchema>;
 export type DailyLogInput = z.infer<typeof dailyLogSchema>;
 
 export const visitSchema = z.object({
@@ -380,6 +389,17 @@ export const idCardSchema = z.object({
   state: z.string().optional(),
   place: z.string().optional(),
 });
+
+export const bulkIdCardSchema = z.object({
+  tour_id: z.string().uuid(),
+  group_id: z.string().uuid().optional(),
+  volunteer_ids: z.array(z.string().uuid()).min(1, "Select at least one volunteer"),
+  valid_from: z.string(),
+  valid_to: z.string(),
+  state: z.string().optional(),
+  place: z.string().optional(),
+});
+export type BulkIdCardInput = z.infer<typeof bulkIdCardSchema>;
 
 export const travelTicketSchema = z.object({
   group_id: z.string().uuid(),

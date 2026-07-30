@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { issueCertificate } from "@/actions/certificates";
 import { getLatestIdCardForVolunteer } from "@/actions/id-cards";
 import type { CertificateType } from "@/types";
@@ -91,7 +92,9 @@ export default function NewCertificatePage() {
       });
       router.push(`/admin/certificates/${cert.id}`);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to issue certificate");
+      const message = err instanceof Error ? err.message : "Failed to issue certificate";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
