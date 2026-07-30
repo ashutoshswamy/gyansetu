@@ -95,7 +95,7 @@ export default function NewBlogPostPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ marginBottom: 28 }}>

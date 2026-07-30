@@ -32,7 +32,7 @@ const TYPE_BADGE: Record<MaterialType, { bg: string; color: string }> = {
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 10px", fontSize: 13.5,
   border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
+  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
 };
 
 function toRow(item: KitItemRow): Row {

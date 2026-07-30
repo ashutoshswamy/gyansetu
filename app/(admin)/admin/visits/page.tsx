@@ -64,7 +64,7 @@ export default async function AdminVisitsPage({
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "32px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px 80px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         {/* Header */}

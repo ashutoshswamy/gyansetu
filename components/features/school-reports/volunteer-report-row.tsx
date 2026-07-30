@@ -90,7 +90,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
             const s = statusColors[r.status] ?? statusColors.draft;
             const sessions = r.sessions ?? [];
             return (
-              <div key={r.id} style={{ background: "#FAFAF7", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 16px" }}>
+              <div key={r.id} style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 16px" }}>
                 <div className="flex items-start justify-between gap-4 mb-2 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1 flex-wrap">

@@ -72,7 +72,7 @@ export default async function AdminTestsPage() {
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">

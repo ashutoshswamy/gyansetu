@@ -52,7 +52,7 @@ export default async function EnrollmentDashboard() {
   const unappliedTours = (openTours ?? []).filter((t: OpenTourRow) => !appliedTourIds.has(t.id));
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-start justify-between flex-wrap gap-4">

@@ -82,7 +82,7 @@ export default function VolunteerMediaPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
@@ -103,7 +103,7 @@ export default function VolunteerMediaPage() {
               value={selectedTour}
               disabled={todayCount >= 2}
               onChange={e => setSelectedTour(e.target.value)}
-              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FAFAF7", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
             >
               {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
             </select>
@@ -129,7 +129,7 @@ export default function VolunteerMediaPage() {
                   accept="image/*,video/*"
                   required
                   disabled={todayCount >= 2}
-                  style={{ width: "100%", padding: "7px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FAFAF7", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+                  style={{ width: "100%", padding: "7px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
                 />
               ) : (
                 <input
@@ -139,7 +139,7 @@ export default function VolunteerMediaPage() {
                   placeholder="https://example.com/image.jpg"
                   required
                   disabled={todayCount >= 2}
-                  style={{ width: "100%", padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FAFAF7", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+                  style={{ width: "100%", padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
                 />
               )}
             </div>
@@ -148,7 +148,7 @@ export default function VolunteerMediaPage() {
               disabled={todayCount >= 2}
               onChange={e => setCaption(e.target.value)}
               placeholder="Caption (optional)"
-              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FAFAF7", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
             />
             <button
               type="submit"

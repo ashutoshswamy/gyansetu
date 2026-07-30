@@ -27,7 +27,7 @@ export default async function AdminDailyLogsPage() {
   const logs = (await getAllDailyLogs()) as DailyLogRow[];
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>

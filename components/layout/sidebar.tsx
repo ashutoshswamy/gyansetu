@@ -270,7 +270,7 @@ function NavLink({
           className="sb-navlink-icon w-4 h-4 flex-shrink-0"
           style={{ color: active ? accentColor : "#9B9188" }}
         />
-        <span className="font-medium text-[13px]" style={{ fontFamily: "var(--font-poppins), sans-serif" }}>
+        <span className="font-medium text-[13px]" style={{ fontFamily: "var(--font-plex-sans), sans-serif" }}>
           {item.label}
         </span>
       </div>
@@ -302,7 +302,7 @@ function CollapsibleGroup({
       >
         <span
           className="text-[10px] font-semibold tracking-widest uppercase"
-          style={{ color: "#9B9188", fontFamily: "var(--font-poppins), sans-serif" }}
+          style={{ color: "#9B9188", fontFamily: "var(--font-plex-sans), sans-serif" }}
         >
           {group.label}
         </span>
@@ -472,7 +472,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
           <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: config.dotColor }} />
           <span
             className="text-[11px] font-medium truncate"
-            style={{ color: config.textColor, fontFamily: "var(--font-poppins), sans-serif" }}
+            style={{ color: config.textColor, fontFamily: "var(--font-plex-sans), sans-serif" }}
           >
             {config.label}
           </span>
@@ -483,7 +483,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
           style={{ fontSize: 12, color: "#9B9188", textDecoration: "none" }}
         >
           <Globe className="w-3.5 h-3.5" />
-          <span style={{ fontFamily: "var(--font-poppins), sans-serif" }}>Back to Website</span>
+          <span style={{ fontFamily: "var(--font-plex-sans), sans-serif" }}>Back to Website</span>
         </Link>
       </div>
 
@@ -513,7 +513,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
       {/* Progress Bar */}
       {role === "volunteer" && progress && (
         <div className="px-4 py-3.5" style={{ borderTop: "1px solid #E4DFD1" }}>
-          <div className="flex justify-between items-center mb-1.5" style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", fontFamily: "var(--font-poppins), sans-serif" }}>
+          <div className="flex justify-between items-center mb-1.5" style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", fontFamily: "var(--font-plex-sans), sans-serif" }}>
             <span className="flex items-center gap-1.5">
               <CheckSquare className="w-3.5 h-3.5 text-[#2A5E3A]" /> Tasks & Forms
             </span>
@@ -537,7 +537,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <UserButton appearance={{ elements: { avatarBox: "w-7 h-7" } }} />
-            <p className="text-xs truncate" style={{ color: "#9B9188", fontFamily: "var(--font-poppins), sans-serif" }}>
+            <p className="text-xs truncate" style={{ color: "#9B9188", fontFamily: "var(--font-plex-sans), sans-serif" }}>
               Account
             </p>
           </div>

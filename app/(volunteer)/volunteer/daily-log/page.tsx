@@ -49,7 +49,7 @@ export default function VolunteerDailyLogPage() {
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
     border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
+    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
   };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -87,7 +87,7 @@ export default function VolunteerDailyLogPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>

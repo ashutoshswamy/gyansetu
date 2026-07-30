@@ -8,7 +8,7 @@ export function TopBar({ role }: { role: UserRole | null }) {
   return (
     <div
       className="hidden lg:flex items-center justify-end px-8 py-3"
-      style={{ borderBottom: "1px solid #E4DFD1", background: "#FAFAF7" }}
+      style={{ borderBottom: "1px solid #E4DFD1", background: "#FBF7EC" }}
     >
       <NotificationBell />
     </div>

@@ -54,7 +54,7 @@ export function MissedSummaryForm({ workshopId, isPast }: { workshopId: string; 
         onChange={e => setSummary(e.target.value)}
         rows={3}
         placeholder={isPast ? "Explain why you missed this workshop (emergency reason)..." : "Let us know why you won't be able to attend..."}
-        style={{ width: "100%", padding: "8px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none", background: "#FAFAF7", color: "#19140F", boxSizing: "border-box", resize: "vertical" }}
+        style={{ width: "100%", padding: "8px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none", background: "#FBF7EC", color: "#19140F", boxSizing: "border-box", resize: "vertical" }}
       />
       <div className="flex items-center gap-3" style={{ marginTop: 8 }}>
         <button

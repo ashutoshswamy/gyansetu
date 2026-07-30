@@ -28,7 +28,7 @@ export default function NewGalleryCategory() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "48px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "48px 24px" }}>
       <div style={{ maxWidth: 560, margin: "0 auto" }}>
 
         {/* Header */}
@@ -81,7 +81,7 @@ export default function NewGalleryCategory() {
                   padding: "9px 12px",
                   fontSize: 14,
                   color: "#19140F",
-                  background: "#FAFAF7",
+                  background: "#FBF7EC",
                   border: "1.5px solid #E4DFD1",
                   borderRadius: 6,
                   outline: "none",
@@ -110,7 +110,7 @@ export default function NewGalleryCategory() {
                   padding: "9px 12px",
                   fontSize: 14,
                   color: "#19140F",
-                  background: "#FAFAF7",
+                  background: "#FBF7EC",
                   border: "1.5px solid #E4DFD1",
                   borderRadius: 6,
                   outline: "none",

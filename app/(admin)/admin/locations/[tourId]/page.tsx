@@ -12,7 +12,7 @@ export default async function AdminLocationsTourPage({ params }: { params: Promi
   ]);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-6xl mx-auto">
         <Link href="/admin/locations" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", marginBottom: 20 }}>
           <ArrowLeft size={14} /> Back to Tours

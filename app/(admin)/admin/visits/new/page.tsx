@@ -33,7 +33,7 @@ const inputStyle: React.CSSProperties = {
   padding: "9px 12px",
   fontSize: 14,
   color: "#19140F",
-  background: "#FAFAF7",
+  background: "#FBF7EC",
   border: "1.5px solid #E4DFD1",
   borderRadius: 6,
   outline: "none",
@@ -97,7 +97,7 @@ export default function NewVisitPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "40px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "40px 24px 80px" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
 
         {/* Page header */}

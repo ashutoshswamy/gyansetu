@@ -24,7 +24,7 @@ export default async function VolunteerDemoEvaluationsPage() {
   const evaluations = await getMyDemoEvaluations();
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
@@ -56,14 +56,14 @@ export default async function VolunteerDemoEvaluationsPage() {
                   </div>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     {SCORE_FIELDS.map(f => (
-                      <div key={f.key} style={{ background: "#FAFAF7", border: "1px solid #E4DFD1", borderRadius: 6, padding: "8px 10px" }}>
+                      <div key={f.key} style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 6, padding: "8px 10px" }}>
                         <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: "#9B9188", marginBottom: 2 }}>{f.label}</p>
                         <p style={{ fontSize: 15, fontWeight: 700, color: "#19140F", margin: 0 }}>{scores?.[f.key] ?? "-"}</p>
                       </div>
                     ))}
                   </div>
                   {e.remarks && (
-                    <p style={{ fontSize: 13, color: "#5A5247", padding: "8px 12px", background: "#FAFAF7", borderRadius: 6 }}>{e.remarks}</p>
+                    <p style={{ fontSize: 13, color: "#5A5247", padding: "8px 12px", background: "#FBF7EC", borderRadius: 6 }}>{e.remarks}</p>
                   )}
                 </div>
               );

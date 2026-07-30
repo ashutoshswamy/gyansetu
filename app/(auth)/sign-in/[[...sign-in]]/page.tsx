@@ -10,7 +10,7 @@ export default async function SignInPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center relative"
-      style={{ background: "#FAFAF7" }}
+      style={{ background: "#FBF7EC" }}
     >
       {/* Subtle grid pattern */}
       <div
@@ -37,7 +37,7 @@ export default async function SignInPage() {
             className="text-sm mt-1"
             style={{
               color: "#5A5247",
-              fontFamily: "var(--font-poppins), sans-serif",
+              fontFamily: "var(--font-plex-sans), sans-serif",
             }}
           >
             Sign in to your account

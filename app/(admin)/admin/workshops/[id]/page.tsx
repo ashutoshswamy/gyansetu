@@ -38,7 +38,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
 
   if (!workshop) {
     return (
-      <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+      <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
         <p style={{ color: "#5A5247" }}>Workshop not found.</p>
       </div>
     );
@@ -49,7 +49,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
   const allVolunteers = volunteersRes.data ?? [];
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-5xl mx-auto">
         <Link href="/admin/workshops" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "#5A5247", textDecoration: "none", marginBottom: 16 }}>
           <ArrowLeft size={14} /> Back to Workshops
@@ -64,7 +64,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>{workshop.title}</h1>
                 <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: t.color, background: t.bg }}>{t.label}</span>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#5A5247", background: "#FAFAF7", border: "1px solid #E4DFD1", textTransform: "capitalize" }}>{workshop.status}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#5A5247", background: "#FBF7EC", border: "1px solid #E4DFD1", textTransform: "capitalize" }}>{workshop.status}</span>
               </div>
               <p style={{ fontSize: 13, color: "#5A5247", margin: "4px 0 0" }}>
                 {new Date(workshop.workshop_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}

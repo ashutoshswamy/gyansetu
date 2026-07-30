@@ -21,7 +21,7 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
   if (!user) return <div className="p-8" style={{ color: "#DC2626" }}>Volunteer not found.</div>;
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-4xl mx-auto">
         <Link href="/admin/volunteers">
           <button style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>

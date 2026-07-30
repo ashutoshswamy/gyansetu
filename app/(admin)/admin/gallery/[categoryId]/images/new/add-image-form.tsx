@@ -77,7 +77,7 @@ export default function AddImageForm({ categoryId }: Props) {
               padding: "9px 12px",
               fontSize: 14,
               color: "#19140F",
-              background: "#FAFAF7",
+              background: "#FBF7EC",
               border: "1.5px solid #E4DFD1",
               borderRadius: 6,
               outline: "none",

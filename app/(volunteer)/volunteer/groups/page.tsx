@@ -65,7 +65,7 @@ async function GroupCard({ m }: { m: MembershipRow }) {
       {(localHost || kitAssignment) && (
         <div className="grid grid-cols-2 gap-3" style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #E4DFD1" }}>
           {localHost && (
-            <div style={{ background: "#FAFAF7", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
+            <div style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
               <div className="flex items-center gap-2 mb-2">
                 <Home size={13} style={{ color: "#4A55BE" }} />
                 <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188" }}>Local Host</span>
@@ -78,7 +78,7 @@ async function GroupCard({ m }: { m: MembershipRow }) {
             </div>
           )}
           {kitAssignment && (
-            <div style={{ background: "#FAFAF7", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
+            <div style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
               <div className="flex items-center gap-2 mb-2">
                 <Package size={13} style={{ color: "#4A55BE" }} />
                 <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188" }}>Kit Status</span>
@@ -118,7 +118,7 @@ export default async function VolunteerGroupsPage() {
     .eq("user_id", currentUser?.id ?? "");
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>

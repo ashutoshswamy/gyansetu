@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Poppins, Geist_Mono, Cormorant_Garamond } from "next/font/google";
+import { IBM_Plex_Sans, Geist_Mono, Cormorant_Garamond } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/components/layout/query-provider";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+// Same body font as the landing page (components/landing/theme.tsx), so app-wide
+// typography reads as one site instead of dashboard Poppins vs. marketing Plex Sans.
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
@@ -39,7 +41,7 @@ export default function RootLayout({
     <ClerkProvider signInFallbackRedirectUrl="/dashboard" signUpFallbackRedirectUrl="/dashboard">
       <html
         lang="en"
-        className={`${poppins.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
+        className={`${plexSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
       >
         <body className="min-h-full bg-background text-foreground">
           <QueryProvider>{children}</QueryProvider>

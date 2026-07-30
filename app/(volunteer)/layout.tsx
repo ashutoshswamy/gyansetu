@@ -31,7 +31,7 @@ export default async function VolunteerLayout({
   }
 
   return (
-    <div className="flex min-h-screen" style={{ background: "#FAFAF7" }}>
+    <div className="flex min-h-screen" style={{ background: "#FBF7EC" }}>
       <RealtimeRefresher tables={["notifications", "events", "dynamic_forms", "tour_groups", "tour_group_members", "volunteer_assignments", "daily_logs"]} />
       <Sidebar role="volunteer" />
       <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0 flex flex-col">

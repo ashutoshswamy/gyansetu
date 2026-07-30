@@ -57,7 +57,7 @@ export default function AdminLocationsGroupPage() {
   }, [groupId]);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "#FBF7EC" }}>
       <div className="p-4 sm:p-8 pb-4">
         <button
           onClick={() => router.push(`/admin/locations/${tourId}`)}

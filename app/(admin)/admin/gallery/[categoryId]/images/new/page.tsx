@@ -19,7 +19,7 @@ export default async function AddImagePage({ params }: Props) {
   if (!category) notFound();
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "48px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "48px 24px" }}>
       <div style={{ maxWidth: 560, margin: "0 auto" }}>
 
         {/* Header */}

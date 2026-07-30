@@ -53,7 +53,7 @@ function RatingScale({ value, onChange }: { value: number; onChange: (v: number)
           style={{
             width: 26, height: 26, borderRadius: 5, fontSize: 11, fontWeight: 600,
             border: value === n ? "1.5px solid #2A5E3A" : "1.5px solid #E4DFD1",
-            background: value === n ? "#2A5E3A" : "#FAFAF7",
+            background: value === n ? "#2A5E3A" : "#FBF7EC",
             color: value === n ? "white" : "#5A5247",
             cursor: "pointer",
           }}
@@ -97,7 +97,7 @@ export default function VolunteerTourReportPage() {
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
     border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
+    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
   };
 
   function updateHost(i: number, field: keyof TourReportHost, value: string) {
@@ -161,7 +161,7 @@ export default function VolunteerTourReportPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>

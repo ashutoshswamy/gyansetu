@@ -62,7 +62,7 @@ export default async function AdminTestimonialsPage({
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ marginBottom: 24 }}>
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>

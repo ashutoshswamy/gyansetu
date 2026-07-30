@@ -11,7 +11,7 @@ type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
   border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
+  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
 };
 
 // Same fields/rating UI as the admin EvaluationForm, but the volunteer is fixed (no
@@ -62,7 +62,7 @@ export function CoreMemberEvaluationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "#FAFAF7", border: "1px solid #E4DFD1", borderRadius: 10, padding: 20, marginTop: 12 }}>
+    <form onSubmit={handleSubmit} style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 10, padding: 20, marginTop: 12 }}>
       {error && (
         <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "#DC2626" }}>
           {error}

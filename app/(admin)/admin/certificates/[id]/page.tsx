@@ -8,7 +8,7 @@ export default async function AdminCertificateDetailPage({ params }: { params: P
   const cert = await getCertificate(id);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <Link href="/admin/certificates" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "#5A5247", marginBottom: 12 }}>

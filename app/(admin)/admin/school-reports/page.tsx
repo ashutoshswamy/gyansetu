@@ -82,7 +82,7 @@ export default async function AdminSchoolReportsPage() {
   const totalReports = reports.length;
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-5xl mx-auto">
         <div className="flex items-start justify-between gap-4 flex-wrap mb-8">
           <div>

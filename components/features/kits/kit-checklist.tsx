@@ -32,7 +32,7 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
   const packedCount = rows.filter(r => r.checked).length;
 
   return (
-    <div style={{ background: "#FAFAF7", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
+    <div style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
       <div className="flex items-center justify-between mb-2">
         <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188" }}>Packing Checklist</span>
         <span style={{ fontSize: 11, color: "#9B9188" }}>{packedCount}/{rows.length} packed</span>

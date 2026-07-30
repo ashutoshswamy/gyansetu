@@ -12,7 +12,7 @@ const GENDERS = ["Male", "Female", "Other"] as const;
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
   border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
+  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
 };
 
 function F({ label, required, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {

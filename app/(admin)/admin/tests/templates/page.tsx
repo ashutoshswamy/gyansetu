@@ -13,7 +13,7 @@ export default async function TestTemplatesPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-6xl mx-auto">
         <Link href="/admin/tests" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "#9B9188" }}>
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Tests

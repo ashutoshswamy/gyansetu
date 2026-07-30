@@ -99,7 +99,7 @@ export default function GroupDetailPage() {
   const inputStyle: React.CSSProperties = {
     padding: "8px 12px", fontSize: 14,
     border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FAFAF7", color: "#19140F",
+    background: "#FBF7EC", color: "#19140F",
   };
 
   if (loading) return <div className="p-8" style={{ color: "#9B9188" }}>Loading...</div>;
@@ -111,7 +111,7 @@ export default function GroupDetailPage() {
   );
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-4xl mx-auto">
         <button onClick={() => router.push("/admin/groups")} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>
           <ArrowLeft size={14} /> Back to Groups

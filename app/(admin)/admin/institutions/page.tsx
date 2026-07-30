@@ -40,7 +40,7 @@ export default async function AdminInstitutionsPage() {
   }));
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
           <div>

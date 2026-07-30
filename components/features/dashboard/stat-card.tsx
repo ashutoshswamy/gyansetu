@@ -69,7 +69,7 @@ export function StatCard({
             className="text-[11px] font-semibold tracking-widest uppercase mb-2"
             style={{
               color: "#9B9188",
-              fontFamily: "'Poppins', var(--font-poppins), sans-serif",
+              fontFamily: "'IBM Plex Sans', var(--font-plex-sans), sans-serif",
             }}
           >
             {label}
@@ -89,7 +89,7 @@ export function StatCard({
               className="text-xs mt-2"
               style={{
                 color: "#9B9188",
-                fontFamily: "'Poppins', var(--font-poppins), sans-serif",
+                fontFamily: "'IBM Plex Sans', var(--font-plex-sans), sans-serif",
               }}
             >
               {sub}

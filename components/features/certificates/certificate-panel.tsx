@@ -21,7 +21,7 @@ const GOLD_LIGHT = "#DCC98F";
 const HAIRLINE = "#E1D9C2";
 const MUTED = "#8A8071";
 
-const sans = "var(--font-poppins), system-ui, sans-serif";
+const sans = "var(--font-plex-sans), system-ui, sans-serif";
 const display = "var(--font-cormorant), Georgia, serif";
 const mono = "var(--font-geist-mono), monospace";
 

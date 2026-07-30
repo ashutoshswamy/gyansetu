@@ -8,7 +8,7 @@ export default async function AdminIdCardDetailPage({ params }: { params: Promis
   const card = await getIdCard(id);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <Link href="/admin/id-cards" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "#5A5247", marginBottom: 12 }}>

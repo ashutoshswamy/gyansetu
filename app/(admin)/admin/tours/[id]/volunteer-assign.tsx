@@ -12,7 +12,7 @@ type Assignment = { id: string; role_description?: string; users?: { id: string;
 const inputStyle: React.CSSProperties = {
   padding: "8px 12px", fontSize: 14,
   border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FAFAF7", color: "#19140F",
+  background: "#FBF7EC", color: "#19140F",
 };
 
 export function VolunteerAssign({ tourId, assignments }: { tourId: string; assignments: Assignment[] }) {
