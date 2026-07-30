@@ -82,6 +82,7 @@ drop table if exists public.dynamic_forms        cascade;
 drop table if exists public.test_attempts        cascade;
 drop table if exists public.tour_applications    cascade;
 drop table if exists public.eligibility_tests    cascade;
+drop table if exists public.tour_end_demotions   cascade;
 drop table if exists public.tours                cascade;
 drop table if exists public.users                cascade;
 
@@ -89,6 +90,9 @@ drop table if exists public.users                cascade;
 -- DROP FUNCTIONS
 -- ============================================================
 drop function if exists public.handle_updated_at() cascade;
+drop function if exists public.is_admin() cascade;
+drop function if exists public.is_admin_or_earc() cascade;
+drop function if exists public.is_admin_or_volunteer() cascade;
 
 -- ============================================================
 -- DROP STORAGE BUCKETS (optional — comment out to keep files)
