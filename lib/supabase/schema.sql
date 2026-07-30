@@ -24,6 +24,22 @@ end;
 $$ language plpgsql;
 
 -- ============================================================
+-- TABLES
+-- ============================================================
+
+-- Users (synced from Clerk via webhook; role defaults to 'enrollee' on signup)
+create table if not exists public.users (
+  id          uuid primary key default gen_random_uuid(),
+  clerk_id    text unique not null,
+  email       text unique not null,
+  name        text not null,
+  role        text default 'enrollee' check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'group_core_member', 'super_admin')),
+  avatar_url  text,
+  created_at  timestamptz default now(),
+  updated_at  timestamptz default now()
+);
+
+-- ============================================================
 -- ROLE-CHECK HELPERS (security definer — bypasses RLS on the
 -- inner users lookup so admin-check policies elsewhere don't
 -- recurse into users' own select policy)
@@ -61,22 +77,6 @@ $$;
 grant execute on function public.is_admin() to authenticated, anon;
 grant execute on function public.is_admin_or_earc() to authenticated, anon;
 grant execute on function public.is_admin_or_volunteer() to authenticated, anon;
-
--- ============================================================
--- TABLES
--- ============================================================
-
--- Users (synced from Clerk via webhook; role defaults to 'enrollee' on signup)
-create table if not exists public.users (
-  id          uuid primary key default gen_random_uuid(),
-  clerk_id    text unique not null,
-  email       text unique not null,
-  name        text not null,
-  role        text default 'enrollee' check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'group_core_member', 'super_admin')),
-  avatar_url  text,
-  created_at  timestamptz default now(),
-  updated_at  timestamptz default now()
-);
 
 -- Tours
 create table if not exists public.tours (
