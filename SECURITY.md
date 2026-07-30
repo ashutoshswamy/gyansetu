@@ -59,8 +59,9 @@ To eliminate the risk of privilege escalation or unauthorized access via stale J
 | --- | --- |
 | `enrollee` | Public content, view open tours, apply for tours, take timed eligibility tests, fill enrollee dynamic forms. |
 | `volunteer` | Volunteer portal, view assigned group details, submit daily logs, fill school reports, submit end-of-tour reports, claim expenses, submit missed workshop summaries, view travel tickets & location logs, generate ID card & certificates. |
-| `admin` | Admin console, manage tours & groups, grade subjective test questions, approve/demote volunteers, approve expense claims, schedule workshops/events, issue certificates & ID cards, moderate public content. |
-| `super_admin` | All `admin` privileges + alter any user's role (`/admin/super-admin`), grant/revoke `earc_staff` role, delete user accounts. |
+| `group_core_member` | Everything a `volunteer` can do, plus (scoped to their own tour group only) view fellow group members' details and score their pre-tour demo evaluations. Promoted per-group by an `admin` via `setGroupCoreMember`. |
+| `admin` | Admin console, manage tours & groups, grade subjective test questions, approve/demote volunteers, promote/demote `group_core_member` per group, grant/revoke `earc_staff` role, approve expense claims, schedule workshops/events, issue certificates & ID cards, moderate public content. |
+| `super_admin` | All `admin` privileges + alter any user's role (`/admin/super-admin`), delete user accounts. |
 | `earc_staff` | EARC field portal, submit EARC School Profiles & Student Profiles, export CSV field reports. |
 
 ### 3.2 Server Action Guards
@@ -69,10 +70,11 @@ All Next.js Server Actions validate caller credentials using mandatory guard fun
 
 ```typescript
 // Guard check required at entry of every server action
-const { db, user } = await requireAdminUser();      // Requires admin or super_admin
-const { db, user } = await requireVolunteerUser();  // Requires volunteer, admin, or super_admin
-const { db, user } = await requireEarcUser();       // Requires earc_staff, admin, or super_admin
-const { db, user } = await requireSuperAdminUser(); // Requires super_admin
+const { db, user } = await requireAdminUser();       // Requires admin or super_admin
+const { db, user } = await requireVolunteerUser();   // Requires volunteer, admin, or super_admin
+const { db, user } = await requireEarcUser();        // Requires earc_staff, admin, or super_admin
+const { db, user } = await requireCoreMemberUser();  // Requires group_core_member, admin, or super_admin
+const { db, user } = await requireSuperAdminUser();  // Requires super_admin
 ```
 
 ### 3.3 Strict Group Data Isolation
@@ -80,6 +82,7 @@ const { db, user } = await requireSuperAdminUser(); // Requires super_admin
 Volunteers are restricted to viewing and managing logistics (travel tickets, location logs, kit distribution, host families) **only for groups to which they are explicitly assigned**:
 
 - Guarded via `assertGroupAccess(db, user, groupId)` in [`lib/clerk/action-auth.ts`](./lib/clerk/action-auth.ts).
+- A `group_core_member` is further restricted to only view or score volunteers within their own group, guarded via `assertCoreMemberOverVolunteer(db, user, groupId, volunteerId)` in the same file.
 - Admin and Super Admin roles bypass group isolation to enable system-wide management.
 
 ---
@@ -88,7 +91,7 @@ Volunteers are restricted to viewing and managing logistics (travel tickets, loc
 
 ### 4.1 Rate Limiting & Denial of Service Protection
 
-- **Global IP Rate Limiting**: Enforced in [`middleware.ts`](./middleware.ts) using Upstash Redis sliding window algorithm set at **200 requests per minute per IP address**.
+- **Global IP Rate Limiting**: Enforced in [`proxy.ts`](./proxy.ts) using Upstash Redis sliding window algorithm set at **200 requests per minute per IP address**.
 - **Test Submission Rate Limiting**: Per-user sliding window rate limiting prevents automated script submissions on eligibility tests.
 
 ### 4.2 Webhook Signature Verification
@@ -120,7 +123,7 @@ All database tables in Supabase have **Row Level Security (RLS)** enabled:
 
 ### 5.2 Protection of Sensitive Information (PII)
 
-- Sensitive fields (Aadhaar numbers, APAAR IDs, medical emergency details, contact numbers) are accessible only to authorized roles (`admin`, `super_admin`, assigned `volunteer` lead, or `earc_staff`).
+- Sensitive fields (Aadhaar numbers, APAAR IDs, medical emergency details, contact numbers) are accessible only to authorized roles (`admin`, `super_admin`, the assigned `group_core_member` for that group, or `earc_staff`).
 - Document uploads (receipts, Aadhaar verifications, travel tickets) are stored in configured Supabase Storage buckets with role-checked access control.
 
 ---

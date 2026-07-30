@@ -6,7 +6,7 @@
 
 ## Key Features & Highlights
 
-- **Multi-Role Portal Access**: Role-based access control (RBAC) supporting 5 distinct user roles (`enrollee`, `volunteer`, `admin`, `super_admin`, and `earc_staff`).
+- **Multi-Role Portal Access**: Role-based access control (RBAC) supporting 6 distinct user roles (`enrollee`, `volunteer`, `group_core_member`, `admin`, `super_admin`, and `earc_staff`).
 - **Enrollee Application & Automated Testing**: Online tour browsing, application submission, and automated/manual online eligibility test evaluation pipeline.
 - **Session Revocation Security**: Instant session revocation across active devices upon role promotion (e.g., enrollee $\rightarrow$ volunteer) or demotion.
 - **Volunteer Operations Hub**:
@@ -28,7 +28,7 @@
   - Student Profile data collection (APAAR ID, Aadhaar number, DOB, gender).
   - One-click admin CSV exports for reporting.
 - **Credential Generation**: Dynamic PDF/Image export for official Volunteer ID Cards and Certificates of Completion (Participation, Excellence, Leadership, Mentor).
-- **Public Portal & Engagement**: Dynamic Landing Page, Photo Gallery, Visits Showcase, Blog, Newsletters, FAQ, Testimonials, Sponsor Inquiries, Career Inquiries, Institution Partnerships, and Alumni Network Registration.
+- **Public Portal & Engagement**: Dynamic Landing Page, Photo Gallery, Visits Showcase, Blog, Newsletters, FAQ, Testimonials, Sponsor Inquiries, Institution Partnerships, and Alumni Network Registration.
 
 ---
 
@@ -56,6 +56,7 @@
 | --- | --- | --- |
 | `enrollee` | Students / Applicants | Public pages, open tour discovery, tour applications, timed eligibility tests, dynamic applicant forms, personal profile. |
 | `volunteer` | Qualified Volunteers | Volunteer Panel — assigned tours, group logistics, travel tickets, expense claims, daily logs, school reports, workshop attendance/makeups, ID card & certificates. |
+| `group_core_member` | Volunteer Group Leads | Core Member Portal — view fellow group members and score their demo evaluations, scoped to their own tour group only. |
 | `admin` | Program Managers | Full Admin Console — tour creation, test grading & candidate approval, group assignment, finance approval, kit management, content moderation, analytics. |
 | `super_admin` | System Directors | All Admin permissions + user role modification (`/admin/super-admin`), user deletion, system override. |
 | `earc_staff` | EARC Field Staff | Dedicated EARC Panel — School Profile data collection, Student Profile registrations, field data management. |
@@ -84,6 +85,8 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 CLERK_WEBHOOK_SECRET=whsec_...
 
 # Supabase Database & Storage
@@ -98,6 +101,9 @@ UPSTASH_REDIS_REST_TOKEN=AX...
 # Resend (Transactional Email)
 RESEND_API_KEY=re_...
 RESEND_FROM_EMAIL=Gyan Setu <noreply@yourdomain.com>
+
+# Public app URL (used for sitemap.xml / robots.txt absolute URLs)
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
 ```
 
 ### Installation & Database Setup
@@ -145,10 +151,11 @@ RESEND_FROM_EMAIL=Gyan Setu <noreply@yourdomain.com>
 
 ```
 gyan-setu/
-├── actions/                  # 29 Next.js Server Actions (Auth-guarded mutations & queries)
+├── actions/                  # 30 Next.js Server Actions (Auth-guarded mutations & queries)
 ├── app/                      # Next.js App Router Structure
 │   ├── (admin)/admin/        # Admin Console (admin & super_admin)
 │   ├── (auth)/               # Clerk Authentication pages (/sign-in, /sign-up)
+│   ├── (core-member)/core-member/ # Core Member Portal (group_core_member, admin, super_admin)
 │   ├── (earc)/earc/          # EARC Field Data Panel (earc_staff, admin, super_admin)
 │   ├── (enrollee)/enrollee/  # Enrollee Student Portal
 │   ├── (public)/             # Public Landing Page & Marketing Content (blog, gallery, etc.)
@@ -157,6 +164,7 @@ gyan-setu/
 │   └── dashboard/            # Post-login role router
 ├── components/
 │   ├── features/             # Business Domain Components (tours, forms, earc, tests, etc.)
+│   ├── landing/               # Public site theme tokens, landing page, and shared navbar
 │   ├── layout/               # Header, Sidebar, Navigation, and Shell providers
 │   └── ui/                   # Primitive UI components (shadcn/ui base)
 ├── lib/
@@ -166,7 +174,7 @@ gyan-setu/
 │   └── validations/          # Zod validation schemas for all domain entities
 ├── scripts/                  # Database seeding and cleanup utilities
 ├── types/                    # Shared TypeScript interfaces and type declarations
-└── middleware.ts             # Global rate limiting & Clerk RBAC route matcher
+└── proxy.ts                  # Global rate limiting & Clerk RBAC route matcher (Next.js middleware)
 ```
 
 ---
