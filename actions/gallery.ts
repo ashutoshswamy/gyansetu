@@ -1,25 +1,5 @@
 "use server";
 
-/*
-  Run the following SQL in your Supabase SQL editor to create the required tables:
-
-  create table gallery_categories (
-    id uuid primary key default gen_random_uuid(),
-    name text not null,
-    description text,
-    created_at timestamptz default now()
-  );
-
-  create table gallery_images (
-    id uuid primary key default gen_random_uuid(),
-    category_id uuid references gallery_categories(id) on delete cascade,
-    url text not null,
-    caption text,
-    uploaded_by text,
-    created_at timestamptz default now()
-  );
-*/
-
 import { requireAdminUser } from "@/lib/clerk/action-auth";
 import { revalidatePath } from "next/cache";
 

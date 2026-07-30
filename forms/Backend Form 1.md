@@ -38,6 +38,7 @@ Download CSV File format
 - Mobile Number
 - Date of Birth (DOB)
 - Gender\*
+- Standard/Class\* (1st-12th)
 - Blood Group (Optional)
 - APAAR ID (Optional)
 - Aadhaar Number (Optional)

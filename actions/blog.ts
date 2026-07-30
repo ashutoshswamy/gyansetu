@@ -1,20 +1,5 @@
 "use server";
 
-/*
-create table blog_posts (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  slug text unique not null,
-  excerpt text,
-  content text not null,
-  cover_image_url text,
-  status text default 'draft' check (status in ('draft','published')),
-  published_at timestamptz,
-  created_by text,
-  created_at timestamptz default now()
-);
-*/
-
 import { requireAdminUser } from "@/lib/clerk/action-auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";

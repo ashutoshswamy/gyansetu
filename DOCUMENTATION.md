@@ -272,7 +272,7 @@ All tables reside in the Supabase PostgreSQL `public` schema ([`lib/supabase/sch
 
 ### Logistics & Financial Management
 
-- **`logistics`**: Per-tour logistics plan (`tour_id`, `travel_details` [JSONB], `accommodation_details` [JSONB], `kit_details` [JSONB], `itinerary`, `notes`).
+- **`logistics`**: Per-tour logistics plan (`tour_id`, `travel_details` [JSONB], `accommodation_details` [JSONB], `kit_details` [JSONB], `itinerary`, `notes`). Defined in the schema but unused legacy — no action or page references it.
 - **`expense_advances`**: Advance funds requested by group leaders (`group_id`, `amount`, `notes`, `status`).
 - **`expenses`**: Itemized expense reimbursement claims (`group_id`, `category` ['travel', 'accommodation', 'food', 'materials', 'miscellaneous'], `subcategory`, `amount`, `bill_url`, `status`, `rejection_reason`).
 - **`registration_fees`**: Fee payment records (`volunteer_id`, `amount`, `status` ['pending', 'paid', 'waived', 'refunded'], `payment_reference`).
@@ -295,7 +295,7 @@ All tables reside in the Supabase PostgreSQL `public` schema ([`lib/supabase/sch
 - **`id_cards`**: Issued volunteer ID cards (`volunteer_id`, `tour_id`, `valid_from`, `valid_to`, `card_file_url`).
 - **`notifications`**: User notifications (`user_id`, `title`, `message`, `read`, `type`).
 - **`media_gallery`**: Volunteer-uploaded tour photos/documents/videos (`tour_id`, `uploaded_by`, `file_url`, `caption`, `media_type`).
-- **`visits`**, **`gallery_categories`**/**`gallery_images`**, **`blog_posts`**, **`newsletters`**, **`testimonials`**, **`sponsor_inquiries`**, **`career_inquiries`**, **`institution_inquiries`**, **`alumni_*`**: Marketing, public content, and network registration tables.
+- **`visits`**, **`gallery_categories`**/**`gallery_images`**, **`blog_posts`**, **`newsletters`**, **`testimonials`**, **`sponsor_inquiries`**, **`career_inquiries`**, **`institution_inquiries`**, **`alumni_registrations`**: Marketing, public content, and network registration tables. (`alumni_profiles` and `career_inquiries` are defined in the schema but unused legacy — no action or page references them; live alumni signups go through `alumni_registrations`.)
 
 ---
 
@@ -305,7 +305,7 @@ All Server Actions are located in `actions/` and operate under strict authorizat
 
 | Module | Primary Exported Functions | Auth Requirement |
 | --- | --- | --- |
-| [`tours.ts`](./actions/tours.ts) | `createTour`, `updateTour`, `deleteTour`, `applyForTour` | Admin / Enrollee |
+| [`tours.ts`](./actions/tours.ts) | `createTour`, `updateTour`, `deleteTour`, `applyForTour`, `endTour`, `reactivateTour` | Admin / Enrollee |
 | [`tests.ts`](./actions/tests.ts) | `createTest`, `submitTestAttempt`, `saveSubjectiveEvaluation`, `approveTestResult`, `demoteVolunteer` | Admin / Enrollee |
 | [`forms.ts`](./actions/forms.ts) | `createForm`, `updateForm`, `deleteForm`, `submitForm` | Admin / Authenticated |
 | [`groups.ts`](./actions/groups.ts) | `createGroup`, `updateGroup`, `deleteGroup`, `addGroupMember`, `removeGroupMember`, `getAllGroups`, `getGroupsForSelect`, `getGroupsByTour`, `getMyGroup`, `setGroupCoreMember`, `getMyCoreMemberAssignments` | Admin / Volunteer |
@@ -314,18 +314,18 @@ All Server Actions are located in `actions/` and operate under strict authorizat
 | [`school-reports.ts`](./actions/school-reports.ts) | `submitSchoolReport`, `updateSchoolReport`, `getGroupSchoolReports`, `getAllSchoolReports`, `getGroupMembersForSchoolReport` | Volunteer / Admin |
 | [`tour-reports.ts`](./actions/tour-reports.ts) | `submitTourReport`, `updateTourReport`, `approveTourReport` | Volunteer / Admin |
 | [`demo-evaluations.ts`](./actions/demo-evaluations.ts) | `createDemoEvaluation`, `updateDemoEvaluation`, `getAllDemoEvaluations` | Admin / Volunteer |
-| [`finance.ts`](./actions/finance.ts) | `createExpenseAdvance`, `submitExpense`, `approveExpense`, `rejectExpense`, `sendBackExpense` | Volunteer / Admin |
+| [`finance.ts`](./actions/finance.ts) | `createExpenseAdvance`, `submitExpense`, `approveExpense`, `rejectExpense`, `sendBackExpense`, `resubmitExpense` | Volunteer / Admin |
 | [`travel.ts`](./actions/travel.ts) | `createTravelTicket`, `postLocationUpdate`, `getLocationUpdatesForGroup` | Admin / Volunteer |
 | [`locations.ts`](./actions/locations.ts) | `startSharingLocation`, `updateMyLocation`, `stopSharingLocation`, `getMySharingStatus`, `getGroupVolunteerLocations` | Volunteer / Admin |
-| [`workshops.ts`](./actions/workshops.ts) | `createWorkshop`, `setWorkshopAttendance`, `submitMissedWorkshopSummary`, `decideMakeup` | Admin / Volunteer |
+| [`workshops.ts`](./actions/workshops.ts) | `createWorkshop`, `setWorkshopAttendance`, `reportWorkshopAttended`, `submitMissedWorkshopSummary`, `decideMakeup` | Admin / Volunteer |
 | [`events.ts`](./actions/events.ts) | `createEvent`, `updateEvent`, `deleteEvent`, `getEvents`, `rsvpEvent`, `getMyEventRsvps`, `markAttended` | Admin / Volunteer |
 | [`kits.ts`](./actions/kits.ts) | `createKitItem`, `updateKitItem`, `upsertKitAssignment`, `markKitDistributed`, `getKitChecklistForGroup`, `toggleKitChecklistItem` | Admin / Volunteer |
 | [`local-hosts.ts`](./actions/local-hosts.ts) | `createLocalHost`, `updateLocalHost`, `deleteLocalHost`, `getAllLocalHosts`, `getLocalHostForMyGroup` | Admin / Volunteer |
 | [`profiles.ts`](./actions/profiles.ts) | `upsertVolunteerProfile`, `getMyVolunteerProfile`, `getVolunteerProfileById`, `getAllVolunteerProfiles`, `setAadhaarVerified` | Volunteer / Admin |
 | [`registration-fees.ts`](./actions/registration-fees.ts) | `createRegistrationFee`, `updateRegistrationFee`, `getAllRegistrationFees`, `getMyRegistrationFee` | Admin / Volunteer |
 | [`earc.ts`](./actions/earc.ts) | `createSchoolProfile`, `createStudentProfile`, `getSchoolProfiles`, `getStudentProfiles`, `bulkCreateSchoolProfiles`, `bulkCreateStudentProfiles`, `exportSchoolProfilesCsv`, `exportStudentProfilesCsv` | EARC Staff / Admin |
-| [`certificates.ts`](./actions/certificates.ts) | `issueCertificate`, `revokeCertificate`, `getMyCertificates` | Admin / Volunteer |
-| [`id-cards.ts`](./actions/id-cards.ts) | `createIdCard`, `deleteIdCard`, `getMyIdCard` | Admin / Volunteer |
+| [`certificates.ts`](./actions/certificates.ts) | `issueCertificate`, `bulkIssueCertificates`, `revokeCertificate`, `getMyCertificates` | Admin / Volunteer |
+| [`id-cards.ts`](./actions/id-cards.ts) | `createIdCard`, `bulkCreateIdCards`, `deleteIdCard`, `getMyIdCard` | Admin / Volunteer |
 | [`gallery.ts`](./actions/gallery.ts) | `createCategory`, `deleteCategory`, `addImage`, `deleteImage` | Admin |
 | [`blog.ts`](./actions/blog.ts) | `createPost`, `publishPost`, `deletePost` | Admin |
 | [`newsletter.ts`](./actions/newsletter.ts) | `createNewsletter`, `publishNewsletter`, `deleteNewsletter` | Admin |
@@ -333,7 +333,7 @@ All Server Actions are located in `actions/` and operate under strict authorizat
 | [`alumni-registration.ts`](./actions/alumni-registration.ts) | `submitAlumniRegistration`, `getAllAlumniRegistrations` | Public / Admin |
 | [`public-forms.ts`](./actions/public-forms.ts) | `submitTestimonial`, `submitSponsorInquiry`, `submitInstitutionInquiry`, `approveTestimonial`, `declineTestimonial`, `deleteTestimonial` | Public / Admin |
 | [`notifications.ts`](./actions/notifications.ts) | `createNotification`, `markNotificationRead`, `markAllNotificationsRead`, `notifyGroupMembers`, `sendEmail` | Authenticated |
-| [`users.ts`](./actions/users.ts) | `getAllUsers`, `updateUserRole`, `setEarcStaffRole`, `syncDeletedUsers`, `deleteUser` | Admin / Super Admin |
+| [`users.ts`](./actions/users.ts) | `getAllUsers`, `getEarcCandidates`, `updateUserRole`, `setEarcStaffRole`, `syncDeletedUsers`, `deleteUser` | Admin / Super Admin |
 
 ---
 
@@ -363,7 +363,7 @@ Supabase Storage is partitioned into 4 dedicated public buckets, all routed thro
 | `gallery-images` | Admin only | High-resolution photographs for public photo gallery |
 | `newsletter-files` | Admin only | Published PDF newsletters |
 
-There is no dedicated `documents` or `earc-files` bucket. The `earc_files` table exists in the schema but is unused legacy. Expense receipts (`bill_url`), travel tickets (`ticket_file_url`), and ID card files (`card_file_url`) are not uploaded to Supabase Storage at all — they're plain external-URL text fields (or, for ID cards, generated client-side and downloaded directly); profile photos are the one exception, uploaded through the `media` bucket.
+A `documents` storage bucket is created by `schema.sql` (`insert into storage.buckets ... values ('documents', ...)`) but is dead — no allow-listed helper writes to it. There is no dedicated `earc-files` bucket, and the `earc_files` table exists in the schema but is unused legacy. Expense receipts (`bill_url`), travel tickets (`ticket_file_url`), and ID card files (`card_file_url`) are not uploaded to Supabase Storage at all — they're plain external-URL text fields (or, for ID cards, generated client-side and downloaded directly); profile photos are the one exception, uploaded through the `media` bucket.
 
 ---
 

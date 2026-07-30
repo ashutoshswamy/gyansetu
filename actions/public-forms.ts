@@ -1,8 +1,3 @@
-/*
-create table testimonials (id uuid primary key default gen_random_uuid(), name text not null, batch_year text, role text, message text not null, is_approved boolean default false, created_at timestamptz default now());
-create table sponsor_inquiries (id uuid primary key default gen_random_uuid(), organization_name text not null, contact_name text not null, email text not null, phone text, sponsorship_type text, message text, created_at timestamptz default now());
-create table institution_inquiries (id uuid primary key default gen_random_uuid(), institution_name text not null, contact_name text not null, email text not null, phone text, institution_type text, city text, student_count text, message text, created_at timestamptz default now());
-*/
 "use server";
 
 import { createServerClient } from "@/lib/supabase/server";
