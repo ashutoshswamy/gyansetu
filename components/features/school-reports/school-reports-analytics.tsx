@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
 import {
-  fmt, count, sortBy, SectionEyebrow, SingleBar, DonutCard, LedgerStat, Ledger, bandSelectStyle,
+  fmt, count, sortBy, SectionEyebrow, ChartCard, BreakdownCard, LedgerStat, Ledger, bandSelectStyle,
+  tooltipStyle, legendStyle, gridProps, axisTick, axisTickMono,
 } from "@/components/features/analytics/chart-kit";
 
 const RATING_ORDER = ["Excellent", "Good", "Satisfactory", "Needs Improvement"];
@@ -63,16 +65,21 @@ export function SchoolReportsAnalytics({ reports }: { reports: ReportForAnalytic
     () => sortBy(count(filtered.map(r => r.overall_rating).filter((v): v is string => !!v)), RATING_ORDER, r => r.name),
     [filtered]
   );
-  const byMonth = useMemo(() => {
-    const m = new Map<string, number>();
+  // Reports filed vs. students reached, same month — a dual-axis line+area
+  // shows whether report volume actually tracks reach, which a single-metric
+  // bar can't say anything about.
+  const activityByMonth = useMemo(() => {
+    const m = new Map<string, { reports: number; students: number; sortKey: number }>();
     for (const r of filtered) {
       const key = MONTH_FORMAT.format(new Date(r.created_at));
-      m.set(key, (m.get(key) ?? 0) + 1);
+      const cur = m.get(key) ?? { reports: 0, students: 0, sortKey: new Date(r.created_at).getTime() };
+      cur.reports += 1;
+      cur.students += r.sessions?.reduce((a, s) => a + (s.num_students ?? 0), 0) ?? 0;
+      m.set(key, cur);
     }
     return [...m.entries()]
-      .map(([name, value]) => ({ name, value, sortKey: new Date(name).getTime() || 0 }))
-      .sort((a, b) => a.sortKey - b.sortKey)
-      .map(({ name, value }) => ({ name, value }));
+      .sort((a, b) => a[1].sortKey - b[1].sortKey)
+      .map(([name, v]) => ({ name, reports: v.reports, students: v.students }));
   }, [filtered]);
 
   return (
@@ -130,19 +137,34 @@ export function SchoolReportsAnalytics({ reports }: { reports: ReportForAnalytic
       <div className="mb-8">
         <SectionEyebrow>Report breakdown</SectionEyebrow>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <DonutCard title="Reports by status" data={byStatus} />
-          <SingleBar title="Reports by tour" data={byTour} />
-          <DonutCard title="Schools by type" data={bySchoolType} />
-          <DonutCard title="Schools by location" data={byLocation} />
-          <DonutCard title="Medium of instruction" data={byMedium} />
-          <SingleBar title="Overall rating" data={byRating} />
+          <BreakdownCard title="Reports by status" data={byStatus} />
+          <BreakdownCard title="Reports by tour" data={byTour} />
+          <BreakdownCard title="Schools by type" data={bySchoolType} />
+          <BreakdownCard title="Schools by location" data={byLocation} />
+          <BreakdownCard title="Medium of instruction" data={byMedium} />
+          <BreakdownCard title="Overall rating" data={byRating} />
         </div>
       </div>
 
       <div>
         <SectionEyebrow>Reports over time</SectionEyebrow>
         <div className="grid grid-cols-1 gap-4">
-          <SingleBar title="Reports filed by month" data={byMonth} />
+          <ChartCard
+            title="Reports filed & students reached by month"
+            data={activityByMonth}
+            tableColumns={[{ key: "name", label: "Month" }, { key: "reports", label: "Reports" }, { key: "students", label: "Students" }]}
+          >
+            <ComposedChart data={activityByMonth} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
+              <CartesianGrid vertical={false} {...gridProps} />
+              <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} />
+              <YAxis yAxisId="reports" tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
+              <YAxis yAxisId="students" orientation="right" tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)", opacity: 0.6 }} />
+              <Legend wrapperStyle={legendStyle} />
+              <Area yAxisId="students" type="monotone" dataKey="students" name="Students reached" fill="var(--gs-marigold)" fillOpacity={0.18} stroke="var(--gs-marigold)" strokeWidth={2} />
+              <Line yAxisId="reports" type="monotone" dataKey="reports" name="Reports filed" stroke="var(--gs-rust)" strokeWidth={2.5} dot={{ r: 3, fill: "var(--gs-rust)" }} />
+            </ComposedChart>
+          </ChartCard>
         </div>
       </div>
     </div>

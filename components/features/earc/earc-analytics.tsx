@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { BarChart, Bar, ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { STANDARDS } from "@/lib/constants/earc";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
 import {
   CHART_SPECTRUM, tooltipStyle, legendStyle, gridProps, axisTick, axisTickMono,
-  fmt, count, sortBy, SectionEyebrow, ChartCard, SingleBar, DonutCard, LedgerStat, Ledger, bandSelectStyle,
+  fmt, count, sortBy, SectionEyebrow, ChartCard, BreakdownCard, LedgerStat, Ledger, bandSelectStyle,
 } from "@/components/features/analytics/chart-kit";
 
 const MODULE_ORDER = ["Teacher Training", "Facilitator"];
@@ -157,10 +157,18 @@ export function EarcAnalytics({
   const schoolsByMedium = useMemo(() => count(filtered.map(s => s.medium_of_instruction)), [filtered]);
   const schoolsByMode = useMemo(() => count(filtered.map(s => s.mode)), [filtered]);
 
-  const sessionsByYear = useMemo(() => {
-    const m = new Map<string, number>();
-    for (const s of filtered) m.set(s.academic_year, (m.get(s.academic_year) ?? 0) + s.num_sessions_conducted);
-    return [...m.entries()].map(([name, value]) => ({ name, value })).sort((a, b) => a.name.localeCompare(b.name));
+  // Two metrics, two very different scales (dozens of sessions vs. hundreds of
+  // students) — a dual-axis line+area reads their trends together where a bar
+  // chart forced onto one axis would flatten the smaller series to nothing.
+  const activityByYear = useMemo(() => {
+    const m = new Map<string, { sessions: number; students: number }>();
+    for (const s of filtered) {
+      const cur = m.get(s.academic_year) ?? { sessions: 0, students: 0 };
+      cur.sessions += s.num_sessions_conducted;
+      cur.students += s.student_strength.reduce((a, r) => a + r.boys + r.girls, 0);
+      m.set(s.academic_year, cur);
+    }
+    return [...m.entries()].map(([name, v]) => ({ name, ...v })).sort((a, b) => a.name.localeCompare(b.name));
   }, [filtered]);
 
   const genderDistribution = useMemo(() => count(studentProfiles.map(s => s.gender)), [studentProfiles]);
@@ -302,27 +310,42 @@ export function EarcAnalytics({
             </BarChart>
           </ChartCard>
 
-          <DonutCard title="Schools by state" data={schoolsByState} />
-          <SingleBar title="Schools by project" data={schoolsByProject} />
-          <SingleBar title="Schools by type" data={schoolsByType} />
-          <DonutCard title="Schools by location type" data={schoolsByLocation} />
-          <DonutCard title="Schools by medium of instruction" data={schoolsByMedium} />
-          <DonutCard title="Schools by mode" data={schoolsByMode} />
+          <BreakdownCard title="Schools by state" data={schoolsByState} />
+          <BreakdownCard title="Schools by project" data={schoolsByProject} />
+          <BreakdownCard title="Schools by type" data={schoolsByType} />
+          <BreakdownCard title="Schools by location type" data={schoolsByLocation} />
+          <BreakdownCard title="Schools by medium of instruction" data={schoolsByMedium} />
+          <BreakdownCard title="Schools by mode" data={schoolsByMode} />
         </div>
       </div>
 
       <div className="mb-8">
         <SectionEyebrow>Programme activity</SectionEyebrow>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <SingleBar title="Sessions conducted by academic year" data={sessionsByYear} />
+        <div className="grid grid-cols-1 gap-4">
+          <ChartCard
+            title="Sessions & students reached by academic year"
+            data={activityByYear}
+            tableColumns={[{ key: "name", label: "Year" }, { key: "sessions", label: "Sessions" }, { key: "students", label: "Students" }]}
+          >
+            <ComposedChart data={activityByYear} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
+              <CartesianGrid vertical={false} {...gridProps} />
+              <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} />
+              <YAxis yAxisId="sessions" tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
+              <YAxis yAxisId="students" orientation="right" tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)", opacity: 0.6 }} />
+              <Legend wrapperStyle={legendStyle} />
+              <Area yAxisId="students" type="monotone" dataKey="students" name="Students reached" fill="var(--gs-marigold)" fillOpacity={0.18} stroke="var(--gs-marigold)" strokeWidth={2} />
+              <Line yAxisId="sessions" type="monotone" dataKey="sessions" name="Sessions conducted" stroke="var(--gs-rust)" strokeWidth={2.5} dot={{ r: 3, fill: "var(--gs-rust)" }} />
+            </ComposedChart>
+          </ChartCard>
         </div>
       </div>
 
       <div>
         <SectionEyebrow>Student demographics</SectionEyebrow>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <SingleBar title="Gender distribution" data={genderDistribution} />
-          <SingleBar title="Blood group distribution" data={bloodGroupDistribution} />
+          <BreakdownCard title="Gender distribution" data={genderDistribution} />
+          <BreakdownCard title="Blood group distribution" data={bloodGroupDistribution} />
         </div>
       </div>
     </div>
