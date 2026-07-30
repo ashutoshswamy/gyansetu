@@ -274,7 +274,7 @@ export function EarcAnalytics({
               <CartesianGrid vertical={false} {...gridProps} />
               <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} />
               <YAxis tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)" }} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)", opacity: 0.6 }} />
               <Legend wrapperStyle={legendStyle} />
               {studentsByModule.standards.map((std, i) => (
                 <Bar
@@ -294,7 +294,7 @@ export function EarcAnalytics({
               <CartesianGrid vertical={false} {...gridProps} />
               <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} />
               <YAxis tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)" }} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)", opacity: 0.6 }} />
               <Legend wrapperStyle={legendStyle} />
               {/* ponytail: recharts stacked bars render segments flush; skipping the 2px inter-segment gap spec, low visual cost at this scale */}
               <Bar dataKey="boys" stackId="s" name="Boys" fill="var(--gs-marigold)" maxBarSize={24} />

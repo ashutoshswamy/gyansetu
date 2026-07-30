@@ -61,7 +61,7 @@ export function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export function ChartCard({
-  title, data, children, tableColumns, centerLabel, centerLabelLeft = "50%",
+  title, data, children, tableColumns, centerLabel, centerLabelLeft = "50%", maxWidth,
 }: {
   title: string;
   data: Record<string, string | number>[];
@@ -70,6 +70,9 @@ export function ChartCard({
   centerLabel?: React.ReactNode;
   /** Horizontal position of centerLabel — matches the donut's cx when a side legend pushes it off-center. */
   centerLabelLeft?: string;
+  /** Caps the chart+legend area's width so a small donut doesn't strand its legend
+   *  far off in empty space on a wide grid cell. */
+  maxWidth?: number;
 }) {
   return (
     <div style={{ background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 6, padding: "16px 16px 8px" }}>
@@ -77,7 +80,7 @@ export function ChartCard({
       {data.length === 0 ? (
         <p style={{ fontFamily: F_BODY, fontSize: 12, color: "var(--gs-text-mute)", padding: "24px 0", textAlign: "center" }}>No data yet.</p>
       ) : (
-        <div style={{ width: "100%", height: 220, position: "relative" }}>
+        <div style={{ width: "100%", maxWidth, height: 220, position: "relative", margin: maxWidth ? "0 auto" : undefined }}>
           <ResponsiveContainer width="100%" height="100%">
             {children as React.ReactElement}
           </ResponsiveContainer>
@@ -118,7 +121,7 @@ export function SingleBar({ title, data }: { title: string; data: { name: string
         <CartesianGrid vertical={false} {...gridProps} />
         <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} interval={0} angle={data.length > 6 ? -30 : 0} textAnchor={data.length > 6 ? "end" : "middle"} height={data.length > 6 ? 50 : 24} />
         <YAxis tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
-        <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)" }} />
+        <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)", opacity: 0.6 }} />
         <Bar dataKey="value" fill="var(--gs-marigold)" radius={[3, 3, 0, 0]} maxBarSize={24} />
       </BarChart>
     </ChartCard>
@@ -141,7 +144,7 @@ export function StackedBar({
         <CartesianGrid vertical={false} {...gridProps} />
         <XAxis dataKey="name" tick={axisTick} axisLine={{ stroke: "var(--gs-line)" }} tickLine={false} />
         <YAxis tick={axisTickMono} axisLine={false} tickLine={false} allowDecimals={false} />
-        <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)" }} />
+        <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--gs-paper-deep)", opacity: 0.6 }} />
         <Legend wrapperStyle={legendStyle} />
         {series.map((s, i) => (
           <Bar
@@ -165,6 +168,7 @@ export function DonutCard({ title, data, cap = 6 }: { title: string; data: { nam
       data={capped}
       tableColumns={[{ key: "name", label: "Category" }, { key: "value", label: "Count" }]}
       centerLabelLeft="38%"
+      maxWidth={380}
       centerLabel={
         <>
           <div style={{ fontFamily: F_MONO, fontSize: 20, fontWeight: 600, color: "var(--gs-text)" }}>{fmt(total)}</div>
