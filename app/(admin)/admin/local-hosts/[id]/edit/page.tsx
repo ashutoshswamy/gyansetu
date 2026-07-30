@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { createLocalHost } from "@/actions/local-hosts";
+import { useParams, useRouter } from "next/navigation";
+import { getLocalHost, updateLocalHost } from "@/actions/local-hosts";
 import { createClientClient } from "@/lib/supabase/client";
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 
-export default function NewLocalHostPage() {
+export default function EditLocalHostPage() {
+  const params = useParams();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const id = params.id as string;
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<{ id: string; name: string; state_allocated?: string | null; tour_id?: string | null; tours?: { title: string }[] | null }[]>([]);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
@@ -17,6 +20,7 @@ export default function NewLocalHostPage() {
   const [groupId, setGroupId] = useState("");
   const [manualState, setManualState] = useState("");
   const [district, setDistrict] = useState("");
+  const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", notes: "" });
 
   useEffect(() => {
     createClientClient()
@@ -25,20 +29,50 @@ export default function NewLocalHostPage() {
       .order("created_at", { ascending: false })
       .then(({ data }) => setGroups(data ?? []));
     fetch("/api/tours").then(r => r.json()).then(d => setTours(Array.isArray(d) ? d : []));
-  }, []);
+    getLocalHost(id)
+      .then(host => {
+        setForm({
+          name: host.name ?? "",
+          phone: host.phone ?? "",
+          email: host.email ?? "",
+          address: host.address ?? "",
+          notes: host.notes ?? "",
+        });
+        setGroupId(host.group_id ?? "");
+        setTourId(host.group?.tour_id ?? "");
+        setManualState(host.state ?? "");
+        setDistrict(host.district ?? "");
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id]);
 
   const groupsForTour = tourId ? groups.filter(g => g.tour_id === tourId) : groups;
-
-  // Location follows the linked group (which carries its allocated state) — only fall back
-  // to a manual pick when no group is linked, or that group has no state set yet.
   const selectedGroup = groups.find(g => g.id === groupId);
   const groupState = selectedGroup?.state_allocated ?? "";
   const state = groupState || manualState;
 
-  const [lastState, setLastState] = useState(state);
-  if (state !== lastState) {
-    setLastState(state);
-    setDistrict("");
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    try {
+      await updateLocalHost(id, {
+        name: form.name,
+        phone: form.phone || undefined,
+        email: form.email || undefined,
+        state: state || undefined,
+        district: district || undefined,
+        address: form.address || undefined,
+        group_id: groupId || undefined,
+        notes: form.notes || undefined,
+      });
+      router.push("/admin/local-hosts");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to update local host");
+    } finally {
+      setSaving(false);
+    }
   }
 
   const inputStyle: React.CSSProperties = {
@@ -47,36 +81,14 @@ export default function NewLocalHostPage() {
     background: "#FAFAF7", color: "#19140F", boxSizing: "border-box",
   };
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const fd = new FormData(e.currentTarget);
-    try {
-      await createLocalHost({
-        name: fd.get("name") as string,
-        phone: (fd.get("phone") as string) || undefined,
-        email: (fd.get("email") as string) || undefined,
-        state: state || undefined,
-        district: district || undefined,
-        address: (fd.get("address") as string) || undefined,
-        group_id: (fd.get("group_id") as string) || undefined,
-        notes: (fd.get("notes") as string) || undefined,
-      });
-      router.push("/admin/local-hosts");
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create local host");
-    } finally {
-      setLoading(false);
-    }
-  }
+  if (loading) return <div className="p-8" style={{ color: "#9B9188" }}>Loading...</div>;
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Add Local Host</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Edit Local Host</h1>
         </div>
         <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
           {error && (
@@ -87,16 +99,16 @@ export default function NewLocalHostPage() {
           <div className="space-y-5">
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Name <span style={{ color: "#DC2626" }}>*</span></label>
-              <input name="name" required style={inputStyle} placeholder="Local host name" />
+              <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} placeholder="Local host name" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Phone</label>
-                <input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} onInput={e => { e.currentTarget.value = e.currentTarget.value.replace(/\D/g, "").slice(0, 10); }} style={inputStyle} placeholder="10-digit phone number" />
+                <input type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))} style={inputStyle} placeholder="10-digit phone number" />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Email</label>
-                <input name="email" type="email" style={inputStyle} placeholder="host@example.com" />
+                <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} style={inputStyle} placeholder="host@example.com" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -109,7 +121,7 @@ export default function NewLocalHostPage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Linked Group (optional)</label>
-                <select name="group_id" value={groupId} onChange={e => setGroupId(e.target.value)} style={inputStyle}>
+                <select value={groupId} onChange={e => setGroupId(e.target.value)} style={inputStyle}>
                   <option value="">None</option>
                   {groupsForTour.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
                 </select>
@@ -122,7 +134,7 @@ export default function NewLocalHostPage() {
                 {groupState ? (
                   <input value={groupState} readOnly placeholder="From linked group" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
                 ) : (
-                  <select value={manualState} onChange={e => setManualState(e.target.value)} style={inputStyle}>
+                  <select value={manualState} onChange={e => { setManualState(e.target.value); setDistrict(""); }} style={inputStyle}>
                     <option value="">Select State/Union Territory</option>
                     {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
@@ -135,16 +147,16 @@ export default function NewLocalHostPage() {
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Address</label>
-              <textarea name="address" rows={2} placeholder="Enter address" style={{ ...inputStyle, resize: "vertical" }} />
+              <textarea rows={2} value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="Enter address" style={{ ...inputStyle, resize: "vertical" }} />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea name="notes" rows={3} placeholder="Enter notes" style={{ ...inputStyle, resize: "vertical" }} />
+              <textarea rows={3} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Enter notes" style={{ ...inputStyle, resize: "vertical" }} />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
-              {loading ? "Saving..." : "Add Local Host"}
+            <button type="submit" disabled={saving} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+              {saving ? "Saving..." : "Save Changes"}
             </button>
             <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
               Cancel

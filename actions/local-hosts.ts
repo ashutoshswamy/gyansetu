@@ -49,10 +49,21 @@ export async function getAllLocalHosts() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("local_hosts")
-    .select("*, group:tour_groups(id, name)")
+    .select("*, group:tour_groups(id, name, tour_id, tours(title))")
     .order("created_at", { ascending: false });
   if (error) { console.error("[getAllLocalHosts]", error); throw new Error("Failed to fetch local hosts"); }
   return data ?? [];
+}
+
+export async function getLocalHost(id: string) {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("local_hosts")
+    .select("*, group:tour_groups(id, name, tour_id)")
+    .eq("id", id)
+    .single();
+  if (error) { console.error("[getLocalHost]", error); throw new Error("Failed to fetch local host"); }
+  return data;
 }
 
 export async function getLocalHostForMyGroup(groupId: string) {

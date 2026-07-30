@@ -52,7 +52,7 @@ function EditableRow({
   // Debounced auto-save: creates the row on first meaningful edit, updates it after.
   useEffect(() => {
     if (first.current) { first.current = false; return; }
-    if (!row.name.trim()) return;
+    if (!row.name.trim() || Number.isNaN(row.quantity_per_school)) return;
 
     const timeout = setTimeout(async () => {
       onChange(row.key, { saving: true });
@@ -73,7 +73,8 @@ function EditableRow({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run on the editable fields, not on every row-object identity change
   }, [row.name, row.material_type, row.quantity_per_school]);
 
-  const totalQty = row.material_type === "reusable" ? row.quantity_per_school : row.quantity_per_school * expectedSchools;
+  const qty = Number.isNaN(row.quantity_per_school) ? 0 : row.quantity_per_school;
+  const totalQty = row.material_type === "reusable" ? qty : qty * expectedSchools;
 
   return (
     <tr style={{ borderBottom: "1px solid #E4DFD1" }}>
@@ -85,11 +86,11 @@ function EditableRow({
           style={inputStyle}
         />
       </td>
-      <td className="p-3">
+      <td className="p-3" style={{ minWidth: 130 }}>
         <select
           value={row.material_type}
           onChange={e => onChange(row.key, { material_type: e.target.value as MaterialType })}
-          style={{ ...inputStyle, appearance: "none", fontWeight: 600, color: TYPE_BADGE[row.material_type].color, background: TYPE_BADGE[row.material_type].bg, border: "none" }}
+          style={{ ...inputStyle, minWidth: 116, appearance: "none", fontWeight: 600, color: TYPE_BADGE[row.material_type].color, background: TYPE_BADGE[row.material_type].bg, border: "none" }}
         >
           <option value="reusable">Reusable</option>
           <option value="consumable">Consumable</option>
@@ -98,8 +99,12 @@ function EditableRow({
       <td className="p-3">
         <input
           type="number" min={1}
-          value={row.quantity_per_school}
-          onChange={e => onChange(row.key, { quantity_per_school: Math.max(1, Number(e.target.value) || 1) })}
+          value={Number.isNaN(row.quantity_per_school) ? "" : row.quantity_per_school}
+          onChange={e => {
+            const v = e.target.value;
+            onChange(row.key, { quantity_per_school: v === "" ? NaN : Math.max(1, Number(v) || 1) });
+          }}
+          onBlur={() => { if (Number.isNaN(row.quantity_per_school)) onChange(row.key, { quantity_per_school: 1 }); }}
           style={inputStyle}
         />
       </td>

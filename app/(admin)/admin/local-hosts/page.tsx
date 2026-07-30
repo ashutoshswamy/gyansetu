@@ -34,6 +34,11 @@ export default async function AdminLocalHostsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{h.name}</span>
+                  {h.group?.tours?.[0]?.title && (
+                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#9B6B1F", background: "rgba(155,107,31,0.08)" }}>
+                      {h.group.tours[0].title}
+                    </span>
+                  )}
                   {h.group && (
                     <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#4A55BE", background: "rgba(74,85,190,0.08)" }}>
                       {h.group.name}
@@ -45,6 +50,11 @@ export default async function AdminLocalHostsPage() {
                 </div>
                 {h.notes && <div style={{ fontSize: 12, color: "#5A5247", marginTop: 4 }}>{h.notes}</div>}
               </div>
+              <Link href={`/admin/local-hosts/${h.id}/edit`}>
+                <button style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, background: "transparent", color: "#4A55BE", border: "1.5px solid rgba(74,85,190,0.3)", cursor: "pointer" }}>
+                  Edit
+                </button>
+              </Link>
               <DeleteHostButton id={h.id} />
             </div>
           ))}
