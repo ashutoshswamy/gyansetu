@@ -50,30 +50,16 @@ export function HeroCarousel() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Field-note tag */}
-      <div
-        style={{
-          position: "absolute", top: -18, left: -18, zIndex: 2,
-          background: "var(--lp-navy)", color: "white",
-          fontFamily: "'Poppins',sans-serif", fontSize: 11.5, fontWeight: 600,
-          letterSpacing: "0.08em", textTransform: "uppercase",
-          padding: "7px 14px", borderRadius: 20,
-          boxShadow: "0 6px 18px rgba(46,53,112,.28)",
-        }}
-      >
-        Live from the field
-      </div>
-
       <div
         style={{
           position: "relative",
           width: "100%",
           aspectRatio: "4 / 5",
-          borderRadius: 16,
+          borderRadius: 4,
           overflow: "hidden",
-          background: "#F3F0E8",
-          border: "1px solid var(--lp-border)",
-          boxShadow: "0 18px 44px rgba(25,20,15,.16)",
+          background: "var(--gs-ink-soft)",
+          border: "1px solid rgba(251,247,236,.16)",
+          boxShadow: "0 24px 56px rgba(10,8,20,.45)",
         }}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -93,6 +79,7 @@ export function HeroCarousel() {
               style={{ objectFit: "cover" }}
               priority={index === 0}
             />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,transparent 60%,rgba(20,23,46,.55) 100%)", pointerEvents: "none" }} />
           </motion.div>
         </AnimatePresence>
 
@@ -103,13 +90,13 @@ export function HeroCarousel() {
           onClick={() => go(index - 1)}
           style={{
             position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)",
-            width: 34, height: 34, borderRadius: "50%", border: "none",
-            background: "rgba(25,20,15,.4)", color: "white",
+            width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(251,247,236,.3)",
+            background: "rgba(20,23,46,.5)", color: "var(--gs-paper)",
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", zIndex: 2,
           }}
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={16} />
         </button>
         <button
           type="button"
@@ -117,21 +104,18 @@ export function HeroCarousel() {
           onClick={() => go(index + 1)}
           style={{
             position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
-            width: 34, height: 34, borderRadius: "50%", border: "none",
-            background: "rgba(25,20,15,.4)", color: "white",
+            width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(251,247,236,.3)",
+            background: "rgba(20,23,46,.5)", color: "var(--gs-paper)",
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", zIndex: 2,
           }}
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={16} />
         </button>
       </div>
 
-      {/* Caption + dots */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12, gap: 12 }}>
-        <p style={{ fontFamily: "var(--font-cormorant), serif", fontStyle: "italic", fontSize: 15, color: "var(--lp-tm)", margin: 0 }}>
-          {slides[index].word}
-        </p>
+      {/* Dots */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 12 }}>
         <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
           {slides.map((s, i) => (
             <button
@@ -141,7 +125,7 @@ export function HeroCarousel() {
               onClick={() => go(i)}
               style={{
                 width: i === index ? 16 : 6, height: 6, borderRadius: 3, border: "none",
-                background: i === index ? "var(--lp-navy)" : "var(--lp-border)",
+                background: i === index ? "var(--gs-marigold)" : "rgba(251,247,236,.22)",
                 cursor: "pointer", transition: "all 0.25s ease", padding: 0,
               }}
             />

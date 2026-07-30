@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import {
   Sun,
   Network,
@@ -14,11 +15,53 @@ import dynamic from "next/dynamic";
 import { useAuth } from "@clerk/nextjs";
 import { SiteNavbar } from "./site-navbar";
 
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "900"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+/* Scoped design tokens — landing page only, does not touch the global
+   --lp-* tokens shared by the rest of the public site. */
+const pageVars = {
+  "--gs-ink": "#14172E",
+  "--gs-ink-soft": "#1E2240",
+  "--gs-paper": "#FBF7EC",
+  "--gs-paper-deep": "#F1E8D2",
+  "--gs-line": "#E1D6B8",
+  "--gs-line-ink": "rgba(251,247,236,.14)",
+  "--gs-marigold": "#E8A33D",
+  "--gs-rust": "#B8492E",
+  "--gs-text": "#1C1A14",
+  "--gs-text-soft": "#5C5646",
+  "--gs-text-mute": "#948C77",
+} as CSSProperties;
+
+const F_DISPLAY = "var(--font-fraunces), serif";
+const F_BODY = "var(--font-plex-sans), sans-serif";
+const F_MONO = "var(--font-plex-mono), monospace";
+
 const HeroCarousel = dynamic(() => import("./hero-carousel").then((m) => m.HeroCarousel), {
   ssr: false,
   loading: () => (
     <div style={{ width: "100%", maxWidth: 400, marginLeft: "auto" }}>
-      <div style={{ width: "100%", aspectRatio: "4 / 5", borderRadius: 16, background: "#F3F0E8", border: "1px solid var(--lp-border)" }} />
+      <div style={{ width: "100%", aspectRatio: "4 / 5", borderRadius: 4, background: "var(--gs-ink-soft)", border: "1px solid var(--gs-line-ink)" }} />
     </div>
   ),
 });
@@ -35,10 +78,49 @@ interface LandingPageProps {
   testimonials?: Testimonial[];
 }
 
-/* ── Animated stat ── */
-function AnimatedStat({ value, label, delay = 0 }: { value: string; label: string; delay?: number }) {
+/* ── Reusable button styles (ink sections vs. paper sections) ── */
+const btnMarigold: CSSProperties = {
+  display: "inline-flex", alignItems: "center", gap: 8,
+  background: "var(--gs-marigold)", color: "var(--gs-ink)",
+  fontFamily: F_BODY, fontSize: 13.5, fontWeight: 700, letterSpacing: "0.02em",
+  padding: "13px 28px", borderRadius: 3, textDecoration: "none",
+};
+const btnOutlinePaper: CSSProperties = {
+  display: "inline-flex", alignItems: "center", gap: 8,
+  background: "transparent", color: "var(--gs-paper)",
+  fontFamily: F_BODY, fontSize: 13.5, fontWeight: 600,
+  padding: "12px 27px", borderRadius: 3, textDecoration: "none",
+  border: "1.5px solid rgba(251,247,236,.3)",
+};
+const btnInk: CSSProperties = {
+  display: "inline-flex", alignItems: "center", gap: 8,
+  background: "var(--gs-ink)", color: "var(--gs-paper)",
+  fontFamily: F_BODY, fontSize: 13.5, fontWeight: 700,
+  padding: "12px 26px", borderRadius: 3, textDecoration: "none",
+};
+
+/* ── Eyebrow label — a field-log coordinate/reference line ── */
+function Eyebrow({ children, tone = "ink" }: { children: React.ReactNode; tone?: "ink" | "paper" }) {
+  return (
+    <span
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 10,
+        fontFamily: F_MONO, fontSize: 11, fontWeight: 500, letterSpacing: "0.12em",
+        textTransform: "uppercase", color: "var(--gs-marigold)", marginBottom: 14,
+      }}
+    >
+      <span style={{ display: "inline-block", width: 22, height: 1.5, background: "var(--gs-marigold)" }} />
+      {children}
+    </span>
+  );
+}
+
+/* ── Animated stat, ledger style ── */
+function AnimatedStat({ value, label, delay = 0, tone = "paper" }: { value: string; label: string; delay?: number; tone?: "paper" | "ink" }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-30px" });
+  const valColor = tone === "ink" ? "var(--gs-paper)" : "var(--gs-ink)";
+  const lblColor = tone === "ink" ? "rgba(251,247,236,.5)" : "var(--gs-text-mute)";
   return (
     <motion.div
       ref={ref}
@@ -46,10 +128,10 @@ function AnimatedStat({ value, label, delay = 0 }: { value: string; label: strin
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.65, delay, ease: [0.22, 0.68, 0, 1.2] }}
     >
-      <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 30, fontWeight: 700, color: "var(--lp-navy)", lineHeight: 1 }}>
+      <div style={{ fontFamily: F_MONO, fontSize: 26, fontWeight: 600, color: valColor, lineHeight: 1 }}>
         {value}
       </div>
-      <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 11.5, color: "var(--lp-tm)", marginTop: 5, fontWeight: 400 }}>
+      <div style={{ fontFamily: F_BODY, fontSize: 11.5, color: lblColor, marginTop: 6, fontWeight: 500 }}>
         {label}
       </div>
     </motion.div>
@@ -69,23 +151,26 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
   const storyLineScale = useTransform(storyProgress, [0, 1], [0, 1]);
 
   return (
-    <main style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <main
+      className={`${fraunces.variable} ${plexSans.variable} ${plexMono.variable}`}
+      style={{ ...pageVars, fontFamily: F_BODY }}
+    >
 
       <SiteNavbar />
 
       {/* ── HERO ── */}
-      <section style={{ minHeight: "calc(100vh - 64px)", marginTop: 64, display: "flex", alignItems: "center", position: "relative", overflow: "hidden", background: "var(--lp-bg)" }}>
-        {/* Background: grid */}
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(228,223,209,.32) 1px,transparent 1px),linear-gradient(90deg,rgba(228,223,209,.32) 1px,transparent 1px)", backgroundSize: "48px 48px" }} />
+      <section style={{ minHeight: "calc(100vh - 64px)", marginTop: 64, display: "flex", alignItems: "center", position: "relative", overflow: "hidden", background: "var(--gs-ink)" }}>
+        {/* Fine coordinate grid */}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", backgroundImage: "linear-gradient(var(--gs-line-ink) 1px,transparent 1px),linear-gradient(90deg,var(--gs-line-ink) 1px,transparent 1px)", backgroundSize: "48px 48px" }} />
 
-        {/* Animated gradient orbs */}
+        {/* Ambient glows */}
         <motion.div
-          style={{ position: "absolute", width: 700, height: 700, borderRadius: "50%", background: "radial-gradient(circle,rgba(74,85,190,.055) 0%,transparent 65%)", top: "5%", left: "-12%", pointerEvents: "none" }}
+          style={{ position: "absolute", width: 680, height: 680, borderRadius: "50%", background: "radial-gradient(circle,rgba(232,163,61,.09) 0%,transparent 65%)", top: "0%", left: "-14%", pointerEvents: "none" }}
           animate={{ x: [0, 28, 0], y: [0, -18, 0] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          style={{ position: "absolute", width: 550, height: 550, borderRadius: "50%", background: "radial-gradient(circle,rgba(245,165,32,.048) 0%,transparent 65%)", bottom: "0%", right: "0%", pointerEvents: "none" }}
+          style={{ position: "absolute", width: 520, height: 520, borderRadius: "50%", background: "radial-gradient(circle,rgba(184,73,46,.14) 0%,transparent 65%)", bottom: "-6%", right: "-4%", pointerEvents: "none" }}
           animate={{ x: [0, -22, 0], y: [0, 16, 0] }}
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         />
@@ -96,51 +181,49 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
         >
           {/* Left text */}
           <div>
-            {/* Eyebrow */}
-            <motion.div
-              style={{ display: "inline-flex", alignItems: "center", gap: 10, fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 22 }}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <span style={{ display: "inline-block", width: 28, height: 1.5, background: "var(--lp-amber)" }} />
-              Jnana Prabodhini &middot; Educational Activity Research Centre
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
+              <Eyebrow>Pune, India &middot; Est. 2013</Eyebrow>
             </motion.div>
 
             {/* Headline */}
-            <h1 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(46px,6.5vw,78px)", fontWeight: 600, lineHeight: 1.06, letterSpacing: "-0.025em", color: "var(--lp-text)", margin: "0 0 8px" }}>
-              {"Gyan-".split(" ").map((w, i) => (
-                <motion.span
-                  key={i}
-                  style={{ display: "inline-block", marginRight: "0.22em" }}
-                  initial={{ opacity: 0, y: 28 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.65, delay: 0.2 + i * 0.1, ease: [0.22, 0.68, 0, 1.2] }}
-                >
-                  {w}
-                </motion.span>
-              ))}
+            <h1 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(46px,6.5vw,80px)", fontWeight: 600, lineHeight: 1.04, letterSpacing: "-0.02em", color: "var(--gs-paper)", margin: "0 0 8px" }}>
               <motion.span
-                style={{ color: "var(--lp-navy)", fontStyle: "italic", display: "inline-block" }}
+                style={{ display: "inline-block" }}
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.44, ease: [0.22, 0.68, 0, 1.2] }}
+                transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 0.68, 0, 1.2] }}
+              >
+                Gyan
+              </motion.span>
+              <motion.span
+                style={{ display: "inline-block", color: "var(--gs-marigold)" }}
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.3, ease: [0.22, 0.68, 0, 1.2] }}
+              >
+                -
+              </motion.span>
+              <motion.span
+                style={{ color: "var(--gs-paper)", fontStyle: "italic", fontWeight: 500, display: "inline-block" }}
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 0.68, 0, 1.2] }}
               >
                 Setu
               </motion.span>
               <motion.span
-                style={{ display: "block", fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(20px,2.8vw,34px)", fontWeight: 400, fontStyle: "italic", color: "var(--lp-tm)", letterSpacing: "0.01em", marginTop: 6 }}
+                style={{ display: "block", fontFamily: F_DISPLAY, fontSize: "clamp(18px,2.5vw,30px)", fontWeight: 400, fontStyle: "italic", color: "var(--gs-marigold)", letterSpacing: "0.01em", marginTop: 8 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.9, delay: 0.68 }}
+                transition={{ duration: 0.9, delay: 0.62 }}
               >
-                ज्ञान सेतू
+                ज्ञान सेतू — a bridge of knowledge
               </motion.span>
             </h1>
 
             {/* Body */}
             <motion.p
-              style={{ fontFamily: "'Poppins',sans-serif", fontSize: 16.5, lineHeight: 1.72, color: "var(--lp-ts)", maxWidth: 460, margin: "24px 0 36px" }}
+              style={{ fontFamily: F_BODY, fontSize: 16.5, lineHeight: 1.72, color: "rgba(251,247,236,.68)", maxWidth: 460, margin: "24px 0 36px" }}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.56 }}
@@ -155,25 +238,22 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.7 }}
             >
-              <Link
-                href={isLoggedIn ? "/dashboard" : "/sign-up"}
-                className="btn-primary"
-              >
+              <Link href={isLoggedIn ? "/dashboard" : "/sign-up"} style={btnMarigold}>
                 {isLoggedIn ? "Go to Home" : "Apply for a Visit"}
                 <ChevronRight size={16} />
               </Link>
-              <a href="#how-it-works" className="btn-outline">Learn More</a>
+              <a href="#how-it-works" style={btnOutlinePaper}>Learn More</a>
             </motion.div>
 
             {/* Stats */}
-            <div style={{ display: "flex", gap: 36, marginTop: 52 }}>
+            <div style={{ display: "flex", gap: 36, marginTop: 52, flexWrap: "wrap" }}>
               {[
                 { val: "91,348", lbl: "Students Connected", d: 0.82 },
                 { val: "1,688",  lbl: "Schools Reached",     d: 0.9  },
                 { val: "14",     lbl: "States & UT",         d: 0.98 },
                 { val: "1,050",  lbl: "Volunteers Engaged",  d: 1.06 },
               ].map((s) => (
-                <AnimatedStat key={s.lbl} value={s.val} label={s.lbl} delay={s.d} />
+                <AnimatedStat key={s.lbl} value={s.val} label={s.lbl} delay={s.d} tone="ink" />
               ))}
             </div>
           </div>
@@ -198,25 +278,29 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       {/* ── WHAT WE DO ── */}
       <section
         ref={whatRef}
-        style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)", position: "relative", overflow: "hidden" }}
+        style={{ background: "var(--gs-paper)", borderTop: "1px solid var(--gs-line)", borderBottom: "1px solid var(--gs-line)", position: "relative", overflow: "hidden" }}
       >
-        <div style={{ position: "absolute", top: -60, right: -60, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle,rgba(245,165,32,.055) 0%,transparent 70%)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: -40, left: -40, width: 240, height: 240, borderRadius: "50%", background: "radial-gradient(circle,rgba(74,85,190,.04) 0%,transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: -60, right: -60, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle,rgba(232,163,61,.1) 0%,transparent 70%)", pointerEvents: "none" }} />
 
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", position: "relative", zIndex: 1 }}>
-          <div className="what-grid" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start", marginBottom: 72 }}>
-            <motion.h2
-              style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: 0 }}
-              initial={{ opacity: 0, y: 24 }}
-              animate={whatInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
-            >
-              What We Do
-            </motion.h2>
+          <div className="what-grid" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 56, alignItems: "start", marginBottom: 56 }}>
+            <div>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={whatInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}>
+                <Eyebrow>Field Activities</Eyebrow>
+              </motion.div>
+              <motion.h2
+                style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: 0 }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={whatInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
+              >
+                What We Do
+              </motion.h2>
+            </div>
 
             <div>
               <motion.p
-                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 16, color: "var(--lp-ts)", lineHeight: 1.75, margin: "0 0 24px" }}
+                style={{ fontFamily: F_BODY, fontSize: 16, color: "var(--gs-text-soft)", lineHeight: 1.75, margin: "0 0 24px" }}
                 initial={{ opacity: 0, y: 16 }}
                 animate={whatInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.14 }}
@@ -230,38 +314,40 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
 
               <motion.a
                 href="#how-it-works"
-                style={{ display: "inline-block", background: "var(--lp-amber)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "12px 30px", borderRadius: 5, textDecoration: "none" }}
+                style={{ ...btnInk, padding: "11px 26px", fontSize: 12.5, letterSpacing: "0.06em", textTransform: "uppercase" }}
                 initial={{ opacity: 0, y: 12 }}
                 animate={whatInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.26 }}
-                whileHover={{ scale: 1.04, boxShadow: "0 8px 28px rgba(245,165,32,.35)" }}
+                whileHover={{ scale: 1.03 }}
               >
                 Learn More
               </motion.a>
             </div>
           </div>
 
-          <div
-            className="what-grid"
-            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}
-          >
+          <div className="what-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
             {[
-              { icon: <Sun size={26} stroke="#F5A520" strokeWidth={1.75} />, desc: "Conduct joyful, hands-on science and mathematics workshops for middle school students" },
-              { icon: <Network size={26} stroke="#F5A520" strokeWidth={1.75} />, desc: "Build a network of volunteers, communities, and grassroots organizations to strengthen this “Knowledge Bridge”" },
-              { icon: <TrendingUp size={26} stroke="#F5A520" strokeWidth={1.75} />, desc: "Organize volunteer visits to remote, tribal, and aspirational regions of India to promote national integration through education and cultural exchange" },
+              { icon: <Sun size={24} stroke="var(--gs-rust)" strokeWidth={1.75} />, desc: "Conduct joyful, hands-on science and mathematics workshops for middle school students" },
+              { icon: <Network size={24} stroke="var(--gs-rust)" strokeWidth={1.75} />, desc: "Build a network of volunteers, communities, and grassroots organizations to strengthen this “Knowledge Bridge”" },
+              { icon: <TrendingUp size={24} stroke="var(--gs-rust)" strokeWidth={1.75} />, desc: "Organize volunteer visits to remote, tribal, and aspirational regions of India to promote national integration through education and cultural exchange" },
             ].map((item, i) => (
               <motion.div
                 key={i}
-                style={{ display: "flex", alignItems: "flex-start", gap: 16, background: "white", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "24px 22px" }}
+                style={{ position: "relative", background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 3, padding: "26px 22px 22px" }}
                 initial={{ opacity: 0, y: 28 }}
                 animate={whatInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.65, delay: 0.36 + i * 0.12, ease: [0.22, 0.68, 0, 1.2] }}
-                whileHover={{ y: -3, boxShadow: "0 10px 28px rgba(25,20,15,.06)" }}
+                whileHover={{ y: -3 }}
               >
-                <div style={{ width: 46, height: 46, borderRadius: 10, background: "rgba(245,165,32,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  {item.icon}
-                </div>
-                <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "var(--lp-ts)", lineHeight: 1.65, margin: 0 }}>
+                <span style={{
+                  position: "absolute", top: -1, left: 20, background: "var(--gs-ink)", color: "var(--gs-marigold)",
+                  fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, letterSpacing: "0.08em",
+                  padding: "3px 9px", borderRadius: "0 0 3px 3px",
+                }}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div style={{ marginTop: 14, marginBottom: 16 }}>{item.icon}</div>
+                <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "var(--gs-text-soft)", lineHeight: 1.65, margin: 0 }}>
                   {item.desc}
                 </p>
               </motion.div>
@@ -271,20 +357,14 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       </section>
 
       {/* ── OUR STORY ── */}
-      <section id="our-story" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
-        <div ref={storyRef} className="story-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "280px 1fr", gap: 64 }}>
+      <section id="our-story" style={{ background: "var(--gs-paper-deep)", borderTop: "1px solid var(--gs-line)", borderBottom: "1px solid var(--gs-line)" }}>
+        <div ref={storyRef} className="story-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "300px 1fr", gap: 64 }}>
           <div style={{ position: "sticky", top: 100, alignSelf: "start" }}>
-            <motion.span
-              style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              Our Story
-            </motion.span>
+            <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+              <Eyebrow>Our Story</Eyebrow>
+            </motion.div>
             <motion.h2
-              style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: "0 0 20px" }}
+              style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, fontStyle: "italic", lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: "0 0 24px" }}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -292,10 +372,9 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             >
               Since 2013
             </motion.h2>
-            <div style={{ width: 36, height: 3, background: "var(--lp-amber)", borderRadius: 2, marginBottom: 28 }} />
 
-            <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 700, color: "var(--lp-tm)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
-              Where We&apos;ve Worked
+            <div style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, color: "var(--gs-text-mute)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
+              Where We&apos;ve Worked — 11 States &amp; UTs
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
               {["Arunachal Pradesh", "Assam", "Chhattisgarh", "Jammu & Kashmir", "Jharkhand", "Ladakh", "Madhya Pradesh", "Manipur", "Meghalaya", "Nagaland", "Odisha"].map((state, i) => (
@@ -304,9 +383,9 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: 0.3 + i * 0.04 }}
-                  whileHover={{ scale: 1.06, borderColor: "var(--lp-navy)", color: "var(--lp-navy)" }}
-                  style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11.5, color: "var(--lp-ts)", border: "1px solid var(--lp-border)", borderRadius: 20, padding: "5px 11px", cursor: "default" }}
+                  transition={{ duration: 0.35, delay: 0.2 + i * 0.04 }}
+                  whileHover={{ scale: 1.06, borderColor: "var(--gs-rust)", color: "var(--gs-rust)" }}
+                  style={{ fontFamily: F_MONO, fontSize: 11, color: "var(--gs-text-mute)", border: "1px solid var(--gs-line)", borderRadius: 20, padding: "5px 11px", cursor: "default" }}
                 >
                   {state}
                 </motion.span>
@@ -316,8 +395,8 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
 
           <div style={{ position: "relative" }}>
             {/* Scroll-linked reading progress rail */}
-            <div style={{ position: "absolute", left: -33, top: 4, bottom: 4, width: 2, background: "var(--lp-border)", borderRadius: 1 }} className="story-rail">
-              <motion.div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,var(--lp-navy),var(--lp-amber))", transformOrigin: "top", scaleY: storyLineScale, borderRadius: 1 }} />
+            <div style={{ position: "absolute", left: -33, top: 4, bottom: 4, width: 2, background: "var(--gs-line)", borderRadius: 1 }} className="story-rail">
+              <motion.div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,var(--gs-rust),var(--gs-marigold))", transformOrigin: "top", scaleY: storyLineScale, borderRadius: 1 }} />
             </div>
 
             {[
@@ -326,7 +405,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             ].map((para, i) => (
               <motion.p
                 key={i}
-                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, maxWidth: 640, marginBottom: 18 }}
+                style={{ fontFamily: F_BODY, fontSize: 15.5, color: "var(--gs-text-soft)", lineHeight: 1.8, maxWidth: 640, marginBottom: 18 }}
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -338,13 +417,13 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
 
             {/* Pull quote break */}
             <motion.blockquote
-              style={{ margin: "36px 0", padding: "4px 0 4px 24px", borderLeft: "3px solid var(--lp-amber)" }}
+              style={{ margin: "36px 0", padding: "4px 0 4px 24px", borderLeft: "3px solid var(--gs-rust)" }}
               initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55 }}
             >
-              <p style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 24, fontStyle: "italic", fontWeight: 500, color: "var(--lp-navy)", lineHeight: 1.4, margin: 0, maxWidth: 560 }}>
+              <p style={{ fontFamily: F_DISPLAY, fontSize: 24, fontStyle: "italic", fontWeight: 500, color: "var(--gs-rust)", lineHeight: 1.4, margin: 0, maxWidth: 560 }}>
                 Volunteers not only teach, but also learn, live, and grow with the communities they serve.
               </p>
             </motion.blockquote>
@@ -356,7 +435,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             ].map((para, i) => (
               <motion.p
                 key={i}
-                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.8, maxWidth: 640, marginBottom: 18 }}
+                style={{ fontFamily: F_BODY, fontSize: 15.5, color: "var(--gs-text-soft)", lineHeight: 1.8, maxWidth: 640, marginBottom: 18 }}
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -373,20 +452,15 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       <section
         id="how-it-works"
         ref={howRef}
-        style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}
+        style={{ background: "var(--gs-paper)", borderTop: "1px solid var(--gs-line)", borderBottom: "1px solid var(--gs-line)" }}
       >
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "88px 24px" }}>
           <div style={{ marginBottom: 56 }}>
-            <motion.span
-              style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 12 }}
-              initial={{ opacity: 0, y: 12 }}
-              animate={howInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5 }}
-            >
-              Process
-            </motion.span>
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={howInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}>
+              <Eyebrow>Itinerary</Eyebrow>
+            </motion.div>
             <motion.h2
-              style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: 0 }}
+              style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: 0 }}
               initial={{ opacity: 0, y: 18 }}
               animate={howInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.1 }}
@@ -406,51 +480,44 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             ].map((step, i, arr) => (
               <motion.div
                 key={i}
-                style={{ display: "flex", gap: 28 }}
+                style={{
+                  display: "flex", gap: 22, alignItems: "stretch",
+                  borderBottom: i < arr.length - 1 ? "1px dashed var(--gs-line)" : "none",
+                  paddingBottom: 22, marginBottom: 22, position: "relative",
+                }}
                 initial={{ opacity: 0, x: -20 }}
                 animate={howInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.55, delay: 0.15 + i * 0.09, ease: [0.22, 0.68, 0, 1.2] }}
               >
-                {/* Rail: circle + connector */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                {/* Ticket-stub code */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, width: 64 }}>
                   <motion.div
                     style={{
-                      width: 48, height: 48, borderRadius: "50%",
-                      border: step.active ? "none" : "1.5px solid var(--lp-border)",
-                      background: step.active ? "var(--lp-navy)" : "white",
+                      width: 52, height: 52, borderRadius: "50%",
+                      border: step.active ? "none" : "1.5px solid var(--gs-line)",
+                      background: step.active ? "var(--gs-rust)" : "var(--gs-paper-deep)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      position: "relative", zIndex: 1, flexShrink: 0,
+                      position: "relative", flexShrink: 0,
                     }}
-                    whileHover={{ scale: 1.08 }}
-                    transition={{ duration: 0.2 }}
+                    whileHover={{ scale: 1.06 }}
                   >
                     {step.active && (
                       <motion.div
-                        style={{ position: "absolute", inset: -5, borderRadius: "50%", border: "1.5px solid rgba(74,85,190,.35)" }}
+                        style={{ position: "absolute", inset: -5, borderRadius: "50%", border: "1.5px solid rgba(184,73,46,.35)" }}
                         animate={{ scale: [1, 1.18, 1], opacity: [0.9, 0, 0.9] }}
                         transition={{ duration: 2.8, repeat: Infinity }}
                       />
                     )}
-                    <span style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 17, fontWeight: 700, color: step.active ? "white" : "var(--lp-navy)", letterSpacing: "0.02em" }}>
-                      {step.num}
+                    <span style={{ fontFamily: F_MONO, fontSize: 13, fontWeight: 600, color: step.active ? "var(--gs-paper)" : "var(--gs-text-mute)", letterSpacing: "0.02em" }}>
+                      GS·{step.num}
                     </span>
                   </motion.div>
-                  {i < arr.length - 1 && (
-                    <div style={{ width: 1, flex: 1, minHeight: 40, background: "var(--lp-border)", overflow: "hidden", marginTop: 4 }}>
-                      <motion.div
-                        style={{ width: "100%", background: "linear-gradient(180deg,var(--lp-navy),var(--lp-amber))", transformOrigin: "top" }}
-                        initial={{ scaleY: 0, height: "100%" }}
-                        animate={howInView ? { scaleY: 1 } : {}}
-                        transition={{ duration: 0.6, delay: 0.4 + i * 0.09, ease: "easeOut" }}
-                      />
-                    </div>
-                  )}
                 </div>
 
                 {/* Text */}
-                <div style={{ paddingBottom: i < arr.length - 1 ? 40 : 0, paddingTop: 6 }}>
-                  <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, fontWeight: 600, color: "var(--lp-text)", marginBottom: 8 }}>{step.title}</div>
-                  <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "var(--lp-tm)", lineHeight: 1.7, maxWidth: 560, margin: 0 }}>{step.desc}</p>
+                <div style={{ paddingTop: 4, flex: 1 }}>
+                  <div style={{ fontFamily: F_BODY, fontSize: 15.5, fontWeight: 600, color: "var(--gs-text)", marginBottom: 8 }}>{step.title}</div>
+                  <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "var(--gs-text-mute)", lineHeight: 1.7, maxWidth: 560, margin: 0 }}>{step.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -459,21 +526,15 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section id="testimonials" style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+      <section id="testimonials" style={{ background: "var(--gs-paper-deep)", borderTop: "1px solid var(--gs-line)", borderBottom: "1px solid var(--gs-line)" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 32, marginBottom: 48, flexWrap: "wrap" }}>
             <div>
-              <motion.span
-                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 12 }}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                Alumni Voices
-              </motion.span>
+              <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+                <Eyebrow>Alumni Voices</Eyebrow>
+              </motion.div>
               <motion.h2
-                style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--lp-text)", margin: "0 0 12px" }}
+                style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: "0 0 12px" }}
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -482,7 +543,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                 What Our Alumni Say
               </motion.h2>
               <motion.p
-                style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15, color: "var(--lp-ts)", maxWidth: 480, margin: 0 }}
+                style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", maxWidth: 480, margin: 0 }}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -498,10 +559,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               transition={{ duration: 0.5, delay: 0.26 }}
               style={{ flexShrink: 0 }}
             >
-              <Link
-                href="/testimonial"
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-navy)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "11px 24px", borderRadius: 6, textDecoration: "none", letterSpacing: "0.02em" }}
-              >
+              <Link href="/testimonial" style={btnInk}>
                 Share Your Experience
                 <ChevronRight size={15} />
               </Link>
@@ -509,24 +567,29 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
           </div>
 
           {testimonials.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 22 }}>
               {testimonials.map((t, i) => (
                 <motion.div
                   key={t.id}
-                  style={{ background: "white", border: "1px solid var(--lp-border)", borderRadius: 14, padding: "26px 24px", display: "flex", flexDirection: "column", gap: 16 }}
+                  style={{ position: "relative", background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "26px 24px", display: "flex", flexDirection: "column", gap: 16 }}
                   initial={{ opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: i * 0.09, ease: [0.22, 0.68, 0, 1.2] }}
                 >
-                  <div style={{ color: "var(--lp-amber)", fontSize: 22, lineHeight: 1 }}>&ldquo;</div>
-                  <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, color: "var(--lp-ts)", lineHeight: 1.75, margin: 0, flex: 1 }}>
+                  {/* Postmark corner */}
+                  <div style={{
+                    position: "absolute", top: 14, right: 14, width: 30, height: 30, borderRadius: "50%",
+                    border: "1.5px dashed var(--gs-rust)", opacity: 0.55,
+                  }} />
+                  <div style={{ color: "var(--gs-marigold)", fontFamily: F_DISPLAY, fontSize: 34, lineHeight: 0.5, fontWeight: 700 }}>&ldquo;</div>
+                  <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-soft)", lineHeight: 1.75, margin: 0, flex: 1 }}>
                     {t.message}
                   </p>
-                  <div style={{ borderTop: "1px solid var(--lp-border)", paddingTop: 14 }}>
-                    <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 600, color: "var(--lp-text)" }}>{t.name}</div>
+                  <div style={{ borderTop: "1px dashed var(--gs-line)", paddingTop: 14 }}>
+                    <div style={{ fontFamily: F_BODY, fontSize: 14, fontWeight: 600, color: "var(--gs-text)" }}>{t.name}</div>
                     {(t.role || t.batch_year) && (
-                      <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, color: "var(--lp-tm)", marginTop: 3 }}>
+                      <div style={{ fontFamily: F_MONO, fontSize: 11.5, color: "var(--gs-text-mute)", marginTop: 3 }}>
                         {[t.role, t.batch_year].filter(Boolean).join(" · ")}
                       </div>
                     )}
@@ -536,12 +599,12 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             </div>
           ) : (
             <motion.div
-              style={{ textAlign: "center", padding: "40px 24px", background: "white", border: "1px solid var(--lp-border)", borderRadius: 14 }}
+              style={{ textAlign: "center", padding: "40px 24px", background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 4 }}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
             >
-              <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15, color: "var(--lp-tm)", margin: 0 }}>
+              <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-mute)", margin: 0 }}>
                 Be the first to share your Gyan Setu experience.
               </p>
             </motion.div>
@@ -550,7 +613,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       </section>
 
       {/* ── ALUMNI NETWORK ── */}
-      <section id="alumni" style={{ background: "white", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+      <section id="alumni" style={{ background: "var(--gs-paper)", borderTop: "1px solid var(--gs-line)", borderBottom: "1px solid var(--gs-line)" }}>
         <div className="career-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 72, alignItems: "center" }}>
           <motion.div
             initial={{ opacity: 0, x: -32 }}
@@ -558,49 +621,32 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
           >
-            <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
-              Alumni Network
-            </span>
-            <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
+            <Eyebrow>Alumni Network</Eyebrow>
+            <h2 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--gs-text)", margin: "0 0 20px" }}>
               Your Journey{" "}
-              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Doesn&apos;t End Here</span>
+              <span style={{ color: "var(--gs-rust)", fontStyle: "italic" }}>Doesn&apos;t End Here</span>
             </h2>
-            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
+            <p style={{ fontFamily: F_BODY, fontSize: 15.5, color: "var(--gs-text-soft)", lineHeight: 1.75, marginBottom: 28 }}>
               Your Gyan-Setu journey doesn&apos;t end with a visit. Join our alumni network to reconnect, share your experiences, and inspire the next generation of volunteers.
             </p>
-            <Link
-              href="/alumni"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                background: "var(--lp-navy)",
-                color: "white",
-                fontFamily: "'Poppins',sans-serif",
-                fontSize: 13.5,
-                fontWeight: 600,
-                padding: "13px 30px",
-                borderRadius: 8,
-                textDecoration: "none",
-              }}
-            >
+            <Link href="/alumni" style={btnInk}>
               Register as Alumni <ChevronRight size={15} />
             </Link>
           </motion.div>
 
           <motion.div
-            style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", borderRadius: 16, padding: "44px 36px", position: "relative", overflow: "hidden" }}
+            style={{ background: "var(--gs-ink)", borderRadius: 6, padding: "44px 36px", position: "relative", overflow: "hidden" }}
             initial={{ opacity: 0, x: 32 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 0.68, 0, 1.2] }}
           >
-            <div style={{ position: "absolute", top: -30, right: -20, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle,rgba(74,85,190,.06) 0%,transparent 70%)", pointerEvents: "none" }} />
-            <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 64, lineHeight: 0.6, color: "var(--lp-amber)", marginBottom: 18 }}>&ldquo;</div>
-            <p style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 26, fontStyle: "italic", fontWeight: 500, color: "var(--lp-navy)", lineHeight: 1.35, margin: "0 0 24px" }}>
+            <div style={{ position: "absolute", top: -30, right: -20, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle,rgba(232,163,61,.12) 0%,transparent 70%)", pointerEvents: "none" }} />
+            <div style={{ fontFamily: F_DISPLAY, fontSize: 64, lineHeight: 0.6, color: "var(--gs-marigold)", marginBottom: 18 }}>&ldquo;</div>
+            <p style={{ fontFamily: F_DISPLAY, fontSize: 26, fontStyle: "italic", fontWeight: 500, color: "var(--gs-paper)", lineHeight: 1.35, margin: "0 0 24px" }}>
               once a Gyan-Setu Volunteer, always one.
             </p>
-            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "var(--lp-tm)", margin: 0, letterSpacing: "0.02em" }}>
+            <p style={{ fontFamily: F_MONO, fontSize: 12, color: "rgba(251,247,236,.5)", margin: 0, letterSpacing: "0.02em" }}>
               Reconnect. Share your story. Guide the next generation.
             </p>
           </motion.div>
@@ -608,7 +654,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       </section>
 
       {/* ── COLLABORATE WITH GYAN-SETU ── */}
-      <section id="institutions" style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+      <section id="institutions" style={{ background: "var(--gs-paper-deep)", borderTop: "1px solid var(--gs-line)", borderBottom: "1px solid var(--gs-line)" }}>
         <div className="career-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 72, alignItems: "center" }}>
           <motion.div
             initial={{ opacity: 0, x: -32 }}
@@ -616,20 +662,15 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
           >
-            <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
-              For Institutions
-            </span>
-            <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
+            <Eyebrow>For Institutions</Eyebrow>
+            <h2 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--gs-text)", margin: "0 0 20px" }}>
               Collaborate with{" "}
-              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Gyan-Setu</span>
+              <span style={{ color: "var(--gs-rust)", fontStyle: "italic" }}>Gyan-Setu</span>
             </h2>
-            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
+            <p style={{ fontFamily: F_BODY, fontSize: 15.5, color: "var(--gs-text-soft)", lineHeight: 1.75, marginBottom: 28 }}>
               Collaborate to create engaging learning experiences for your students. Together, we can inspire scientific curiosity, cultural understanding, and a spirit of national integration.
             </p>
-            <Link
-              href="/institution"
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-navy)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
-            >
+            <Link href="/institution" style={btnInk}>
               Apply Now <ChevronRight size={15} />
             </Link>
           </motion.div>
@@ -641,13 +682,13 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 0.68, 0, 1.2] }}
           >
-            <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 700, color: "var(--lp-tm)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>What We Bring</div>
+            <div style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, color: "var(--gs-text-mute)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>What We Bring</div>
             {["Science & Mathematics Workshops", "Career Guidance Sessions", "“Know Our Country” Exhibition"].map((item) => (
-              <div key={item} style={{ display: "flex", alignItems: "center", gap: 12, background: "white", border: "1px solid var(--lp-border)", borderRadius: 10, padding: "14px 18px" }}>
-                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(74,85,190,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="var(--lp-navy)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div key={item} style={{ display: "flex", alignItems: "center", gap: 12, background: "var(--gs-paper)", border: "1px solid var(--gs-line)", borderRadius: 3, padding: "14px 18px" }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(184,73,46,.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="var(--gs-rust)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
-                <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, color: "var(--lp-text)", fontWeight: 500 }}>{item}</span>
+                <span style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text)", fontWeight: 500 }}>{item}</span>
               </div>
             ))}
           </motion.div>
@@ -655,7 +696,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       </section>
 
       {/* ── BE A SPONSOR ── */}
-      <section style={{ background: "var(--lp-surface)", borderTop: "1px solid var(--lp-border)", borderBottom: "1px solid var(--lp-border)" }}>
+      <section style={{ background: "var(--gs-paper)", borderTop: "1px solid var(--gs-line)", borderBottom: "1px solid var(--gs-line)" }}>
         <div className="career-grid" style={{ maxWidth: 1120, margin: "0 auto", padding: "88px 24px", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 72, alignItems: "center" }}>
           <motion.div
             initial={{ opacity: 0, x: -32 }}
@@ -663,20 +704,15 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.75, ease: [0.22, 0.68, 0, 1.2] }}
           >
-            <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 600, color: "var(--lp-amber)", letterSpacing: "0.14em", textTransform: "uppercase", display: "block", marginBottom: 14 }}>
-              Partnerships
-            </span>
-            <h2 style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--lp-text)", margin: "0 0 20px" }}>
+            <Eyebrow>Partnerships</Eyebrow>
+            <h2 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.022em", color: "var(--gs-text)", margin: "0 0 20px" }}>
               Be a Sponsor,{" "}
-              <span style={{ color: "var(--lp-navy)", fontStyle: "italic" }}>Shape Young India</span>
+              <span style={{ color: "var(--gs-rust)", fontStyle: "italic" }}>Shape Young India</span>
             </h2>
-            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "var(--lp-ts)", lineHeight: 1.75, marginBottom: 28 }}>
+            <p style={{ fontFamily: F_BODY, fontSize: 15.5, color: "var(--gs-text-soft)", lineHeight: 1.75, marginBottom: 28 }}>
               Your sponsorship powers activity-based learning workshops in remote schools, supports volunteer travel, and helps bridge knowledge gaps across India. Partner with Gyan Setu and invest in a generation of curious, connected young minds.
             </p>
-            <Link
-              href="/sponsor"
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--lp-amber)", color: "white", fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 600, padding: "12px 26px", borderRadius: 6, textDecoration: "none" }}
-            >
+            <Link href="/sponsor" style={btnMarigold}>
               Become a Sponsor <ChevronRight size={15} />
             </Link>
           </motion.div>
@@ -692,9 +728,9 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               { num: "1,688", label: "Schools Reached" },
               { num: "14",    label: "States & UT" },
             ].map((stat, i) => (
-              <div key={i} style={{ background: "white", border: "1px solid var(--lp-border)", borderRadius: 12, padding: "26px 28px", display: "flex", gap: 22, alignItems: "center" }}>
-                <div style={{ fontFamily: "var(--font-cormorant), serif", fontSize: 42, fontWeight: 700, color: "var(--lp-navy)", lineHeight: 1, flexShrink: 0 }}>{stat.num}</div>
-                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 600, color: "var(--lp-text)" }}>{stat.label}</div>
+              <div key={i} style={{ background: "var(--gs-paper-deep)", border: "1px solid var(--gs-line)", borderRadius: 3, padding: "26px 28px", display: "flex", gap: 22, alignItems: "center" }}>
+                <div style={{ fontFamily: F_MONO, fontSize: 36, fontWeight: 600, color: "var(--gs-rust)", lineHeight: 1, flexShrink: 0 }}>{stat.num}</div>
+                <div style={{ fontFamily: F_BODY, fontSize: 14, fontWeight: 600, color: "var(--gs-text)" }}>{stat.label}</div>
               </div>
             ))}
           </motion.div>
@@ -702,21 +738,21 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       </section>
 
       {/* ── CTA BAND ── */}
-      <section style={{ background: "var(--lp-navy)", padding: "88px 24px", position: "relative", overflow: "hidden" }}>
+      <section style={{ background: "var(--gs-ink)", padding: "88px 24px", position: "relative", overflow: "hidden" }}>
         <motion.div
-          style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle,rgba(255,255,255,.035) 0%,transparent 70%)", top: "50%", left: "18%", transform: "translate(-50%,-50%)", pointerEvents: "none" }}
+          style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle,rgba(232,163,61,.08) 0%,transparent 70%)", top: "50%", left: "18%", transform: "translate(-50%,-50%)", pointerEvents: "none" }}
           animate={{ scale: [1, 1.25, 1] }}
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          style={{ position: "absolute", width: 440, height: 440, borderRadius: "50%", background: "radial-gradient(circle,rgba(245,165,32,.07) 0%,transparent 70%)", top: "30%", right: "12%", pointerEvents: "none" }}
+          style={{ position: "absolute", width: 440, height: 440, borderRadius: "50%", background: "radial-gradient(circle,rgba(184,73,46,.14) 0%,transparent 70%)", top: "30%", right: "12%", pointerEvents: "none" }}
           animate={{ scale: [1, 1.35, 1], x: [0, -18, 0] }}
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
         />
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(var(--gs-line-ink) 1px,transparent 1px),linear-gradient(90deg,var(--gs-line-ink) 1px,transparent 1px)", backgroundSize: "48px 48px", pointerEvents: "none" }} />
         <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
           <motion.h2
-            style={{ fontFamily: "var(--font-cormorant), serif", fontSize: "clamp(32px,4.5vw,54px)", fontWeight: 600, color: "white", letterSpacing: "-0.022em", margin: "0 0 18px", lineHeight: 1.1 }}
+            style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4.5vw,54px)", fontWeight: 600, color: "var(--gs-paper)", letterSpacing: "-0.022em", margin: "0 0 18px", lineHeight: 1.1 }}
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -725,7 +761,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             Ready to Explore India?
           </motion.h2>
           <motion.p
-            style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15.5, color: "rgba(255,255,255,.58)", marginBottom: 42, lineHeight: 1.65 }}
+            style={{ fontFamily: F_BODY, fontSize: 15.5, color: "rgba(251,247,236,.58)", marginBottom: 42, lineHeight: 1.65 }}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -741,11 +777,11 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             transition={{ duration: 0.55, delay: 0.26 }}
           >
             {isLoggedIn ? (
-              <Link href="/dashboard" className="btn-white">Go to Home</Link>
+              <Link href="/dashboard" style={btnMarigold}>Go to Home</Link>
             ) : (
               <>
-                <Link href="/sign-up" className="btn-white">Apply Now</Link>
-                <Link href="/sign-in" className="btn-outline-white">Sign In</Link>
+                <Link href="/sign-up" style={btnMarigold}>Apply Now</Link>
+                <Link href="/sign-in" style={btnOutlinePaper}>Sign In</Link>
               </>
             )}
           </motion.div>
@@ -753,13 +789,13 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ background: "#19140F", borderTop: "1px solid rgba(255,255,255,.06)" }}>
+      <footer style={{ background: "var(--gs-ink)", borderTop: "1px solid var(--gs-line-ink)" }}>
         {/* Main footer grid */}
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "64px 24px 48px", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48 }} className="footer-grid">
           {/* Brand column */}
           <div>
             <Image src="/logo_wide.png" alt="Gyan Setu" width={120} height={36} style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 18 }} />
-            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "rgba(255,255,255,.45)", lineHeight: 1.75, maxWidth: 300, marginBottom: 24 }}>
+            <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "rgba(251,247,236,.45)", lineHeight: 1.75, maxWidth: 300, marginBottom: 24 }}>
               Jnana Prabodhini Educational Activity Research Centre. Building bridges of knowledge across India since 2013.
             </p>
             <div style={{ display: "flex", gap: 14 }}>
@@ -770,9 +806,9 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                 { href: "https://youtube.com/@gyansetuyoutubechannel?si=Fc1wprxTfw55Rmnn", label: "YouTube", hoverBg: "#FF0000", hoverColor: "white", path: "M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" },
               ].map(({ href, label, hoverBg, hoverColor, path }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-                  style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(255,255,255,.07)", border: "1px solid rgba(255,255,255,.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,.5)", transition: "all .2s", flexShrink: 0 }}
+                  style={{ width: 36, height: 36, borderRadius: 4, background: "rgba(251,247,236,.06)", border: "1px solid rgba(251,247,236,.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(251,247,236,.5)", transition: "all .2s", flexShrink: 0 }}
                   onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = hoverBg; el.style.color = hoverColor; el.style.borderColor = hoverBg; el.style.transform = "translateY(-2px)"; }}
-                  onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "rgba(255,255,255,.07)"; el.style.color = "rgba(255,255,255,.5)"; el.style.borderColor = "rgba(255,255,255,.1)"; el.style.transform = "translateY(0)"; }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "rgba(251,247,236,.06)"; el.style.color = "rgba(251,247,236,.5)"; el.style.borderColor = "rgba(251,247,236,.1)"; el.style.transform = "translateY(0)"; }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d={path} /></svg>
                 </a>
@@ -782,7 +818,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
 
           {/* Explore column */}
           <div>
-            <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,.35)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 18 }}>Explore</div>
+            <div style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, color: "rgba(251,247,236,.35)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 18 }}>Explore</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {[
                 { label: "How It Works", href: "#how-it-works" },
@@ -792,9 +828,9 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                 { label: "Newsletter", href: "/newsletter" },
                 { label: "FAQ",        href: "/faq"        },
               ].map(({ label, href }) => (
-                <a key={label} href={href} style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                <a key={label} href={href} style={{ fontFamily: F_BODY, fontSize: 13.5, color: "rgba(251,247,236,.5)", textDecoration: "none", transition: "color .18s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--gs-paper)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(251,247,236,.5)"; }}
                 >{label}</a>
               ))}
             </div>
@@ -802,7 +838,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
 
           {/* Get Involved column */}
           <div>
-            <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,.35)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 18 }}>Get Involved</div>
+            <div style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, color: "rgba(251,247,236,.35)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 18 }}>Get Involved</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {[
                 { label: "Apply for a Tour", href: isLoggedIn ? "/dashboard" : "/sign-up" },
@@ -811,9 +847,9 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                 { label: "Be a Sponsor", href: "/sponsor" },
                 { label: isLoggedIn ? "Home" : "Sign In", href: isLoggedIn ? "/dashboard" : "/sign-in" },
               ].map(({ label, href }) => (
-                <a key={label} href={href} style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13.5, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                <a key={label} href={href} style={{ fontFamily: F_BODY, fontSize: 13.5, color: "rgba(251,247,236,.5)", textDecoration: "none", transition: "color .18s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--gs-paper)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(251,247,236,.5)"; }}
                 >{label}</a>
               ))}
             </div>
@@ -821,13 +857,13 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
 
           {/* Contact column */}
           <div>
-            <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,.35)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 18 }}>Contact</div>
+            <div style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, color: "rgba(251,247,236,.35)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 18 }}>Contact</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
-                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Address</div>
-                <a href="https://goo.gl/maps/XptGcSa9XG8C7aFq7" target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.65, textDecoration: "none", transition: "color .18s" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                <div style={{ fontFamily: F_MONO, fontSize: 10.5, color: "rgba(251,247,236,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Address</div>
+                <a href="https://goo.gl/maps/XptGcSa9XG8C7aFq7" target="_blank" rel="noopener noreferrer" style={{ fontFamily: F_BODY, fontSize: 13, color: "rgba(251,247,236,.5)", lineHeight: 1.65, textDecoration: "none", transition: "color .18s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--gs-paper)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(251,247,236,.5)"; }}
                 >
                   510, 1st Floor EARC<br />
                   Jnana Prabodhini, Sadashiv Peth<br />
@@ -835,33 +871,33 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                 </a>
               </div>
               <div>
-                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Phone</div>
-                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.65 }}>
+                <div style={{ fontFamily: F_MONO, fontSize: 10.5, color: "rgba(251,247,236,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Phone</div>
+                <div style={{ fontFamily: F_BODY, fontSize: 13, color: "rgba(251,247,236,.5)", lineHeight: 1.65 }}>
                   9325585695<br />
                   020-24207209
                 </div>
               </div>
               <div>
-                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Email</div>
-                <a href="mailto:gyansetu@jnanaprabodhini.org" style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                <div style={{ fontFamily: F_MONO, fontSize: 10.5, color: "rgba(251,247,236,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Email</div>
+                <a href="mailto:gyansetu@jnanaprabodhini.org" style={{ fontFamily: F_BODY, fontSize: 13, color: "rgba(251,247,236,.5)", textDecoration: "none", transition: "color .18s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--gs-paper)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(251,247,236,.5)"; }}
                 >
                   gyansetu@jnanaprabodhini.org
                 </a>
               </div>
               <div>
-                <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: 11, color: "rgba(255,255,255,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Websites</div>
+                <div style={{ fontFamily: F_MONO, fontSize: 10.5, color: "rgba(251,247,236,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Websites</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                  <a href="https://earc.jnanaprabodhini.org/" target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                  <a href="https://earc.jnanaprabodhini.org/" target="_blank" rel="noopener noreferrer" style={{ fontFamily: F_BODY, fontSize: 13, color: "rgba(251,247,236,.5)", textDecoration: "none", transition: "color .18s" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--gs-paper)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(251,247,236,.5)"; }}
                   >
                     EARC
                   </a>
-                  <a href="https://www.jnanaprabodhini.org/" target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "rgba(255,255,255,.5)", textDecoration: "none", transition: "color .18s" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.5)"; }}
+                  <a href="https://www.jnanaprabodhini.org/" target="_blank" rel="noopener noreferrer" style={{ fontFamily: F_BODY, fontSize: 13, color: "rgba(251,247,236,.5)", textDecoration: "none", transition: "color .18s" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--gs-paper)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(251,247,236,.5)"; }}
                   >
                     Jnana Prabodhini
                   </a>
@@ -872,17 +908,17 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
         </div>
 
         {/* Bottom bar */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,.07)", padding: "20px 24px" }}>
+        <div style={{ borderTop: "1px solid var(--gs-line-ink)", padding: "20px 24px" }}>
           <div style={{ maxWidth: 1120, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-            <p suppressHydrationWarning style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, color: "rgba(255,255,255,.28)", margin: 0 }}>
+            <p suppressHydrationWarning style={{ fontFamily: F_MONO, fontSize: 11.5, color: "rgba(251,247,236,.28)", margin: 0 }}>
               © {new Date().getFullYear()} Jnana Prabodhini Educational Resource Centre. All rights reserved.
             </p>
-            <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 12, color: "rgba(255,255,255,.28)", margin: 0 }}>
+            <p style={{ fontFamily: F_MONO, fontSize: 11.5, color: "rgba(251,247,236,.28)", margin: 0 }}>
               Made by{" "}
               <a href="https://anahat-entertainment.vercel.app" target="_blank" rel="noopener noreferrer"
-                style={{ color: "rgba(255,255,255,.45)", fontWeight: 600, textDecoration: "none", transition: "color .18s" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "white"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,.45)"; }}
+                style={{ color: "rgba(251,247,236,.45)", fontWeight: 600, textDecoration: "none", transition: "color .18s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--gs-paper)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(251,247,236,.45)"; }}
               >
                 Anahat Entertainment
               </a>
