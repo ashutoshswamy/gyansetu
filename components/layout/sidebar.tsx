@@ -77,7 +77,6 @@ const adminGroups: NavGroup[] = [
       { label: "Enrollments",      href: "/admin/students",   Icon: UserCheck, description: "Review tour applications and move enrollees through shortlist/selection." },
       { label: "Volunteers",       href: "/admin/volunteers", Icon: Users, description: "Directory of active volunteers and their assignment details." },
       { label: "Profile Data",     href: "/admin/profiles",   Icon: UserCircle, description: "Full volunteer profile records — contact, education, emergency info." },
-      { label: "EARC Staff",       href: "/admin/earc-staff", Icon: KeyRound, description: "Grant or revoke EARC staff access for a user." },
     ],
   },
   {
@@ -144,7 +143,10 @@ const earcNavItems: NavItem[] = [
 
 const earcPanelGroup: NavGroup = {
   label: "EARC Panel",
-  items: earcNavItems,
+  items: [
+    ...earcNavItems,
+    { label: "Role Management", href: "/earc/roles", Icon: KeyRound, description: "Grant or revoke EARC staff access for a user." },
+  ],
 };
 
 const coreMemberNavItems: NavItem[] = [

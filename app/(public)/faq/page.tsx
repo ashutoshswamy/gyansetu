@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
 
 const categories = [
   {
@@ -187,7 +188,7 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div
-      style={{ borderBottom: "1px solid #E4DFD1", paddingBottom: 0 }}
+      style={{ borderBottom: "1px dashed var(--gs-line)" }}
     >
       <button
         onClick={() => setOpen((v) => !v)}
@@ -206,26 +207,26 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
       >
         <span
           style={{
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: F_BODY,
             fontSize: 15,
             fontWeight: 500,
-            color: open ? "#1E3A5F" : "#19140F",
+            color: open ? "var(--gs-rust)" : "var(--gs-text)",
             lineHeight: 1.5,
             transition: "color .2s",
           }}
         >
           {q}
         </span>
-        <span style={{ flexShrink: 0, marginTop: 2, color: open ? "#1E3A5F" : "#9B9188" }}>
+        <span style={{ flexShrink: 0, marginTop: 2, color: open ? "var(--gs-rust)" : "var(--gs-text-mute)" }}>
           {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </span>
       </button>
       {open && (
         <p
           style={{
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: F_BODY,
             fontSize: 14.5,
-            color: "#5A5247",
+            color: "var(--gs-text-soft)",
             lineHeight: 1.8,
             paddingBottom: 22,
             margin: 0,
@@ -248,22 +249,25 @@ export default function FAQPage() {
   const tabsRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7" }}>
+    <div className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)" }}>
       {/* Header */}
-      <div style={{ background: "white", borderBottom: "1px solid #E4DFD1", padding: "48px 24px 0" }}>
+      <div style={{ background: "var(--gs-paper-deep)", borderBottom: "1px solid var(--gs-line)", padding: "48px 24px 0" }}>
         <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <Link
             href="/"
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "'Poppins',sans-serif", fontSize: 12, color: "#9B9188", textDecoration: "none", marginBottom: 24 }}
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F_MONO, fontSize: 11.5, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-text-mute)", textDecoration: "none", marginBottom: 24 }}
           >
             ← Back to Home
           </Link>
+
+          <Eyebrow>Support</Eyebrow>
+
           <h1
             style={{
-              fontFamily: "var(--font-cormorant, serif)",
+              fontFamily: F_DISPLAY,
               fontSize: "clamp(36px, 5vw, 60px)",
-              fontWeight: 700,
-              color: "#19140F",
+              fontWeight: 600,
+              color: "var(--gs-text)",
               letterSpacing: "-0.02em",
               lineHeight: 1.05,
               margin: "0 0 8px",
@@ -271,7 +275,7 @@ export default function FAQPage() {
           >
             Frequently Asked Questions
           </h1>
-          <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 15, color: "#8A7F76", marginBottom: 32 }}>
+          <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", marginBottom: 32 }}>
             Everything you need to know about Gyan Setu.
           </p>
 
@@ -289,9 +293,9 @@ export default function FAQPage() {
                 width: 28,
                 height: 28,
                 borderRadius: "50%",
-                border: "1px solid #E4DFD1",
-                background: "white",
-                color: "#5A5247",
+                border: "1px solid var(--gs-line)",
+                background: "var(--gs-paper)",
+                color: "var(--gs-text-soft)",
                 cursor: "pointer",
               }}
             >
@@ -306,13 +310,15 @@ export default function FAQPage() {
                   key={cat.id}
                   onClick={() => setActiveTab(cat.id)}
                   style={{
-                    fontFamily: "'Poppins',sans-serif",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: activeTab === cat.id ? "#1E3A5F" : "#9B9188",
+                    fontFamily: F_MONO,
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                    color: activeTab === cat.id ? "var(--gs-rust)" : "var(--gs-text-mute)",
                     background: "none",
                     border: "none",
-                    borderBottom: activeTab === cat.id ? "2px solid #1E3A5F" : "2px solid transparent",
+                    borderBottom: activeTab === cat.id ? "2px solid var(--gs-marigold)" : "2px solid transparent",
                     padding: "10px 20px",
                     cursor: "pointer",
                     whiteSpace: "nowrap",
@@ -335,9 +341,9 @@ export default function FAQPage() {
                 width: 28,
                 height: 28,
                 borderRadius: "50%",
-                border: "1px solid #E4DFD1",
-                background: "white",
-                color: "#5A5247",
+                border: "1px solid var(--gs-line)",
+                background: "var(--gs-paper)",
+                color: "var(--gs-text-soft)",
                 cursor: "pointer",
               }}
             >
@@ -349,18 +355,18 @@ export default function FAQPage() {
 
       {/* Content */}
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "48px 24px 80px" }}>
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "0 32px" }}>
+        <div style={{ background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "0 32px" }}>
           {active.items.map((item, i) => (
             <AccordionItem key={i} q={item.q} a={item.a} />
           ))}
         </div>
 
         <div style={{ marginTop: 40, textAlign: "center" }}>
-          <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: 14, color: "#9B9188" }}>
+          <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-mute)" }}>
             Still have questions?{" "}
             <a
               href="mailto:gyansetu@jnanaprabodhini.org"
-              style={{ color: "#1E3A5F", fontWeight: 600, textDecoration: "none" }}
+              style={{ color: "var(--gs-rust)", fontWeight: 600, textDecoration: "none" }}
             >
               Email us
             </a>

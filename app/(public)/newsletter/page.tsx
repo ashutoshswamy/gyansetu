@@ -1,5 +1,8 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { Mail } from "lucide-react";
+import {
+  fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, btnInk, Eyebrow,
+} from "@/components/landing/theme";
 
 export const metadata = {
   title: "Newsletter — Gyan Setu",
@@ -38,15 +41,15 @@ export default async function NewsletterPage() {
   const items = (newsletters ?? []) as Newsletter[];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7" }}>
+    <div className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)" }}>
       {/* Hero */}
-      <div style={{ borderBottom: "1px solid #E4DFD1", background: "#F3F0E8", padding: "56px 24px 48px" }}>
+      <div style={{ borderBottom: "1px solid var(--gs-line)", background: "var(--gs-paper-deep)", padding: "56px 24px 48px" }}>
         <div style={{ maxWidth: 960, margin: "0 auto" }}>
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 10 }}>
-            Gyan Setu Updates
-          </p>
-          <h1 style={{ fontSize: 36, fontWeight: 800, color: "#19140F", margin: 0, lineHeight: 1.2 }}>Newsletter</h1>
-          <p style={{ fontSize: 15, color: "#5A5247", marginTop: 10, maxWidth: 480 }}>
+          <Eyebrow>Gyan Setu Updates</Eyebrow>
+          <h1 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(32px,4vw,50px)", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: 0, lineHeight: 1.12 }}>
+            Newsletter
+          </h1>
+          <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", marginTop: 12, maxWidth: 480, lineHeight: 1.7 }}>
             Periodic updates, highlights, and announcements from the Gyan Setu program.
           </p>
         </div>
@@ -56,9 +59,9 @@ export default async function NewsletterPage() {
       <div style={{ maxWidth: 960, margin: "0 auto", padding: "48px 24px" }}>
         {items.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
-            <Mail size={40} style={{ color: "#E4DFD1", margin: "0 auto 12px" }} />
-            <p style={{ fontSize: 16, fontWeight: 600, color: "#19140F", marginBottom: 4 }}>No newsletters yet</p>
-            <p style={{ fontSize: 14, color: "#9B9188" }}>The first issue is on its way. Stay tuned!</p>
+            <Mail size={40} style={{ color: "var(--gs-line)", margin: "0 auto 12px" }} />
+            <p style={{ fontFamily: F_BODY, fontSize: 16, fontWeight: 600, color: "var(--gs-text)", marginBottom: 4 }}>No newsletters yet</p>
+            <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-mute)" }}>The first issue is on its way. Stay tuned!</p>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
@@ -66,28 +69,30 @@ export default async function NewsletterPage() {
               <div
                 key={item.id}
                 style={{
-                  background: "#FFFFFF",
-                  border: "1px solid #E4DFD1",
-                  borderRadius: 12,
-                  padding: "24px 24px 20px",
+                  position: "relative",
+                  background: "var(--gs-paper-deep)",
+                  border: "1px dashed var(--gs-line)",
+                  borderRadius: 3,
+                  padding: "26px 24px 22px",
                   display: "flex",
                   flexDirection: "column",
                   gap: 0,
                 }}
               >
                 {/* Issue badge */}
-                <div style={{ marginBottom: 12 }}>
+                <div style={{ marginBottom: 14 }}>
                   <span
                     style={{
                       display: "inline-block",
-                      fontSize: 11,
-                      fontWeight: 700,
+                      fontFamily: F_MONO,
+                      fontSize: 10.5,
+                      fontWeight: 600,
                       letterSpacing: "0.08em",
                       textTransform: "uppercase",
-                      color: "#F5A520",
-                      background: "rgba(245,165,32,0.10)",
-                      borderRadius: 4,
-                      padding: "3px 8px",
+                      color: "var(--gs-paper)",
+                      background: "var(--gs-ink)",
+                      borderRadius: 3,
+                      padding: "3px 9px",
                     }}
                   >
                     {item.issue_number != null ? `Issue #${item.issue_number}` : "Newsletter"}
@@ -95,7 +100,7 @@ export default async function NewsletterPage() {
                 </div>
 
                 {/* Title */}
-                <h2 style={{ fontSize: 17, fontWeight: 700, color: "#19140F", margin: "0 0 8px", lineHeight: 1.35 }}>
+                <h2 style={{ fontFamily: F_DISPLAY, fontSize: 19, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 8px", lineHeight: 1.35 }}>
                   {item.title}
                 </h2>
 
@@ -103,9 +108,10 @@ export default async function NewsletterPage() {
                 {item.description && (
                   <p
                     style={{
-                      fontSize: 13,
-                      color: "#5A5247",
-                      lineHeight: 1.6,
+                      fontFamily: F_BODY,
+                      fontSize: 13.5,
+                      color: "var(--gs-text-soft)",
+                      lineHeight: 1.65,
                       margin: "0 0 16px",
                       display: "-webkit-box",
                       WebkitLineClamp: 3,
@@ -119,7 +125,7 @@ export default async function NewsletterPage() {
 
                 {/* Date */}
                 {item.published_at && (
-                  <p style={{ fontSize: 11, color: "#9B9188", marginBottom: 16 }}>
+                  <p style={{ fontFamily: F_MONO, fontSize: 11, color: "var(--gs-text-mute)", letterSpacing: "0.04em", marginBottom: 16 }}>
                     {formatDate(item.published_at)}
                   </p>
                 )}
@@ -131,30 +137,21 @@ export default async function NewsletterPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      display: "inline-flex",
-                      alignItems: "center",
+                      ...btnInk,
                       justifyContent: "center",
-                      gap: 6,
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#FFFFFF",
-                      background: "#4A55BE",
-                      border: "none",
-                      borderRadius: 6,
-                      padding: "8px 16px",
-                      textDecoration: "none",
+                      fontSize: 12.5,
+                      padding: "10px 18px",
                       marginTop: "auto",
-                      cursor: "pointer",
                       width: "fit-content",
                     }}
                   >
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                      <path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     Download / View
                   </a>
                 ) : (
-                  <span style={{ fontSize: 12, color: "#9B9188", fontStyle: "italic", marginTop: "auto" }}>
+                  <span style={{ fontFamily: F_BODY, fontSize: 12, color: "var(--gs-text-mute)", fontStyle: "italic", marginTop: "auto" }}>
                     File coming soon
                   </span>
                 )}

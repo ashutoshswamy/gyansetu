@@ -3,7 +3,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ArrowLeft, Check } from "lucide-react";
 import { submitSponsorInquiry } from "@/actions/public-forms";
+import {
+  fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO,
+  btnMarigold, Eyebrow,
+} from "@/components/landing/theme";
 
 export default function SponsorPage() {
   const [form, setForm] = useState({
@@ -45,24 +50,26 @@ export default function SponsorPage() {
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    padding: "10px 14px",
+    padding: "11px 14px",
     fontSize: 14,
-    color: "#19140F",
-    background: "#FAFAF7",
-    border: "1.5px solid #E4DFD1",
-    borderRadius: 8,
+    color: "var(--gs-text)",
+    background: "var(--gs-paper)",
+    border: "1.5px solid var(--gs-line)",
+    borderRadius: 4,
     outline: "none",
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: F_BODY,
     boxSizing: "border-box",
   };
 
   const labelStyle: React.CSSProperties = {
     display: "block",
-    fontSize: 12,
-    fontWeight: 600,
-    color: "#5A5247",
-    marginBottom: 6,
-    letterSpacing: "0.02em",
+    fontFamily: F_MONO,
+    fontSize: 11,
+    fontWeight: 500,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    color: "var(--gs-text-mute)",
+    marginBottom: 8,
   };
 
   const fieldStyle: React.CSSProperties = {
@@ -71,18 +78,16 @@ export default function SponsorPage() {
 
   if (status === "success") {
     return (
-      <div style={{ minHeight: "100vh", background: "#FAFAF7", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-        <div style={{ maxWidth: 560, width: "100%", background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "40px 36px", textAlign: "center" }}>
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(42,94,58,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A5E3A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+      <div style={{ ...pageVars, minHeight: "100vh", background: "var(--gs-paper)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} className={fontVars}>
+        <div style={{ maxWidth: 560, width: "100%", background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 6, padding: "44px 36px", textAlign: "center" }}>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(184,73,46,.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+            <Check size={22} color="var(--gs-rust)" strokeWidth={2.5} />
           </div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: "#19140F", margin: "0 0 10px" }}>Inquiry Received</h2>
-          <p style={{ fontSize: 14, color: "#5A5247", lineHeight: 1.6, margin: "0 0 28px" }}>
+          <h2 style={{ fontFamily: F_DISPLAY, fontSize: 24, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 10px" }}>Inquiry Received</h2>
+          <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-soft)", lineHeight: 1.6, margin: "0 0 28px" }}>
             Thank you for your interest in sponsoring Gyan Setu. We&apos;ll be in touch shortly.
           </p>
-          <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE", textDecoration: "none" }}>
+          <Link href="/" style={{ fontFamily: F_MONO, fontSize: 12, fontWeight: 600, letterSpacing: "0.04em", color: "var(--gs-rust)", textDecoration: "none" }}>
             Back to Home
           </Link>
         </div>
@@ -91,33 +96,40 @@ export default function SponsorPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
-      <div style={{ maxWidth: 560, width: "100%" }}>
+    <div style={{ ...pageVars, minHeight: "100vh", background: "var(--gs-paper)" }} className={fontVars}>
+      <div style={{ maxWidth: 640, margin: "0 auto", padding: "56px 24px 80px" }}>
         <div style={{ marginBottom: 28 }}>
-          <Link href="/" style={{ fontSize: 12, fontWeight: 600, color: "#9B9188", textDecoration: "none", letterSpacing: "0.04em", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
+          <Link href="/" style={{ fontFamily: F_MONO, fontSize: 11.5, fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-text-mute)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <ArrowLeft size={13} />
             Back to Home
           </Link>
         </div>
 
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "36px 32px" }}>
-          <div style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", margin: "0 0 6px" }}>
-              Partner With Us
-            </p>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: "0 0 6px", fontFamily: "var(--font-cormorant), serif" }}>
-              Sponsor Gyan Setu
-            </h1>
-            <p style={{ fontSize: 13, color: "#5A5247", margin: 0 }}>
-              Help us create meaningful learning experiences for students across India.
-            </p>
-          </div>
+        <Eyebrow>Partnerships</Eyebrow>
+        <h1 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(30px,4.5vw,44px)", fontWeight: 600, lineHeight: 1.1, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: "0 0 14px" }}>
+          Be a Sponsor,{" "}
+          <span style={{ color: "var(--gs-rust)", fontStyle: "italic" }}>Shape Young India</span>
+        </h1>
+        <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", lineHeight: 1.7, margin: "0 0 32px" }}>
+          Your sponsorship powers activity-based learning workshops in remote schools, supports volunteer travel, and helps bridge knowledge gaps across India.
+        </p>
 
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 40 }}>
+          {[
+            { num: "1,688", label: "Schools Reached" },
+            { num: "14", label: "States & UT" },
+          ].map((stat) => (
+            <div key={stat.label} style={{ background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "18px 20px" }}>
+              <div style={{ fontFamily: F_MONO, fontSize: 28, fontWeight: 600, color: "var(--gs-rust)", lineHeight: 1, marginBottom: 6 }}>{stat.num}</div>
+              <div style={{ fontFamily: F_BODY, fontSize: 12.5, fontWeight: 600, color: "var(--gs-text)" }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 6, padding: "32px 28px" }}>
           <form onSubmit={handleSubmit}>
             <div style={fieldStyle}>
-              <label htmlFor="organization_name" style={labelStyle}>Organization Name <span style={{ color: "#C0392B" }}>*</span></label>
+              <label htmlFor="organization_name" style={labelStyle}>Organization Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
               <input
                 id="organization_name"
                 name="organization_name"
@@ -131,7 +143,7 @@ export default function SponsorPage() {
             </div>
 
             <div style={fieldStyle}>
-              <label htmlFor="contact_name" style={labelStyle}>Contact Person Name <span style={{ color: "#C0392B" }}>*</span></label>
+              <label htmlFor="contact_name" style={labelStyle}>Contact Person Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
               <input
                 id="contact_name"
                 name="contact_name"
@@ -146,7 +158,7 @@ export default function SponsorPage() {
 
             <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
-                <label htmlFor="email" style={labelStyle}>Email <span style={{ color: "#C0392B" }}>*</span></label>
+                <label htmlFor="email" style={labelStyle}>Email <span style={{ color: "var(--gs-rust)" }}>*</span></label>
                 <input
                   id="email"
                   name="email"
@@ -189,8 +201,8 @@ export default function SponsorPage() {
             </div>
 
             {status === "error" && (
-              <div style={{ background: "rgba(192,57,43,0.06)", border: "1px solid rgba(192,57,43,0.2)", borderRadius: 7, padding: "10px 14px", marginBottom: 16 }}>
-                <p style={{ fontSize: 13, color: "#C0392B", margin: 0 }}>{errorMsg}</p>
+              <div style={{ background: "rgba(184,73,46,.06)", border: "1px dashed var(--gs-rust)", borderRadius: 4, padding: "10px 14px", marginBottom: 16 }}>
+                <p style={{ fontFamily: F_BODY, fontSize: 13, color: "var(--gs-rust)", margin: 0 }}>{errorMsg}</p>
               </div>
             )}
 
@@ -198,17 +210,13 @@ export default function SponsorPage() {
               type="submit"
               disabled={status === "loading"}
               style={{
+                ...btnMarigold,
                 width: "100%",
-                background: status === "loading" ? "#9B9188" : "#4A55BE",
-                color: "white",
+                justifyContent: "center",
                 fontSize: 14,
-                fontWeight: 600,
-                padding: "12px 24px",
-                borderRadius: 8,
-                border: "none",
+                padding: "13px 24px",
+                opacity: status === "loading" ? 0.6 : 1,
                 cursor: status === "loading" ? "not-allowed" : "pointer",
-                fontFamily: "Poppins, sans-serif",
-                transition: "background 0.15s",
               }}
             >
               {status === "loading" ? "Submitting..." : "Submit Inquiry"}

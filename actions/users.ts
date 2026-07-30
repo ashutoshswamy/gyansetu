@@ -123,7 +123,7 @@ export async function syncDeletedUsers() {
   if (deleteError) { console.error("[syncDeletedUsers]", deleteError); throw new Error("Failed to delete orphaned users"); }
 
   revalidatePath("/admin/super-admin");
-  revalidatePath("/admin/earc-staff");
+  revalidatePath("/earc/roles");
   return { removed: orphaned.length, names: orphaned.map(u => u.name || u.email) };
 }
 

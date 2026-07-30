@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
 
 type Visit = {
   id: string;
@@ -20,24 +21,27 @@ function formatDate(dateStr: string) {
 }
 
 const STATUS_CONFIG = {
-  upcoming: { label: "Upcoming", color: "#4A55BE", bg: "rgba(74,85,190,0.10)" },
-  ongoing:  { label: "Ongoing",  color: "#2A5E3A", bg: "rgba(42,94,58,0.10)"  },
-  completed:{ label: "Completed",color: "#9B9188", bg: "rgba(155,145,136,0.12)"},
+  upcoming: { label: "Upcoming", color: "var(--gs-marigold)", bg: "rgba(232,163,61,.12)", border: "rgba(232,163,61,.4)" },
+  ongoing:  { label: "Ongoing",  color: "var(--gs-rust)",     bg: "rgba(184,73,46,.12)",  border: "rgba(184,73,46,.4)"  },
+  completed:{ label: "Completed",color: "var(--gs-text-mute)",bg: "var(--gs-paper)",      border: "var(--gs-line)"      },
 } as const;
 
 function StatusBadge({ status }: { status: Visit["status"] }) {
   const s = STATUS_CONFIG[status];
   return (
     <span style={{
-      fontSize: 11,
+      fontFamily: F_MONO,
+      fontSize: 10.5,
       fontWeight: 600,
-      padding: "3px 9px",
-      borderRadius: 4,
+      padding: "4px 11px",
+      borderRadius: 20,
       color: s.color,
       background: s.bg,
-      textTransform: "capitalize",
-      letterSpacing: "0.04em",
+      border: `1px solid ${s.border}`,
+      textTransform: "uppercase",
+      letterSpacing: "0.08em",
       display: "inline-block",
+      flexShrink: 0,
     }}>
       {s.label}
     </span>
@@ -47,28 +51,28 @@ function StatusBadge({ status }: { status: Visit["status"] }) {
 function VisitCard({ visit }: { visit: Visit }) {
   return (
     <div style={{
-      background: "#FFFFFF",
-      border: "1px solid #E4DFD1",
-      borderRadius: 12,
+      background: "var(--gs-paper-deep)",
+      border: "1px dashed var(--gs-line)",
+      borderRadius: 4,
       padding: "24px 26px",
       display: "flex",
       flexDirection: "column",
       gap: 12,
-      transition: "box-shadow 0.2s",
     }}>
       {/* Header row */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <h3 style={{
-            fontSize: 16,
+            fontFamily: F_DISPLAY,
+            fontSize: 19,
             fontWeight: 600,
-            color: "#19140F",
+            color: "var(--gs-text)",
             margin: "0 0 4px",
             lineHeight: 1.3,
           }}>
             {visit.title}
           </h3>
-          <p style={{ fontSize: 13, color: "#5A5247", margin: 0 }}>
+          <p style={{ fontFamily: F_MONO, fontSize: 12, color: "var(--gs-text-mute)", margin: 0, letterSpacing: "0.02em" }}>
             {visit.destination}{visit.state ? `, ${visit.state}` : ""}
           </p>
         </div>
@@ -80,19 +84,20 @@ function VisitCard({ visit }: { visit: Visit }) {
         display: "flex",
         alignItems: "center",
         gap: 6,
-        fontSize: 12.5,
-        color: "#9B9188",
+        fontFamily: F_MONO,
+        fontSize: 12,
+        color: "var(--gs-text-mute)",
         fontWeight: 500,
       }}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
         </svg>
         <span>{formatDate(visit.start_date)}</span>
-        <span style={{ color: "#E4DFD1" }}>→</span>
+        <span style={{ color: "var(--gs-line)" }}>&rarr;</span>
         <span>{formatDate(visit.end_date)}</span>
         {visit.capacity != null && (
           <>
-            <span style={{ color: "#E4DFD1", marginLeft: 8 }}>·</span>
+            <span style={{ color: "var(--gs-line)", marginLeft: 8 }}>&middot;</span>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}>
               <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
             </svg>
@@ -104,8 +109,9 @@ function VisitCard({ visit }: { visit: Visit }) {
       {/* Description */}
       {visit.description && (
         <p style={{
+          fontFamily: F_BODY,
           fontSize: 13.5,
-          color: "#5A5247",
+          color: "var(--gs-text-soft)",
           lineHeight: 1.65,
           margin: 0,
         }}>
@@ -124,18 +130,19 @@ function VisitCard({ visit }: { visit: Visit }) {
               display: "inline-flex",
               alignItems: "center",
               gap: 6,
-              fontSize: 12.5,
+              fontFamily: F_MONO,
+              fontSize: 11.5,
               fontWeight: 600,
-              color: "#4A55BE",
+              color: "var(--gs-text-mute)",
               textDecoration: "none",
-              padding: "6px 13px",
-              borderRadius: 5,
-              border: "1.5px solid rgba(74,85,190,0.25)",
-              background: "rgba(74,85,190,0.04)",
-              transition: "border-color 0.18s, background 0.18s",
+              padding: "6px 14px",
+              borderRadius: 20,
+              border: "1px solid var(--gs-line)",
+              background: "var(--gs-paper)",
+              letterSpacing: "0.02em",
             }}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
             </svg>
             View Timetable
@@ -151,11 +158,11 @@ function Section({ title, visits }: { title: string; visits: Visit[] }) {
   return (
     <div style={{ marginBottom: 48 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-        <h2 style={{ fontSize: 13, fontWeight: 700, color: "#9B9188", letterSpacing: "0.12em", textTransform: "uppercase", margin: 0 }}>
+        <h2 style={{ fontFamily: F_MONO, fontSize: 12, fontWeight: 600, color: "var(--gs-text-mute)", letterSpacing: "0.12em", textTransform: "uppercase", margin: 0 }}>
           {title}
         </h2>
-        <div style={{ flex: 1, height: 1, background: "#E4DFD1" }} />
-        <span style={{ fontSize: 12, color: "#9B9188", fontWeight: 500 }}>{visits.length}</span>
+        <div style={{ flex: 1, height: 1, background: "var(--gs-line)" }} />
+        <span style={{ fontFamily: F_MONO, fontSize: 11.5, color: "var(--gs-text-mute)", fontWeight: 500 }}>{visits.length}</span>
       </div>
       <div style={{
         display: "grid",
@@ -184,86 +191,69 @@ export default async function VisitsPage() {
   const isEmpty  = all.length === 0;
 
   return (
-    <>
-      <style>{`
-        * { box-sizing: border-box; }
-        body { background: #FAFAF7; margin: 0; }
-      `}</style>
+    <main className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)" }}>
+      {/* Page header */}
+      <div style={{
+        background: "var(--gs-ink)",
+        padding: "64px 24px 56px",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", backgroundImage: "linear-gradient(var(--gs-line-ink) 1px,transparent 1px),linear-gradient(90deg,var(--gs-line-ink) 1px,transparent 1px)", backgroundSize: "48px 48px" }} />
+        <div style={{ maxWidth: 1080, margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <Eyebrow>Jnana Pravas Schedule</Eyebrow>
+          <h1 style={{
+            fontFamily: F_DISPLAY,
+            fontSize: "clamp(36px, 5vw, 56px)",
+            fontWeight: 600,
+            color: "var(--gs-paper)",
+            margin: "0 0 12px",
+            lineHeight: 1.08,
+            letterSpacing: "-0.02em",
+          }}>
+            Visits
+          </h1>
+          <p style={{ fontFamily: F_BODY, fontSize: 15.5, color: "rgba(251,247,236,.62)", margin: 0, lineHeight: 1.65, maxWidth: 620 }}>
+            Jnana Prabodhini volunteer visits to remote parts of India &mdash; science workshops, cultural exchanges, and knowledge bridges.
+          </p>
+        </div>
+      </div>
 
-      <main style={{ minHeight: "100vh", background: "#FAFAF7" }}>
-        {/* Page header */}
-        <div style={{
-          background: "#FFFFFF",
-          borderBottom: "1px solid #E4DFD1",
-          padding: "48px 24px 40px",
-        }}>
-          <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-            <p style={{
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#F5A520",
-              margin: "0 0 10px",
+      {/* Content */}
+      <div style={{ maxWidth: 1080, margin: "0 auto", padding: "56px 24px 96px" }}>
+        {isEmpty ? (
+          <div style={{
+            textAlign: "center",
+            padding: "80px 24px",
+            background: "var(--gs-paper-deep)",
+            border: "1px dashed var(--gs-line)",
+            borderRadius: 4,
+          }}>
+            <div style={{
+              width: 52,
+              height: 52,
+              borderRadius: "50%",
+              background: "var(--gs-paper)",
+              border: "1px solid var(--gs-line)",
               display: "flex",
               alignItems: "center",
-              gap: 8,
+              justifyContent: "center",
+              margin: "0 auto 18px",
             }}>
-              <span style={{ display: "inline-block", width: 24, height: 1.5, background: "#F5A520" }} />
-              Jnana Pravas Schedule
-            </p>
-            <h1 style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(36px, 5vw, 54px)",
-              fontWeight: 600,
-              color: "#19140F",
-              margin: "0 0 10px",
-              lineHeight: 1.08,
-              letterSpacing: "-0.02em",
-            }}>
-              Upcoming Visits
-            </h1>
-            <p style={{ fontSize: 15, color: "#5A5247", margin: 0, lineHeight: 1.6 }}>
-              Jnana Prabodhini volunteer visits to remote parts of India — science workshops, cultural exchanges, and knowledge bridges.
-            </p>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div style={{ maxWidth: 1080, margin: "0 auto", padding: "48px 24px 80px" }}>
-          {isEmpty ? (
-            <div style={{
-              textAlign: "center",
-              padding: "80px 24px",
-              background: "#FFFFFF",
-              border: "1px solid #E4DFD1",
-              borderRadius: 12,
-            }}>
-              <div style={{
-                width: 52,
-                height: 52,
-                borderRadius: "50%",
-                background: "#F3F0E8",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 18px",
-              }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B9188" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-              </div>
-              <p style={{ fontSize: 16, fontWeight: 600, color: "#19140F", margin: "0 0 6px" }}>No visits scheduled</p>
-              <p style={{ fontSize: 14, color: "#9B9188", margin: 0 }}>Check back soon for upcoming Jnana Pravas visits.</p>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gs-text-mute)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
             </div>
-          ) : (
-            <>
-              <Section title="Currently Ongoing" visits={ongoing} />
-              <Section title="Upcoming" visits={upcoming} />
-            </>
-          )}
-        </div>
-      </main>
-    </>
+            <p style={{ fontFamily: F_DISPLAY, fontSize: 19, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 6px" }}>No visits scheduled</p>
+            <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-mute)", margin: 0 }}>Check back soon for upcoming Jnana Pravas visits.</p>
+          </div>
+        ) : (
+          <>
+            <Section title="Currently Ongoing" visits={ongoing} />
+            <Section title="Upcoming" visits={upcoming} />
+          </>
+        )}
+      </div>
+    </main>
   );
 }

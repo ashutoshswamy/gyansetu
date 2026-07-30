@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { FileText, Newspaper, ArrowRight } from "lucide-react";
+import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
 
 export const metadata = {
   title: "Blog — Gyan Setu",
@@ -39,52 +40,66 @@ export default async function BlogPage() {
   const blogPosts = (posts ?? []) as BlogPost[];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7" }}>
+    <div className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)" }}>
+      <style>{`
+        .gs-blog-card { transition: transform .2s ease, border-color .2s ease; }
+        .gs-blog-card:hover { transform: translateY(-3px); border-color: var(--gs-rust); }
+        .gs-read-more { transition: color .18s ease; }
+        .gs-read-more:hover { color: var(--gs-rust); }
+        .gs-read-more svg { transition: transform .18s ease; }
+        .gs-read-more:hover svg { transform: translateX(2px); }
+      `}</style>
+
       {/* Hero */}
-      <div style={{ borderBottom: "1px solid #E4DFD1", background: "#F3F0E8", padding: "56px 24px 48px" }}>
-        <div style={{ maxWidth: 960, margin: "0 auto" }}>
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 10 }}>
-            Stories from the Field
-          </p>
-          <h1 style={{ fontSize: 36, fontWeight: 800, color: "#19140F", margin: 0, lineHeight: 1.2 }}>Blog</h1>
-          <p style={{ fontSize: 15, color: "#5A5247", marginTop: 10, maxWidth: 480 }}>
+      <div style={{ background: "var(--gs-paper-deep)", borderBottom: "1px dashed var(--gs-line)", padding: "64px 24px 56px" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto" }}>
+          <Eyebrow>Stories from the Field</Eyebrow>
+          <h1
+            style={{
+              fontFamily: F_DISPLAY, fontSize: "clamp(34px,4.5vw,52px)", fontWeight: 600,
+              fontStyle: "italic", letterSpacing: "-0.02em", color: "var(--gs-text)", margin: 0, lineHeight: 1.12,
+            }}
+          >
+            Blog
+          </h1>
+          <p style={{ fontFamily: F_BODY, fontSize: 15.5, color: "var(--gs-text-soft)", marginTop: 14, maxWidth: 520, lineHeight: 1.7 }}>
             Experiences, insights, and updates from students and coordinators across tours.
           </p>
         </div>
       </div>
 
       {/* Posts grid */}
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "48px 24px" }}>
+      <div style={{ maxWidth: 1120, margin: "0 auto", padding: "72px 24px 96px" }}>
         {blogPosts.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 0" }}>
-            <FileText size={40} style={{ color: "#E4DFD1", margin: "0 auto 12px" }} />
-            <p style={{ fontSize: 16, fontWeight: 600, color: "#19140F", marginBottom: 4 }}>No posts yet</p>
-            <p style={{ fontSize: 14, color: "#9B9188" }}>Check back soon for stories from the field.</p>
+          <div style={{ textAlign: "center", padding: "80px 24px", background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 4 }}>
+            <FileText size={36} style={{ color: "var(--gs-line)", margin: "0 auto 14px" }} />
+            <p style={{ fontFamily: F_BODY, fontSize: 16, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 4px" }}>No posts yet</p>
+            <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-mute)", margin: 0 }}>Check back soon for stories from the field.</p>
           </div>
         ) : (
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: 24,
+              gap: 22,
             }}
           >
             {blogPosts.map((post) => (
               <article
                 key={post.id}
+                className="gs-blog-card"
                 style={{
-                  background: "#FFFFFF",
-                  border: "1px solid #E4DFD1",
-                  borderRadius: 12,
+                  background: "var(--gs-paper-deep)",
+                  border: "1px dashed var(--gs-line)",
+                  borderRadius: 4,
                   overflow: "hidden",
                   display: "flex",
                   flexDirection: "column",
-                  transition: "box-shadow 0.2s",
                 }}
               >
                 {/* Cover */}
                 {post.cover_image_url ? (
-                  <div style={{ height: 180, overflow: "hidden" }}>
+                  <div style={{ height: 180, overflow: "hidden", borderBottom: "1px dashed var(--gs-line)" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-supplied URL, not a same-origin/whitelisted host for next/image */}
                     <img
                       src={post.cover_image_url}
@@ -96,33 +111,35 @@ export default async function BlogPage() {
                   <div
                     style={{
                       height: 180,
-                      background: "linear-gradient(135deg, rgba(74,85,190,0.08) 0%, rgba(245,165,32,0.10) 100%)",
+                      background: "linear-gradient(135deg, rgba(232,163,61,.14) 0%, rgba(184,73,46,.12) 100%)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      borderBottom: "1px dashed var(--gs-line)",
                     }}
                   >
-                    <Newspaper size={40} style={{ color: "#D4CFC6" }} />
+                    <Newspaper size={34} stroke="var(--gs-rust)" strokeWidth={1.5} />
                   </div>
                 )}
 
                 {/* Content */}
-                <div style={{ padding: "20px 20px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
+                <div style={{ padding: "22px 22px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
                   {post.published_at && (
-                    <p style={{ fontSize: 11, color: "#9B9188", marginBottom: 8, letterSpacing: "0.04em" }}>
+                    <p style={{ fontFamily: F_MONO, fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-text-mute)", margin: "0 0 10px" }}>
                       {formatDate(post.published_at)}
                     </p>
                   )}
-                  <h2 style={{ fontSize: 17, fontWeight: 700, color: "#19140F", margin: "0 0 8px", lineHeight: 1.35 }}>
+                  <h2 style={{ fontFamily: F_DISPLAY, fontSize: 19, fontWeight: 600, letterSpacing: "-0.01em", color: "var(--gs-text)", margin: "0 0 10px", lineHeight: 1.32 }}>
                     {post.title}
                   </h2>
                   {post.excerpt && (
                     <p
                       style={{
-                        fontSize: 13,
-                        color: "#5A5247",
-                        lineHeight: 1.6,
-                        margin: "0 0 16px",
+                        fontFamily: F_BODY,
+                        fontSize: 13.5,
+                        color: "var(--gs-text-soft)",
+                        lineHeight: 1.65,
+                        margin: "0 0 18px",
                         flex: 1,
                         display: "-webkit-box",
                         WebkitLineClamp: 3,
@@ -134,21 +151,24 @@ export default async function BlogPage() {
                     </p>
                   )}
                   <div style={{ marginTop: "auto", paddingTop: post.excerpt ? 0 : 16 }}>
-                    <Link href={`/blog/${post.slug}`}>
-                      <span
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 4,
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: "#4A55BE",
-                          textDecoration: "none",
-                        }}
-                      >
-                        Read More
-                        <ArrowRight size={14} />
-                      </span>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="gs-read-more"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 5,
+                        fontFamily: F_MONO,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                        color: "var(--gs-text)",
+                        textDecoration: "none",
+                      }}
+                    >
+                      Read More
+                      <ArrowRight size={13} />
                     </Link>
                   </div>
                 </div>

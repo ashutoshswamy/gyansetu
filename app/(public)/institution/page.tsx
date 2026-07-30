@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { submitInstitutionInquiry } from "@/actions/public-forms";
+import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, btnMarigold, Eyebrow } from "@/components/landing/theme";
 
 export default function InstitutionPage() {
   const [form, setForm] = useState({
@@ -53,22 +54,32 @@ export default function InstitutionPage() {
     width: "100%",
     padding: "10px 14px",
     fontSize: 14,
-    color: "#19140F",
-    background: "#FAFAF7",
-    border: "1.5px solid #E4DFD1",
-    borderRadius: 8,
+    color: "var(--gs-text)",
+    background: "var(--gs-paper)",
+    border: "1.5px solid var(--gs-line)",
+    borderRadius: 4,
     outline: "none",
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: F_BODY,
     boxSizing: "border-box",
+    transition: "border-color .15s",
   };
+
+  function handleFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    e.currentTarget.style.borderColor = "var(--gs-rust)";
+  }
+  function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    e.currentTarget.style.borderColor = "var(--gs-line)";
+  }
 
   const labelStyle: React.CSSProperties = {
     display: "block",
-    fontSize: 12,
+    fontFamily: F_MONO,
+    fontSize: 11,
     fontWeight: 600,
-    color: "#5A5247",
-    marginBottom: 6,
-    letterSpacing: "0.02em",
+    color: "var(--gs-text-mute)",
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    marginBottom: 7,
   };
 
   const fieldStyle: React.CSSProperties = {
@@ -77,18 +88,21 @@ export default function InstitutionPage() {
 
   if (status === "success") {
     return (
-      <div style={{ minHeight: "100vh", background: "#FAFAF7", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-        <div style={{ maxWidth: 560, width: "100%", background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "40px 36px", textAlign: "center" }}>
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(42,94,58,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A5E3A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div
+        className={fontVars}
+        style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper-deep)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}
+      >
+        <div style={{ maxWidth: 560, width: "100%", background: "var(--gs-paper)", border: "1px solid var(--gs-line)", borderRadius: 6, padding: "40px 36px", textAlign: "center" }}>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(184,73,46,.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gs-rust)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: "#19140F", margin: "0 0 10px" }}>Application Received</h2>
-          <p style={{ fontSize: 14, color: "#5A5247", lineHeight: 1.6, margin: "0 0 28px" }}>
+          <h2 style={{ fontFamily: F_DISPLAY, fontSize: 24, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 10px" }}>Application Received</h2>
+          <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-soft)", lineHeight: 1.6, margin: "0 0 28px" }}>
             Thank you for your interest in partnering with Gyan Setu. Our team will review your application and be in touch shortly.
           </p>
-          <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE", textDecoration: "none" }}>
+          <Link href="/" style={btnMarigold}>
             Back to Home
           </Link>
         </div>
@@ -97,10 +111,13 @@ export default function InstitutionPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
+    <div
+      className={fontVars}
+      style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper-deep)", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}
+    >
       <div style={{ maxWidth: 560, width: "100%" }}>
         <div style={{ marginBottom: 28 }}>
-          <Link href="/" style={{ fontSize: 12, fontWeight: 600, color: "#9B9188", textDecoration: "none", letterSpacing: "0.04em", display: "inline-flex", alignItems: "center", gap: 5 }}>
+          <Link href="/" style={{ fontFamily: F_MONO, fontSize: 11.5, fontWeight: 600, color: "var(--gs-text-mute)", textDecoration: "none", letterSpacing: "0.06em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 6 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
@@ -108,22 +125,20 @@ export default function InstitutionPage() {
           </Link>
         </div>
 
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "36px 32px" }}>
+        <div style={{ background: "var(--gs-paper)", border: "1px solid var(--gs-line)", borderRadius: 6, padding: "36px 32px" }}>
           <div style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", margin: "0 0 6px" }}>
-              Institutional Partnership
-            </p>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: "0 0 6px", fontFamily: "var(--font-cormorant), serif" }}>
+            <Eyebrow>Institutional Partnership</Eyebrow>
+            <h1 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(26px,3.4vw,34px)", fontWeight: 600, letterSpacing: "-0.01em", color: "var(--gs-text)", margin: "0 0 8px" }}>
               Apply as an Institution
             </h1>
-            <p style={{ fontSize: 13, color: "#5A5247", margin: 0 }}>
+            <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "var(--gs-text-soft)", lineHeight: 1.65, margin: 0 }}>
               Partner with Gyan Setu to bring Jnana Pravas tours and science enrichment programmes to your students.
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div style={fieldStyle}>
-              <label htmlFor="institution_name" style={labelStyle}>Institution Name <span style={{ color: "#C0392B" }}>*</span></label>
+              <label htmlFor="institution_name" style={labelStyle}>Institution Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
               <input
                 id="institution_name"
                 name="institution_name"
@@ -131,13 +146,15 @@ export default function InstitutionPage() {
                 required
                 value={form.institution_name}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 placeholder="e.g. Kendriya Vidyalaya, IIT Bombay"
                 style={inputStyle}
               />
             </div>
 
             <div style={fieldStyle}>
-              <label htmlFor="contact_name" style={labelStyle}>Contact Person Name <span style={{ color: "#C0392B" }}>*</span></label>
+              <label htmlFor="contact_name" style={labelStyle}>Contact Person Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
               <input
                 id="contact_name"
                 name="contact_name"
@@ -145,6 +162,8 @@ export default function InstitutionPage() {
                 required
                 value={form.contact_name}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 placeholder="Full name"
                 style={inputStyle}
               />
@@ -152,7 +171,7 @@ export default function InstitutionPage() {
 
             <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
-                <label htmlFor="email" style={labelStyle}>Email <span style={{ color: "#C0392B" }}>*</span></label>
+                <label htmlFor="email" style={labelStyle}>Email <span style={{ color: "var(--gs-rust)" }}>*</span></label>
                 <input
                   id="email"
                   name="email"
@@ -160,6 +179,8 @@ export default function InstitutionPage() {
                   required
                   value={form.email}
                   onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   placeholder="contact@institution.edu"
                   style={inputStyle}
                 />
@@ -175,6 +196,8 @@ export default function InstitutionPage() {
                   maxLength={10}
                   value={form.phone}
                   onChange={(e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10); handleChange(e); }}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   placeholder="10-digit phone number"
                   style={inputStyle}
                 />
@@ -189,6 +212,8 @@ export default function InstitutionPage() {
                   name="institution_type"
                   value={form.institution_type}
                   onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   style={{ ...inputStyle, appearance: "none" }}
                 >
                   <option value="">Select</option>
@@ -208,6 +233,8 @@ export default function InstitutionPage() {
                   type="text"
                   value={form.city}
                   onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   placeholder="e.g. Pune"
                   style={inputStyle}
                 />
@@ -221,6 +248,8 @@ export default function InstitutionPage() {
                 name="student_count"
                 value={form.student_count}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 style={{ ...inputStyle, appearance: "none" }}
               >
                 <option value="">Select</option>
@@ -239,6 +268,8 @@ export default function InstitutionPage() {
                 name="message"
                 value={form.message}
                 onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 placeholder="Tell us about your institution's goals and how you'd like to work with Gyan Setu..."
                 rows={4}
                 style={{ ...inputStyle, resize: "vertical", minHeight: 100 }}
@@ -246,8 +277,8 @@ export default function InstitutionPage() {
             </div>
 
             {status === "error" && (
-              <div style={{ background: "rgba(192,57,43,0.06)", border: "1px solid rgba(192,57,43,0.2)", borderRadius: 7, padding: "10px 14px", marginBottom: 16 }}>
-                <p style={{ fontSize: 13, color: "#C0392B", margin: 0 }}>{errorMsg}</p>
+              <div style={{ background: "rgba(184,73,46,.08)", border: "1px dashed var(--gs-rust)", borderRadius: 4, padding: "10px 14px", marginBottom: 16 }}>
+                <p style={{ fontFamily: F_BODY, fontSize: 13, color: "var(--gs-rust)", margin: 0 }}>{errorMsg}</p>
               </div>
             )}
 
@@ -255,17 +286,13 @@ export default function InstitutionPage() {
               type="submit"
               disabled={status === "loading"}
               style={{
+                ...btnMarigold,
                 width: "100%",
-                background: status === "loading" ? "#9B9188" : "#4A55BE",
-                color: "white",
+                justifyContent: "center",
                 fontSize: 14,
-                fontWeight: 600,
-                padding: "12px 24px",
-                borderRadius: 8,
-                border: "none",
+                padding: "13px 24px",
+                background: status === "loading" ? "var(--gs-text-mute)" : "var(--gs-marigold)",
                 cursor: status === "loading" ? "not-allowed" : "pointer",
-                fontFamily: "Poppins, sans-serif",
-                transition: "background 0.15s",
               }}
             >
               {status === "loading" ? "Submitting..." : "Submit Application"}

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { submitTestimonial } from "@/actions/public-forms";
+import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, btnInk, Eyebrow } from "@/components/landing/theme";
 
 export default function TestimonialPage() {
   const [form, setForm] = useState({
@@ -45,22 +46,24 @@ export default function TestimonialPage() {
     width: "100%",
     padding: "10px 14px",
     fontSize: 14,
-    color: "#19140F",
-    background: "#FAFAF7",
-    border: "1.5px solid #E4DFD1",
-    borderRadius: 8,
+    color: "var(--gs-text)",
+    background: "var(--gs-paper)",
+    border: "1.5px solid var(--gs-line)",
+    borderRadius: 4,
     outline: "none",
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: F_BODY,
     boxSizing: "border-box",
   };
 
   const labelStyle: React.CSSProperties = {
     display: "block",
-    fontSize: 12,
-    fontWeight: 600,
-    color: "#5A5247",
-    marginBottom: 6,
-    letterSpacing: "0.02em",
+    fontFamily: F_MONO,
+    fontSize: 11,
+    fontWeight: 500,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    color: "var(--gs-text-mute)",
+    marginBottom: 7,
   };
 
   const fieldStyle: React.CSSProperties = {
@@ -69,18 +72,19 @@ export default function TestimonialPage() {
 
   if (status === "success") {
     return (
-      <div style={{ minHeight: "100vh", background: "#FAFAF7", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-        <div style={{ maxWidth: 560, width: "100%", background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "40px 36px", textAlign: "center" }}>
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(42,94,58,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A5E3A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+        <div style={{ position: "relative", maxWidth: 560, width: "100%", background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "40px 36px", textAlign: "center" }}>
+          <div style={{ position: "absolute", top: 14, right: 14, width: 30, height: 30, borderRadius: "50%", border: "1.5px dashed var(--gs-rust)", opacity: 0.55 }} />
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(232,163,61,.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gs-rust)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: "#19140F", margin: "0 0 10px" }}>Testimonial Submitted</h2>
-          <p style={{ fontSize: 14, color: "#5A5247", lineHeight: 1.6, margin: "0 0 28px" }}>
+          <h2 style={{ fontFamily: F_DISPLAY, fontSize: 24, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 10px" }}>Testimonial Submitted</h2>
+          <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-soft)", lineHeight: 1.6, margin: "0 0 28px" }}>
             Thank you! Your testimonial has been submitted for review.
           </p>
-          <Link href="/" style={{ fontSize: 13, fontWeight: 600, color: "#4A55BE", textDecoration: "none" }}>
+          <Link href="/" style={{ fontFamily: F_MONO, fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-rust)", textDecoration: "none" }}>
             Back to Home
           </Link>
         </div>
@@ -89,10 +93,10 @@ export default function TestimonialPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
+    <div className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
       <div style={{ maxWidth: 560, width: "100%" }}>
         <div style={{ marginBottom: 28 }}>
-          <Link href="/" style={{ fontSize: 12, fontWeight: 600, color: "#9B9188", textDecoration: "none", letterSpacing: "0.04em", display: "inline-flex", alignItems: "center", gap: 5 }}>
+          <Link href="/" style={{ fontFamily: F_MONO, fontSize: 12, fontWeight: 500, color: "var(--gs-text-mute)", textDecoration: "none", letterSpacing: "0.06em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 5 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
@@ -100,22 +104,24 @@ export default function TestimonialPage() {
           </Link>
         </div>
 
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 14, padding: "36px 32px" }}>
+        <div style={{ position: "relative", background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "36px 32px" }}>
+          {/* Postmark corner */}
+          <div style={{ position: "absolute", top: 14, right: 14, width: 30, height: 30, borderRadius: "50%", border: "1.5px dashed var(--gs-rust)", opacity: 0.55 }} />
+
           <div style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", margin: "0 0 6px" }}>
-              Share Your Story
-            </p>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: "0 0 6px", fontFamily: "var(--font-cormorant), serif" }}>
+            <Eyebrow>Share Your Story</Eyebrow>
+            <div style={{ color: "var(--gs-marigold)", fontFamily: F_DISPLAY, fontSize: 34, lineHeight: 0.5, fontWeight: 700, marginBottom: 10 }}>&ldquo;</div>
+            <h1 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(26px,3.4vw,34px)", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: "0 0 8px" }}>
               Submit a Testimonial
             </h1>
-            <p style={{ fontSize: 13, color: "#5A5247", margin: 0 }}>
+            <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "var(--gs-text-soft)", margin: 0, lineHeight: 1.6 }}>
               Tell us about your experience with Gyan Setu. All testimonials are reviewed before publishing.
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div style={fieldStyle}>
-              <label htmlFor="name" style={labelStyle}>Full Name <span style={{ color: "#C0392B" }}>*</span></label>
+              <label htmlFor="name" style={labelStyle}>Full Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
               <input
                 id="name"
                 name="name"
@@ -155,7 +161,7 @@ export default function TestimonialPage() {
             </div>
 
             <div style={fieldStyle}>
-              <label htmlFor="message" style={labelStyle}>Your Experience <span style={{ color: "#C0392B" }}>*</span></label>
+              <label htmlFor="message" style={labelStyle}>Your Experience <span style={{ color: "var(--gs-rust)" }}>*</span></label>
               <textarea
                 id="message"
                 name="message"
@@ -167,14 +173,14 @@ export default function TestimonialPage() {
                 rows={5}
                 style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
               />
-              <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6, textAlign: "right" }}>
+              <p style={{ fontFamily: F_MONO, fontSize: 11, color: "var(--gs-text-mute)", marginTop: 6, textAlign: "right" }}>
                 {form.message.length}/100
               </p>
             </div>
 
             {status === "error" && (
-              <div style={{ background: "rgba(192,57,43,0.06)", border: "1px solid rgba(192,57,43,0.2)", borderRadius: 7, padding: "10px 14px", marginBottom: 16 }}>
-                <p style={{ fontSize: 13, color: "#C0392B", margin: 0 }}>{errorMsg}</p>
+              <div style={{ background: "rgba(184,73,46,0.06)", border: "1px solid rgba(184,73,46,0.25)", borderRadius: 4, padding: "10px 14px", marginBottom: 16 }}>
+                <p style={{ fontFamily: F_BODY, fontSize: 13, color: "var(--gs-rust)", margin: 0 }}>{errorMsg}</p>
               </div>
             )}
 
@@ -182,17 +188,11 @@ export default function TestimonialPage() {
               type="submit"
               disabled={status === "loading"}
               style={{
+                ...btnInk,
                 width: "100%",
-                background: status === "loading" ? "#9B9188" : "#4A55BE",
-                color: "white",
-                fontSize: 14,
-                fontWeight: 600,
-                padding: "12px 24px",
-                borderRadius: 8,
-                border: "none",
+                justifyContent: "center",
+                opacity: status === "loading" ? 0.6 : 1,
                 cursor: status === "loading" ? "not-allowed" : "pointer",
-                fontFamily: "Poppins, sans-serif",
-                transition: "background 0.15s",
               }}
             >
               {status === "loading" ? "Submitting..." : "Submit Testimonial"}

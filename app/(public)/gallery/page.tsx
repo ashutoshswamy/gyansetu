@@ -1,4 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
+import {
+  fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow,
+} from "@/components/landing/theme";
 
 interface GalleryImage {
   id: string;
@@ -27,31 +30,28 @@ export default async function GalleryPage() {
   const cats = (categories as GalleryCategory[]) ?? [];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7", padding: "48px 24px" }}>
+    <main
+      className={fontVars}
+      style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)", padding: "64px 24px 96px" }}
+    >
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
 
         {/* Page header */}
-        <div style={{ marginBottom: 48, textAlign: "center" }}>
-          <p style={{
-            fontSize: 11,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            fontWeight: 700,
-            color: "#F5A520",
-            marginBottom: 10,
-          }}>
-            Jnana Pravas Memories
-          </p>
+        <div style={{ marginBottom: 56, textAlign: "center" }}>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Eyebrow>Jnana Pravas Memories</Eyebrow>
+          </div>
           <h1 style={{
-            fontSize: 36,
-            fontWeight: 800,
-            color: "#19140F",
+            fontFamily: F_DISPLAY,
+            fontSize: "clamp(32px,4vw,50px)",
+            fontWeight: 600,
+            color: "var(--gs-text)",
             margin: 0,
             letterSpacing: "-0.02em",
           }}>
             Gallery
           </h1>
-          <p style={{ fontSize: 15, color: "#5A5247", marginTop: 10, maxWidth: 480, margin: "10px auto 0" }}>
+          <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", marginTop: 14, maxWidth: 480, marginLeft: "auto", marginRight: "auto" }}>
             A collection of moments from our student exchange journeys.
           </p>
         </div>
@@ -59,8 +59,12 @@ export default async function GalleryPage() {
         {cats.length === 0 && (
           <div style={{
             textAlign: "center",
-            padding: "80px 0",
-            color: "#9B9188",
+            padding: "64px 24px",
+            background: "var(--gs-paper-deep)",
+            border: "1px dashed var(--gs-line)",
+            borderRadius: 4,
+            fontFamily: F_BODY,
+            color: "var(--gs-text-mute)",
             fontSize: 15,
           }}>
             No images yet. Check back soon.
@@ -68,34 +72,29 @@ export default async function GalleryPage() {
         )}
 
         {cats.map((category) => (
-          <div key={category.id} style={{ marginBottom: 56 }}>
+          <div key={category.id} style={{ marginBottom: 64 }}>
             {/* Category header */}
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 24, paddingBottom: 16, borderBottom: "1px dashed var(--gs-line)" }}>
               <h2 style={{
-                fontSize: 20,
-                fontWeight: 700,
-                color: "#19140F",
+                fontFamily: F_DISPLAY,
+                fontSize: 24,
+                fontWeight: 600,
+                fontStyle: "italic",
+                color: "var(--gs-text)",
                 margin: 0,
               }}>
                 {category.name}
               </h2>
               {category.description && (
-                <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>
+                <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "var(--gs-text-soft)", marginTop: 6 }}>
                   {category.description}
                 </p>
               )}
-              <div style={{
-                width: 40,
-                height: 3,
-                background: "#4A55BE",
-                borderRadius: 99,
-                marginTop: 10,
-              }} />
             </div>
 
             {/* Masonry grid */}
             {(category.gallery_images ?? []).length === 0 ? (
-              <p style={{ fontSize: 13, color: "#9B9188", padding: "24px 0" }}>
+              <p style={{ fontFamily: F_BODY, fontSize: 13, color: "var(--gs-text-mute)", padding: "24px 0" }}>
                 No images in this category yet.
               </p>
             ) : (
@@ -109,9 +108,9 @@ export default async function GalleryPage() {
                     style={{
                       breakInside: "avoid",
                       marginBottom: 16,
-                      background: "white",
-                      border: "1px solid #E4DFD1",
-                      borderRadius: 10,
+                      background: "var(--gs-paper-deep)",
+                      border: "1px dashed var(--gs-line)",
+                      borderRadius: 4,
                       overflow: "hidden",
                     }}
                   >
@@ -128,11 +127,14 @@ export default async function GalleryPage() {
                     />
                     {image.caption && (
                       <p style={{
-                        fontSize: 12,
-                        color: "#5A5247",
-                        padding: "8px 12px",
+                        fontFamily: F_MONO,
+                        fontSize: 11,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                        color: "var(--gs-text-mute)",
+                        padding: "10px 12px",
                         margin: 0,
-                        borderTop: "1px solid #E4DFD1",
+                        borderTop: "1px dashed var(--gs-line)",
                       }}>
                         {image.caption}
                       </p>
@@ -144,6 +146,6 @@ export default async function GalleryPage() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }

@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
 
 interface BlogPost {
   id: string;
@@ -47,6 +48,19 @@ function formatDate(dateStr: string | null) {
 
 export const revalidate = 60;
 
+const backLinkStyle = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  fontFamily: F_MONO,
+  fontSize: 12,
+  fontWeight: 600,
+  letterSpacing: "0.04em",
+  textTransform: "uppercase" as const,
+  color: "var(--gs-text-mute)",
+  textDecoration: "none",
+};
+
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const db = createServerClient();
@@ -63,10 +77,15 @@ export default async function BlogPostPage({ params }: Props) {
   const typedPost = post as BlogPost;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAF7" }}>
+    <div className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)" }}>
+      <style>{`
+        .gs-back-link { transition: color .18s ease; }
+        .gs-back-link:hover { color: var(--gs-rust); }
+      `}</style>
+
       {/* Cover image */}
       {typedPost.cover_image_url && (
-        <div style={{ width: "100%", maxHeight: 420, overflow: "hidden" }}>
+        <div style={{ width: "100%", maxHeight: 420, overflow: "hidden", borderBottom: "1px dashed var(--gs-line)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-supplied URL, not a same-origin/whitelisted host for next/image */}
           <img
             src={typedPost.cover_image_url}
@@ -77,31 +96,18 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       {/* Article */}
-      <div style={{ maxWidth: 720, margin: "0 auto", padding: "48px 24px 80px" }}>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "56px 24px 96px" }}>
         {/* Back link */}
-        <Link href="/blog">
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              fontSize: 13,
-              fontWeight: 500,
-              color: "#5A5247",
-              textDecoration: "none",
-              marginBottom: 32,
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path d="M13 8H3M7 12l-4-4 4-4" stroke="#5A5247" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Back to Blog
-          </span>
+        <Link href="/blog" className="gs-back-link" style={{ ...backLinkStyle, marginBottom: 36 }}>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Back to Blog
         </Link>
 
         {/* Meta */}
         {typedPost.published_at && (
-          <p style={{ fontSize: 12, color: "#9B9188", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 12 }}>
+          <p style={{ fontFamily: F_MONO, fontSize: 11.5, fontWeight: 500, color: "var(--gs-text-mute)", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 14px" }}>
             {formatDate(typedPost.published_at)}
           </p>
         )}
@@ -109,11 +115,13 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Title */}
         <h1
           style={{
-            fontSize: 34,
-            fontWeight: 800,
-            color: "#19140F",
-            lineHeight: 1.25,
-            margin: "0 0 16px",
+            fontFamily: F_DISPLAY,
+            fontSize: "clamp(30px,4.5vw,44px)",
+            fontWeight: 600,
+            letterSpacing: "-0.02em",
+            color: "var(--gs-text)",
+            lineHeight: 1.14,
+            margin: "0 0 20px",
           }}
         >
           {typedPost.title}
@@ -123,13 +131,15 @@ export default async function BlogPostPage({ params }: Props) {
         {typedPost.excerpt && (
           <p
             style={{
-              fontSize: 17,
-              color: "#5A5247",
-              lineHeight: 1.65,
-              margin: "0 0 32px",
+              fontFamily: F_DISPLAY,
+              fontSize: 18,
+              color: "var(--gs-rust)",
+              lineHeight: 1.5,
+              margin: "0 0 36px",
               fontStyle: "italic",
-              borderLeft: "3px solid #F5A520",
-              paddingLeft: 16,
+              fontWeight: 500,
+              borderLeft: "3px solid var(--gs-rust)",
+              paddingLeft: 20,
             }}
           >
             {typedPost.excerpt}
@@ -137,14 +147,15 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Divider */}
-        <div style={{ height: 1, background: "#E4DFD1", margin: "0 0 32px" }} />
+        <div style={{ borderTop: "1px dashed var(--gs-line)", margin: "0 0 36px" }} />
 
         {/* Content */}
         <div
           style={{
+            fontFamily: F_BODY,
             fontSize: 16,
-            color: "#19140F",
-            lineHeight: 1.75,
+            color: "var(--gs-text-soft)",
+            lineHeight: 1.8,
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
           }}
@@ -153,24 +164,12 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: 56, paddingTop: 24, borderTop: "1px solid #E4DFD1" }}>
-          <Link href="/blog">
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                fontSize: 13,
-                fontWeight: 600,
-                color: "#4A55BE",
-                textDecoration: "none",
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                <path d="M13 8H3M7 12l-4-4 4-4" stroke="#4A55BE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              All Posts
-            </span>
+        <div style={{ marginTop: 60, paddingTop: 28, borderTop: "1px dashed var(--gs-line)" }}>
+          <Link href="/blog" className="gs-back-link" style={backLinkStyle}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            All Posts
           </Link>
         </div>
       </div>
