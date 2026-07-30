@@ -7,7 +7,7 @@ import { STANDARDS } from "@/lib/constants/earc";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
 import {
   CHART_SPECTRUM, tooltipStyle, legendStyle, gridProps, axisTick, axisTickMono,
-  fmt, count, sortBy, SectionEyebrow, ChartCard, BreakdownCard, LedgerStat, Ledger, bandSelectStyle,
+  fmt, count, sortBy, SectionEyebrow, ChartCard, SingleBar, DonutCard, LedgerStat, Ledger, bandSelectStyle,
 } from "@/components/features/analytics/chart-kit";
 
 const MODULE_ORDER = ["Teacher Training", "Facilitator"];
@@ -310,12 +310,12 @@ export function EarcAnalytics({
             </BarChart>
           </ChartCard>
 
-          <BreakdownCard title="Schools by state" data={schoolsByState} />
-          <BreakdownCard title="Schools by project" data={schoolsByProject} />
-          <BreakdownCard title="Schools by type" data={schoolsByType} />
-          <BreakdownCard title="Schools by location type" data={schoolsByLocation} />
-          <BreakdownCard title="Schools by medium of instruction" data={schoolsByMedium} />
-          <BreakdownCard title="Schools by mode" data={schoolsByMode} />
+          <DonutCard title="Schools by state" data={schoolsByState} />
+          <SingleBar title="Schools by project" data={schoolsByProject} />
+          <DonutCard title="Schools by type" data={schoolsByType} />
+          <SingleBar title="Schools by location type" data={schoolsByLocation} />
+          <DonutCard title="Schools by medium of instruction" data={schoolsByMedium} />
+          <SingleBar title="Schools by mode" data={schoolsByMode} />
         </div>
       </div>
 
@@ -344,8 +344,8 @@ export function EarcAnalytics({
       <div>
         <SectionEyebrow>Student demographics</SectionEyebrow>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <BreakdownCard title="Gender distribution" data={genderDistribution} />
-          <BreakdownCard title="Blood group distribution" data={bloodGroupDistribution} />
+          <DonutCard title="Gender distribution" data={genderDistribution} />
+          <SingleBar title="Blood group distribution" data={bloodGroupDistribution} />
         </div>
       </div>
     </div>

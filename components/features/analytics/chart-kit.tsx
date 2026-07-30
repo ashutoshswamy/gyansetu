@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
-import { F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
+import { F_BODY, F_MONO } from "@/components/landing/theme";
 
 // Shared chart primitives for internal analytics dashboards (EARC impact,
 // school reports, ...) — built on the site's --gs-* tokens (see
@@ -97,22 +97,33 @@ function TableFooter({ data, tableColumns }: { data: Record<string, string | num
 const BREAKDOWN_TABLE_COLUMNS = [{ key: "name", label: "Category" }, { key: "value", label: "Count" }];
 
 export function ChartCard({
-  title, data, children, tableColumns,
+  title, data, children, tableColumns, centerLabel, centerLabelLeft = "50%", maxWidth,
 }: {
   title: string;
   data: Record<string, string | number>[];
   children: React.ReactNode;
   tableColumns: { key: string; label: string }[];
+  centerLabel?: React.ReactNode;
+  /** Horizontal position of centerLabel — matches the donut's cx when a side legend pushes it off-center. */
+  centerLabelLeft?: string;
+  /** Caps the chart+legend area's width so a small donut doesn't strand its legend
+   *  far off in empty space on a wide grid cell. */
+  maxWidth?: number;
 }) {
   return (
     <CardShell title={title}>
       {data.length === 0 ? (
         <p style={{ fontFamily: F_BODY, fontSize: 12, color: "var(--gs-text-mute)", padding: "24px 0", textAlign: "center" }}>No data yet.</p>
       ) : (
-        <div style={{ width: "100%", height: 220 }}>
+        <div style={{ width: "100%", maxWidth, height: 220, position: "relative", margin: maxWidth ? "0 auto" : undefined }}>
           <ResponsiveContainer width="100%" height="100%">
             {children as React.ReactElement}
           </ResponsiveContainer>
+          {centerLabel && (
+            <div style={{ position: "absolute", top: "50%", left: centerLabelLeft, transform: "translate(-50%, calc(-50% - 12px))", textAlign: "center", pointerEvents: "none" }}>
+              {centerLabel}
+            </div>
+          )}
         </div>
       )}
       <TableFooter data={data} tableColumns={tableColumns} />
@@ -166,54 +177,38 @@ export function StackedBar({
   );
 }
 
-// A pie/donut chart with one slice isn't a chart — it's a stat wearing a
-// costume. BreakdownCard reads the data's actual shape and picks the
-// presentation that earns the space: nothing to show, a single fact worth
-// stating plainly, a short ledger of proportional bars, or (past ~5
-// categories, where a shape genuinely helps) the same ledger capped with
-// an "Others" row rather than reaching for a separate chart type.
-export function BreakdownCard({ title, data, cap = 8 }: { title: string; data: { name: string; value: number }[]; cap?: number }) {
+// Proportion-of-whole facets read as a donut; the center total keeps the
+// same mono-numeral language as the ledger stats. cx is fixed (not the
+// recharts default 50%) — with a side legend, letting recharts auto-center
+// the pie against the full plot width leaves it hugging the left edge with
+// a dead gap before the legend. A fixed cx plus a capped chart width keep
+// the donut and its matching centerLabel in a stable, predictable spot
+// regardless of legend width or how wide the surrounding grid cell is.
+export function DonutCard({ title, data, cap = 6 }: { title: string; data: { name: string; value: number }[]; cap?: number }) {
   const capped = topNWithOthers(data, cap);
   const total = capped.reduce((a, d) => a + d.value, 0);
-  const tableData = capped.map(d => ({ name: d.name, value: d.value }));
-
   return (
-    <CardShell title={title}>
-      {total === 0 ? (
-        <p style={{ fontFamily: F_BODY, fontSize: 12, color: "var(--gs-text-mute)", padding: "24px 0", textAlign: "center" }}>No data yet.</p>
-      ) : capped.length === 1 ? (
-        <div style={{ padding: "22px 4px 18px", textAlign: "center" }}>
-          <p style={{ fontFamily: F_DISPLAY, fontStyle: "italic", fontWeight: 600, fontSize: 26, color: "var(--gs-text)", margin: "0 0 6px" }}>
-            {capped[0].name}
-          </p>
-          <p style={{ fontFamily: F_MONO, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-text-mute)", margin: 0 }}>
-            All {fmt(total)} record{total === 1 ? "" : "s"}
-          </p>
-        </div>
-      ) : (
-        <div style={{ padding: "4px 2px 12px" }}>
-          {capped.map((d, i) => {
-            const pct = Math.round((d.value / total) * 100);
-            const color = d.name === "Others" ? "var(--gs-line)" : CHART_SPECTRUM[i % CHART_SPECTRUM.length];
-            return (
-              <div key={d.name} style={{ marginBottom: i === capped.length - 1 ? 0 : 12 }}>
-                <div className="flex items-baseline justify-between gap-3" style={{ marginBottom: 5 }}>
-                  <span className="flex items-center gap-2 min-w-0" style={{ fontFamily: F_BODY, fontSize: 12.5, color: "var(--gs-text-soft)" }}>
-                    <span style={{ width: 8, height: 8, borderRadius: 2, background: color, flexShrink: 0 }} />
-                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.name}</span>
-                  </span>
-                  <span style={{ fontFamily: F_MONO, fontSize: 11.5, color: "var(--gs-text-mute)", flexShrink: 0 }}>{fmt(d.value)} &middot; {pct}%</span>
-                </div>
-                <div style={{ height: 5, borderRadius: 3, background: "var(--gs-paper-deep)", overflow: "hidden" }}>
-                  <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3 }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      <TableFooter data={tableData} tableColumns={BREAKDOWN_TABLE_COLUMNS} />
-    </CardShell>
+    <ChartCard
+      title={title}
+      data={capped}
+      tableColumns={BREAKDOWN_TABLE_COLUMNS}
+      centerLabelLeft="38%"
+      maxWidth={380}
+      centerLabel={
+        <>
+          <div style={{ fontFamily: F_MONO, fontSize: 20, fontWeight: 600, color: "var(--gs-text)" }}>{fmt(total)}</div>
+          <div style={{ fontFamily: F_BODY, fontSize: 9.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-text-mute)" }}>total</div>
+        </>
+      }
+    >
+      <PieChart>
+        <Pie data={capped} dataKey="value" nameKey="name" cx="38%" cy="50%" innerRadius="56%" outerRadius="82%" paddingAngle={2} strokeWidth={0}>
+          {capped.map((d, i) => <Cell key={d.name} fill={d.name === "Others" ? "var(--gs-line)" : CHART_SPECTRUM[i % CHART_SPECTRUM.length]} />)}
+        </Pie>
+        <Tooltip contentStyle={tooltipStyle} />
+        <Legend wrapperStyle={legendStyle} layout="vertical" verticalAlign="middle" align="right" iconSize={8} />
+      </PieChart>
+    </ChartCard>
   );
 }
 
