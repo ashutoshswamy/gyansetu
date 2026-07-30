@@ -61,13 +61,15 @@ export function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export function ChartCard({
-  title, data, children, tableColumns, centerLabel,
+  title, data, children, tableColumns, centerLabel, centerLabelLeft = "50%",
 }: {
   title: string;
   data: Record<string, string | number>[];
   children: React.ReactNode;
   tableColumns: { key: string; label: string }[];
   centerLabel?: React.ReactNode;
+  /** Horizontal position of centerLabel — matches the donut's cx when a side legend pushes it off-center. */
+  centerLabelLeft?: string;
 }) {
   return (
     <div style={{ background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 6, padding: "16px 16px 8px" }}>
@@ -80,7 +82,7 @@ export function ChartCard({
             {children as React.ReactElement}
           </ResponsiveContainer>
           {centerLabel && (
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, calc(-50% - 12px))", textAlign: "center", pointerEvents: "none" }}>
+            <div style={{ position: "absolute", top: "50%", left: centerLabelLeft, transform: "translate(-50%, calc(-50% - 12px))", textAlign: "center", pointerEvents: "none" }}>
               {centerLabel}
             </div>
           )}
@@ -162,6 +164,7 @@ export function DonutCard({ title, data, cap = 6 }: { title: string; data: { nam
       title={title}
       data={capped}
       tableColumns={[{ key: "name", label: "Category" }, { key: "value", label: "Count" }]}
+      centerLabelLeft="38%"
       centerLabel={
         <>
           <div style={{ fontFamily: F_MONO, fontSize: 20, fontWeight: 600, color: "var(--gs-text)" }}>{fmt(total)}</div>
@@ -169,8 +172,12 @@ export function DonutCard({ title, data, cap = 6 }: { title: string; data: { nam
         </>
       }
     >
+      {/* cx fixed at 38% (not the recharts default 50%) — with a side legend, letting
+          recharts auto-center the pie against the full plot width leaves it hugging the
+          left edge with a dead gap before the legend. A fixed cx keeps the donut and its
+          matching centerLabel offset in a stable, predictable spot regardless of legend width. */}
       <PieChart>
-        <Pie data={capped} dataKey="value" nameKey="name" innerRadius="56%" outerRadius="82%" paddingAngle={2} strokeWidth={0}>
+        <Pie data={capped} dataKey="value" nameKey="name" cx="38%" cy="50%" innerRadius="56%" outerRadius="82%" paddingAngle={2} strokeWidth={0}>
           {capped.map((d, i) => <Cell key={d.name} fill={d.name === "Others" ? "var(--gs-line)" : CHART_SPECTRUM[i % CHART_SPECTRUM.length]} />)}
         </Pie>
         <Tooltip contentStyle={tooltipStyle} />

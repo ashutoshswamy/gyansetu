@@ -48,34 +48,36 @@ function GroupSection({ g }: { g: GroupLedger }) {
   return (
     <section style={{ marginBottom: 36 }}>
       <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "16px 20px", marginBottom: 14 }}>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: "#19140F", margin: 0 }}>{g.groupName}</h3>
-            {g.advances.length > 0 && (
-              <p style={{ fontSize: 11.5, color: "#9B9188", margin: "4px 0 0" }}>
-                {g.advances.map((a, i) => (
-                  <span key={a.id}>
-                    {i > 0 && " · "}
-                    ₹{Number(a.amount).toLocaleString("en-IN")}{a.notes ? ` (${a.notes})` : ""} on {new Date(a.given_at).toLocaleDateString("en-IN")}
-                  </span>
-                ))}
-              </p>
-            )}
+        <h3 style={{ fontSize: 17, fontWeight: 700, color: "#19140F", margin: "0 0 14px" }}>{g.groupName}</h3>
+
+        <div className="grid grid-cols-2 gap-3" style={{ marginBottom: g.advances.length > 0 ? 14 : 0 }}>
+          <div style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 8, padding: "10px 14px" }}>
+            <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9B9188", margin: "0 0 4px" }}>Advance Given</p>
+            <p style={{ fontSize: 19, fontWeight: 700, color: "#4A55BE", margin: 0 }}>₹{g.advanceTotal.toLocaleString("en-IN")}</p>
           </div>
-          <div className="flex items-center gap-6 flex-wrap">
-            <div className="text-right">
-              <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9B9188", margin: 0 }}>Advance Given</p>
-              <p style={{ fontSize: 19, fontWeight: 700, color: "#4A55BE", margin: 0 }}>₹{g.advanceTotal.toLocaleString("en-IN")}</p>
-            </div>
-            <div className="text-right">
-              <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9B9188", margin: 0 }}>Gyan Setu Balance</p>
-              <p style={{ fontSize: 19, fontWeight: 700, color: over ? "#DC2626" : "#2A5E3A", margin: 0 }}>
-                {over ? "−" : "+"}₹{Math.abs(g.remaining).toLocaleString("en-IN")}
-              </p>
-            </div>
+          <div style={{ background: over ? "rgba(220,38,38,0.06)" : "rgba(42,94,58,0.06)", border: `1px solid ${over ? "rgba(220,38,38,0.2)" : "rgba(42,94,58,0.2)"}`, borderRadius: 8, padding: "10px 14px" }}>
+            <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9B9188", margin: "0 0 4px" }}>Gyan Setu Balance</p>
+            <p style={{ fontSize: 19, fontWeight: 700, color: over ? "#DC2626" : "#2A5E3A", margin: 0 }}>
+              {over ? "−" : "+"}₹{Math.abs(g.remaining).toLocaleString("en-IN")}
+            </p>
           </div>
         </div>
-        <p style={{ fontSize: 11, color: over ? "#DC2626" : "#9B9188", margin: "8px 0 0" }}>
+
+        {g.advances.length > 0 && (
+          <div className="space-y-1.5" style={{ marginBottom: 10 }}>
+            {g.advances.map((a) => (
+              <div key={a.id} className="flex items-baseline justify-between gap-3" style={{ fontSize: 12, padding: "4px 0", borderBottom: "1px dashed #E4DFD1" }}>
+                <span style={{ color: "#5A5247", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ fontWeight: 700, color: "#19140F" }}>₹{Number(a.amount).toLocaleString("en-IN")}</span>
+                  {a.notes && <span> · {a.notes}</span>}
+                </span>
+                <span style={{ color: "#9B9188", flexShrink: 0 }}>{new Date(a.given_at).toLocaleDateString("en-IN")}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p style={{ fontSize: 11, color: over ? "#DC2626" : "#9B9188", margin: 0 }}>
           {over
             ? "Approved expenses exceed the advance — this much is owed back to the group."
             : "Remaining with the group against approved expenses."}
