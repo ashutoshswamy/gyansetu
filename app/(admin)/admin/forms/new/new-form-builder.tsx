@@ -214,21 +214,42 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                   {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
                 </select>
               ) : (
-                <select
-                  multiple
-                  disabled={isTemplate}
-                  style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1, height: 96 }}
-                  value={tourIds}
-                  onChange={e => setTourIds(Array.from(e.target.selectedOptions, o => o.value))}
+                <div
+                  style={{
+                    ...inputStyle, padding: 6, opacity: isTemplate ? 0.5 : 1, pointerEvents: isTemplate ? "none" : "auto",
+                    maxHeight: 140, overflowY: "auto", display: "flex", flexDirection: "column", gap: 1,
+                  }}
                 >
-                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
+                  {tours.length === 0 && (
+                    <span style={{ fontSize: 12.5, color: "#9B9188", padding: "6px 6px" }}>No tours available</span>
+                  )}
+                  {tours.map(t => {
+                    const checked = tourIds.includes(t.id);
+                    return (
+                      <label
+                        key={t.id}
+                        style={{
+                          display: "flex", alignItems: "center", gap: 8, padding: "6px 6px", borderRadius: 4,
+                          fontSize: 13, color: "#19140F", cursor: "pointer",
+                          background: checked ? "rgba(74,85,190,0.07)" : "transparent",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => setTourIds(checked ? tourIds.filter(id => id !== t.id) : [...tourIds, t.id])}
+                        />
+                        {t.title}
+                      </label>
+                    );
+                  })}
+                </div>
               )}
               {!isTemplate && (
                 <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4, margin: "4px 0 0 0" }}>
                   {isEdit
                     ? "Assigning a tour makes this visible to every group in that tour."
-                    : "Cmd/Ctrl-click to select multiple tours. Creates one linked copy per tour, each visible to every group in that tour. Leave empty for no tour."}
+                    : "Check multiple tours to create one linked copy per tour, each visible to every group in that tour. Leave unchecked for no tour."}
                 </p>
               )}
             </div>
