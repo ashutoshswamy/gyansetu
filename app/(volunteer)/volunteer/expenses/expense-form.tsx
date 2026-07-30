@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { submitExpense, resubmitExpense } from "@/actions/finance";
 import { getGroupsForSelect } from "@/actions/groups";
+import { uploadFileToStorage } from "@/actions/upload";
 import type { ExpenseInput } from "@/lib/validations";
 import type { Expense } from "@/types";
 
@@ -24,12 +25,74 @@ const SUBCATEGORY_OPTIONS: Partial<Record<ExpenseInput["category"], readonly str
 
 const VOLUNTEER_COUNT_CATEGORIES: ExpenseInput["category"][] = ["accommodation", "food"];
 
+// Upload-only receipt field — no raw URL entry, so volunteers can't paste an arbitrary
+// (possibly dead or unrelated) link in place of an actual bill.
+function ReceiptUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError(null);
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const url = await uploadFileToStorage(fd, "media", "receipts");
+      onChange(url);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  const fileName = value ? decodeURIComponent(value.split("/").pop() ?? "Receipt") : "";
+
+  return (
+    <div style={{ position: "relative" }}>
+      <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Receipt</label>
+      {value ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", border: "1.5px solid #E4DFD1", borderRadius: 6, background: "#FBF7EC" }}>
+          <a href={value} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#4A55BE", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {fileName}
+          </a>
+          <button type="button" onClick={() => onChange("")} style={{ fontSize: 12, color: "#DC2626", background: "transparent", border: "none", cursor: "pointer" }}>
+            Remove
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => fileRef.current?.click()}
+          style={{ width: "100%", padding: "10px 12px", fontSize: 13, fontWeight: 600, textAlign: "left", color: uploading ? "#9B9188" : "#19140F", background: uploading ? "#F0EEE6" : "#FBF7EC", border: "1.5px dashed #E4DFD1", borderRadius: 6, cursor: uploading ? "not-allowed" : "pointer" }}
+        >
+          {uploading ? "Uploading…" : "+ Upload receipt (image or PDF)"}
+        </button>
+      )}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*,application/pdf"
+        style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", border: 0 }}
+        onChange={handleFileChange}
+      />
+      {uploadError && <p style={{ fontSize: 12, color: "#DC2626", marginTop: 5 }}>{uploadError}</p>}
+    </div>
+  );
+}
+
 export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string | null; editExpense?: Expense; onDone?: () => void }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
   const [category, setCategory] = useState<ExpenseInput["category"]>(editExpense?.category ?? "travel");
+  const [billUrl, setBillUrl] = useState(editExpense?.bill_url ?? "");
 
   useEffect(() => {
     if (groupId) return;
@@ -77,6 +140,7 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
       } else {
         (e.target as HTMLFormElement).reset();
         setCategory("travel");
+        setBillUrl("");
       }
       router.refresh();
     } catch (err: unknown) {
@@ -162,10 +226,8 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
           <input name="vendor_name" type="text" defaultValue={editExpense?.vendor_name ?? ""} placeholder="Who was paid?" style={inputStyle} />
         </div>
 
-        <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Bill URL</label>
-          <input name="bill_url" type="text" defaultValue={editExpense?.bill_url ?? ""} placeholder="https://..." style={inputStyle} />
-        </div>
+        <input type="hidden" name="bill_url" value={billUrl} />
+        <ReceiptUpload value={billUrl} onChange={setBillUrl} />
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Additional Notes</label>
           <textarea name="description" rows={2} defaultValue={editExpense?.description ?? ""} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />

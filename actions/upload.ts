@@ -12,7 +12,7 @@ const ALLOWED_EXTENSIONS: Record<string, string[]> = {
   "blog-covers":      ["jpg", "jpeg", "png", "webp", "gif"],
   "gallery-images":   ["jpg", "jpeg", "png", "webp", "gif"],
   "newsletter-files": ["pdf", "doc", "docx", "jpg", "jpeg", "png", "webp"],
-  "media":            ["jpg", "jpeg", "png", "webp", "gif", "mp4", "webm", "mov", "ogg"],
+  "media":            ["jpg", "jpeg", "png", "webp", "gif", "pdf", "mp4", "webm", "mov", "ogg"],
 };
 
 const ALLOWED_MIME_TYPES = new Set([
