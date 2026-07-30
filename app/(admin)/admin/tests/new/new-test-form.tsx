@@ -46,7 +46,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
 
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
-  const [tourId, setTourId] = useState(initialData?.tour_id ?? "");
+  const [tourIds, setTourIds] = useState<string[]>(initialData?.tour_id ? [initialData.tour_id] : []);
   const [duration, setDuration] = useState(initialData?.duration_minutes ?? 30);
   const [passing, setPassing] = useState(initialData?.passing_score ?? 60);
   const [status, setStatus] = useState<"draft" | "active" | "closed">(initialData?.status ?? "draft");
@@ -118,7 +118,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
     const payload = {
       title,
       description: description || undefined,
-      tour_id: isTemplate ? null : (tourId || null),
+      tour_id: isTemplate ? null : (tourIds[0] || null),
       duration_minutes: duration,
       passing_score: passing,
       questions: questions.map(q => ({
@@ -132,7 +132,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
     try {
       const result = isEdit
         ? await updateTest(initialData.id, payload)
-        : await createTest(payload);
+        : await createTest(payload, isTemplate ? undefined : tourIds);
 
       if (!result.ok) {
         setError(result.error);
@@ -199,18 +199,38 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
               <select style={inputStyle} value={isTemplate ? "template" : "link"} onChange={e => {
                 const val = e.target.value === "template";
                 setIsTemplate(val);
-                if (val) setTourId("");
+                if (val) setTourIds([]);
               }}>
                 <option value="link">Standard Test</option>
                 <option value="template">Template</option>
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Linked Tour {isTemplate ? "" : "*"}</label>
-              <select required={!isTemplate} disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourId} onChange={e => setTourId(e.target.value)}>
-                <option value="">{tours.length === 0 ? "No tours available" : "No tour"}</option>
-                {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
+              <label style={labelStyle}>{isEdit ? "Linked Tour" : "Linked Tour(s)"} {isTemplate ? "" : "*"}</label>
+              {isEdit ? (
+                <select required={!isTemplate} disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourIds[0] ?? ""} onChange={e => setTourIds(e.target.value ? [e.target.value] : [])}>
+                  <option value="">{tours.length === 0 ? "No tours available" : "No tour"}</option>
+                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </select>
+              ) : (
+                <select
+                  required={!isTemplate}
+                  multiple
+                  disabled={isTemplate}
+                  style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1, height: 96 }}
+                  value={tourIds}
+                  onChange={e => setTourIds(Array.from(e.target.selectedOptions, o => o.value))}
+                >
+                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </select>
+              )}
+              {!isTemplate && (
+                <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4, margin: "4px 0 0 0" }}>
+                  {isEdit
+                    ? "Assigning a tour makes this visible to every group in that tour."
+                    : "Cmd/Ctrl-click to select multiple tours. Creates one linked copy per tour, each visible to every group in that tour."}
+                </p>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

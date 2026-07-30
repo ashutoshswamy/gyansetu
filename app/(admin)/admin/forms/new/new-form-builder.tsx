@@ -61,7 +61,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
 
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
-  const [tourId, setTourId] = useState(initialData?.tour_id ?? "");
+  const [tourIds, setTourIds] = useState<string[]>(initialData?.tour_id ? [initialData.tour_id] : []);
   const [targetRole, setTargetRole] = useState<"enrollee" | "volunteer" | "all">(initialData?.target_role ?? "enrollee");
   const [category, setCategory] = useState<"general" | "task" | "survey" | "cultural_activity">(initialData?.category ?? "general");
   const [status, setStatus] = useState<"draft" | "active" | "closed">(initialData?.status ?? "draft");
@@ -96,7 +96,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
     const payload = {
       title,
       description: description || undefined,
-      tour_id: isTemplate ? null : (tourId || null),
+      tour_id: isTemplate ? null : (tourIds[0] || null),
       target_role: targetRole,
       status,
       category,
@@ -115,7 +115,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
       if (isEdit) {
         await updateForm(initialData.id, payload);
       } else {
-        await createForm(payload);
+        await createForm(payload, isTemplate ? undefined : tourIds);
       }
       toast.success(isEdit ? "Form updated successfully" : "Form created successfully");
       if (isTemplate) {
@@ -199,7 +199,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                 const val = e.target.value === "template";
                 setIsTemplate(val);
                 if (val) {
-                  setTourId("");
+                  setTourIds([]);
                 }
               }}>
                 <option value="link">Standard Form</option>
@@ -207,11 +207,30 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Linked Tour</label>
-              <select disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourId} onChange={e => setTourId(e.target.value)}>
-                <option value="">No tour</option>
-                {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
+              <label style={labelStyle}>{isEdit ? "Linked Tour" : "Linked Tour(s)"}</label>
+              {isEdit ? (
+                <select disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourIds[0] ?? ""} onChange={e => setTourIds(e.target.value ? [e.target.value] : [])}>
+                  <option value="">No tour</option>
+                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </select>
+              ) : (
+                <select
+                  multiple
+                  disabled={isTemplate}
+                  style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1, height: 96 }}
+                  value={tourIds}
+                  onChange={e => setTourIds(Array.from(e.target.selectedOptions, o => o.value))}
+                >
+                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </select>
+              )}
+              {!isTemplate && (
+                <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4, margin: "4px 0 0 0" }}>
+                  {isEdit
+                    ? "Assigning a tour makes this visible to every group in that tour."
+                    : "Cmd/Ctrl-click to select multiple tours. Creates one linked copy per tour, each visible to every group in that tour. Leave empty for no tour."}
+                </p>
+              )}
             </div>
             <div>
               <label style={labelStyle}>Target Role *</label>

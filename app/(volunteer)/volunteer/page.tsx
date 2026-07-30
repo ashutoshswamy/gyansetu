@@ -31,13 +31,24 @@ export default async function VolunteerDashboard() {
 
   const uid = user?.id ?? "";
 
+  const { data: assignments } = await db
+    .from("volunteer_assignments")
+    .select("*, tours(id, title, destination, start_date, end_date, status, participant_visible)")
+    .eq("volunteer_id", uid);
+  const tourIds = (assignments ?? [])
+    .map((a: { tour_id: string | null }) => a.tour_id)
+    .filter((id): id is string => !!id);
+
+  let formsQuery = db.from("dynamic_forms").select("id, title, fields, tour_id, tours(title)").eq("target_role", "volunteer").eq("status", "active").eq("is_template", false);
+  formsQuery = tourIds.length > 0
+    ? formsQuery.or(`tour_id.is.null,tour_id.in.(${tourIds.join(",")})`)
+    : formsQuery.is("tour_id", null);
+
   const [
-    { data: assignments },
     { data: forms },
     { data: testAttempts },
   ] = await Promise.all([
-    db.from("volunteer_assignments").select("*, tours(id, title, destination, start_date, end_date, status, participant_visible)").eq("volunteer_id", uid),
-    db.from("dynamic_forms").select("id, title, fields, tour_id, tours(title)").eq("target_role", "volunteer").eq("status", "active").eq("is_template", false),
+    formsQuery,
     db.from("test_attempts").select("id, status").eq("student_id", uid),
   ]);
 

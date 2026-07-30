@@ -54,21 +54,24 @@ const submitRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(10, "1 m"),
 });
 
-export async function createForm(input: DynamicFormInput) {
+export async function createForm(input: DynamicFormInput, tourIds?: string[]) {
   const { db, user } = await requireAdminUser();
   const data = dynamicFormSchema.parse(input);
 
-  const { data: form, error } = await db
+  // Bulk-create: one linked row per selected tour, so admins can assign the
+  // same form to multiple tours in one action instead of repeating it per tour.
+  const ids = tourIds && tourIds.length > 0 ? tourIds : [data.tour_id ?? null];
+
+  const { data: forms, error } = await db
     .from("dynamic_forms")
-    .insert({ ...data, created_by: user.id })
-    .select()
-    .single();
+    .insert(ids.map((tour_id) => ({ ...data, tour_id, created_by: user.id })))
+    .select();
 
   if (error) { console.error("[createForm]", error); throw new Error("Failed to create form"); }
 
   revalidatePath("/admin/forms");
 
-  return form;
+  return forms;
 }
 
 export async function updateForm(id: string, input: DynamicFormInput) {

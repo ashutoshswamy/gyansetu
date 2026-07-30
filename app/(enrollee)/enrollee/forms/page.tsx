@@ -1,16 +1,31 @@
+import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { DynamicForm } from "@/types";
 
 export default async function StudentFormsPage() {
+  const { userId } = await auth();
   const db = createServerClient();
-  const { data: forms } = await db
+
+  const { data: user } = await db.from("users").select("id").eq("clerk_id", userId!).single();
+
+  const { data: applications } = await db
+    .from("tour_applications")
+    .select("tour_id, status")
+    .eq("student_id", user?.id ?? "")
+    .in("status", ["pending", "shortlisted"]);
+  const tourIds = (applications ?? []).map((a) => a.tour_id).filter((id): id is string => !!id);
+
+  let formsQuery = db
     .from("dynamic_forms")
     .select("*")
     .in("target_role", ["enrollee", "all"])
     .eq("status", "active")
-    .eq("is_template", false)
-    .order("created_at", { ascending: false });
+    .eq("is_template", false);
+  formsQuery = tourIds.length > 0
+    ? formsQuery.or(`tour_id.is.null,tour_id.in.(${tourIds.join(",")})`)
+    : formsQuery.is("tour_id", null);
+  const { data: forms } = await formsQuery.order("created_at", { ascending: false });
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FAFAF7" }}>

@@ -40,13 +40,19 @@ export default async function VolunteerFormsPage() {
   const { data: user } = await db.from("users").select("id").eq("clerk_id", userId!).single();
   const uid = user?.id ?? "";
 
-  const { data: forms } = await db
+  const { data: assignments } = await db.from("volunteer_assignments").select("tour_id").eq("volunteer_id", uid);
+  const tourIds = (assignments ?? []).map((a) => a.tour_id).filter((id): id is string => !!id);
+
+  let formsQuery = db
     .from("dynamic_forms")
     .select("*")
     .in("target_role", ["volunteer", "all"])
     .eq("status", "active")
-    .eq("is_template", false)
-    .order("created_at", { ascending: false });
+    .eq("is_template", false);
+  formsQuery = tourIds.length > 0
+    ? formsQuery.or(`tour_id.is.null,tour_id.in.(${tourIds.join(",")})`)
+    : formsQuery.is("tour_id", null);
+  const { data: forms } = await formsQuery.order("created_at", { ascending: false });
 
   const formIds = (forms ?? []).map((f) => f.id);
   const { data: submissions } = formIds.length

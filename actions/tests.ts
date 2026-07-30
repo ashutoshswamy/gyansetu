@@ -28,7 +28,7 @@ const testRatelimit = new Ratelimit({
   limiter: Ratelimit.fixedWindow(3, "1 h"),
 });
 
-export async function createTest(input: EligibilityTestInput) {
+export async function createTest(input: EligibilityTestInput, tourIds?: string[]) {
   const { db, user } = await requireAdminUser();
 
   let data: EligibilityTestInput;
@@ -39,16 +39,22 @@ export async function createTest(input: EligibilityTestInput) {
     throw err;
   }
 
-  const { data: test, error } = await db
+  // Bulk-create: one linked row per selected tour, so admins can assign the
+  // same test to multiple tours in one action instead of repeating it per tour.
+  const ids = tourIds && tourIds.length > 0 ? tourIds : [data.tour_id ?? null];
+  if (!data.is_template && ids.some((id) => !id)) {
+    return { ok: false as const, error: "tour_id: Select at least one tour" };
+  }
+
+  const { data: tests, error } = await db
     .from("eligibility_tests")
-    .insert({ ...data, created_by: user.id })
-    .select()
-    .single();
+    .insert(ids.map((tour_id) => ({ ...data, tour_id, created_by: user.id })))
+    .select();
 
   if (error) { console.error("[createTest]", error); return { ok: false as const, error: "Failed to create test" }; }
 
   revalidatePath("/admin/tests");
-  return { ok: true as const, test };
+  return { ok: true as const, test: tests[0] };
 }
 
 export async function updateTest(id: string, input: EligibilityTestInput) {
