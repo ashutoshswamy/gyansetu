@@ -400,7 +400,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               { num: "03", title: "Selection & Team Formation", desc: "Complete the interview and selection process. Selected volunteers are grouped into teams and assigned a state based on programme requirements" },
               { num: "04", title: "Preparation & State Study", desc: "Prepare with your team by planning activities, coordinating logistics, and studying the history, culture, geography, language, and local context of your allotted state" },
               { num: "05", title: "School & Community Visit", desc: "Travel to the assigned region to conduct science and mathematics workshops, career guidance sessions, the “Know Our Country” Exhibition, and participate in meaningful cultural understanding with schools and local communities" },
-              { num: "06", title: "Reflection & Continued Engagement", desc: "Submit reports and post test feedback, receive your volunteer certificate, participate in annual Gyan-Setu events (15 August Melawa and 26 January Katta), and continue as an active member of the Gyan-Setu volunteer network", active: true },
+              { num: "06", title: "Reflection & Continued Engagement", desc: "Submit reports and post test feedback, receive your volunteer certificate, participate in annual Gyan-Setu events (15 August Melawa and 26 January Katta), and continue as an active member of the Gyan-Setu volunteer network" },
             ].map((step, i, arr) => (
               <motion.div
                 key={i}
@@ -418,22 +418,15 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                   <motion.div
                     style={{
                       width: 52, height: 52, borderRadius: "50%",
-                      border: step.active ? "none" : "1.5px solid var(--gs-line)",
-                      background: step.active ? "var(--gs-rust)" : "var(--gs-paper-deep)",
+                      border: "1.5px solid var(--gs-line)",
+                      background: "var(--gs-paper-deep)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       position: "relative", flexShrink: 0,
                     }}
                     whileHover={{ scale: 1.06 }}
                   >
-                    {step.active && (
-                      <motion.div
-                        style={{ position: "absolute", inset: -5, borderRadius: "50%", border: "1.5px solid rgba(184,73,46,.35)" }}
-                        animate={{ scale: [1, 1.18, 1], opacity: [0.9, 0, 0.9] }}
-                        transition={{ duration: 2.8, repeat: Infinity }}
-                      />
-                    )}
-                    <span style={{ fontFamily: F_MONO, fontSize: 13, fontWeight: 600, color: step.active ? "var(--gs-paper)" : "var(--gs-text-mute)", letterSpacing: "0.02em" }}>
-                      GS·{step.num}
+                    <span style={{ fontFamily: F_MONO, fontSize: 13, fontWeight: 600, color: "var(--gs-text-mute)", letterSpacing: "0.02em" }}>
+                      {step.num}
                     </span>
                   </motion.div>
                 </div>

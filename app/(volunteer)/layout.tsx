@@ -7,6 +7,8 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 const VOLUNTEER_ALLOWED: UserRole[] = ["volunteer", "admin", "super_admin"];
 
 export default async function VolunteerLayout({

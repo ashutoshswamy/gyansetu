@@ -5,6 +5,8 @@ import { getUserRole } from "@/lib/clerk/roles";
 import { redirect } from "next/navigation";
 import type { UserRole } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 const CORE_MEMBER_ALLOWED: UserRole[] = ["group_core_member", "admin", "super_admin"];
 
 export default async function CoreMemberLayout({ children }: { children: React.ReactNode }) {

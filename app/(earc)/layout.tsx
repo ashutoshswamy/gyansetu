@@ -5,6 +5,8 @@ import { getUserRole } from "@/lib/clerk/roles";
 import { redirect } from "next/navigation";
 import type { UserRole } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 const EARC_ALLOWED: UserRole[] = ["earc_staff", "admin", "super_admin"];
 
 export default async function EarcLayout({ children }: { children: React.ReactNode }) {
