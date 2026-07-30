@@ -19,12 +19,6 @@ export interface IdCardPanelData {
   card_file_url?: string | null;
 }
 
-const ROLE_LABELS: Record<string, string> = {
-  volunteer: "Volunteer",
-  group_leader: "Group Leader",
-  project_member: "Project Member",
-};
-
 function looksLikeImage(url: string) {
   return /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url);
 }
@@ -59,11 +53,11 @@ const faceStyle: React.CSSProperties = {
 
 function field(label: string, value?: string | null) {
   return (
-    <div style={{ marginBottom: 3.5 }}>
+    <div>
       <span style={{ fontFamily: sans, fontSize: 7.5, fontWeight: 600, color: MUTED, textTransform: "uppercase", letterSpacing: "0.07em", display: "block" }}>
         {label}
       </span>
-      <span style={{ fontFamily: sans, fontSize: 10, fontWeight: 600, color: INK, whiteSpace: "nowrap" }}>{value || "—"}</span>
+      <span style={{ fontFamily: sans, fontSize: 10, fontWeight: 600, color: INK, display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value || "—"}</span>
     </div>
   );
 }
@@ -135,11 +129,12 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
                 <div style={{ width: 74, height: 90, borderRadius: 5, background: "#EFE9D6", border: `1px dashed ${GOLD_LIGHT}` }} />
               )}
             </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: INK, margin: "0 0 5px", lineHeight: 1.2 }}>{data.name}</p>
-              {field("Role", data.role_in_group ? (ROLE_LABELS[data.role_in_group] ?? data.role_in_group) : undefined)}
-              {field("State", data.state)}
-              {field("Place", data.place)}
+            <div style={{ minWidth: 0, flex: 1, display: "flex", flexDirection: "column" }}>
+              <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 700, color: INK, margin: "0 0 6px", lineHeight: 1.2 }}>{data.name}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {field("State", data.state)}
+                {field("Place", data.place)}
+              </div>
             </div>
           </div>
 

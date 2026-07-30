@@ -27,6 +27,7 @@ export default function BulkIdCardsPage() {
   const [tourId, setTourId] = useState("");
   const [groups, setGroups] = useState<Group[]>([]);
   const [groupId, setGroupId] = useState("");
+  const [place, setPlace] = useState("");
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [validFrom, setValidFrom] = useState("");
@@ -50,9 +51,9 @@ export default function BulkIdCardsPage() {
     setGroups([]);
     setVolunteers([]);
     setSelected(new Set());
+    setPlace(tours.find(t => t.id === id)?.destination ?? "");
   }
 
-  const place = tours.find(t => t.id === tourId)?.destination ?? "";
   const selectedGroup = groups.find(g => g.id === groupId);
   const state = selectedGroup?.state_allocated ?? "";
 
@@ -126,8 +127,12 @@ export default function BulkIdCardsPage() {
               </div>
             </div>
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>
-              Card numbers are generated automatically per volunteer. State/Place come from the group&apos;s allocated state and the tour&apos;s destination.
+              Card numbers are generated automatically per volunteer. State comes from the group&apos;s allocated state.
             </p>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
+              <input value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" style={inputStyle} />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>

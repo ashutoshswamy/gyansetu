@@ -20,9 +20,10 @@ export default function NewIdCardPage() {
   const [tourId, setTourId] = useState("");
   const [groups, setGroups] = useState<Group[]>([]);
   const [groupId, setGroupId] = useState("");
-  // State/Place aren't admin-typed — they come from the group's allocated state and the
-  // tour's destination, same as the certificate form already pulls its fields from the ID card.
-  const place = tours.find(t => t.id === tourId)?.destination ?? "";
+  // State isn't admin-typed — it comes from the group's allocated state, same as the
+  // certificate form pulls its fields from the ID card. Place is admin-typed (below),
+  // defaulted from the tour's destination when a tour is picked but freely editable.
+  const [place, setPlace] = useState("");
   const state = groups.find(g => g.id === groupId)?.state_allocated ?? "";
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function NewIdCardPage() {
     setTourId(id);
     setGroupId("");
     setGroups([]);
+    setPlace(tours.find(t => t.id === id)?.destination ?? "");
   }
 
   function handleVolunteerChange(id: string) {
@@ -139,7 +141,7 @@ export default function NewIdCardPage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
-                <input name="place" value={place} readOnly placeholder="From tour's destination" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
+                <input name="place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" style={inputStyle} />
               </div>
             </div>
             {tourId && !groupId && (
