@@ -208,8 +208,6 @@ export function AlumniRegistrationForm() {
     }
   }
 
-  const activeIndex = TABS.findIndex((t) => t.id === activeTab);
-
   if (status === "success") {
     return (
       <div className={`min-h-screen p-8 ${fontVars}`} style={{ ...pageVars, background: "var(--gs-paper-deep)", fontFamily: F_BODY }}>
@@ -278,9 +276,6 @@ export function AlumniRegistrationForm() {
                 </button>
               );
             })}
-          </div>
-          <div style={{ height: 2, background: "var(--gs-line)", position: "relative" }}>
-            <div style={{ position: "absolute", inset: 0, width: `${((activeIndex + 1) / TABS.length) * 100}%`, background: "var(--gs-rust)", transition: "width .25s ease" }} />
           </div>
         </div>
 
@@ -357,11 +352,15 @@ export function AlumniRegistrationForm() {
                   </div>
                 ))}
               </div>
-              <button type="button" onClick={() => setVisits((prev) => [...prev, { ...emptyVisit }])}
-                style={{ fontFamily: F_BODY, fontSize: 12.5, fontWeight: 600, color: "var(--gs-rust)", background: "transparent", border: "none", padding: "6px 0", cursor: "pointer" }}>
-                + Add another visit
-              </button>
-              <NextSectionButton onClick={() => setActiveTab("work")} />
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 24 }}>
+                <button type="button" onClick={() => setVisits((prev) => [...prev, { ...emptyVisit }])}
+                  style={{ fontFamily: F_BODY, fontSize: 12.5, fontWeight: 600, color: "var(--gs-rust)", background: "transparent", border: "none", padding: "6px 0", cursor: "pointer" }}>
+                  + Add another visit
+                </button>
+                <button type="button" onClick={() => setActiveTab("work")} style={{ ...btnInk, display: "inline-flex", alignItems: "center", gap: 8 }}>
+                  Next Section <ArrowRight size={14} />
+                </button>
+              </div>
           </div>
 
           <div className="space-y-5" data-tab="work" style={{ display: activeTab === "work" ? undefined : "none" }}>
