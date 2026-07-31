@@ -28,28 +28,33 @@ export default async function EnrollmentDashboard() {
     .eq("clerk_id", userId!)
     .single();
 
-  const [{ data: applications }, { data: openTours }, { data: availableTests }] =
-    await Promise.all([
-      db
-        .from("tour_applications")
-        .select("*, tours(title, destination, start_date, end_date)")
-        .eq("student_id", user?.id ?? "")
-        .order("submitted_at", { ascending: false }),
-      db
-        .from("tours")
-        .select("id, title, destination, start_date, capacity, status")
-        .eq("status", "open")
-        .eq("participant_visible", true)
-        .order("start_date")
-        .limit(6),
-      db
-        .from("eligibility_tests")
-        .select("id, title, duration_minutes, passing_score, tour_id")
-        .eq("status", "active"),
-    ]);
+  const [{ data: applications }, { data: openTours }] = await Promise.all([
+    db
+      .from("tour_applications")
+      .select("*, tours(title, destination, start_date, end_date)")
+      .eq("student_id", user?.id ?? "")
+      .order("submitted_at", { ascending: false }),
+    db
+      .from("tours")
+      .select("id, title, destination, start_date, capacity, status")
+      .eq("status", "open")
+      .eq("participant_visible", true)
+      .order("start_date")
+      .limit(6),
+  ]);
 
   const appliedTourIds = new Set((applications ?? []).map((a: ApplicationRow) => a.tour_id));
   const unappliedTours = (openTours ?? []).filter((t: OpenTourRow) => !appliedTourIds.has(t.id));
+
+  // Only tests for tours the student actually applied for — same scoping as /enrollee/tests.
+  const { data: availableTests } = appliedTourIds.size > 0
+    ? await db
+        .from("eligibility_tests")
+        .select("id, title, duration_minutes, passing_score, tour_id")
+        .in("tour_id", Array.from(appliedTourIds))
+        .eq("status", "active")
+        .eq("is_template", false)
+    : { data: [] as AvailableTestRow[] };
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
