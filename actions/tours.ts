@@ -16,6 +16,21 @@ const applyRatelimit = new Ratelimit({
   limiter: Ratelimit.fixedWindow(5, "1 h"),
 });
 
+// Scoped to the tours the current volunteer is actually assigned to — feeds
+// tour-select dropdowns in volunteer-facing forms (daily log), same reasoning as
+// getGroupsForSelect: showing every tour in the system would let a volunteer log
+// against a tour they aren't on.
+export async function getMyToursForSelect() {
+  const { db, user } = await getAuthenticatedUser();
+  const { data, error } = await db
+    .from("volunteer_assignments")
+    .select("tours!inner(id, title)")
+    .eq("volunteer_id", user.id)
+    .order("assigned_at", { ascending: false });
+  if (error) { console.error("[getMyToursForSelect]", error); throw new Error("Failed to fetch tours"); }
+  return (data ?? []).map(a => a.tours as unknown as { id: string; title: string });
+}
+
 export async function createTour(input: TourInput) {
   const { db, user } = await requireAdminUser();
   const data = tourSchema.parse(input);

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { getMyTourReports, submitTourReport } from "@/actions/tour-reports";
+import { getMyToursForSelect } from "@/actions/tours";
 import { FileBarChart, Plus, X } from "lucide-react";
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
@@ -87,10 +88,10 @@ export default function VolunteerTourReportPage() {
   useEffect(() => {
     Promise.all([
       getMyTourReports(),
-      fetch("/api/tours").then(r => r.json()),
+      getMyToursForSelect(),
     ]).then(([reportsData, toursData]) => {
       setReports(reportsData);
-      setTours(Array.isArray(toursData) ? toursData : []);
+      setTours(toursData);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);

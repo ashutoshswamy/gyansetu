@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Star } from "lucide-react";
 import { createDemoEvaluation, updateDemoEvaluation } from "@/actions/demo-evaluations";
+import { getCurrentTourForVolunteer } from "@/actions/groups";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import type { DemoEvaluation } from "@/types";
 
@@ -60,6 +61,7 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
   const [volunteerId, setVolunteerId] = useState(evaluation?.volunteer_id ?? "");
+  const [tourId, setTourId] = useState(evaluation?.tour_id ?? "");
   const [scores, setScores] = useState<Record<ScoreKey, number>>(
     Object.fromEntries(SCORE_FIELDS.map(f => [f.key, evaluation?.scores?.[f.key] ?? 0])) as Record<ScoreKey, number>
   );
@@ -69,6 +71,14 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
     fetch("/api/tours").then(r => r.json()).then(d => setTours(Array.isArray(d) ? d : []));
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
   }, []);
+
+  function handleVolunteerChange(id: string) {
+    setVolunteerId(id);
+    if (!id || evaluation) return;
+    getCurrentTourForVolunteer(id).then(info => {
+      if (info?.tour_id) setTourId(info.tour_id);
+    }).catch(() => {});
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -116,11 +126,11 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
           <div className="space-y-5">
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
-              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={setVolunteerId} name="volunteer_id" />
+              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="volunteer_id" />
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour (optional)</label>
-              <select name="tour_id" defaultValue={evaluation?.tour_id ?? ""} style={inputStyle}>
+              <select name="tour_id" value={tourId} onChange={e => setTourId(e.target.value)} style={inputStyle}>
                 <option value="">General (no specific tour)</option>
                 {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
               </select>

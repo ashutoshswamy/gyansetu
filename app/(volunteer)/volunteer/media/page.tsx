@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { uploadMedia, getMediaByTour, getTodayUploadCount } from "@/actions/daily-logs";
+import { getMyToursForSelect } from "@/actions/tours";
 import { uploadFileToStorage } from "@/actions/upload";
 import { Image as ImageIcon, Upload } from "lucide-react";
 import type { MediaGalleryItem } from "@/types";
@@ -21,8 +22,7 @@ export default function VolunteerMediaPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch("/api/tours").then(r => r.json()).then(d => {
-      const t = Array.isArray(d) ? d : [];
+    getMyToursForSelect().then(t => {
       setTours(t);
       if (t.length > 0) setSelectedTour(t[0].id);
     });

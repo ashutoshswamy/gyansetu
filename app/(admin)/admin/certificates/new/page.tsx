@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { issueCertificate } from "@/actions/certificates";
 import { getLatestIdCardForVolunteer } from "@/actions/id-cards";
+import { getCurrentTourForVolunteer } from "@/actions/groups";
 import type { CertificateType } from "@/types";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
@@ -66,6 +67,10 @@ export default function NewCertificatePage() {
 
   function handleVolunteerChange(id: string) {
     setVolunteerId(id);
+    if (!id) return;
+    getCurrentTourForVolunteer(id).then(info => {
+      if (info?.tour_id) setTourId(info.tour_id);
+    }).catch(() => {});
   }
 
   const inputStyle: React.CSSProperties = {

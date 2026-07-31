@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { createDailyLog, getMyDailyLogs } from "@/actions/daily-logs";
+import { getMyToursForSelect } from "@/actions/tours";
 import { BookOpen, Plus, X, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
 
@@ -39,10 +40,10 @@ export default function VolunteerDailyLogPage() {
   useEffect(() => {
     Promise.all([
       getMyDailyLogs(),
-      fetch("/api/tours").then(r => r.json()),
+      getMyToursForSelect(),
     ]).then(([logsData, toursData]) => {
       setLogs(logsData);
-      setTours(Array.isArray(toursData) ? toursData : []);
+      setTours(toursData);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
