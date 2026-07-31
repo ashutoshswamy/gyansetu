@@ -22,6 +22,7 @@ export default function NewCertificatePage() {
   const [idCardChecked, setIdCardChecked] = useState(false);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
   const [durationDays, setDurationDays] = useState("");
+  const [place, setPlace] = useState("");
   const [lastIdCard, setLastIdCard] = useState(idCard);
 
   // Default the duration from the ID card's validity span (inclusive day count) — admin can
@@ -140,7 +141,7 @@ export default function NewCertificatePage() {
             {volunteerId && idCardChecked && !idCard && (
               <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", fontSize: 13, color: "#DC2626" }}>
                 No ID card found for this volunteer{tourId ? " on this tour" : ""}. Generate their ID card first &mdash;
-                State, Place, and Volunteer ID are filled in automatically from it.
+                State and Volunteer ID are filled in automatically from it.
               </div>
             )}
 
@@ -151,7 +152,7 @@ export default function NewCertificatePage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
-                <input name="place" value={idCard?.place ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
+                <input name="place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" style={inputStyle} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit (days)</label>

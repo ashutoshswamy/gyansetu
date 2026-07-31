@@ -97,6 +97,11 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
           <CornerMark corner="bl" />
           <CornerMark corner="br" />
 
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Gyan Setu" style={{ position: "absolute", top: 14, right: 16, height: 52, width: "auto" }} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/earc_logo.png" alt="EARC" style={{ position: "absolute", top: 14, left: 16, height: 52, width: "auto" }} />
+
           <div style={{ position: "relative", textAlign: "center" }}>
             <p style={{ fontFamily: sans, fontSize: 12, fontWeight: 600, letterSpacing: "0.16em", color: INK, margin: 0, textTransform: "uppercase" }}>
               Jnana Prabodhini
