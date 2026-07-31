@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createIdCard } from "@/actions/id-cards";
-import { getGroupsByTour } from "@/actions/groups";
+import { getGroupsByTour, getCurrentTourForVolunteer } from "@/actions/groups";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 
 type Group = { id: string; name: string; state_allocated?: string | null; tour_group_members?: { users?: { id: string } | null }[] };
@@ -58,6 +58,10 @@ export default function NewIdCardPage() {
     setVolunteerId(id);
     const match = autoMatchGroup(groups, id);
     if (match) setGroupId(match.id);
+    if (!id) return;
+    getCurrentTourForVolunteer(id).then(info => {
+      if (info?.tour_id && info.tour_id !== tourId) handleTourChange(info.tour_id);
+    }).catch(() => {});
   }
 
   const inputStyle: React.CSSProperties = {

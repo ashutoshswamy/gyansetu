@@ -106,6 +106,23 @@ export async function getGroupsByTour(tourId: string) {
   return data ?? [];
 }
 
+// Latest group membership for a given volunteer, any tour — feeds the ID card
+// form's auto-select-tour-on-volunteer-pick flow (admin still picks the group after).
+export async function getCurrentTourForVolunteer(volunteerId: string) {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("tour_group_members")
+    .select("group_id, tour_groups!inner(tour_id)")
+    .eq("user_id", volunteerId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) { console.error("[getCurrentTourForVolunteer]", error); throw new Error("Failed to fetch volunteer's tour"); }
+  if (!data) return null;
+  const tourGroup = data.tour_groups as unknown as { tour_id: string };
+  return { tour_id: tourGroup.tour_id, group_id: data.group_id as string };
+}
+
 export async function getMyGroup(tourId: string) {
   const { db, user } = await getAuthenticatedUser();
   const { data, error } = await db
