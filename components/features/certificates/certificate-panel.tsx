@@ -139,7 +139,7 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
               <p style={{ fontFamily: sans, fontSize: 13, lineHeight: 1.75, margin: "0 0 14px", color: "#3A3327" }}>
                 During the programme, you successfully conducted <strong>Science and Mathematics workshops</strong>{" "}
                 for middle school students and facilitated the <strong>&ldquo;Know Our Country&rdquo;</strong>{" "}
-                exhibition in remote areas of the state, inspiring young minds through experiential learning and
+                exhibition in remote areas of the state/Union Territory, inspiring young minds through experiential learning and
                 fostering national integration.
               </p>
               <p style={{ fontFamily: sans, fontSize: 13, lineHeight: 1.7, margin: "0 0 4px", color: "#3A3327" }}>
@@ -151,7 +151,7 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
             </div>
 
             <div style={{ display: "flex", justifyContent: "center", gap: 30, flexWrap: "wrap", marginBottom: 26 }}>
-              {field("State", data.state)}
+              {field("State/Union Territory", data.state)}
               {field("Place", data.place)}
               {field("Duration of Visit", data.duration_of_visit)}
               {field("Volunteer ID", data.volunteer_code)}
@@ -174,9 +174,6 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
 
             <div style={{ borderTop: `1px solid ${HAIRLINE}`, paddingTop: 16 }}>
               <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 600, margin: 0, color: INK }}>Issued by Gyan-Setu EARC</p>
-              <p style={{ fontFamily: sans, fontSize: 9.5, color: MUTED, fontStyle: "italic", margin: "2px 0 0" }}>
-                This is a digitally generated certificate and is valid without a physical signature or seal.
-              </p>
             </div>
             <p style={{ fontFamily: mono, fontSize: 9, letterSpacing: "0.05em", color: MUTED, margin: "14px 0 0" }}>
               Issued {new Date(data.issued_at).toLocaleDateString("en-IN")}
