@@ -1426,7 +1426,7 @@ create policy "admins_manage_tour_reports" on public.tour_reports for all using 
 -- ============================================================
 alter table public.users drop constraint if exists users_role_check;
 alter table public.users add constraint users_role_check
-  check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'super_admin'));
+  check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'group_core_member', 'super_admin'));
 alter table public.users alter column role set default 'enrollee';
 update public.users set role = 'enrollee' where role is null;
 
@@ -1623,3 +1623,13 @@ alter table public.earc_students add column if not exists standard text;
 alter table public.earc_students drop constraint if exists earc_students_standard_check;
 alter table public.earc_students add constraint earc_students_standard_check
   check (standard is null or standard in ('1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th'));
+
+-- ============================================================
+-- MIGRATION: restore 'group_core_member' to users_role_check
+-- (dropped by the enrollee/super_admin migration above, which
+-- rewrote the constraint without it — blocked all core-member
+-- role assignments)
+-- ============================================================
+alter table public.users drop constraint if exists users_role_check;
+alter table public.users add constraint users_role_check
+  check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'group_core_member', 'super_admin'));
