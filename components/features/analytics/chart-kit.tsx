@@ -76,7 +76,8 @@ function TableFooter({ data, tableColumns }: { data: Record<string, string | num
   return (
     <details style={{ margin: "8px 0 4px" }}>
       <summary style={{ fontFamily: F_BODY, fontSize: 11, color: "var(--gs-text-mute)", cursor: "pointer" }}>View as table</summary>
-      <table style={{ width: "100%", fontFamily: F_MONO, fontSize: 12, marginTop: 8, borderCollapse: "collapse" }}>
+      <div style={{ overflowX: "auto", marginTop: 8 }}>
+      <table style={{ width: "100%", fontFamily: F_MONO, fontSize: 12, borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid var(--gs-line)" }}>
             {tableColumns.map(c => <th key={c.key} className="text-left p-1" style={{ color: "var(--gs-text-soft)", fontWeight: 500 }}>{c.label}</th>)}
@@ -90,6 +91,7 @@ function TableFooter({ data, tableColumns }: { data: Record<string, string | num
           ))}
         </tbody>
       </table>
+      </div>
     </details>
   );
 }

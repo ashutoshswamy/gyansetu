@@ -104,7 +104,7 @@ export default function EditLocalHostPage() {
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Name <span style={{ color: "#DC2626" }}>*</span></label>
               <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} placeholder="Local host name" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Phone</label>
                 <input type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))} style={inputStyle} placeholder="10-digit phone number" />
@@ -114,7 +114,7 @@ export default function EditLocalHostPage() {
                 <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} style={inputStyle} placeholder="host@example.com" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Linked Tour (optional)</label>
                 <select value={tourId} onChange={e => { setTourId(e.target.value); setGroupId(""); }} style={inputStyle}>
@@ -131,7 +131,7 @@ export default function EditLocalHostPage() {
               </div>
             </div>
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>Selecting a tour filters the group list to that tour. State follows the linked group&apos;s allocated state below.</p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
                 {groupState ? (

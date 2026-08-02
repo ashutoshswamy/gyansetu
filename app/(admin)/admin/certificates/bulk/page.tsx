@@ -104,7 +104,7 @@ export default function BulkCertificatesPage() {
             </div>
           )}
           <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
                 <select value={tourId} onChange={e => handleTourChange(e.target.value)} required style={inputStyle}>
@@ -130,7 +130,7 @@ export default function BulkCertificatesPage() {
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>
               State, Place, and Volunteer ID are pulled from each volunteer&apos;s ID card for this tour &mdash; anyone without one is skipped.
             </p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit (days)</label>
                 <input type="number" min={1} step={1} value={durationDays} onChange={e => setDurationDays(e.target.value)} placeholder="Optional" style={inputStyle} />

@@ -110,7 +110,7 @@ export default function BulkIdCardsPage() {
             </div>
           )}
           <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
                 <select value={tourId} onChange={e => handleTourChange(e.target.value)} required style={inputStyle}>
@@ -133,7 +133,7 @@ export default function BulkIdCardsPage() {
               <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
               <input value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" style={inputStyle} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>
                 <input type="date" value={validFrom} onChange={e => setValidFrom(e.target.value)} required style={inputStyle} />

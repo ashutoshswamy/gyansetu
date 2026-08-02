@@ -121,7 +121,7 @@ export default function NewIdCardPage() {
                 )
               )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
                 <select name="tour_id" required value={tourId} onChange={e => handleTourChange(e.target.value)} style={inputStyle}>
@@ -138,7 +138,7 @@ export default function NewIdCardPage() {
               </div>
             </div>
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>Card number is generated automatically from the tour, group, and issue sequence.</p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
                 <input name="state" value={state} readOnly placeholder="From group's allocated state" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
@@ -151,7 +151,7 @@ export default function NewIdCardPage() {
             {tourId && !groupId && (
               <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>No group selected — State stays blank until one is assigned (group carries the allocated state).</p>
             )}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>
                 <input name="valid_from" type="date" required style={inputStyle} />

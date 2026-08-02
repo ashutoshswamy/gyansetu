@@ -63,7 +63,7 @@ async function GroupCard({ m }: { m: MembershipRow }) {
       )}
 
       {(localHost || kitAssignment) && (
-        <div className="grid grid-cols-2 gap-3" style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #E4DFD1" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #E4DFD1" }}>
           {localHost && (
             <div style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
               <div className="flex items-center gap-2 mb-2">

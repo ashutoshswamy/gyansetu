@@ -50,7 +50,7 @@ function GroupSection({ g }: { g: GroupLedger }) {
       <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "16px 20px", marginBottom: 14 }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: "#19140F", margin: "0 0 14px" }}>{g.groupName}</h3>
 
-        <div className="grid grid-cols-2 gap-3" style={{ marginBottom: g.advances.length > 0 ? 14 : 0 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ marginBottom: g.advances.length > 0 ? 14 : 0 }}>
           <div style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 8, padding: "10px 14px" }}>
             <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9B9188", margin: "0 0 4px" }}>Advance Given</p>
             <p style={{ fontSize: 19, fontWeight: 700, color: "#4A55BE", margin: 0 }}>₹{g.advanceTotal.toLocaleString("en-IN")}</p>

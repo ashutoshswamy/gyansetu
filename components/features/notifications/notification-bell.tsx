@@ -65,7 +65,7 @@ export function NotificationBell() {
           <div
             className="absolute z-50"
             style={{
-              top: "calc(100% + 8px)", right: 0, width: 320, maxHeight: 420,
+              top: "calc(100% + 8px)", right: 0, width: "min(320px, calc(100vw - 24px))", maxHeight: 420,
               background: "white", border: "1px solid #E4DFD1", borderRadius: 10,
               boxShadow: "0 8px 24px rgba(25,20,15,0.12)", display: "flex", flexDirection: "column", overflow: "hidden",
             }}
