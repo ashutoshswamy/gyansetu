@@ -222,27 +222,27 @@ export function EarcAnalytics({
 
           <div className="flex flex-wrap gap-2 items-center">
             <select value={academicYear} onChange={e => setAcademicYear(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All academic years</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>Academic years</option>
               {years.map(y => <option key={y} value={y} style={{ color: "var(--gs-text)" }}>{y}</option>)}
             </select>
             <select value={project} onChange={e => setProject(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All projects</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>Projects</option>
               {projects.map(p => <option key={p} value={p} style={{ color: "var(--gs-text)" }}>{p}</option>)}
             </select>
             <select value={moduleFilter} onChange={e => setModuleFilter(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All modules</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>Modules</option>
               {modules.map(m => <option key={m} value={m} style={{ color: "var(--gs-text)" }}>{m}</option>)}
             </select>
             <select value={state} onChange={e => onStateChange(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All states</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>States</option>
               {states.map(s => <option key={s} value={s} style={{ color: "var(--gs-text)" }}>{s}</option>)}
             </select>
             <select value={district} onChange={e => onDistrictChange(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All districts</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>Districts</option>
               {districts.map(d => <option key={d} value={d} style={{ color: "var(--gs-text)" }}>{d}</option>)}
             </select>
             <select value={block} onChange={e => setBlock(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All blocks</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>Blocks</option>
               {blocks.map(b => <option key={b} value={b} style={{ color: "var(--gs-text)" }}>{b}</option>)}
             </select>
           </div>

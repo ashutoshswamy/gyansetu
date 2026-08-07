@@ -1633,3 +1633,44 @@ alter table public.earc_students add constraint earc_students_standard_check
 alter table public.users drop constraint if exists users_role_check;
 alter table public.users add constraint users_role_check
   check (role in ('enrollee', 'volunteer', 'admin', 'earc_staff', 'group_core_member', 'super_admin'));
+
+-- ============================================================
+-- MIGRATION: volunteer self-reported payment (transaction id)
+-- pending -> submitted (volunteer entered txn id, awaiting admin
+-- verification) -> paid (admin verified)
+-- ============================================================
+alter table public.registration_fees drop constraint if exists registration_fees_status_check;
+alter table public.registration_fees add constraint registration_fees_status_check
+  check (status in ('pending', 'submitted', 'paid', 'waived', 'refunded'));
+alter table public.registration_fees add column if not exists submitted_at timestamptz;
+alter table public.registration_fees add column if not exists verified_by uuid references public.users(id) on delete set null;
+
+-- ============================================================
+-- MIGRATION: core member private observations on a volunteer.
+-- Visible to admin + core member only, never to the volunteer.
+-- ============================================================
+create table if not exists public.volunteer_observations (
+  id            uuid primary key default gen_random_uuid(),
+  volunteer_id  uuid not null references public.users(id) on delete cascade,
+  group_id      uuid references public.tour_groups(id) on delete set null,
+  author_id     uuid references public.users(id) on delete set null,
+  note          text not null,
+  created_at    timestamptz default now()
+);
+
+alter table public.volunteer_observations enable row level security;
+
+-- no volunteer-facing policy by design: only admins and core members
+-- (via server actions using the service role) read/write this table
+create policy "admins_manage_volunteer_observations" on public.volunteer_observations for all using (
+  public.is_admin()
+);
+create policy "core_members_manage_own_group_observations" on public.volunteer_observations for all using (
+  group_id is not null and exists (
+    select 1 from public.tour_group_members m
+    join public.users u on u.id = m.user_id
+    where m.group_id = volunteer_observations.group_id
+      and u.clerk_id = auth.uid()::text
+      and m.role_in_group = 'group_core_member'
+  )
+);

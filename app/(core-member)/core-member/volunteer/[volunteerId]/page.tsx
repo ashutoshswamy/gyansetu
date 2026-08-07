@@ -2,9 +2,10 @@ import { createServerClient } from "@/lib/supabase/server";
 import { getVolunteerDetailForCoreMember } from "@/actions/core-member";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Wallet, GraduationCap, FileText, CalendarDays, Star, BookOpen, School, Plane, Receipt, ClipboardList, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Wallet, GraduationCap, FileText, CalendarDays, Star, BookOpen, School, Plane, Receipt, ClipboardList, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { CoreMemberEvaluationSection } from "@/components/features/demo-evaluations/core-member-evaluation-section";
-import type { DemoEvaluation, FormField } from "@/types";
+import { VolunteerObservations } from "@/components/features/core-member/volunteer-observations";
+import type { DemoEvaluation, FormField, VolunteerObservation } from "@/types";
 
 const card: React.CSSProperties = { background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20 };
 const emptyCard: React.CSSProperties = { ...card, textAlign: "center", padding: "24px 20px" };
@@ -56,6 +57,12 @@ export default async function CoreMemberVolunteerDetailPage({
         </div>
 
         <div className="space-y-8">
+          {/* Observations — private, core member + admin only */}
+          <section>
+            <SectionTitle icon={NotebookPen}>Observations</SectionTitle>
+            <VolunteerObservations volunteerId={volunteerId} groupId={groupId} observations={detail.observations as VolunteerObservation[]} />
+          </section>
+
           {/* Demo Evaluation — the one editable section */}
           <section>
             <SectionTitle icon={Star}>Demo Evaluation</SectionTitle>

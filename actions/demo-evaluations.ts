@@ -62,7 +62,9 @@ export async function getDemoEvaluationById(id: string) {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("demo_evaluations")
-    .select("*")
+    .select(
+      "*, volunteer:users!demo_evaluations_volunteer_id_fkey(id, name, email), observer:users!demo_evaluations_observer_id_fkey(id, name), tour:tours(id, title)"
+    )
     .eq("id", id)
     .single();
   if (error) { console.error("[getDemoEvaluationById]", error); throw new Error("Failed to fetch evaluation"); }

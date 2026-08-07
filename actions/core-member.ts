@@ -2,8 +2,10 @@
 
 import { requireCoreMemberUser, assertCoreMemberOverVolunteer } from "@/lib/clerk/action-auth";
 import { totalOf } from "@/lib/demo-evaluation-utils";
-import { demoEvaluationSchema, type DemoEvaluationInput } from "@/lib/validations";
+import { demoEvaluationSchema, volunteerObservationSchema, type DemoEvaluationInput, type VolunteerObservationInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+
+const ADMIN_ROLES = ["admin", "super_admin"];
 
 // Everything a core member is allowed to see about one volunteer in their group, in a
 // single round trip. Every query here is a direct pattern-match of the volunteer's own
@@ -27,6 +29,7 @@ export async function getVolunteerDetailForCoreMember(groupId: string, volunteer
     { data: expenses },
     { data: tourReports },
     { data: media },
+    { data: observations },
   ] = await Promise.all([
     db.from("registration_fees").select("*").eq("volunteer_id", volunteerId).maybeSingle(),
     db.from("workshop_attendees").select("*, workshop:workshops(id, title, workshop_type, workshop_date)").eq("volunteer_id", volunteerId),
@@ -43,6 +46,7 @@ export async function getVolunteerDetailForCoreMember(groupId: string, volunteer
     tourId
       ? db.from("media_gallery").select("*").eq("tour_id", tourId).eq("uploaded_by", volunteerId).order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as unknown[] }),
+    db.from("volunteer_observations").select("*, author:users!volunteer_observations_author_id_fkey(id, name)").eq("volunteer_id", volunteerId).order("created_at", { ascending: false }),
   ]);
 
   return {
@@ -57,7 +61,49 @@ export async function getVolunteerDetailForCoreMember(groupId: string, volunteer
     expenses: expenses ?? [],
     tourReports: tourReports ?? [],
     media: media ?? [],
+    observations: observations ?? [],
   };
+}
+
+// Core member notes about a volunteer — never surfaced to the volunteer, only to
+// admins and core members. Admins can add/view across any volunteer; core members
+// are scoped to volunteers in their own group via assertCoreMemberOverVolunteer.
+export async function createVolunteerObservation(input: VolunteerObservationInput) {
+  const { db, user } = await requireCoreMemberUser();
+  const data = volunteerObservationSchema.parse(input);
+
+  if (!ADMIN_ROLES.includes(user.role as string)) {
+    if (!data.group_id) throw new Error("Unauthorized");
+    await assertCoreMemberOverVolunteer(db, user, data.group_id, data.volunteer_id);
+  }
+
+  const { data: observation, error } = await db
+    .from("volunteer_observations")
+    .insert({ volunteer_id: data.volunteer_id, group_id: data.group_id ?? null, author_id: user.id, note: data.note })
+    .select("*, author:users!volunteer_observations_author_id_fkey(id, name)")
+    .single();
+  if (error) { console.error("[createVolunteerObservation]", error); throw new Error("Failed to add observation"); }
+
+  revalidatePath(`/core-member/volunteer/${data.volunteer_id}`);
+  revalidatePath(`/admin/volunteers/${data.volunteer_id}`);
+  return observation;
+}
+
+export async function getVolunteerObservations(volunteerId: string, groupId?: string) {
+  const { db, user } = await requireCoreMemberUser();
+
+  if (!ADMIN_ROLES.includes(user.role as string)) {
+    if (!groupId) throw new Error("Unauthorized");
+    await assertCoreMemberOverVolunteer(db, user, groupId, volunteerId);
+  }
+
+  const { data, error } = await db
+    .from("volunteer_observations")
+    .select("*, author:users!volunteer_observations_author_id_fkey(id, name)")
+    .eq("volunteer_id", volunteerId)
+    .order("created_at", { ascending: false });
+  if (error) { console.error("[getVolunteerObservations]", error); throw new Error("Failed to fetch observations"); }
+  return data ?? [];
 }
 
 export async function createDemoEvaluationForVolunteer(groupId: string, input: DemoEvaluationInput) {

@@ -1,6 +1,9 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ArrowLeft, Phone, AlertCircle, CheckCircle, MapPin } from "lucide-react";
+import { ArrowLeft, Phone, AlertCircle, CheckCircle, MapPin, NotebookPen } from "lucide-react";
+import { getVolunteerObservations } from "@/actions/core-member";
+import { VolunteerObservations } from "@/components/features/core-member/volunteer-observations";
+import type { VolunteerObservation } from "@/types";
 
 interface VolunteerAssignment {
   id: string;
@@ -12,10 +15,11 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
   const { id } = await params;
   const db = createServerClient();
 
-  const [{ data: user }, { data: profile }, { data: assignments }] = await Promise.all([
+  const [{ data: user }, { data: profile }, { data: assignments }, observations] = await Promise.all([
     db.from("users").select("*").eq("id", id).single(),
     db.from("volunteer_profiles").select("*").eq("user_id", id).single(),
     db.from("volunteer_assignments").select("*, tours(id, title, destination, start_date, end_date, status)").eq("volunteer_id", id),
+    getVolunteerObservations(id),
   ]);
 
   if (!user) return <div className="p-8" style={{ color: "#DC2626" }}>Volunteer not found.</div>;
@@ -115,6 +119,15 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
               </div>
             )}
           </div>
+        </div>
+
+        {/* Observations — private, admin + core member only */}
+        <div className="mt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <NotebookPen className="w-4 h-4" style={{ color: "#4A55BE" }} />
+            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.04em", color: "#19140F", margin: 0 }}>Observations</p>
+          </div>
+          <VolunteerObservations volunteerId={id} observations={observations as VolunteerObservation[]} />
         </div>
       </div>
     </div>

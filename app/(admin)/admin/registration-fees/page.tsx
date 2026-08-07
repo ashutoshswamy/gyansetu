@@ -4,16 +4,17 @@ import { Wallet } from "lucide-react";
 import { MarkPaidButton } from "./mark-paid-button";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
-  pending:  { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
-  paid:     { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-  waived:   { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
-  refunded: { color: "#9B9188", bg: "rgba(155,145,136,0.1)" },
+  pending:   { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
+  submitted: { color: "#A8641C", bg: "rgba(168,100,28,0.08)" },
+  paid:      { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
+  waived:    { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
+  refunded:  { color: "#9B9188", bg: "rgba(155,145,136,0.1)" },
 };
 
 export default async function AdminRegistrationFeesPage() {
   const fees = await getAllRegistrationFees();
 
-  const counts = { pending: 0, paid: 0, waived: 0, refunded: 0 };
+  const counts = { pending: 0, submitted: 0, paid: 0, waived: 0, refunded: 0 };
   for (const f of fees) counts[f.status as keyof typeof counts]++;
 
   return (
@@ -32,7 +33,7 @@ export default async function AdminRegistrationFeesPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           {Object.entries(counts).map(([status, count]) => {
             const c = statusColors[status];
             return (
@@ -69,6 +70,7 @@ export default async function AdminRegistrationFeesPage() {
                   </div>
                 </div>
                 {fee.status === "pending" && <MarkPaidButton feeId={fee.id} />}
+                {fee.status === "submitted" && <MarkPaidButton feeId={fee.id} label="Verify Payment" />}
               </div>
             );
           })}

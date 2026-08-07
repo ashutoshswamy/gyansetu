@@ -312,13 +312,25 @@ export interface RegistrationFee {
   id: string;
   volunteer_id: string;
   amount: number;
-  status: "pending" | "paid" | "waived" | "refunded";
+  status: "pending" | "submitted" | "paid" | "waived" | "refunded";
   payment_reference?: string;
   paid_at?: string;
+  submitted_at?: string;
+  verified_by?: string;
   notes?: string;
   created_at: string;
   updated_at: string;
   volunteer?: UserProfile;
+}
+
+export interface VolunteerObservation {
+  id: string;
+  volunteer_id: string;
+  group_id?: string;
+  author_id?: string;
+  note: string;
+  created_at: string;
+  author?: { id: string; name: string };
 }
 
 export type WorkshopType = "science" | "mathematics" | "exhibition_country" | "cultural_survey" | "other";

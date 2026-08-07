@@ -35,7 +35,7 @@ export default async function AdminDemoEvaluationsPage() {
             const color = scoreColor(e.total_score);
             const isDraft = e.status === "draft";
             return (
-              <Link key={e.id} href={isDraft ? `/admin/demo-evaluations/${e.id}/edit` : "#"} style={{ pointerEvents: isDraft ? "auto" : "none" }}>
+              <Link key={e.id} href={isDraft ? `/admin/demo-evaluations/${e.id}/edit` : `/admin/demo-evaluations/${e.id}`}>
                 <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(74,85,190,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <ClipboardCheck size={18} style={{ color: "#4A55BE" }} />

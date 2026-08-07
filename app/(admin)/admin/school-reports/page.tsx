@@ -2,7 +2,8 @@ import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { getAllSchoolReports } from "@/actions/school-reports";
 import { School, LayoutDashboard } from "lucide-react";
-import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
+import { type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
+import { SchoolReportsSearch } from "@/components/features/school-reports/school-reports-search";
 
 interface GroupMemberRow {
   user_id: string;
@@ -100,36 +101,14 @@ export default async function AdminSchoolReportsPage() {
           </Link>
         </div>
 
-        {groups.length === 0 && (
+        {groups.length === 0 ? (
           <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
             <School className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
             <p style={{ fontSize: 15, color: "#5A5247" }}>No groups yet.</p>
           </div>
+        ) : (
+          <SchoolReportsSearch byTour={byTour} />
         )}
-
-        {Object.entries(byTour).map(([tourId, tour]) => (
-          <div key={tourId} className="mb-10">
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: "#19140F", marginBottom: 14, paddingBottom: 8, borderBottom: "1.5px solid #E4DFD1" }}>
-              {tour.title}
-            </h2>
-            {tour.groups.map(group => (
-              <div key={group.id} className="mb-6">
-                <h3 style={{ fontSize: 13, fontWeight: 600, color: "#5A5247", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  {group.name} ({group.members.length} volunteer{group.members.length === 1 ? "" : "s"})
-                </h3>
-                {group.members.length === 0 ? (
-                  <p style={{ fontSize: 13, color: "#9B9188" }}>No volunteers assigned to this group.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {group.members.map(m => (
-                      <VolunteerReportRow key={m.id} name={m.name} email={m.email} reports={m.reports} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ))}
       </div>
     </div>
   );

@@ -103,16 +103,16 @@ export function SchoolReportsAnalytics({ reports }: { reports: ReportForAnalytic
 
           <div className="flex flex-wrap gap-2 items-center">
             <select value={tour} onChange={e => setTour(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All tours</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>Tours</option>
               {tours.map(t => <option key={t.id} value={t.id} style={{ color: "var(--gs-text)" }}>{t.title}</option>)}
             </select>
             <select value={status} onChange={e => setStatus(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All statuses</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>Statuses</option>
               <option value="submitted" style={{ color: "var(--gs-text)" }}>Submitted</option>
               <option value="draft" style={{ color: "var(--gs-text)" }}>Draft</option>
             </select>
             <select value={state} onChange={e => setState(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>All states</option>
+              <option value="" style={{ color: "var(--gs-text)" }}>States</option>
               {states.map(s => <option key={s} value={s} style={{ color: "var(--gs-text)" }}>{s}</option>)}
             </select>
           </div>

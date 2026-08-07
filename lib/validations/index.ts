@@ -304,10 +304,22 @@ export type VolunteerProfileInput = z.infer<typeof volunteerProfileSchema>;
 export const registrationFeeSchema = z.object({
   volunteer_id: z.string().uuid(),
   amount: z.number().positive(),
-  status: z.enum(["pending", "paid", "waived", "refunded"]).default("pending"),
+  status: z.enum(["pending", "submitted", "paid", "waived", "refunded"]).default("pending"),
   payment_reference: z.string().max(200).optional(),
   paid_at: z.string().optional(),
+  submitted_at: z.string().optional(),
+  verified_by: z.string().uuid().optional(),
   notes: z.string().max(1000).optional(),
+});
+
+export const paymentSubmissionSchema = z.object({
+  payment_reference: z.string().min(3, "Enter the transaction ID").max(200),
+});
+
+export const volunteerObservationSchema = z.object({
+  volunteer_id: z.string().uuid(),
+  group_id: z.string().uuid().optional(),
+  note: z.string().min(1).max(2000),
 });
 
 export const workshopSchema = z.object({
@@ -568,6 +580,8 @@ export const schoolReportSchema = z.object({
 });
 
 export type RegistrationFeeInput = z.infer<typeof registrationFeeSchema>;
+export type PaymentSubmissionInput = z.infer<typeof paymentSubmissionSchema>;
+export type VolunteerObservationInput = z.infer<typeof volunteerObservationSchema>;
 export type WorkshopInput = z.infer<typeof workshopSchema>;
 export type WorkshopAttendeeInput = z.infer<typeof workshopAttendeeSchema>;
 export type DemoEvaluationInput = z.infer<typeof demoEvaluationSchema>;

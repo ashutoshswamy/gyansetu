@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateRegistrationFee } from "@/actions/registration-fees";
+import { verifyRegistrationFee } from "@/actions/registration-fees";
 
-export function MarkPaidButton({ feeId }: { feeId: string }) {
+export function MarkPaidButton({ feeId, label = "Mark Paid" }: { feeId: string; label?: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
     setLoading(true);
     try {
-      await updateRegistrationFee(feeId, { status: "paid", paid_at: new Date().toISOString() });
+      await verifyRegistrationFee(feeId);
       router.refresh();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Failed to mark as paid");
@@ -30,7 +30,7 @@ export function MarkPaidButton({ feeId }: { feeId: string }) {
         color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,
       }}
     >
-      {loading ? "..." : "Mark Paid"}
+      {loading ? "..." : label}
     </button>
   );
 }
