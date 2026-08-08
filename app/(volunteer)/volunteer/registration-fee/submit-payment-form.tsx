@@ -3,12 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { submitPaymentReference } from "@/actions/registration-fees";
+import { submitRegistrationFee } from "@/actions/registration-fees";
 
-export function SubmitPaymentForm() {
+export function RecordFeeForm({
+  tour,
+  group,
+  presetAmount,
+}: {
+  tour: { title: string } | null;
+  group: { name: string } | null;
+  presetAmount?: number;
+}) {
   const router = useRouter();
+  const [amount, setAmount] = useState(presetAmount ? String(presetAmount) : "");
   const [txnId, setTxnId] = useState("");
+  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,21 +28,42 @@ export function SubmitPaymentForm() {
     setError(null);
     setLoading(true);
     try {
-      await submitPaymentReference({ payment_reference: txnId.trim() });
+      await submitRegistrationFee({
+        amount: Number(amount),
+        payment_reference: txnId.trim(),
+        notes: notes.trim() || undefined,
+      });
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to submit payment");
+      setError(err instanceof Error ? err.message : "Failed to record payment");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 pt-4 border-t border-border">
-      <label className="text-xs font-semibold text-muted-foreground block mb-1.5">
-        Already paid? Enter your transaction ID
-      </label>
-      <div className="flex gap-2 flex-wrap">
+    <form onSubmit={handleSubmit} className="mt-4 pt-4 border-t border-border space-y-3">
+      <div className="flex flex-wrap gap-4" style={{ fontSize: 13, color: "#5A5247" }}>
+        <span><span style={{ fontWeight: 600, color: "#9B9188" }}>Tour: </span>{tour?.title ?? "Not assigned to a tour yet"}</span>
+        <span><span style={{ fontWeight: 600, color: "#9B9188" }}>Group: </span>{group?.name ?? "Not assigned to a group yet"}</span>
+      </div>
+
+      <div>
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Amount paid (₹)</label>
+        <Input
+          type="number"
+          min="1"
+          step="1"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          required
+          readOnly={presetAmount !== undefined}
+          disabled={presetAmount !== undefined}
+        />
+      </div>
+
+      <div>
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Transaction ID</label>
         <Input
           type="text"
           value={txnId}
@@ -39,17 +71,24 @@ export function SubmitPaymentForm() {
           placeholder="e.g. UPI transaction ID"
           required
           minLength={3}
-          className="flex-1 min-w-52"
         />
-        <Button
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Submit Payment"}
-        </Button>
       </div>
-      {error && <p className="text-xs text-destructive mt-1.5">{error}</p>}
-      <p className="text-xs text-muted-foreground mt-1.5">Admin will verify this and mark your payment as confirmed.</p>
+
+      <div>
+        <label className="text-xs font-semibold text-muted-foreground block mb-1.5">Remarks (optional)</label>
+        <Textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Anything the admin should know about this payment"
+          rows={2}
+        />
+      </div>
+
+      <Button type="submit" disabled={loading}>
+        {loading ? "Submitting..." : "Record Payment"}
+      </Button>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      <p className="text-xs text-muted-foreground">Admin will verify this and mark your payment as approved.</p>
     </form>
   );
 }

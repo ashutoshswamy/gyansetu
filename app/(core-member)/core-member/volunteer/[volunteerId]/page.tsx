@@ -5,7 +5,10 @@ import Link from "next/link";
 import { ArrowLeft, Wallet, GraduationCap, FileText, CalendarDays, Star, BookOpen, School, Plane, Receipt, ClipboardList, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { CoreMemberEvaluationSection } from "@/components/features/demo-evaluations/core-member-evaluation-section";
 import { VolunteerObservations } from "@/components/features/core-member/volunteer-observations";
-import type { DemoEvaluation, FormField, VolunteerObservation } from "@/types";
+import { VolunteerFormSubmissions } from "@/components/features/core-member/volunteer-form-submissions";
+import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
+import { TOUR_REPORT_OBSERVATION_FIELDS, TOUR_REPORT_LOGISTICS_LABELS } from "@/lib/report-field-labels";
+import type { DemoEvaluation, FormSubmission, FormField, TourReportHost, VolunteerObservation } from "@/types";
 
 const card: React.CSSProperties = { background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20 };
 const emptyCard: React.CSSProperties = { ...card, textAlign: "center", padding: "24px 20px" };
@@ -113,17 +116,9 @@ export default async function CoreMemberVolunteerDetailPage({
             {detail.formSubmissions.length === 0 ? (
               <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No forms submitted.</p></div>
             ) : (
-              <div className="space-y-2">
-                {detail.formSubmissions.map((s) => {
-                  const form = s.dynamic_forms as { title: string; fields?: FormField[] } | null;
-                  return (
-                    <div key={s.id} style={card} className="flex items-center justify-between">
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{form?.title ?? "Form"}</span>
-                      <span style={{ fontSize: 12, color: "#9B9188" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
-                    </div>
-                  );
-                })}
-              </div>
+              <VolunteerFormSubmissions
+                submissions={detail.formSubmissions as unknown as (FormSubmission & { dynamic_forms: { title: string; fields?: FormField[] } | null })[]}
+              />
             )}
           </section>
 
@@ -169,18 +164,11 @@ export default async function CoreMemberVolunteerDetailPage({
           {/* School Details — group-shared */}
           <section>
             <SectionTitle icon={School} shared>School Details ({detail.schoolReports.length})</SectionTitle>
-            {detail.schoolReports.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No school reports for this group.</p></div>
-            ) : (
-              <div className="space-y-2">
-                {detail.schoolReports.map((r) => (
-                  <div key={r.id} style={card} className="flex items-center justify-between">
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{r.school_name ?? "School visit"}</span>
-                    <span style={{ fontSize: 12, color: "#9B9188" }}>{new Date(r.created_at).toLocaleDateString()}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <VolunteerReportRow
+              name={volunteer.name}
+              email={volunteer.email}
+              reports={detail.schoolReports as unknown as SchoolReportRow[]}
+            />
           </section>
 
           {/* Travel — group-shared */}
@@ -227,12 +215,82 @@ export default async function CoreMemberVolunteerDetailPage({
               <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No tour reports submitted.</p></div>
             ) : (
               <div className="space-y-2">
-                {detail.tourReports.map((r) => (
-                  <div key={r.id} style={card} className="flex items-center justify-between">
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{r.tour?.title ?? "Tour report"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "#4A55BE" }}>{r.status}</span>
-                  </div>
-                ))}
+                {detail.tourReports.map((r) => {
+                  const hosts = (r.hosts ?? []) as TourReportHost[];
+                  const scores = (r.logistics_scores ?? {}) as Record<string, number | undefined>;
+                  const fields = r as unknown as Record<string, string | boolean | undefined>;
+                  return (
+                    <div key={r.id} style={card}>
+                      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{r.location_name ?? r.tour?.title ?? "Tour report"}</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "#4A55BE" }}>{r.status}</span>
+                      </div>
+
+                      {hosts.length > 0 && (
+                        <div className="mb-3">
+                          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Local Organisations &amp; Hosts</p>
+                          <div className="space-y-1">
+                            {hosts.map((h, i) => (
+                              <p key={i} style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
+                                {h.organisation || "-"} · {h.contact_person_name || "-"} ({h.designation || "-"}) · {h.mobile_number || "-"} · {[h.village_city, h.block_taluk, h.district, h.state].filter(Boolean).join(", ")}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {Object.keys(scores).length > 0 && (
+                        <div className="mb-3">
+                          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Logistics Rating</p>
+                          <div className="flex flex-wrap gap-3">
+                            {Object.entries(scores).filter(([, v]) => v).map(([k, v]) => (
+                              <span key={k} style={{ fontSize: 12, color: "#5A5247" }}>{TOUR_REPORT_LOGISTICS_LABELS[k] ?? k}: <strong>{v}/10</strong></span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-2">
+                        {TOUR_REPORT_OBSERVATION_FIELDS.map((f) => {
+                          const val = fields[f.key] as string | undefined;
+                          if (!val) return null;
+                          return (
+                            <div key={f.key}>
+                              <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>{f.label}</p>
+                              <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{val}</p>
+                            </div>
+                          );
+                        })}
+                        {r.overall_recommendation && (
+                          <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
+                            <span style={{ fontWeight: 600, color: "#9B9188" }}>Recommendation: </span>{r.overall_recommendation}
+                          </p>
+                        )}
+                        {fields.suitable_residential_camps !== undefined && fields.suitable_residential_camps !== null && (
+                          <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
+                            <span style={{ fontWeight: 600, color: "#9B9188" }}>Suitable for Residential Camps: </span>{fields.suitable_residential_camps ? "Yes" : "No"}
+                          </p>
+                        )}
+                        {fields.follow_up_required !== undefined && fields.follow_up_required !== null && (
+                          <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
+                            <span style={{ fontWeight: 600, color: "#9B9188" }}>Follow-up Required: </span>{fields.follow_up_required ? "Yes" : "No"}
+                          </p>
+                        )}
+                        {r.additional_remarks && (
+                          <div>
+                            <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>Additional Remarks</p>
+                            <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{r.additional_remarks}</p>
+                          </div>
+                        )}
+                        {r.report_file_url && (
+                          <a href={r.report_file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4A55BE", display: "inline-block" }}>
+                            View report file
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </section>

@@ -312,8 +312,12 @@ export const registrationFeeSchema = z.object({
   notes: z.string().max(1000).optional(),
 });
 
-export const paymentSubmissionSchema = z.object({
+// Volunteer self-recording a registration fee — tour/group are auto-fetched
+// server-side from the caller's group membership, not user-entered.
+export const volunteerRegistrationFeeSchema = z.object({
+  amount: z.number().positive(),
   payment_reference: z.string().min(3, "Enter the transaction ID").max(200),
+  notes: z.string().max(1000).optional(),
 });
 
 export const volunteerObservationSchema = z.object({
@@ -580,7 +584,7 @@ export const schoolReportSchema = z.object({
 });
 
 export type RegistrationFeeInput = z.infer<typeof registrationFeeSchema>;
-export type PaymentSubmissionInput = z.infer<typeof paymentSubmissionSchema>;
+export type VolunteerRegistrationFeeInput = z.infer<typeof volunteerRegistrationFeeSchema>;
 export type VolunteerObservationInput = z.infer<typeof volunteerObservationSchema>;
 export type WorkshopInput = z.infer<typeof workshopSchema>;
 export type WorkshopAttendeeInput = z.infer<typeof workshopAttendeeSchema>;

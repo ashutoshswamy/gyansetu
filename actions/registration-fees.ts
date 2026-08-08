@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
-import { registrationFeeSchema, paymentSubmissionSchema, type RegistrationFeeInput } from "@/lib/validations";
+import { registrationFeeSchema, volunteerRegistrationFeeSchema, type RegistrationFeeInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
 export async function createRegistrationFee(input: RegistrationFeeInput) {
@@ -51,50 +51,67 @@ export async function getAllRegistrationFees() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("registration_fees")
-    .select("*, volunteer:users!registration_fees_volunteer_id_fkey(id, name, email)")
+    .select("*, volunteer:users!registration_fees_volunteer_id_fkey(id, name, email), tour:tours(id, title), group:tour_groups(id, name)")
     .order("created_at", { ascending: false });
   if (error) { console.error("[getAllRegistrationFees]", error); throw new Error("Failed to fetch registration fees"); }
   return data ?? [];
-}
-
-// Volunteer reports having paid: records the transaction id and moves the fee
-// into "submitted" so admin can verify it. Only allowed while pending/submitted
-// (i.e. not already paid/waived/refunded) and only on the caller's own row.
-export async function submitPaymentReference(input: { payment_reference: string }) {
-  const { db, user } = await requireVolunteerUser();
-  const { payment_reference } = paymentSubmissionSchema.parse(input);
-
-  const { data: existing, error: fetchError } = await db
-    .from("registration_fees")
-    .select("id, status")
-    .eq("volunteer_id", user.id)
-    .maybeSingle();
-  if (fetchError) { console.error("[submitPaymentReference]", fetchError); throw new Error("Failed to submit payment"); }
-  if (!existing) throw new Error("No registration fee record found");
-  if (existing.status === "paid" || existing.status === "waived" || existing.status === "refunded") {
-    throw new Error("This fee is already settled");
-  }
-
-  const { data: fee, error } = await db
-    .from("registration_fees")
-    .update({ status: "submitted", payment_reference, submitted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-    .eq("id", existing.id)
-    .select()
-    .single();
-  if (error) { console.error("[submitPaymentReference]", error); throw new Error("Failed to submit payment"); }
-
-  revalidatePath("/volunteer/registration-fee");
-  revalidatePath("/admin/registration-fees");
-  return fee;
 }
 
 export async function getMyRegistrationFee() {
   const { db, user } = await requireVolunteerUser();
   const { data, error } = await db
     .from("registration_fees")
-    .select("*")
+    .select("*, tour:tours(id, title), group:tour_groups(id, name)")
     .eq("volunteer_id", user.id)
     .maybeSingle();
   if (error) { console.error("[getMyRegistrationFee]", error); throw new Error("Failed to fetch registration fee"); }
   return data;
+}
+
+// Volunteer records their own registration fee payment: tour/group are
+// auto-fetched from the caller's (most recent) group membership rather than
+// picked, amount + transaction id + remarks are entered. Creates the row if
+// none exists yet; if admin already created a "pending" placeholder (amount
+// set but no payment info), fills it in instead of erroring. Blocked once the
+// fee has moved past pending/submitted (already settled).
+export async function submitRegistrationFee(input: { amount: number; payment_reference: string; notes?: string }) {
+  const { db, user } = await requireVolunteerUser();
+  const data = volunteerRegistrationFeeSchema.parse(input);
+
+  const { data: membership } = await db
+    .from("tour_group_members")
+    .select("group_id, tour_groups!inner(tour_id)")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const tourGroup = membership?.tour_groups as unknown as { tour_id: string } | null;
+
+  const { data: existing, error: fetchError } = await db
+    .from("registration_fees")
+    .select("id, status")
+    .eq("volunteer_id", user.id)
+    .maybeSingle();
+  if (fetchError) { console.error("[submitRegistrationFee]", fetchError); throw new Error("Failed to record payment"); }
+  if (existing && existing.status !== "pending") throw new Error("Registration fee already recorded");
+
+  const payload = {
+    volunteer_id: user.id,
+    amount: data.amount,
+    payment_reference: data.payment_reference,
+    notes: data.notes ?? null,
+    tour_id: tourGroup?.tour_id ?? null,
+    group_id: membership?.group_id ?? null,
+    status: "submitted" as const,
+    submitted_at: new Date().toISOString(),
+  };
+
+  const { data: fee, error } = existing
+    ? await db.from("registration_fees").update(payload).eq("id", existing.id).select().single()
+    : await db.from("registration_fees").insert(payload).select().single();
+  if (error) { console.error("[submitRegistrationFee]", error); throw new Error("Failed to record payment"); }
+
+  revalidatePath("/volunteer/registration-fee");
+  revalidatePath("/admin/registration-fees");
+  return fee;
 }

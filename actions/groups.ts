@@ -123,6 +123,23 @@ export async function getCurrentTourForVolunteer(volunteerId: string) {
   return { tour_id: tourGroup.tour_id, group_id: data.group_id as string };
 }
 
+// Volunteer's most recent group membership, tour/group name only — feeds the
+// registration-fee self-recording form's auto-fetched tour/group display.
+export async function getMyCurrentTourGroup() {
+  const { db, user } = await getAuthenticatedUser();
+  const { data, error } = await db
+    .from("tour_group_members")
+    .select("group_id, tour_groups!inner(name, tours(title))")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) { console.error("[getMyCurrentTourGroup]", error); return null; }
+  if (!data) return null;
+  const tourGroup = data.tour_groups as unknown as { name: string; tours: { title: string } | null };
+  return { group: { name: tourGroup.name }, tour: tourGroup.tours ? { title: tourGroup.tours.title } : null };
+}
+
 export async function getMyGroup(tourId: string) {
   const { db, user } = await getAuthenticatedUser();
   const { data, error } = await db

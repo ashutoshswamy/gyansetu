@@ -47,10 +47,11 @@ export default function GroupDetailPage() {
       .catch(() => setLoading(false));
   }, [groupId]);
 
-  // Only volunteers approved for this group's tour are eligible members
+  // Volunteers approved for this group's tour, plus enrollees (an admin can add an
+  // enrollee directly and promote them to core member, ahead of tour selection).
   useEffect(() => {
     if (!group?.tours?.id) return;
-    fetch(`/api/volunteers?tourId=${group.tours.id}`).then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
+    fetch(`/api/volunteers?tourId=${group.tours.id}&includeEnrollees=1`).then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
   }, [group?.tours?.id]);
 
   async function handleAddMember() {

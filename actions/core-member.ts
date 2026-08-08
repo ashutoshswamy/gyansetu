@@ -33,7 +33,7 @@ export async function getVolunteerDetailForCoreMember(groupId: string, volunteer
   ] = await Promise.all([
     db.from("registration_fees").select("*").eq("volunteer_id", volunteerId).maybeSingle(),
     db.from("workshop_attendees").select("*, workshop:workshops(id, title, workshop_type, workshop_date)").eq("volunteer_id", volunteerId),
-    db.from("form_submissions").select("*, dynamic_forms!inner(id, title, tour_id)").eq("submitted_by", volunteerId).order("submitted_at", { ascending: false }),
+    db.from("form_submissions").select("*, dynamic_forms!inner(id, title, tour_id, fields)").eq("submitted_by", volunteerId).order("submitted_at", { ascending: false }),
     db.from("event_attendees").select("*, event:events(id, title, event_type, event_date)").eq("user_id", volunteerId),
     db.from("demo_evaluations").select("*, tour:tours(id, title)").eq("volunteer_id", volunteerId).order("evaluated_at", { ascending: false }),
     tourId

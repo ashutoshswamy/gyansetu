@@ -1674,3 +1674,11 @@ create policy "core_members_manage_own_group_observations" on public.volunteer_o
       and m.role_in_group = 'group_core_member'
   )
 );
+
+-- ============================================================
+-- MIGRATION: link registration_fees to the volunteer's tour/group
+-- so a self-recorded fee shows which tour it's for (auto-fetched
+-- from tour_group_members, not user-entered).
+-- ============================================================
+alter table public.registration_fees add column if not exists tour_id uuid references public.tours(id) on delete set null;
+alter table public.registration_fees add column if not exists group_id uuid references public.tour_groups(id) on delete set null;

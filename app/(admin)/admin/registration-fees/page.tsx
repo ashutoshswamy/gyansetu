@@ -65,6 +65,8 @@ export default async function AdminRegistrationFeesPage() {
                   </div>
                   <div style={{ fontSize: 12, color: "#9B9188" }}>
                     {fee.volunteer?.email} · ₹{fee.amount}
+                    {fee.tour?.title ? ` · ${fee.tour.title}` : ""}
+                    {fee.group?.name ? ` (${fee.group.name})` : ""}
                     {fee.payment_reference ? ` · Ref: ${fee.payment_reference}` : ""}
                     {fee.paid_at ? ` · Paid ${new Date(fee.paid_at).toLocaleDateString()}` : ""}
                   </div>

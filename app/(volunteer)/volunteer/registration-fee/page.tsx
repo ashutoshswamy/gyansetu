@@ -1,6 +1,7 @@
 import { getMyRegistrationFee } from "@/actions/registration-fees";
+import { getMyCurrentTourGroup } from "@/actions/groups";
 import { Wallet, CheckCircle2 } from "lucide-react";
-import { SubmitPaymentForm } from "./submit-payment-form";
+import { RecordFeeForm } from "./submit-payment-form";
 
 const statusColors: Record<string, { color: string; bg: string; border: string }> = {
   pending:   { color: "#F5A520", bg: "rgba(245,165,32,0.05)", border: "rgba(245,165,32,0.2)" },
@@ -12,14 +13,15 @@ const statusColors: Record<string, { color: string; bg: string; border: string }
 
 const statusLabels: Record<string, string> = {
   pending: "Pending",
-  submitted: "Verification Pending",
-  paid: "Payment Verified",
+  submitted: "Pending",
+  paid: "Approved",
   waived: "Waived",
   refunded: "Refunded",
 };
 
 export default async function VolunteerRegistrationFeePage() {
   const fee = await getMyRegistrationFee();
+  const tourGroup = fee ? null : await getMyCurrentTourGroup();
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
@@ -30,10 +32,17 @@ export default async function VolunteerRegistrationFeePage() {
         </div>
 
         {!fee ? (
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
-            <Wallet className="w-12 h-12 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-            <p style={{ fontSize: 15, color: "#5A5247", marginBottom: 4 }}>No registration fee record yet.</p>
-            <p style={{ fontSize: 13, color: "#9B9188" }}>Contact admin if you believe this is an error.</p>
+          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "28px 26px" }}>
+            <div className="flex items-start gap-4">
+              <div style={{ width: 44, height: 44, borderRadius: 10, background: "rgba(245,165,32,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Wallet size={22} style={{ color: "#F5A520" }} />
+              </div>
+              <div className="flex-1">
+                <p style={{ fontSize: 15, color: "#5A5247", margin: "0 0 4px" }}>You haven&apos;t recorded a registration fee payment yet.</p>
+                <p style={{ fontSize: 13, color: "#9B9188", margin: 0 }}>Already paid? Fill in the details below.</p>
+                <RecordFeeForm tour={tourGroup?.tour ?? null} group={tourGroup?.group ?? null} />
+              </div>
+            </div>
           </div>
         ) : (
           (() => {
@@ -47,6 +56,8 @@ export default async function VolunteerRegistrationFeePage() {
                   <div className="flex-1">
                     <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: c.color }}>{statusLabels[fee.status] ?? fee.status}</span>
                     <h3 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: "4px 0 10px" }}>₹{fee.amount}</h3>
+                    <p style={{ fontSize: 13, color: "#5A5247", margin: "0 0 4px" }}>Tour: {fee.tour?.title ?? "Not assigned"}</p>
+                    <p style={{ fontSize: 13, color: "#5A5247", margin: "0 0 4px" }}>Group: {fee.group?.name ?? "Not assigned"}</p>
                     {fee.payment_reference && (
                       <p style={{ fontSize: 13, color: "#5A5247", margin: "0 0 4px" }}>Transaction ID: {fee.payment_reference}</p>
                     )}
@@ -56,7 +67,7 @@ export default async function VolunteerRegistrationFeePage() {
                     {fee.notes && (
                       <p style={{ fontSize: 12, color: "#5A5247", marginTop: 8, padding: "6px 10px", background: c.bg, borderRadius: 5 }}>{fee.notes}</p>
                     )}
-                    {fee.status === "pending" && <SubmitPaymentForm />}
+                    {fee.status === "pending" && <RecordFeeForm tour={fee.tour ?? null} group={fee.group ?? null} presetAmount={fee.amount} />}
                   </div>
                 </div>
               </div>

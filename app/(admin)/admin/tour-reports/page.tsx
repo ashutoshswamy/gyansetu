@@ -1,30 +1,12 @@
 import { getAllTourReports } from "@/actions/tour-reports";
 import { FileBarChart } from "lucide-react";
 import { ApproveReportButton } from "./approve-button";
+import { TOUR_REPORT_OBSERVATION_FIELDS as OBSERVATION_FIELDS, TOUR_REPORT_LOGISTICS_LABELS as LOGISTICS_LABELS } from "@/lib/report-field-labels";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   draft:     { color: "#9B9188", bg: "rgba(155,145,136,0.10)" },
   submitted: { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
   approved:  { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-};
-
-const OBSERVATION_FIELDS: { key: string; label: string }[] = [
-  { key: "unique_features", label: "Unique Features of the Region" },
-  { key: "best_practices", label: "Best Practices Observed" },
-  { key: "cultural_observations", label: "Cultural Observations" },
-  { key: "challenges_faced", label: "Challenges Faced During the Visit" },
-  { key: "suggestions_future_teams", label: "Suggestions for Future Teams" },
-  { key: "important_contacts", label: "Important Local Contacts or Resources" },
-  { key: "places_worth_visiting", label: "Places Worth Visiting" },
-];
-
-const LOGISTICS_LABELS: Record<string, string> = {
-  accommodation: "Accommodation",
-  food: "Food",
-  local_transport: "Local Transport",
-  coordination_communication: "Coordination & Communication",
-  safety_security: "Safety & Security",
-  overall_experience: "Overall Experience",
 };
 
 export default async function AdminTourReportsPage() {

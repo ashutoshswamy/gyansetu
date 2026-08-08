@@ -318,9 +318,13 @@ export interface RegistrationFee {
   submitted_at?: string;
   verified_by?: string;
   notes?: string;
+  tour_id?: string;
+  group_id?: string;
   created_at: string;
   updated_at: string;
   volunteer?: UserProfile;
+  tour?: Pick<Tour, "id" | "title">;
+  group?: { id: string; name: string };
 }
 
 export interface VolunteerObservation {
