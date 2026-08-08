@@ -83,18 +83,18 @@ export default async function AdminSchoolReportsPage() {
   const totalReports = reports.length;
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="flex items-start justify-between gap-4 flex-wrap mb-8">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>School Reports</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{totalReports} school visit reports</p>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>School Reports</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{totalReports} school visit reports</p>
           </div>
           <Link
             href="/admin/school-reports/dashboard"
             className="flex items-center gap-1.5"
-            style={{ fontSize: 13, fontWeight: 600, color: "white", background: "#19140F", padding: "9px 16px", borderRadius: 6, textDecoration: "none" }}
+            style={{ fontSize: 13, fontWeight: 600, color: "white", background: "var(--foreground)", padding: "9px 16px", borderRadius: 6, textDecoration: "none" }}
           >
             <LayoutDashboard size={14} />
             Dashboard
@@ -102,9 +102,9 @@ export default async function AdminSchoolReportsPage() {
         </div>
 
         {groups.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
-            <School className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-            <p style={{ fontSize: 15, color: "#5A5247" }}>No groups yet.</p>
+          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+            <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No groups yet.</p>
           </div>
         ) : (
           <SchoolReportsSearch byTour={byTour} />

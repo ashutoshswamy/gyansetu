@@ -27,14 +27,14 @@ export function ApplyButton({ tourId }: { tourId: string }) {
   return (
     <div>
       {error && (
-        <div className="mb-3 rounded-lg px-4 py-3" style={{ background: "rgba(184,56,30,0.07)", border: "1px solid rgba(184,56,30,0.2)", fontSize: 13, color: "#B8381E" }}>
+        <div className="mb-3 rounded-lg px-4 py-3" style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-alt-rgb), 0.2)", fontSize: 13, color: "var(--gs-danger-alt)" }}>
           {error}
         </div>
       )}
       <button
         onClick={handleApply}
         disabled={loading}
-        style={{ width: "100%", background: loading ? "#C8C4BC" : "#4A55BE", color: "white", fontSize: 14, fontWeight: 600, padding: "12px 0", borderRadius: 7, border: "none", cursor: loading ? "not-allowed" : "pointer" }}
+        style={{ width: "100%", background: loading ? "#C8C4BC" : "var(--gs-accent)", color: "white", fontSize: 14, fontWeight: 600, padding: "12px 0", borderRadius: 7, border: "none", cursor: loading ? "not-allowed" : "pointer" }}
       >
         {loading ? "Applying..." : "Apply for this Tour"}
       </button>

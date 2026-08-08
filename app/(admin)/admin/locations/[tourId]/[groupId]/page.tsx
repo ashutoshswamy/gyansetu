@@ -58,7 +58,7 @@ export default function AdminLocationsGroupPage() {
   }, [groupId]);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--background)" }}>
       <div className="p-4 sm:p-8 pb-4">
         <Button
           variant="ghost"
@@ -70,14 +70,14 @@ export default function AdminLocationsGroupPage() {
         </Button>
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               {groupLabel ? groupLabel.tourTitle : "Volunteer Locations"}
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>
               {groupLabel ? groupLabel.groupName : "Live Map"}
             </h1>
           </div>
-          <div className="flex items-center gap-1.5" style={{ fontSize: 13, color: "#2A5E3A" }}>
+          <div className="flex items-center gap-1.5" style={{ fontSize: 13, color: "var(--gs-success)" }}>
             <Radio size={13} />
             <span>{locations.length} sharing now</span>
           </div>
@@ -85,11 +85,11 @@ export default function AdminLocationsGroupPage() {
       </div>
 
       <div className="flex-1 px-4 sm:px-8 pb-8" style={{ minHeight: 480 }}>
-        <div style={{ height: "70vh", minHeight: 420, borderRadius: 10, overflow: "hidden", border: "1px solid #E4DFD1" }}>
+        <div style={{ height: "70vh", minHeight: 420, borderRadius: 10, overflow: "hidden", border: "1px solid var(--border)" }}>
           {loading ? (
-            <div className="h-full flex items-center justify-center" style={{ color: "#9B9188", fontSize: 14 }}>Loading map...</div>
+            <div className="h-full flex items-center justify-center" style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading map...</div>
           ) : locations.length === 0 ? (
-            <div className="h-full flex items-center justify-center" style={{ color: "#9B9188", fontSize: 14 }}>No volunteers currently sharing their location.</div>
+            <div className="h-full flex items-center justify-center" style={{ color: "var(--gs-muted)", fontSize: 14 }}>No volunteers currently sharing their location.</div>
           ) : (
             <VolunteerMap locations={locations} />
           )}

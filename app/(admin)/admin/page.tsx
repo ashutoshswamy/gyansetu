@@ -67,10 +67,10 @@ async function getRecentApplications(): Promise<RecentApplication[]> {
 }
 
 const appStatusStyles: Record<string, { color: string; background: string }> = {
-  pending:     { color: "#F5A520", background: "rgba(245,165,32,0.08)" },
-  shortlisted: { color: "#4A55BE", background: "rgba(74,85,190,0.08)" },
-  selected:    { color: "#2A5E3A", background: "rgba(42,94,58,0.08)" },
-  rejected:    { color: "#B8381E", background: "rgba(184,56,30,0.08)" },
+  pending:     { color: "var(--gs-warning)", background: "rgba(var(--gs-warning-rgb), 0.08)" },
+  shortlisted: { color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" },
+  selected:    { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" },
+  rejected:    { color: "var(--gs-danger-alt)", background: "rgba(var(--gs-danger-alt-rgb), 0.08)" },
 };
 
 export default async function AdminDashboard() {
@@ -81,15 +81,15 @@ export default async function AdminDashboard() {
   ]);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
             Admin Console
           </p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Platform Overview</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Platform Overview</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
             Real-time summary of all platform activity
           </p>
         </div>
@@ -145,13 +145,13 @@ export default async function AdminDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Active Tours */}
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
+          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
             <div className="flex items-center justify-between mb-5">
-              <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>Active Tours</h2>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Active Tours</h2>
               <Link href="/admin/tours">
                 <button
                   className="flex items-center gap-1"
-                  style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
+                  style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
                 >
                   Manage <ArrowRight className="w-3 h-3" />
                 </button>
@@ -159,7 +159,7 @@ export default async function AdminDashboard() {
             </div>
 
             {activeTours.length === 0 ? (
-              <p style={{ fontSize: 14, color: "#9B9188", textAlign: "center", padding: "24px 0" }}>
+              <p style={{ fontSize: 14, color: "var(--gs-muted)", textAlign: "center", padding: "24px 0" }}>
                 No active tours.
               </p>
             ) : (
@@ -168,17 +168,17 @@ export default async function AdminDashboard() {
                   <div
                     key={tour.id}
                     className="flex items-center justify-between"
-                    style={{ background: "#F3F0E8", borderRadius: 8, padding: "10px 12px" }}
+                    style={{ background: "var(--gs-card)", borderRadius: 8, padding: "10px 12px" }}
                   >
                     <div className="min-w-0">
-                      <p style={{ fontSize: 14, fontWeight: 500, color: "#19140F" }} className="truncate">{tour.title}</p>
-                      <p style={{ fontSize: 12, color: "#9B9188", marginTop: 2 }}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: "var(--foreground)" }} className="truncate">{tour.title}</p>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 2 }}>
                         {tour.destination} &middot; {new Date(tour.start_date).toLocaleDateString()}
                       </p>
                     </div>
                     <span
                       className="flex-shrink-0 ml-3"
-                      style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#2A5E3A", background: "rgba(42,94,58,0.08)" }}
+                      style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}
                     >
                       Open
                     </span>
@@ -189,13 +189,13 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Pending Applications */}
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
+          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
             <div className="flex items-center justify-between mb-5">
-              <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>Pending Applications</h2>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Pending Applications</h2>
               <Link href="/admin/students">
                 <button
                   className="flex items-center gap-1"
-                  style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
+                  style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
                 >
                   Review <ArrowRight className="w-3 h-3" />
                 </button>
@@ -203,7 +203,7 @@ export default async function AdminDashboard() {
             </div>
 
             {recentApplications.length === 0 ? (
-              <p style={{ fontSize: 14, color: "#9B9188", textAlign: "center", padding: "24px 0" }}>
+              <p style={{ fontSize: 14, color: "var(--gs-muted)", textAlign: "center", padding: "24px 0" }}>
                 No pending applications.
               </p>
             ) : (
@@ -212,13 +212,13 @@ export default async function AdminDashboard() {
                   <div
                     key={app.id}
                     className="flex items-center justify-between"
-                    style={{ background: "#F3F0E8", borderRadius: 8, padding: "10px 12px" }}
+                    style={{ background: "var(--gs-card)", borderRadius: 8, padding: "10px 12px" }}
                   >
                     <div className="min-w-0">
-                      <p style={{ fontSize: 14, fontWeight: 500, color: "#19140F" }} className="truncate">
+                      <p style={{ fontSize: 14, fontWeight: 500, color: "var(--foreground)" }} className="truncate">
                         {app.users?.name ?? "Unknown"}
                       </p>
-                      <p style={{ fontSize: 12, color: "#9B9188", marginTop: 2 }}>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 2 }}>
                         {app.tours?.title ?? "-"}
                       </p>
                     </div>

@@ -168,13 +168,13 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
     <form onSubmit={handleSubmit}>
       {/* Template Importer */}
       {!isEdit && templates.length > 0 && (
-        <div className="rounded-xl p-5 mb-4 border-[1.5px] border-dashed border-[#4A55BE] bg-white text-[#4A55BE]">
-          <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#4A55BE]">
+        <div className="rounded-xl p-5 mb-4 border-[1.5px] border-dashed border-[var(--gs-accent)] bg-white text-[var(--gs-accent)]">
+          <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-accent)]">
             Import from existing Template
           </Label>
           <div className="flex gap-3 items-center mt-1">
             <Select value="" onValueChange={(v: string | null) => applyTemplate(v ?? "")}>
-              <SelectTrigger className="w-full border-[#4A55BE]/30">
+              <SelectTrigger className="w-full border-[var(--gs-accent)]/30">
                 <SelectValue placeholder="Select a template to import..." />
               </SelectTrigger>
               <SelectContent>
@@ -186,27 +186,27 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               </SelectContent>
             </Select>
           </div>
-          <p className="mt-1.5 text-[11px] text-[#9B9188]">
+          <p className="mt-1.5 text-[11px] text-[var(--gs-muted)]">
             * Selecting a template will overwrite the title, description, and fields in the builder below.
           </p>
         </div>
       )}
 
       {/* Meta */}
-      <div className="rounded-xl p-5 mb-4 border border-[#E4DFD1] bg-white">
-        <p className="mb-3 text-xs font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Form Details</p>
+      <div className="rounded-xl p-5 mb-4 border border-[var(--border)] bg-white">
+        <p className="mb-3 text-xs font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Form Details</p>
         <div className="space-y-3">
           <div>
-            <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Title *</Label>
+            <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Title *</Label>
             <Input required value={title} onChange={e => setTitle(e.target.value)} placeholder="Form title" />
           </div>
           <div>
-            <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Description</Label>
+            <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Description</Label>
             <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional description" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Form Type *</Label>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Form Type *</Label>
               <Select
                 value={isTemplate ? "template" : "link"}
                 onValueChange={(v: string | null) => {
@@ -227,7 +227,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               </Select>
             </div>
             <div>
-              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">
                 {isEdit ? "Linked Tour" : "Linked Tour(s)"}
               </Label>
               {isEdit ? (
@@ -245,18 +245,18 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                 </Select>
               ) : (
                 <div
-                  className="flex max-h-[140px] flex-col gap-px overflow-y-auto rounded-md border-[1.5px] border-[#E4DFD1] bg-white p-1.5"
+                  className="flex max-h-[140px] flex-col gap-px overflow-y-auto rounded-md border-[1.5px] border-[var(--border)] bg-white p-1.5"
                   style={{ opacity: isTemplate ? 0.5 : 1, pointerEvents: isTemplate ? "none" : "auto" }}
                 >
                   {tours.length === 0 && (
-                    <span className="px-1.5 py-1.5 text-[12.5px] text-[#9B9188]">No tours available</span>
+                    <span className="px-1.5 py-1.5 text-[12.5px] text-[var(--gs-muted)]">No tours available</span>
                   )}
                   {tours.map(t => {
                     const checked = tourIds.includes(t.id);
                     return (
                       <Label
                         key={t.id}
-                        className={`cursor-pointer gap-2 rounded px-1.5 py-1.5 text-sm text-[#19140F] ${checked ? "bg-[#4A55BE]/[0.07]" : ""}`}
+                        className={`cursor-pointer gap-2 rounded px-1.5 py-1.5 text-sm text-[var(--foreground)] ${checked ? "bg-[var(--gs-accent)]/[0.07]" : ""}`}
                       >
                         <Checkbox
                           checked={checked}
@@ -269,7 +269,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                 </div>
               )}
               {!isTemplate && (
-                <p className="mt-1 text-[11px] text-[#9B9188]">
+                <p className="mt-1 text-[11px] text-[var(--gs-muted)]">
                   {isEdit
                     ? "Assigning a tour makes this visible to every group in that tour."
                     : "Check multiple tours to create one linked copy per tour, each visible to every group in that tour. Leave unchecked for no tour."}
@@ -277,7 +277,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               )}
             </div>
             <div>
-              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Target Role *</Label>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Target Role *</Label>
               <Select value={targetRole} onValueChange={(v: string | null) => setTargetRole((v ?? "enrollee") as "enrollee" | "volunteer" | "all")}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -290,7 +290,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               </Select>
             </div>
             <div>
-              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Status</Label>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Status</Label>
               <Select value={status} onValueChange={(v: string | null) => setStatus((v ?? "draft") as "draft" | "active" | "closed")}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -303,7 +303,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               </Select>
             </div>
             <div>
-              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Category</Label>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Category</Label>
               <Select value={category} onValueChange={(v: string | null) => setCategory((v ?? "general") as "general" | "task" | "survey" | "cultural_activity")}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -323,16 +323,16 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
       {/* Fields */}
       <div className="space-y-3 mb-4">
         {fields.map((f, fIdx) => (
-          <div key={f.id} className="rounded-xl p-5 border border-[#E4DFD1] bg-white">
+          <div key={f.id} className="rounded-xl p-5 border border-[var(--border)] bg-white">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold tracking-[0.08em] text-[#4A55BE]">Field {fIdx + 1}</span>
+              <span className="text-[11px] font-bold tracking-[0.08em] text-[var(--gs-accent)]">Field {fIdx + 1}</span>
               {fields.length > 1 && (
                 <Button
                   type="button"
                   variant="link"
                   size="xs"
                   onClick={() => removeField(fIdx)}
-                  className="h-auto p-0 text-[11px] text-[#B8381E]"
+                  className="h-auto p-0 text-[11px] text-[var(--gs-danger-alt)]"
                 >
                   Remove
                 </Button>
@@ -341,11 +341,11 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Label *</Label>
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Label *</Label>
                   <Input required value={f.label} onChange={e => updateField(fIdx, { label: e.target.value })} placeholder="Field label" />
                 </div>
                 <div>
-                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Type</Label>
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Type</Label>
                   <Select value={f.type} onValueChange={(v: string | null) => updateField(fIdx, { type: (v ?? "text") as FieldType, options: [] })}>
                     <SelectTrigger className="w-full">
                       <SelectValue />
@@ -359,21 +359,21 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
 
               {!["file", "image", "checkbox", "date"].includes(f.type) && (
                 <div>
-                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Placeholder</Label>
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Placeholder</Label>
                   <Input value={f.placeholder ?? ""} onChange={e => updateField(fIdx, { placeholder: e.target.value })} placeholder="Placeholder text" />
                 </div>
               )}
 
               {(f.type === "file" || f.type === "image") && (
                 <div>
-                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Accepted Types</Label>
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Accepted Types</Label>
                   <Input value={f.accept ?? ""} onChange={e => updateField(fIdx, { accept: e.target.value })} placeholder={f.type === "image" ? "image/*" : ".pdf,.doc,.docx"} />
                 </div>
               )}
 
               {NEEDS_OPTIONS.includes(f.type) && (
                 <div>
-                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Options</Label>
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Options</Label>
                   <div className="space-y-2">
                     {(f.options.length === 0 ? [""] : f.options).map((opt, oIdx) => (
                       <div key={oIdx} className="flex gap-2">
@@ -389,7 +389,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                             variant="ghost"
                             size="icon-sm"
                             onClick={() => updateField(fIdx, { options: f.options.filter((_, oi) => oi !== oIdx) })}
-                            className="text-[11px] text-[#B8381E]"
+                            className="text-[11px] text-[var(--gs-danger-alt)]"
                           >
                             ✕
                           </Button>
@@ -401,7 +401,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                       variant="link"
                       size="xs"
                       onClick={() => updateField(fIdx, { options: [...f.options, ""] })}
-                      className="h-auto p-0 text-xs text-[#4A55BE]"
+                      className="h-auto p-0 text-xs text-[var(--gs-accent)]"
                     >
                       + Add option
                     </Button>
@@ -411,7 +411,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
 
               <Label className="cursor-pointer">
                 <Checkbox checked={f.required} onCheckedChange={(checked) => updateField(fIdx, { required: checked === true })} />
-                <span className="text-xs text-[#5A5247]">Required field</span>
+                <span className="text-xs text-[var(--gs-text-secondary)]">Required field</span>
               </Label>
             </div>
           </div>
@@ -422,18 +422,18 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
         type="button"
         variant="outline"
         onClick={addField}
-        className="mb-4 w-full border-[1.5px] border-dashed border-[#4A55BE]/30 bg-[#4A55BE]/[0.07] text-[#4A55BE] hover:bg-[#4A55BE]/[0.12]"
+        className="mb-4 w-full border-[1.5px] border-dashed border-[var(--gs-accent)]/30 bg-[var(--gs-accent)]/[0.07] text-[var(--gs-accent)] hover:bg-[var(--gs-accent)]/[0.12]"
       >
         + Add Field
       </Button>
 
-      {error && <p className="mb-3 text-sm text-[#B8381E]">{error}</p>}
+      {error && <p className="mb-3 text-sm text-[var(--gs-danger-alt)]">{error}</p>}
 
       <div className="flex gap-3 justify-end">
         <Button type="button" variant="outline" onClick={() => router.push("/admin/forms")}>
           Cancel
         </Button>
-        <Button type="submit" disabled={saving} className="bg-[#19140F] text-white hover:bg-[#19140F]/85">
+        <Button type="submit" disabled={saving} className="bg-[var(--foreground)] text-white hover:bg-[var(--foreground)]/85">
           {saving ? "Saving..." : isEdit ? "Save Changes" : "Create Form"}
         </Button>
       </div>

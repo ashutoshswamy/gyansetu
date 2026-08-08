@@ -21,15 +21,15 @@ export default async function ProfilesPage() {
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-7xl mx-auto">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Submitted Profile Data</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Submitted Profile Data</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
               Every field submitted by enrollees and volunteers &middot; {profiles.length} total &middot; download for the full column set
             </p>
           </div>
@@ -38,54 +38,54 @@ export default async function ProfilesPage() {
           )}
         </div>
 
-        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
           {profiles.length === 0 ? (
             <div className="py-16 text-center">
-              <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-              <p style={{ fontSize: 14, color: "#9B9188" }}>No profile submissions yet.</p>
+              <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+              <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No profile submissions yet.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: "#F3F0E8", borderBottom: "1px solid #E4DFD1" }}>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 160 }}>Name</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 100 }}>Role</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 150 }}>Phone</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 160 }}>City / State</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 180 }}>Institution / Company</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 180 }}>Emergency Contact</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 110 }}>Consent</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 180 }}>Aadhaar</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 130 }}>Submitted</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 90 }}></th>
+                  <tr style={{ background: "var(--gs-card)", borderBottom: "1px solid var(--border)" }}>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 160 }}>Name</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 100 }}>Role</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 150 }}>Phone</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 160 }}>City / State</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 180 }}>Institution / Company</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 180 }}>Emergency Contact</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 110 }}>Consent</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 180 }}>Aadhaar</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 130 }}>Submitted</th>
+                    <th className="p-4 font-semibold text-[var(--gs-text-secondary)]" style={{ minWidth: 90 }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {profiles.map((p) => {
                     const role = p.users?.role ?? null;
                     return (
-                      <tr key={p.id} style={{ borderBottom: "1px solid #E4DFD1" }} className="hover:bg-slate-50/50">
+                      <tr key={p.id} style={{ borderBottom: "1px solid var(--border)" }} className="hover:bg-slate-50/50">
                         <td className="p-4">
-                          <div className="font-medium text-[#19140F]">{p.users?.name ?? "Unknown"}</div>
-                          <div className="text-xs text-[#9B9188]">{p.users?.email ?? "-"}</div>
+                          <div className="font-medium text-[var(--foreground)]">{p.users?.name ?? "Unknown"}</div>
+                          <div className="text-xs text-[var(--gs-muted)]">{p.users?.email ?? "-"}</div>
                         </td>
-                        <td className="p-4 text-[#19140F]">
+                        <td className="p-4 text-[var(--foreground)]">
                           {role === "volunteer" ? "Volunteer" : "Enrollee"}
                         </td>
-                        <td className="p-4 text-[#19140F]">{p.phone || p.alternate_phone || "-"}</td>
-                        <td className="p-4 text-[#19140F]">{[p.city, p.state].filter(Boolean).join(", ") || "-"}</td>
-                        <td className="p-4 text-[#19140F]">{p.institution || p.company_name || "-"}</td>
-                        <td className="p-4 text-[#19140F]">
+                        <td className="p-4 text-[var(--foreground)]">{p.phone || p.alternate_phone || "-"}</td>
+                        <td className="p-4 text-[var(--foreground)]">{[p.city, p.state].filter(Boolean).join(", ") || "-"}</td>
+                        <td className="p-4 text-[var(--foreground)]">{p.institution || p.company_name || "-"}</td>
+                        <td className="p-4 text-[var(--foreground)]">
                           {p.emergency_contact_name ? `${p.emergency_contact_name}${p.emergency_contact_phone ? ` (${p.emergency_contact_phone})` : ""}` : "-"}
                         </td>
                         <td className="p-4">
                           {p.consent_given ? (
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, color: "#2A5E3A" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--gs-success)" }}>
                               <CheckCircle size={12} /> Yes
                             </span>
                           ) : (
-                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, color: "#A8641C" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--gs-warning-alt)" }}>
                               <AlertCircle size={12} /> No
                             </span>
                           )}
@@ -94,13 +94,13 @@ export default async function ProfilesPage() {
                           {role === "volunteer" ? (
                             <AadhaarToggleButton userId={p.user_id} verified={!!p.aadhaar_verified} />
                           ) : (
-                            <span style={{ fontSize: 12, color: "#9B9188" }}>-</span>
+                            <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>-</span>
                           )}
                         </td>
-                        <td className="p-4 text-[#5A5247]">{new Date(p.created_at).toLocaleDateString()}</td>
+                        <td className="p-4 text-[var(--gs-text-secondary)]">{new Date(p.created_at).toLocaleDateString()}</td>
                         <td className="p-4">
                           {role === "volunteer" && (
-                            <Link href={`/admin/volunteers/${p.user_id}`} style={{ fontSize: 12, fontWeight: 600, color: "#4A55BE", textDecoration: "none" }}>
+                            <Link href={`/admin/volunteers/${p.user_id}`} style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-accent)", textDecoration: "none" }}>
                               View
                             </Link>
                           )}

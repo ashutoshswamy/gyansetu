@@ -79,15 +79,15 @@ export default function NewBlogPostPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "32px 24px" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ marginBottom: 28 }}>
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
             Admin Console
           </p>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>New Blog Post</h1>
-          <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>Write and publish a new blog post.</p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>New Blog Post</h1>
+          <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginTop: 4 }}>Write and publish a new blog post.</p>
         </div>
 
         {/* Form card */}
@@ -95,7 +95,7 @@ export default function NewBlogPostPage() {
           onSubmit={handleSubmit}
           style={{
             background: "white",
-            border: "1px solid #E4DFD1",
+            border: "1px solid var(--border)",
             borderRadius: 12,
             padding: "28px 28px 24px",
             display: "flex",
@@ -129,7 +129,7 @@ export default function NewBlogPostPage() {
               onChange={handleChange}
               required
             />
-            <p style={{ fontSize: 11, color: "#9B9188", marginTop: 5 }}>
+            <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 5 }}>
               URL: /blog/{form.slug || "..."}
             </p>
           </div>

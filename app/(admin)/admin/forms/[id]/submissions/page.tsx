@@ -49,21 +49,21 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         {/* Back Link */}
-        <Link href="/admin/forms" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "#9B9188" }}>
+        <Link href="/admin/forms" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "var(--gs-muted)" }}>
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Forms
         </Link>
 
         {/* Header */}
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Submissions</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Submissions</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
               {form.title} &middot; {submissions?.length ?? 0} total submissions
             </p>
           </div>
@@ -73,21 +73,21 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
         </div>
 
         {/* Submissions List */}
-        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
           {(submissions ?? []).length === 0 ? (
             <div className="py-16 text-center">
-              <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-              <p style={{ fontSize: 14, color: "#9B9188" }}>No submissions yet for this form.</p>
+              <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+              <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No submissions yet for this form.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table className="text-[13px]">
                 <TableHeader>
-                  <TableRow className="bg-[#F3F0E8] hover:bg-[#F3F0E8]">
-                    <TableHead className="min-w-[150px] p-4 font-semibold text-[#5A5247]">Submitter</TableHead>
-                    <TableHead className="min-w-[160px] p-4 font-semibold text-[#5A5247]">Submitted At</TableHead>
+                  <TableRow className="bg-[var(--gs-card)] hover:bg-[var(--gs-card)]">
+                    <TableHead className="min-w-[150px] p-4 font-semibold text-[var(--gs-text-secondary)]">Submitter</TableHead>
+                    <TableHead className="min-w-[160px] p-4 font-semibold text-[var(--gs-text-secondary)]">Submitted At</TableHead>
                     {fields.map((f) => (
-                      <TableHead key={f.id} className="min-w-[150px] p-4 font-semibold text-[#5A5247]">
+                      <TableHead key={f.id} className="min-w-[150px] p-4 font-semibold text-[var(--gs-text-secondary)]">
                         {f.label}
                       </TableHead>
                     ))}
@@ -97,10 +97,10 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
                   {subs.map((sub) => (
                     <TableRow key={sub.id} className="hover:bg-slate-50/50">
                       <TableCell className="p-4">
-                        <div className="font-medium text-[#19140F]">{sub.users?.name ?? "Unknown"}</div>
-                        <div className="text-xs text-[#9B9188]">{sub.users?.email ?? "Unknown"}</div>
+                        <div className="font-medium text-[var(--foreground)]">{sub.users?.name ?? "Unknown"}</div>
+                        <div className="text-xs text-[var(--gs-muted)]">{sub.users?.email ?? "Unknown"}</div>
                       </TableCell>
-                      <TableCell className="p-4 text-[#5A5247]">
+                      <TableCell className="p-4 text-[var(--gs-text-secondary)]">
                         {new Date(sub.submitted_at).toLocaleString()}
                       </TableCell>
                       {fields.map((field) => {
@@ -114,7 +114,7 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
                           content = val !== undefined && val !== null ? String(val) : "-";
                         }
                         return (
-                          <TableCell key={field.id} className="p-4 text-[#19140F]">
+                          <TableCell key={field.id} className="p-4 text-[var(--foreground)]">
                             {content}
                           </TableCell>
                         );

@@ -38,7 +38,7 @@ export function ApproveRejectButtons({ attemptId }: { attemptId: string }) {
       <Button
         onClick={handleApprove}
         disabled={loading !== null}
-        className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90"
+        className="bg-[var(--gs-success)] text-white hover:bg-[var(--gs-success)]/90"
       >
         {loading === "approve" ? "..." : "Approve"}
       </Button>
@@ -46,7 +46,7 @@ export function ApproveRejectButtons({ attemptId }: { attemptId: string }) {
         onClick={handleReject}
         disabled={loading !== null}
         variant="outline"
-        className="border-[#B8381E]/30 text-[#B8381E] hover:bg-[#B8381E]/10"
+        className="border-[var(--gs-danger-alt)]/30 text-[var(--gs-danger-alt)] hover:bg-[var(--gs-danger-alt)]/10"
       >
         {loading === "reject" ? "..." : "Reject"}
       </Button>

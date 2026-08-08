@@ -94,15 +94,15 @@ export default function NewIdCardPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Issue ID Card</h1>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Issue ID Card</h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
+            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
             </div>
           )}
@@ -113,9 +113,9 @@ export default function NewIdCardPage() {
               {volunteerId && (
                 selectedPhoto ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={selectedPhoto} alt="Profile photo" style={{ width: 64, height: 64, borderRadius: 8, objectFit: "cover", marginTop: 8, border: "1px solid #E4DFD1" }} />
+                  <img src={selectedPhoto} alt="Profile photo" style={{ width: 64, height: 64, borderRadius: 8, objectFit: "cover", marginTop: 8, border: "1px solid var(--border)" }} />
                 ) : (
-                  <p style={{ fontSize: 12, color: "#9B9188", marginTop: 6 }}>No profile photo uploaded by this volunteer yet — the card will show no photo unless one is added below.</p>
+                  <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 6 }}>No profile photo uploaded by this volunteer yet — the card will show no photo unless one is added below.</p>
                 )
               )}
             </div>
@@ -143,7 +143,7 @@ export default function NewIdCardPage() {
                 </Select>
               </div>
             </div>
-            <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>Card number is generated automatically from the tour, group, and issue sequence.</p>
+            <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: "-10px 0 0" }}>Card number is generated automatically from the tour, group, and issue sequence.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="mb-1.5">State/Union Territory</Label>
@@ -155,7 +155,7 @@ export default function NewIdCardPage() {
               </div>
             </div>
             {tourId && !groupId && (
-              <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>No group selected — State stays blank until one is assigned (group carries the allocated state).</p>
+              <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: "-10px 0 0" }}>No group selected — State stays blank until one is assigned (group carries the allocated state).</p>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>

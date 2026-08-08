@@ -91,23 +91,23 @@ export default function BulkCertificatesPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Bulk Issue Certificates</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Pick a tour, optionally narrow to one group, choose a category, select volunteers, and issue certificates to all of them at once.</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Bulk Issue Certificates</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Pick a tour, optionally narrow to one group, choose a category, select volunteers, and issue certificates to all of them at once.</p>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
+            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
             </div>
           )}
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label className="mb-1.5">Tour <span style={{ color: "#DC2626" }}>*</span></Label>
+                <Label className="mb-1.5">Tour <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
                 <Select value={tourId || null} onValueChange={(v) => handleTourChange(v ?? "")}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select tour..." />
@@ -118,7 +118,7 @@ export default function BulkCertificatesPage() {
                 </Select>
               </div>
               <div>
-                <Label className="mb-1.5">Certificate Category <span style={{ color: "#DC2626" }}>*</span></Label>
+                <Label className="mb-1.5">Certificate Category <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
                 <Select value={certificateType || null} onValueChange={(v) => setCertificateType((v as CertificateType) ?? "")}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select category..." />
@@ -145,7 +145,7 @@ export default function BulkCertificatesPage() {
                 </SelectContent>
               </Select>
             </div>
-            <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>
+            <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: "-10px 0 0" }}>
               State, Place, and Volunteer ID are pulled from each volunteer&apos;s ID card for this tour &mdash; anyone without one is skipped.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -159,7 +159,7 @@ export default function BulkCertificatesPage() {
               <Textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Reason for certificate, achievements... (applied to all)" />
             </div>
             <div>
-              <Label className="mb-1.5">Volunteers <span style={{ color: "#DC2626" }}>*</span></Label>
+              <Label className="mb-1.5">Volunteers <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
               <VolunteerChecklist volunteers={roster} selected={selected} onChange={setSelected} />
             </div>
           </div>

@@ -6,8 +6,8 @@ import { upsertKitAssignment, markKitDistributed } from "@/actions/kits";
 
 const inputStyle: React.CSSProperties = {
   padding: "6px 10px", fontSize: 13,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 export function KitAssignmentActions({
@@ -67,23 +67,23 @@ export function KitAssignmentActions({
         disabled={loading}
         style={{
           fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: packed ? "#2A5E3A" : "transparent",
-          color: packed ? "white" : "#5A5247",
-          border: packed ? "none" : "1.5px solid #E4DFD1",
+          background: packed ? "var(--gs-success)" : "transparent",
+          color: packed ? "white" : "var(--gs-text-secondary)",
+          border: packed ? "none" : "1.5px solid var(--border)",
           cursor: loading ? "not-allowed" : "pointer",
         }}
       >
         {packed ? "Packed" : "Mark Packed"}
       </button>
       {distributed ? (
-        <span style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "rgba(74,85,190,0.08)", color: "#4A55BE" }}>
+        <span style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "rgba(var(--gs-accent-rgb), 0.08)", color: "var(--gs-accent)" }}>
           Distributed
         </span>
       ) : packed ? (
         <button
           onClick={handleDistribute}
           disabled={loading}
-          style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#4A55BE", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
+          style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "var(--gs-accent)", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
         >
           Mark Distributed
         </button>

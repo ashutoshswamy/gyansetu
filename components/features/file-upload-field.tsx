@@ -20,9 +20,9 @@ interface Props {
 const inputStyle: React.CSSProperties = {
   width: "100%",
   fontSize: 14,
-  color: "#19140F",
+  color: "var(--foreground)",
   background: "white",
-  border: "1px solid #E4DFD1",
+  border: "1px solid var(--border)",
   borderRadius: 7,
   padding: "9px 12px",
   outline: "none",
@@ -73,14 +73,14 @@ export function FileUploadField({
     display: "block",
     fontSize: 12,
     fontWeight: 600,
-    color: "#5A5247",
+    color: "var(--gs-text-secondary)",
     marginBottom: 6,
     letterSpacing: "0.04em",
   };
 
   return (
     <div>
-      <label style={labelStyle}>{label}{required && <span style={{ color: "#DC2626", marginLeft: 2 }}>*</span>}</label>
+      <label style={labelStyle}>{label}{required && <span style={{ color: "var(--gs-danger)", marginLeft: 2 }}>*</span>}</label>
 
       {/* URL input + upload button row */}
       <div style={{ display: "flex", gap: 8, alignItems: "center", position: "relative" }}>
@@ -99,13 +99,13 @@ export function FileUploadField({
           onClick={() => fileRef.current?.click()}
           style={{
             flexShrink: 0,
-            background: uploading ? "#C8C4BC" : "#F3F0E8",
-            color: uploading ? "#9B9188" : "#19140F",
+            background: uploading ? "#C8C4BC" : "var(--gs-card)",
+            color: uploading ? "var(--gs-muted)" : "var(--foreground)",
             fontSize: 13,
             fontWeight: 600,
             padding: "9px 14px",
             borderRadius: 7,
-            border: "1px solid #E4DFD1",
+            border: "1px solid var(--border)",
             cursor: uploading ? "not-allowed" : "pointer",
             whiteSpace: "nowrap",
           }}
@@ -123,7 +123,7 @@ export function FileUploadField({
 
       {/* Hint */}
       {hint && !uploadError && (
-        <p style={{ fontSize: 11, color: "#9B9188", marginTop: 5 }}>{hint}</p>
+        <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 5 }}>{hint}</p>
       )}
 
       {/* Upload error */}
@@ -137,12 +137,12 @@ export function FileUploadField({
           marginTop: 10,
           borderRadius: 8,
           overflow: "hidden",
-          border: "1px solid #E4DFD1",
+          border: "1px solid var(--border)",
           maxHeight: 200,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#F3F0E8",
+          background: "var(--gs-card)",
         }}>
           {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary user-typed URL, not a whitelisted host for next/image */}
           <img
@@ -154,7 +154,7 @@ export function FileUploadField({
         </div>
       )}
       {showImagePreview && previewError && value.trim() && (
-        <p style={{ fontSize: 12, color: "#F5A520", marginTop: 5 }}>
+        <p style={{ fontSize: 12, color: "var(--gs-warning)", marginTop: 5 }}>
           Could not load image preview. Make sure the URL points to a valid image.
         </p>
       )}

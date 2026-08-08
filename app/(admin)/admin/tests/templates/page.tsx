@@ -14,19 +14,19 @@ export default async function TestTemplatesPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
-        <Link href="/admin/tests" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "#9B9188" }}>
+        <Link href="/admin/tests" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "var(--gs-muted)" }}>
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Tests
         </Link>
 
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Test Templates</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Test Templates</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
               {templates?.length ?? 0} templates available for reuse
             </p>
           </div>
@@ -37,7 +37,7 @@ export default async function TestTemplatesPage() {
 
         <div className="space-y-3">
           {(templates ?? []).length === 0 && (
-            <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
               No templates saved yet. Create a test and select &quot;Template&quot; type to save one.
             </p>
           )}
@@ -45,26 +45,26 @@ export default async function TestTemplatesPage() {
             <div
               key={template.id}
               className="flex items-center justify-between"
-              style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px" }}
+              style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px" }}
             >
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <h3 style={{ fontSize: 15, fontWeight: 500, color: "#19140F", margin: 0 }}>{template.title}</h3>
+                  <h3 style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)", margin: 0 }}>{template.title}</h3>
                   <span
                     style={{
                       fontSize: 11,
                       fontWeight: 600,
                       padding: "2px 8px",
                       borderRadius: 4,
-                      color: template.status === "active" ? "#2A5E3A" : "#9B9188",
-                      background: template.status === "active" ? "rgba(42,94,58,0.08)" : "rgba(90,82,71,0.08)",
+                      color: template.status === "active" ? "var(--gs-success)" : "var(--gs-muted)",
+                      background: template.status === "active" ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(90,82,71,0.08)",
                       textTransform: "capitalize",
                     }}
                   >
                     {template.status}
                   </span>
                 </div>
-                <div className="flex gap-4" style={{ fontSize: 12, color: "#9B9188" }}>
+                <div className="flex gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                   <span>{template.questions?.length ?? 0} questions</span>
                   <span>Pass: {template.passing_score}%</span>
                   <span>{template.duration_minutes} min</span>

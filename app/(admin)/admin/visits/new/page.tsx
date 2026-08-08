@@ -93,7 +93,7 @@ export default function NewVisitPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "40px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "40px 24px 80px" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
 
         {/* Page header */}
@@ -101,24 +101,24 @@ export default function NewVisitPage() {
           <Button
             variant="ghost"
             onClick={() => router.back()}
-            className="mb-1 h-auto p-0 pb-[18px] font-medium text-[#9B9188] hover:bg-transparent hover:text-[#9B9188]"
+            className="mb-1 h-auto p-0 pb-[18px] font-medium text-[var(--gs-muted)] hover:bg-transparent hover:text-[var(--gs-muted)]"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
             </svg>
             Back
           </Button>
-          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#9B9188", margin: "0 0 6px" }}>
+          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gs-muted)", margin: "0 0 6px" }}>
             Admin Console
           </p>
-          <h1 style={{ fontSize: 26, fontWeight: 700, color: "#19140F", margin: "0 0 4px" }}>New Visit</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", margin: 0 }}>Add a Jnana Pravas visit to the schedule.</p>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: "var(--foreground)", margin: "0 0 4px" }}>New Visit</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", margin: 0 }}>Add a Jnana Pravas visit to the schedule.</p>
         </div>
 
         {/* Form card */}
         <div style={{
-          background: "#FFFFFF",
-          border: "1px solid #E4DFD1",
+          background: "var(--card)",
+          border: "1px solid var(--border)",
           borderRadius: 12,
           padding: "32px 32px 28px",
         }}>
@@ -126,7 +126,7 @@ export default function NewVisitPage() {
 
             {/* Title */}
             <div style={fieldStyle}>
-              <Label className="mb-1.5">Visit Title <span style={{ color: "#F5A520" }}>*</span></Label>
+              <Label className="mb-1.5">Visit Title <span style={{ color: "var(--gs-warning)" }}>*</span></Label>
               <Input
                 type="text"
                 placeholder="e.g. Rajasthan Jnana Pravas 2025"
@@ -139,7 +139,7 @@ export default function NewVisitPage() {
             {/* Destination + State */}
             <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
-                <Label className="mb-1.5">Destination <span style={{ color: "#F5A520" }}>*</span></Label>
+                <Label className="mb-1.5">Destination <span style={{ color: "var(--gs-warning)" }}>*</span></Label>
                 <Input
                   type="text"
                   placeholder="e.g. Jaipur"
@@ -162,7 +162,7 @@ export default function NewVisitPage() {
             {/* Start + End dates */}
             <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
-                <Label className="mb-1.5">Start Date <span style={{ color: "#F5A520" }}>*</span></Label>
+                <Label className="mb-1.5">Start Date <span style={{ color: "var(--gs-warning)" }}>*</span></Label>
                 <Input
                   type="date"
                   value={form.start_date}
@@ -171,7 +171,7 @@ export default function NewVisitPage() {
                 />
               </div>
               <div style={fieldStyle}>
-                <Label className="mb-1.5">End Date <span style={{ color: "#F5A520" }}>*</span></Label>
+                <Label className="mb-1.5">End Date <span style={{ color: "var(--gs-warning)" }}>*</span></Label>
                 <Input
                   type="date"
                   value={form.end_date}
@@ -203,7 +203,7 @@ export default function NewVisitPage() {
                 value={form.timetable_url}
                 onChange={(e) => set("timetable_url", e.target.value)}
               />
-              <p style={{ fontSize: 11.5, color: "#9B9188", margin: "5px 0 0" }}>
+              <p style={{ fontSize: 11.5, color: "var(--gs-muted)", margin: "5px 0 0" }}>
                 Direct link to a PDF, Google Doc, or any public document. Shown as &quot;View Timetable&quot; on the public page.
               </p>
             </div>

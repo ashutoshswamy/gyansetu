@@ -40,22 +40,22 @@ export default async function AdminInstitutionsPage() {
   }));
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "32px 24px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>Institution Inquiries</h1>
-            <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>{inquiries.length} inquiries total</p>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Institution Inquiries</h1>
+            <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginTop: 4 }}>{inquiries.length} inquiries total</p>
           </div>
           <ExportButton data={exportData} filename="institution-inquiries.csv" />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {inquiries.length === 0 && (
-            <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
               No institution inquiries yet.
             </p>
           )}
@@ -65,7 +65,7 @@ export default async function AdminInstitutionsPage() {
               key={inquiry.id}
               style={{
                 background: "white",
-                border: "1px solid #E4DFD1",
+                border: "1px solid var(--border)",
                 borderRadius: 10,
                 padding: "16px 18px",
               }}
@@ -73,7 +73,7 @@ export default async function AdminInstitutionsPage() {
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 8 }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 2, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F" }}>{inquiry.institution_name}</span>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{inquiry.institution_name}</span>
                     {inquiry.institution_type && (
                       <span
                         style={{
@@ -81,50 +81,50 @@ export default async function AdminInstitutionsPage() {
                           fontWeight: 600,
                           padding: "2px 8px",
                           borderRadius: 4,
-                          color: "#4A55BE",
-                          background: "rgba(74,85,190,0.08)",
+                          color: "var(--gs-accent)",
+                          background: "rgba(var(--gs-accent-rgb), 0.08)",
                         }}
                       >
                         {inquiry.institution_type}
                       </span>
                     )}
                   </div>
-                  <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>Submitted {formatDate(inquiry.created_at)}</p>
+                  <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>Submitted {formatDate(inquiry.created_at)}</p>
                 </div>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "6px 20px", marginBottom: inquiry.message ? 10 : 0 }}>
                 <div>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: "#9B9188", textTransform: "uppercase", letterSpacing: "0.06em" }}>Contact</span>
-                  <p style={{ fontSize: 13, color: "#19140F", margin: "2px 0 0" }}>{inquiry.contact_name}</p>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Contact</span>
+                  <p style={{ fontSize: 13, color: "var(--foreground)", margin: "2px 0 0" }}>{inquiry.contact_name}</p>
                 </div>
                 <div>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: "#9B9188", textTransform: "uppercase", letterSpacing: "0.06em" }}>Email</span>
-                  <p style={{ fontSize: 13, color: "#19140F", margin: "2px 0 0" }}>{inquiry.email}</p>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Email</span>
+                  <p style={{ fontSize: 13, color: "var(--foreground)", margin: "2px 0 0" }}>{inquiry.email}</p>
                 </div>
                 {inquiry.phone && (
                   <div>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: "#9B9188", textTransform: "uppercase", letterSpacing: "0.06em" }}>Phone</span>
-                    <p style={{ fontSize: 13, color: "#19140F", margin: "2px 0 0" }}>{inquiry.phone}</p>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Phone</span>
+                    <p style={{ fontSize: 13, color: "var(--foreground)", margin: "2px 0 0" }}>{inquiry.phone}</p>
                   </div>
                 )}
                 {inquiry.city && (
                   <div>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: "#9B9188", textTransform: "uppercase", letterSpacing: "0.06em" }}>City</span>
-                    <p style={{ fontSize: 13, color: "#19140F", margin: "2px 0 0" }}>{inquiry.city}</p>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>City</span>
+                    <p style={{ fontSize: 13, color: "var(--foreground)", margin: "2px 0 0" }}>{inquiry.city}</p>
                   </div>
                 )}
                 {inquiry.student_count && (
                   <div>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: "#9B9188", textTransform: "uppercase", letterSpacing: "0.06em" }}>Student Count</span>
-                    <p style={{ fontSize: 13, color: "#19140F", margin: "2px 0 0" }}>{inquiry.student_count}</p>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Student Count</span>
+                    <p style={{ fontSize: 13, color: "var(--foreground)", margin: "2px 0 0" }}>{inquiry.student_count}</p>
                   </div>
                 )}
               </div>
 
               {inquiry.message && (
-                <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid #F3F0E8" }}>
-                  <p style={{ fontSize: 13, color: "#5A5247", margin: 0, lineHeight: 1.55 }}>{inquiry.message}</p>
+                <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--gs-card)" }}>
+                  <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: 0, lineHeight: 1.55 }}>{inquiry.message}</p>
                 </div>
               )}
             </div>

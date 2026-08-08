@@ -28,7 +28,7 @@ export function ConfirmButton({ id, disabled }: { id: string; disabled: boolean 
       onClick={handleClick}
       disabled={loading}
       size="sm"
-      className="bg-[#2A5E3A] text-white hover:bg-[#234a2f]"
+      className="bg-[var(--gs-success)] text-white hover:bg-[#234a2f]"
     >
       {loading ? "..." : "Confirm"}
     </Button>
@@ -57,7 +57,7 @@ export function ApproveItineraryButton({ id, approved }: { id: string; approved:
       disabled={loading}
       variant="outline"
       size="sm"
-      className={approved ? "border-[rgba(42,94,58,0.3)] text-[#2A5E3A]" : ""}
+      className={approved ? "border-[rgba(var(--gs-success-rgb), 0.3)] text-[var(--gs-success)]" : ""}
     >
       {loading ? "..." : approved ? "Itinerary Approved" : "Approve Itinerary"}
     </Button>

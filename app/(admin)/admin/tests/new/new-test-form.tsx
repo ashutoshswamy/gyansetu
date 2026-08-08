@@ -158,18 +158,18 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
     }
   }
 
-  const inputStyle = { fontSize: 13, padding: "8px 12px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#19140F", width: "100%", outline: "none" };
-  const labelStyle = { fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "#9B9188", display: "block", marginBottom: 4 };
+  const inputStyle = { fontSize: 13, padding: "8px 12px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: "var(--foreground)", width: "100%", outline: "none" };
+  const labelStyle = { fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--gs-muted)", display: "block", marginBottom: 4 };
 
   return (
     <form onSubmit={handleSubmit}>
       {/* Template Importer */}
       {!isEdit && templates.length > 0 && (
-        <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1.5px dashed #4A55BE", color: "#4A55BE" }}>
-          <label style={{ ...labelStyle, color: "#4A55BE" }}>Import from existing Template</label>
+        <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1.5px dashed var(--gs-accent)", color: "var(--gs-accent)" }}>
+          <label style={{ ...labelStyle, color: "var(--gs-accent)" }}>Import from existing Template</label>
           <div className="flex gap-3 items-center mt-1">
             <select
-              style={{ ...inputStyle, borderColor: "rgba(74,85,190,0.3)" }}
+              style={{ ...inputStyle, borderColor: "rgba(var(--gs-accent-rgb), 0.3)" }}
               defaultValue=""
               onChange={e => { if (e.target.value) importTemplate(e.target.value); }}
             >
@@ -181,15 +181,15 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
               ))}
             </select>
           </div>
-          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6, margin: "6px 0 0 0" }}>
+          <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6, margin: "6px 0 0 0" }}>
             * Selecting a template will overwrite the details and questions in the builder below.
           </p>
         </div>
       )}
 
       {/* Meta */}
-      <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-        <p style={{ fontSize: 12, fontWeight: 600, color: "#9B9188", marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Test Details</p>
+      <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-muted)", marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Test Details</p>
         <div className="space-y-3">
           <div>
             <label style={labelStyle}>Title *</label>
@@ -226,7 +226,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
                   }}
                 >
                   {tours.length === 0 && (
-                    <span style={{ fontSize: 12.5, color: "#9B9188", padding: "6px 6px" }}>No tours available</span>
+                    <span style={{ fontSize: 12.5, color: "var(--gs-muted)", padding: "6px 6px" }}>No tours available</span>
                   )}
                   {tours.map(t => {
                     const checked = tourIds.includes(t.id);
@@ -235,8 +235,8 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
                         key={t.id}
                         style={{
                           display: "flex", alignItems: "center", gap: 8, padding: "6px 6px", borderRadius: 4,
-                          fontSize: 13, color: "#19140F", cursor: "pointer",
-                          background: checked ? "rgba(74,85,190,0.07)" : "transparent",
+                          fontSize: 13, color: "var(--foreground)", cursor: "pointer",
+                          background: checked ? "rgba(var(--gs-accent-rgb), 0.07)" : "transparent",
                         }}
                       >
                         <input
@@ -251,7 +251,7 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
                 </div>
               )}
               {!isTemplate && (
-                <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4, margin: "4px 0 0 0" }}>
+                <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4, margin: "4px 0 0 0" }}>
                   {isEdit
                     ? "Assigning a tour makes this visible to every group in that tour."
                     : "Check multiple tours to create one linked copy per tour, each visible to every group in that tour."}
@@ -283,11 +283,11 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
       {/* Questions */}
       <div className="space-y-3 mb-4">
         {questions.map((q, qIdx) => (
-          <div key={q.id} className="rounded-xl p-5" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+          <div key={q.id} className="rounded-xl p-5" style={{ background: "white", border: "1px solid var(--border)" }}>
             <div className="flex items-center justify-between mb-3">
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#4A55BE", letterSpacing: "0.08em" }}>Q{qIdx + 1}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--gs-accent)", letterSpacing: "0.08em" }}>Q{qIdx + 1}</span>
               {questions.length > 1 && (
-                <button type="button" onClick={() => removeQ(qIdx)} style={{ fontSize: 11, color: "#B8381E", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                <button type="button" onClick={() => removeQ(qIdx)} style={{ fontSize: 11, color: "var(--gs-danger-alt)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                   Remove
                 </button>
               )}
@@ -344,15 +344,15 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
                           placeholder={`Option ${oIdx + 1}`}
                         />
                         {q.options.length > 2 && (
-                          <button type="button" onClick={() => removeOption(qIdx, oIdx)} style={{ fontSize: 11, color: "#B8381E", background: "none", border: "none", cursor: "pointer", flexShrink: 0 }}>✕</button>
+                          <button type="button" onClick={() => removeOption(qIdx, oIdx)} style={{ fontSize: 11, color: "var(--gs-danger-alt)", background: "none", border: "none", cursor: "pointer", flexShrink: 0 }}>✕</button>
                         )}
                       </div>
                     ))}
-                    <button type="button" onClick={() => addOption(qIdx)} style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                    <button type="button" onClick={() => addOption(qIdx)} style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                       + Add option
                     </button>
                   </div>
-                  <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>
+                  <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4 }}>
                     {q.type === "multi_select" ? "Check all correct answers." : "Select correct answer."}
                   </p>
                 </div>
@@ -362,17 +362,17 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
         ))}
       </div>
 
-      <button type="button" onClick={addQ} style={{ fontSize: 13, color: "#4A55BE", background: "rgba(74,85,190,0.07)", border: "1.5px dashed rgba(74,85,190,0.3)", borderRadius: 8, padding: "10px 20px", cursor: "pointer", width: "100%", marginBottom: 16 }}>
+      <button type="button" onClick={addQ} style={{ fontSize: 13, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.07)", border: "1.5px dashed rgba(var(--gs-accent-rgb), 0.3)", borderRadius: 8, padding: "10px 20px", cursor: "pointer", width: "100%", marginBottom: 16 }}>
         + Add Question
       </button>
 
-      {error && <p style={{ fontSize: 13, color: "#B8381E", marginBottom: 12 }}>{error}</p>}
+      {error && <p style={{ fontSize: 13, color: "var(--gs-danger-alt)", marginBottom: 12 }}>{error}</p>}
 
       <div className="flex gap-3 justify-end">
-        <button type="button" onClick={() => router.back()} style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}>
+        <button type="button" onClick={() => router.back()} style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: "var(--gs-text-secondary)", cursor: "pointer" }}>
           Cancel
         </button>
-        <button type="submit" disabled={saving || (!isTemplate && tours.length === 0)} style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: saving ? "#C8C4BC" : "#19140F", color: "white", cursor: saving ? "not-allowed" : "pointer" }}>
+        <button type="submit" disabled={saving || (!isTemplate && tours.length === 0)} style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: saving ? "#C8C4BC" : "var(--foreground)", color: "white", cursor: saving ? "not-allowed" : "pointer" }}>
           {saving ? "Saving..." : isEdit ? "Save Changes" : "Create Test"}
         </button>
       </div>

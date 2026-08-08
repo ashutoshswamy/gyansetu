@@ -54,8 +54,8 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
   }
 
   return (
-    <div className="mb-6 rounded-xl p-4" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-      <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 12 }}>
+    <div className="mb-6 rounded-xl p-4" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 12 }}>
         Volunteers ({assignments.length})
       </p>
 
@@ -83,29 +83,29 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
         <Button
           onClick={handleAdd}
           disabled={saving || !userId}
-          className="flex-shrink-0 bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90"
+          className="flex-shrink-0 bg-[var(--gs-success)] text-white hover:bg-[var(--gs-success)]/90"
         >
           Add
         </Button>
       </div>
 
       {assignments.length === 0 ? (
-        <p style={{ fontSize: 13, color: "#9B9188" }}>No volunteers assigned yet.</p>
+        <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No volunteers assigned yet.</p>
       ) : (
         <div className="space-y-1.5">
           {assignments.map(a => (
-            <div key={a.id} className="flex items-center justify-between" style={{ background: "#F3F0E8", borderRadius: 8, padding: "8px 12px" }}>
+            <div key={a.id} className="flex items-center justify-between" style={{ background: "var(--gs-card)", borderRadius: 8, padding: "8px 12px" }}>
               <div>
-                <span style={{ fontSize: 13, fontWeight: 500, color: "#19140F" }}>{a.users?.name}</span>
-                <span style={{ fontSize: 12, color: "#9B9188", marginLeft: 8 }}>{a.users?.email}</span>
-                {a.role_description && <span style={{ fontSize: 12, color: "#4A55BE", marginLeft: 8, padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>{a.role_description}</span>}
+                <span style={{ fontSize: 13, fontWeight: 500, color: "var(--foreground)" }}>{a.users?.name}</span>
+                <span style={{ fontSize: 12, color: "var(--gs-muted)", marginLeft: 8 }}>{a.users?.email}</span>
+                {a.role_description && <span style={{ fontSize: 12, color: "var(--gs-accent)", marginLeft: 8, padding: "1px 6px", background: "rgba(var(--gs-accent-rgb), 0.08)", borderRadius: 4 }}>{a.role_description}</span>}
               </div>
               <Button
                 onClick={() => a.users?.id && handleRemove(a.users.id)}
                 disabled={saving}
                 variant="ghost"
                 size="icon-sm"
-                className="text-[#DC2626] hover:text-[#DC2626]"
+                className="text-[var(--gs-danger)] hover:text-[var(--gs-danger)]"
               >
                 <Trash2 size={14} />
               </Button>

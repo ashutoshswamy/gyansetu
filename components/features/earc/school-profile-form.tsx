@@ -24,17 +24,17 @@ const EMPTY_ROW: StrengthRow = { standard: "", boys: "", girls: "" };
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 function F({ label, required, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: hint ? 2 : 6 }}>
-        {label}{required && <span style={{ color: "#DC2626", marginLeft: 2 }}>*</span>}
+      <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: hint ? 2 : 6 }}>
+        {label}{required && <span style={{ color: "var(--gs-danger)", marginLeft: 2 }}>*</span>}
       </label>
-      {hint && <p style={{ fontSize: 11, color: "#9B9188", margin: "0 0 6px" }}>{hint}</p>}
+      {hint && <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: "0 0 6px" }}>{hint}</p>}
       {children}
     </div>
   );
@@ -129,9 +129,9 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
+    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
       {error && (
-        <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
+        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
           {error}
         </div>
       )}
@@ -214,7 +214,7 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
         <F label="Student Strength" required hint="Add one row per standard">
           <div className="space-y-2">
             {rows.map((r, i) => (
-              <div key={i} className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center" style={{ border: "1px solid #E4DFD1", borderRadius: 6, padding: 8, position: "relative" }}>
+              <div key={i} className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center" style={{ border: "1px solid var(--border)", borderRadius: 6, padding: 8, position: "relative" }}>
                 <select value={r.standard} onChange={e => updateRow(i, "standard", e.target.value)} style={inputStyle}>
                   <option value="">Select std...</option>
                   {STANDARDS.map(s => <option key={s} value={s}>{s}</option>)}
@@ -222,9 +222,9 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
                 <input value={r.boys} onChange={e => updateRow(i, "boys", e.target.value)} type="number" min="0" placeholder="Boys" style={inputStyle} />
                 <input value={r.girls} onChange={e => updateRow(i, "girls", e.target.value)} type="number" min="0" placeholder="Girls" style={inputStyle} />
                 <div className="flex items-center justify-between">
-                  <span style={{ fontSize: 13, color: "#5A5247" }}>Total: <strong>{(Number(r.boys) || 0) + (Number(r.girls) || 0)}</strong></span>
+                  <span style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>Total: <strong>{(Number(r.boys) || 0) + (Number(r.girls) || 0)}</strong></span>
                   {rows.length > 1 && (
-                    <button type="button" onClick={() => setRows(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", cursor: "pointer", color: "#9B9188" }}>
+                    <button type="button" onClick={() => setRows(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gs-muted)" }}>
                       <X size={16} />
                     </button>
                   )}
@@ -232,10 +232,10 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
               </div>
             ))}
           </div>
-          <button type="button" onClick={() => setRows(prev => [...prev, { ...EMPTY_ROW }])} className="flex items-center gap-1.5" style={{ fontSize: 12, fontWeight: 600, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", marginTop: 8 }}>
+          <button type="button" onClick={() => setRows(prev => [...prev, { ...EMPTY_ROW }])} className="flex items-center gap-1.5" style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", marginTop: 8 }}>
             <Plus size={14} /> Add another standard
           </button>
-          <p style={{ fontSize: 12, color: "#5A5247", marginTop: 8 }}>Total Students (auto-calculated): <strong>{totalStudents}</strong></p>
+          <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 8 }}>Total Students (auto-calculated): <strong>{totalStudents}</strong></p>
         </F>
       </div>
 
@@ -271,11 +271,11 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
           <input value={numSessions} onChange={e => setNumSessions(e.target.value)} type="number" min="0" required placeholder="Total sessions held" style={inputStyle} />
         </F>
         <F label="Total Input Hours" hint="Auto-calculated = Duration × Sessions">
-          <input value={totalInputHours} disabled style={{ ...inputStyle, color: "#9B9188" }} />
+          <input value={totalInputHours} disabled style={{ ...inputStyle, color: "var(--gs-muted)" }} />
         </F>
       </div>
 
-      <button type="submit" disabled={saving} style={{ background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+      <button type="submit" disabled={saving} style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
         {saving ? "Saving..." : "Submit School Profile"}
       </button>
     </form>

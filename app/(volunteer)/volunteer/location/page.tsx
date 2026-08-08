@@ -98,27 +98,27 @@ export default function VolunteerLocationPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Location</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Share your live location with tour admins during travel</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Volunteer Portal</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Location</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Share your live location with tour admins during travel</p>
         </div>
 
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
           <div className="flex items-center gap-3 mb-4">
             <div
               className="flex items-center justify-center flex-shrink-0"
-              style={{ width: 44, height: 44, borderRadius: "50%", background: isSharing ? "rgba(42,94,58,0.1)" : "rgba(90,82,71,0.08)" }}
+              style={{ width: 44, height: 44, borderRadius: "50%", background: isSharing ? "rgba(var(--gs-success-rgb), 0.1)" : "rgba(90,82,71,0.08)" }}
             >
-              {isSharing ? <Navigation size={20} style={{ color: "#2A5E3A" }} /> : <MapPin size={20} style={{ color: "#9B9188" }} />}
+              {isSharing ? <Navigation size={20} style={{ color: "var(--gs-success)" }} /> : <MapPin size={20} style={{ color: "var(--gs-muted)" }} />}
             </div>
             <div>
-              <p style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: 0 }}>
+              <p style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>
                 {isSharing ? "Sharing your location" : "Not sharing"}
               </p>
-              <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>
+              <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                 {isSharing && lastUpdated
                   ? `Last updated ${new Date(lastUpdated).toLocaleTimeString()}`
                   : "Admins can only see your location while sharing is on"}
@@ -127,17 +127,17 @@ export default function VolunteerLocationPage() {
           </div>
 
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "#DC2626" }}>
+            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
             </div>
           )}
 
           {loading ? (
-            <p style={{ fontSize: 13, color: "#9B9188" }}>Loading...</p>
+            <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Loading...</p>
           ) : isSharing ? (
             <button
               onClick={handleStop}
-              style={{ background: "#DC2626", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 20px", borderRadius: 6, border: "none", cursor: "pointer" }}
+              style={{ background: "var(--gs-danger)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 20px", borderRadius: 6, border: "none", cursor: "pointer" }}
             >
               Stop Sharing
             </button>
@@ -145,7 +145,7 @@ export default function VolunteerLocationPage() {
             <button
               onClick={handleStart}
               disabled={starting}
-              style={{ background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 20px", borderRadius: 6, border: "none", cursor: starting ? "not-allowed" : "pointer", opacity: starting ? 0.7 : 1 }}
+              style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 20px", borderRadius: 6, border: "none", cursor: starting ? "not-allowed" : "pointer", opacity: starting ? 0.7 : 1 }}
             >
               {starting ? "Starting..." : "Start Sharing"}
             </button>

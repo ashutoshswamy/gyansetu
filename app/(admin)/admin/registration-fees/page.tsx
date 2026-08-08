@@ -1,14 +1,17 @@
 import { getAllRegistrationFees } from "@/actions/registration-fees";
 import Link from "next/link";
 import { Wallet } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { MarkPaidButton } from "./mark-paid-button";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
-  pending:   { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
-  submitted: { color: "#A8641C", bg: "rgba(168,100,28,0.08)" },
-  paid:      { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-  waived:    { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
-  refunded:  { color: "#9B9188", bg: "rgba(155,145,136,0.1)" },
+  pending:   { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
+  submitted: { color: "var(--gs-warning-alt)", bg: "rgba(var(--gs-warning-alt-rgb), 0.08)" },
+  paid:      { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
+  waived:    { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)" },
+  refunded:  { color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.1)" },
 };
 
 export default async function AdminRegistrationFeesPage() {
@@ -18,18 +21,16 @@ export default async function AdminRegistrationFeesPage() {
   for (const f of fees) counts[f.status as keyof typeof counts]++;
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Registration Fees</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{fees.length} fee record{fees.length !== 1 ? "s" : ""}</p>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Registration Fees</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{fees.length} fee record{fees.length !== 1 ? "s" : ""}</p>
           </div>
           <Link href="/admin/registration-fees/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + Record Fee
-            </button>
+            <Button>+ Record Fee</Button>
           </Link>
         </div>
 
@@ -37,43 +38,47 @@ export default async function AdminRegistrationFeesPage() {
           {Object.entries(counts).map(([status, count]) => {
             const c = statusColors[status];
             return (
-              <div key={status} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 18px" }}>
-                <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 6 }}>{status}</p>
-                <p style={{ fontSize: 28, fontWeight: 700, color: c.color, margin: 0 }}>{count}</p>
-              </div>
+              <Card key={status}>
+                <CardContent className="pt-4">
+                  <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 6 }}>{status}</p>
+                  <p style={{ fontSize: 28, fontWeight: 700, color: c.color, margin: 0 }}>{count}</p>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
 
         <div className="space-y-3">
           {fees.length === 0 && (
-            <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No registration fee records yet.</p>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No registration fee records yet.</p>
           )}
           {fees.map((fee) => {
             const c = statusColors[fee.status] ?? statusColors.pending;
             return (
-              <div key={fee.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <Wallet size={18} style={{ color: c.color }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{fee.volunteer?.name ?? "Unknown"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: c.color, background: c.bg, textTransform: "capitalize" }}>
-                      {fee.status}
-                    </span>
+              <Card key={fee.id}>
+                <CardContent className="flex items-center gap-4 pt-4">
+                  <div style={{ width: 36, height: 36, borderRadius: 8, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Wallet size={18} style={{ color: c.color }} />
                   </div>
-                  <div style={{ fontSize: 12, color: "#9B9188" }}>
-                    {fee.volunteer?.email} · ₹{fee.amount}
-                    {fee.tour?.title ? ` · ${fee.tour.title}` : ""}
-                    {fee.group?.name ? ` (${fee.group.name})` : ""}
-                    {fee.payment_reference ? ` · Ref: ${fee.payment_reference}` : ""}
-                    {fee.paid_at ? ` · Paid ${new Date(fee.paid_at).toLocaleDateString()}` : ""}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }}>{fee.volunteer?.name ?? "Unknown"}</span>
+                      <Badge style={{ color: c.color, background: c.bg, textTransform: "capitalize" }}>
+                        {fee.status}
+                      </Badge>
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
+                      {fee.volunteer?.email} · ₹{fee.amount}
+                      {fee.tour?.title ? ` · ${fee.tour.title}` : ""}
+                      {fee.group?.name ? ` (${fee.group.name})` : ""}
+                      {fee.payment_reference ? ` · Ref: ${fee.payment_reference}` : ""}
+                      {fee.paid_at ? ` · Paid ${new Date(fee.paid_at).toLocaleDateString()}` : ""}
+                    </div>
                   </div>
-                </div>
-                {fee.status === "pending" && <MarkPaidButton feeId={fee.id} />}
-                {fee.status === "submitted" && <MarkPaidButton feeId={fee.id} label="Verify Payment" />}
-              </div>
+                  {fee.status === "pending" && <MarkPaidButton feeId={fee.id} />}
+                  {fee.status === "submitted" && <MarkPaidButton feeId={fee.id} label="Verify Payment" />}
+                </CardContent>
+              </Card>
             );
           })}
         </div>

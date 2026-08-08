@@ -26,7 +26,7 @@ export function MarkPaidButton({ feeId, label = "Mark Paid" }: { feeId: string; 
       disabled={loading}
       style={{
         fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: loading ? "#C8C4BC" : "#2A5E3A",
+        background: loading ? "#C8C4BC" : "var(--gs-success)",
         color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,
       }}
     >

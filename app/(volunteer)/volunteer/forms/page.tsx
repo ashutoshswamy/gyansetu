@@ -7,23 +7,23 @@ import type { DynamicForm } from "@/types";
 function FormCard({ form, status }: { form: DynamicForm; status: "submitted" | "draft" }) {
   const isSubmitted = status === "submitted";
   return (
-    <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: 0 }}>{form.title}</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{form.title}</h3>
           <span
             style={{
               fontSize: 10, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase",
               padding: "2px 8px", borderRadius: 999,
-              color: isSubmitted ? "#2A5E3A" : "#A8641C",
-              background: isSubmitted ? "rgba(42,94,58,0.08)" : "rgba(168,100,28,0.08)",
+              color: isSubmitted ? "var(--gs-success)" : "var(--gs-warning-alt)",
+              background: isSubmitted ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-warning-alt-rgb), 0.08)",
             }}
           >
             {isSubmitted ? "Submitted" : "Draft"}
           </span>
         </div>
-        {form.description && <p style={{ fontSize: 12, color: "#5A5247", margin: "0 0 4px" }}>{form.description}</p>}
-        <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>{form.fields?.length ?? 0} fields</p>
+        {form.description && <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{form.description}</p>}
+        <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>{form.fields?.length ?? 0} fields</p>
       </div>
       <Link href={`/volunteer/forms/${form.id}`}>
         <Button variant={isSubmitted ? "outline" : "default"} size="sm">
@@ -65,21 +65,21 @@ export default async function VolunteerFormsPage() {
   const draftForms = (forms ?? []).filter((f: DynamicForm) => !submittedIds.has(f.id));
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Forms</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Active forms assigned to volunteers</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Volunteer Portal</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Forms</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Active forms assigned to volunteers</p>
         </div>
 
         {(forms ?? []).length === 0 && (
-          <p style={{ fontSize: 14, color: "#9B9188", textAlign: "center", padding: "48px 0" }}>No active forms right now.</p>
+          <p style={{ fontSize: 14, color: "var(--gs-muted)", textAlign: "center", padding: "48px 0" }}>No active forms right now.</p>
         )}
 
         {draftForms.length > 0 && (
           <div className="mb-8">
-            <h2 style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Draft ({draftForms.length})</h2>
+            <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Draft ({draftForms.length})</h2>
             <div className="space-y-3">
               {draftForms.map((form: DynamicForm) => <FormCard key={form.id} form={form} status="draft" />)}
             </div>
@@ -88,7 +88,7 @@ export default async function VolunteerFormsPage() {
 
         {submittedForms.length > 0 && (
           <div>
-            <h2 style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Submitted ({submittedForms.length})</h2>
+            <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Submitted ({submittedForms.length})</h2>
             <div className="space-y-3">
               {submittedForms.map((form: DynamicForm) => <FormCard key={form.id} form={form} status="submitted" />)}
             </div>

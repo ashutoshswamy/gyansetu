@@ -43,9 +43,9 @@ export function RecordFeeForm({
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 pt-4 border-t border-border space-y-3">
-      <div className="flex flex-wrap gap-4" style={{ fontSize: 13, color: "#5A5247" }}>
-        <span><span style={{ fontWeight: 600, color: "#9B9188" }}>Tour: </span>{tour?.title ?? "Not assigned to a tour yet"}</span>
-        <span><span style={{ fontWeight: 600, color: "#9B9188" }}>Group: </span>{group?.name ?? "Not assigned to a group yet"}</span>
+      <div className="flex flex-wrap gap-4" style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>
+        <span><span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Tour: </span>{tour?.title ?? "Not assigned to a tour yet"}</span>
+        <span><span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Group: </span>{group?.name ?? "Not assigned to a group yet"}</span>
       </div>
 
       <div>

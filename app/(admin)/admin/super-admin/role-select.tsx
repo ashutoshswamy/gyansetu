@@ -57,10 +57,10 @@ export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole 
       </Select>
 
       {loading && (
-        <span style={{ fontSize: 12, color: "#9B9188" }}>Updating role&hellip;</span>
+        <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>Updating role&hellip;</span>
       )}
       {!loading && status && (
-        <span style={{ fontSize: 12, fontWeight: 600, color: status.type === "success" ? "#2A5E3A" : "#B8381E" }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: status.type === "success" ? "var(--gs-success)" : "var(--gs-danger-alt)" }}>
           {status.text}
         </span>
       )}
@@ -94,7 +94,7 @@ export function DeleteUserButton({ clerkId, name }: { clerkId: string; name: str
       <Button onClick={handleDelete} disabled={loading} variant="destructive" size="sm">
         {loading ? "Deleting…" : "Delete"}
       </Button>
-      {error && <span style={{ fontSize: 12, fontWeight: 600, color: "#B8381E" }}>{error}</span>}
+      {error && <span style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-danger-alt)" }}>{error}</span>}
     </div>
   );
 }
@@ -128,7 +128,7 @@ export function SyncDeletedUsersButton() {
         {loading ? "Checking Clerk…" : "Sync Deleted Users"}
       </Button>
       {result && (
-        <span style={{ fontSize: 12, fontWeight: 600, color: result.type === "success" ? "#2A5E3A" : "#B8381E" }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: result.type === "success" ? "var(--gs-success)" : "var(--gs-danger-alt)" }}>
           {result.text}
         </span>
       )}

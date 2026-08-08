@@ -11,8 +11,8 @@ import { IdCardPanel } from "@/components/features/id-cards/id-card-panel";
 import { CertificatePanel } from "@/components/features/certificates/certificate-panel";
 import type { FormField } from "@/types";
 
-const card: React.CSSProperties = { background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20 };
-const sectionTitle: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#9B9188", marginBottom: 12 };
+const card: React.CSSProperties = { background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20 };
+const sectionTitle: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 12 };
 
 export default async function EnrolleeTourHistoryDetailPage({ params }: { params: Promise<{ tourId: string }> }) {
   const { tourId } = await params;
@@ -40,16 +40,16 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
   const myCertificate = certificates.find((c) => c.tour_id === tourId);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-3xl mx-auto">
-        <Link href="/enrollee/history" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "#9B9188" }}>
+        <Link href="/enrollee/history" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "var(--gs-muted)" }}>
           <ArrowLeft className="w-3.5 h-3.5" /> Tour History
         </Link>
 
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Student Portal</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>{tour.title}</h1>
-          <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: 13, color: "#5A5247" }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Student Portal</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{tour.title}</h1>
+          <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>
             <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" />{tour.destination}</span>
             <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{tour.start_date} → {tour.end_date}</span>
           </div>
@@ -98,8 +98,8 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
             <p style={sectionTitle}>Forms ({submissions.length})</p>
             {submissions.length === 0 ? (
               <div style={card} className="text-center">
-                <FileText className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-                <p style={{ fontSize: 13, color: "#9B9188" }}>No forms submitted for this tour.</p>
+                <FileText className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+                <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No forms submitted for this tour.</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -110,15 +110,15 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
                   return (
                     <div key={s.id} style={card}>
                       <div className="flex items-center justify-between mb-2">
-                        <p style={{ fontSize: 14, fontWeight: 600, color: "#19140F" }}>{form?.title ?? "Form"}</p>
-                        <span style={{ fontSize: 12, color: "#9B9188" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>{form?.title ?? "Form"}</p>
+                        <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
                       </div>
                       {entries.length > 0 && (
-                        <div className="space-y-1.5 mt-3" style={{ borderTop: "1px solid #E4DFD1", paddingTop: 10 }}>
+                        <div className="space-y-1.5 mt-3" style={{ borderTop: "1px solid var(--border)", paddingTop: 10 }}>
                           {entries.map(([key, value]) => (
                             <div key={key} style={{ fontSize: 13 }}>
-                              <span style={{ color: "#9B9188" }}>{fieldLabels.get(key) ?? key}: </span>
-                              <span style={{ color: "#19140F" }}>{Array.isArray(value) ? value.join(", ") : String(value)}</span>
+                              <span style={{ color: "var(--gs-muted)" }}>{fieldLabels.get(key) ?? key}: </span>
+                              <span style={{ color: "var(--foreground)" }}>{Array.isArray(value) ? value.join(", ") : String(value)}</span>
                             </div>
                           ))}
                         </div>
@@ -134,18 +134,18 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
             <p style={sectionTitle}>Reports ({logs.length})</p>
             {logs.length === 0 ? (
               <div style={card} className="text-center">
-                <BookOpen className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-                <p style={{ fontSize: 13, color: "#9B9188" }}>No daily reports for this tour.</p>
+                <BookOpen className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+                <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No daily reports for this tour.</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {logs.map((log) => (
                   <div key={log.id} style={card}>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 8 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 8 }}>
                       {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
                     </p>
-                    <p style={{ fontSize: 13, color: "#5A5247", marginBottom: 4 }}><b>Activities:</b> {log.activities_conducted}</p>
-                    <p style={{ fontSize: 13, color: "#5A5247" }}><b>Achievements:</b> {log.key_achievements}</p>
+                    <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginBottom: 4 }}><b>Activities:</b> {log.activities_conducted}</p>
+                    <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}><b>Achievements:</b> {log.key_achievements}</p>
                   </div>
                 ))}
               </div>
@@ -156,8 +156,8 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
             <p style={sectionTitle}>Media ({myMedia.length})</p>
             {myMedia.length === 0 ? (
               <div style={card} className="text-center">
-                <ImageIcon className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-                <p style={{ fontSize: 13, color: "#9B9188" }}>No media uploaded for this tour.</p>
+                <ImageIcon className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+                <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No media uploaded for this tour.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -167,7 +167,7 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
                     href={item.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
+                    style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={item.file_url} alt={item.caption ?? "media"} style={{ width: "100%", height: 130, objectFit: "cover", display: "block" }} />

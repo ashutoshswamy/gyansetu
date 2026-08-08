@@ -18,7 +18,7 @@ export interface VolunteerLocation {
 // asset-path workarounds under webpack/Next.js.
 const dotIcon = L.divIcon({
   className: "",
-  html: '<div style="width:16px;height:16px;border-radius:50%;background:#2A5E3A;border:2px solid white;box-shadow:0 0 0 1px rgba(0,0,0,0.2)"></div>',
+  html: '<div style="width:16px;height:16px;border-radius:50%;background:var(--gs-success);border:2px solid white;box-shadow:0 0 0 1px rgba(0,0,0,0.2)"></div>',
   iconSize: [16, 16],
   iconAnchor: [8, 8],
 });

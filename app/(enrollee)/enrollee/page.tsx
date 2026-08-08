@@ -12,10 +12,10 @@ type OpenTourRow = Pick<Tour, "id" | "title" | "destination" | "start_date" | "c
 type AvailableTestRow = Pick<EligibilityTest, "id" | "title" | "duration_minutes" | "passing_score" | "tour_id">;
 
 const statusStyles: Record<string, { label: string; color: string; bg: string }> = {
-  pending:     { label: "Pending",     color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
-  shortlisted: { label: "Shortlisted", color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
-  selected:    { label: "Selected",    color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-  rejected:    { label: "Rejected",    color: "#B8381E", bg: "rgba(184,56,30,0.08)" },
+  pending:     { label: "Pending",     color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
+  shortlisted: { label: "Shortlisted", color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)" },
+  selected:    { label: "Selected",    color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
+  rejected:    { label: "Rejected",    color: "var(--gs-danger-alt)", bg: "rgba(var(--gs-danger-alt-rgb), 0.08)" },
 };
 
 export default async function EnrollmentDashboard() {
@@ -57,23 +57,23 @@ export default async function EnrollmentDashboard() {
     : { data: [] as AvailableTestRow[] };
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-start justify-between flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Student Portal
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>
               Welcome, {user?.name ?? "Enrollee"}
             </h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
               Track your tour applications and eligibility tests
             </p>
           </div>
           <Link href="/enrollee/history">
-            <button style={{ background: "white", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
+            <button style={{ background: "white", color: "var(--gs-accent)", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(var(--gs-accent-rgb), 0.28)", cursor: "pointer" }}>
               Tour History
             </button>
           </Link>
@@ -109,11 +109,11 @@ export default async function EnrollmentDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* My Applications */}
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
+          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
             <div className="flex items-center justify-between mb-5">
-              <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>My Applications</h2>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>My Applications</h2>
               <Link href="/enrollee/tours">
-                <button className="flex items-center gap-1" style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
+                <button className="flex items-center gap-1" style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                   View all <ArrowRight className="w-3 h-3" />
                 </button>
               </Link>
@@ -121,10 +121,10 @@ export default async function EnrollmentDashboard() {
 
             {(applications ?? []).length === 0 ? (
               <div className="py-8 text-center">
-                <p className="text-sm" style={{ color: "#9B9188" }}>
+                <p className="text-sm" style={{ color: "var(--gs-muted)" }}>
                   No applications yet.
                 </p>
-                <p className="text-xs mt-1" style={{ color: "#9B9188" }}>
+                <p className="text-xs mt-1" style={{ color: "var(--gs-muted)" }}>
                   Browse open tours below to apply.
                 </p>
               </div>
@@ -135,13 +135,13 @@ export default async function EnrollmentDashboard() {
                   return (
                     <div
                       key={app.id}
-                      style={{ background: "#F3F0E8", borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      style={{ background: "var(--gs-card)", borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-medium truncate" style={{ color: "#19140F" }}>
+                        <p className="text-sm font-medium truncate" style={{ color: "var(--foreground)" }}>
                           {app.tours?.title}
                         </p>
-                        <p className="text-xs mt-0.5" style={{ color: "#9B9188" }}>
+                        <p className="text-xs mt-0.5" style={{ color: "var(--gs-muted)" }}>
                           {app.tours?.destination}
                           {app.test_score != null && ` · Score: ${app.test_score.toFixed(0)}%`}
                         </p>
@@ -159,11 +159,11 @@ export default async function EnrollmentDashboard() {
           </div>
 
           {/* Available Tests */}
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
+          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
             <div className="flex items-center justify-between mb-5">
-              <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>Eligibility Tests</h2>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Eligibility Tests</h2>
               <Link href="/enrollee/tests">
-                <button className="flex items-center gap-1" style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
+                <button className="flex items-center gap-1" style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                   View all <ArrowRight className="w-3 h-3" />
                 </button>
               </Link>
@@ -171,10 +171,10 @@ export default async function EnrollmentDashboard() {
 
             {(availableTests ?? []).length === 0 ? (
               <div className="py-8 text-center">
-                <p className="text-sm" style={{ color: "#9B9188" }}>
+                <p className="text-sm" style={{ color: "var(--gs-muted)" }}>
                   No active tests.
                 </p>
-                <p className="text-xs mt-1" style={{ color: "#9B9188" }}>
+                <p className="text-xs mt-1" style={{ color: "var(--gs-muted)" }}>
                   Apply for a tour to unlock its eligibility test.
                 </p>
               </div>
@@ -183,19 +183,19 @@ export default async function EnrollmentDashboard() {
                 {(availableTests ?? []).slice(0, 5).map((test: AvailableTestRow) => (
                   <div
                     key={test.id}
-                    style={{ background: "#F3F0E8", borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                    style={{ background: "var(--gs-card)", borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-medium truncate" style={{ color: "#19140F" }}>
+                      <p className="text-sm font-medium truncate" style={{ color: "var(--foreground)" }}>
                         {test.title}
                       </p>
-                      <p className="text-xs mt-0.5" style={{ color: "#9B9188" }}>
+                      <p className="text-xs mt-0.5" style={{ color: "var(--gs-muted)" }}>
                         {test.duration_minutes} min · Pass: {test.passing_score}%
                       </p>
                     </div>
                     <Link href={`/enrollee/tests/${test.id}`}>
                       <button
-                        style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer", flexShrink: 0, marginLeft: 12 }}
+                        style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer", flexShrink: 0, marginLeft: 12 }}
                       >
                         Take Test
                       </button>
@@ -208,18 +208,18 @@ export default async function EnrollmentDashboard() {
         </div>
 
         {/* Open Tours */}
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24 }}>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
           <div className="flex items-center justify-between mb-5">
-            <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>Upcoming Open Tours</h2>
+            <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Upcoming Open Tours</h2>
             <Link href="/enrollee/tours">
-              <button className="flex items-center gap-1" style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
+              <button className="flex items-center gap-1" style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                 Browse all <ArrowRight className="w-3 h-3" />
               </button>
             </Link>
           </div>
 
           {unappliedTours.length === 0 ? (
-            <p className="text-sm py-4 text-center" style={{ color: "#9B9188" }}>
+            <p className="text-sm py-4 text-center" style={{ color: "var(--gs-muted)" }}>
               {(openTours ?? []).length === 0
                 ? "No open tours at this time."
                 : "You've applied to all open tours."}
@@ -229,15 +229,15 @@ export default async function EnrollmentDashboard() {
               {unappliedTours.map((tour: OpenTourRow) => (
                 <div
                   key={tour.id}
-                  style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: 16 }}
+                  style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: 16 }}
                 >
-                  <p className="font-medium text-sm mb-1" style={{ color: "#19140F" }}>{tour.title}</p>
-                  <p className="text-xs mb-3" style={{ color: "#9B9188" }}>
+                  <p className="font-medium text-sm mb-1" style={{ color: "var(--foreground)" }}>{tour.title}</p>
+                  <p className="text-xs mb-3" style={{ color: "var(--gs-muted)" }}>
                     {tour.destination} · {new Date(tour.start_date).toLocaleDateString()}
                   </p>
                   <Link href={`/enrollee/tours/${tour.id}`} style={{ display: "block" }}>
                     <button
-                      style={{ width: "100%", background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}
+                      style={{ width: "100%", background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}
                     >
                       Apply Now
                     </button>

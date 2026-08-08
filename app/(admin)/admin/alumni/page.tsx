@@ -23,15 +23,15 @@ export default async function AlumniAdminPage() {
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-7xl mx-auto">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Alumni Registrations</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Alumni Registrations</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
               Every field submitted via the alumni network form &middot; {registrations.length} total &middot; download for the full column set
             </p>
           </div>
@@ -40,11 +40,11 @@ export default async function AlumniAdminPage() {
           )}
         </div>
 
-        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
           {registrations.length === 0 ? (
             <div className="py-16 text-center">
-              <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-              <p style={{ fontSize: 14, color: "#9B9188" }}>No alumni registrations yet.</p>
+              <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+              <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No alumni registrations yet.</p>
             </div>
           ) : (
             <Table className="text-left text-[13px]">

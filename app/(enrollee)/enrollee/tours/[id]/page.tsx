@@ -5,10 +5,10 @@ import { ApplyButton } from "@/components/features/tours/apply-button";
 import { MapPin, Calendar, Users } from "lucide-react";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
-  open:      { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
-  closed:    { color: "#9B9188", bg: "rgba(90,82,71,0.08)" },
-  completed: { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
-  draft:     { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
+  open:      { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
+  closed:    { color: "var(--gs-muted)", bg: "rgba(90,82,71,0.08)" },
+  completed: { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)" },
+  draft:     { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
 };
 
 export default async function TourDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -54,16 +54,16 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
   const s = statusStyles[tour.status ?? "draft"] ?? statusStyles.draft;
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-3xl mx-auto">
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>{tour.title}</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{tour.title}</h1>
             <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 5, color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize" }}>
               {tour.status}
             </span>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 13, color: "#9B9188" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 13, color: "var(--gs-muted)" }}>
             <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
               <MapPin size={13} /> {tour.destination}
             </span>
@@ -76,55 +76,55 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
-          <h2 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: "0 0 12px" }}>About this Tour</h2>
-          <p style={{ fontSize: 14, color: "#5A5247", lineHeight: 1.7, margin: 0 }}>{tour.description}</p>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
+          <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>About this Tour</h2>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", lineHeight: 1.7, margin: 0 }}>{tour.description}</p>
         </div>
 
         {application ? (
-          <div style={{ background: "rgba(74,85,190,0.06)", border: "1px solid rgba(74,85,190,0.2)", borderRadius: 10, padding: "16px 20px" }}>
-            <p style={{ fontSize: 14, color: "#4A55BE", margin: 0 }}>
+          <div style={{ background: "rgba(var(--gs-accent-rgb), 0.06)", border: "1px solid rgba(var(--gs-accent-rgb), 0.2)", borderRadius: 10, padding: "16px 20px" }}>
+            <p style={{ fontSize: 14, color: "var(--gs-accent)", margin: 0 }}>
               Already applied. Status:{" "}
               <span style={{ fontWeight: 600, textTransform: "capitalize" }}>{application.status}</span>
             </p>
             {application.status !== "rejected" && eligibilityTest && !hasAttempt && (
               eligibilityTest.status === "active" ? (
-                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(74,85,190,0.15)" }}>
-                  <p style={{ fontSize: 13, color: "#4A55BE", margin: "0 0 8px 0" }}>
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(var(--gs-accent-rgb), 0.15)" }}>
+                  <p style={{ fontSize: 13, color: "var(--gs-accent)", margin: "0 0 8px 0" }}>
                     Next step: take the eligibility test to become eligible for this tour.
                   </p>
                   <a
                     href={`/enrollee/tests/${eligibilityTest.id}`}
-                    style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "white", background: "#4A55BE", padding: "9px 18px", borderRadius: 6, textDecoration: "none" }}
+                    style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "white", background: "var(--gs-accent)", padding: "9px 18px", borderRadius: 6, textDecoration: "none" }}
                   >
                     Go to Eligibility Test →
                   </a>
                 </div>
               ) : (
-                <p style={{ fontSize: 13, color: "#4A55BE", margin: "10px 0 0 0", opacity: 0.8 }}>
+                <p style={{ fontSize: 13, color: "var(--gs-accent)", margin: "10px 0 0 0", opacity: 0.8 }}>
                   The eligibility test for this tour isn&apos;t open yet — check back soon.
                 </p>
               )
             )}
           </div>
         ) : appliedElsewhere ? (
-          <div style={{ background: "#F3F0E8", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px" }}>
-            <p style={{ fontSize: 14, color: "#9B9188", margin: 0 }}>
+          <div style={{ background: "var(--gs-card)", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px" }}>
+            <p style={{ fontSize: 14, color: "var(--gs-muted)", margin: 0 }}>
               You&apos;ve already applied for another tour. Only one tour application is allowed per enrollee.
             </p>
           </div>
         ) : ageBlock ? (
-          <div style={{ background: "rgba(184,56,30,0.06)", border: "1px solid rgba(184,56,30,0.2)", borderRadius: 10, padding: "16px 20px" }}>
-            <p style={{ fontSize: 14, color: "#B8381E", margin: 0, fontWeight: 500 }}>{ageBlock}</p>
-            <a href="/enrollee/profile" style={{ display: "inline-block", marginTop: 10, fontSize: 13, color: "#B8381E", textDecoration: "underline" }}>
+          <div style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.06)", border: "1px solid rgba(var(--gs-danger-alt-rgb), 0.2)", borderRadius: 10, padding: "16px 20px" }}>
+            <p style={{ fontSize: 14, color: "var(--gs-danger-alt)", margin: 0, fontWeight: 500 }}>{ageBlock}</p>
+            <a href="/enrollee/profile" style={{ display: "inline-block", marginTop: 10, fontSize: 13, color: "var(--gs-danger-alt)", textDecoration: "underline" }}>
               Go to My Profile →
             </a>
           </div>
         ) : tour.status === "open" ? (
           <ApplyButton tourId={tour.id} />
         ) : (
-          <div style={{ background: "#F3F0E8", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px" }}>
-            <p style={{ fontSize: 14, color: "#9B9188", margin: 0 }}>Applications are currently closed.</p>
+          <div style={{ background: "var(--gs-card)", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px" }}>
+            <p style={{ fontSize: 14, color: "var(--gs-muted)", margin: 0 }}>Applications are currently closed.</p>
           </div>
         )}
       </div>

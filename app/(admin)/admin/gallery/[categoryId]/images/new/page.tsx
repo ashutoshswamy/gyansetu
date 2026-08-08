@@ -19,7 +19,7 @@ export default async function AddImagePage({ params }: Props) {
   if (!category) notFound();
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "48px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "48px 24px" }}>
       <div style={{ maxWidth: 560, margin: "0 auto" }}>
 
         {/* Header */}
@@ -29,16 +29,16 @@ export default async function AddImagePage({ params }: Props) {
             letterSpacing: "0.12em",
             textTransform: "uppercase",
             fontWeight: 600,
-            color: "#9B9188",
+            color: "var(--gs-muted)",
             marginBottom: 4,
           }}>
             Admin Console / Gallery / {category.name}
           </p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>
             Add Image
           </h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
-            Adding image to <strong style={{ color: "#19140F" }}>{category.name}</strong>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
+            Adding image to <strong style={{ color: "var(--foreground)" }}>{category.name}</strong>
           </p>
         </div>
 

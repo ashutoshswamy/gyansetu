@@ -87,18 +87,18 @@ export default function VolunteerMediaPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Media Gallery</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Upload photos and documents from your visit</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Volunteer Portal</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Media Gallery</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Upload photos and documents from your visit</p>
         </div>
 
         {/* Tour selector + upload */}
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20, marginBottom: 24 }}>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20, marginBottom: 24 }}>
           {todayCount >= 2 && (
-            <div style={{ background: "rgba(184,56,30,0.06)", border: "1.5px solid rgba(184,56,30,0.2)", borderRadius: 8, padding: "12px 16px", color: "#B8381E", fontSize: 13, marginBottom: 16 }}>
+            <div style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.06)", border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.2)", borderRadius: 8, padding: "12px 16px", color: "var(--gs-danger-alt)", fontSize: 13, marginBottom: 16 }}>
               Daily upload limit reached ({todayCount}/2 uploaded today). You can only upload up to 2 media files per day. Please try again tomorrow.
             </div>
           )}
@@ -108,19 +108,19 @@ export default function VolunteerMediaPage() {
               value={selectedTour}
               disabled={todayCount >= 2}
               onChange={e => setSelectedTour(e.target.value)}
-              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
             >
               {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
             </select>
           </div>
 
           <div className="flex gap-4 mb-4">
-            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "#2A5E3A" : "#5A5247", fontWeight: 600 }}>
-              <input type="radio" disabled={todayCount >= 2} checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "#2A5E3A" }} />
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "var(--gs-success)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
+              <input type="radio" disabled={todayCount >= 2} checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "var(--gs-success)" }} />
               Upload Image/Video
             </label>
-            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "#2A5E3A" : "#5A5247", fontWeight: 600 }}>
-              <input type="radio" disabled={todayCount >= 2} checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "#2A5E3A" }} />
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "var(--gs-success)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
+              <input type="radio" disabled={todayCount >= 2} checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "var(--gs-success)" }} />
               Direct Link
             </label>
           </div>
@@ -134,7 +134,7 @@ export default function VolunteerMediaPage() {
                   accept="image/*,video/*"
                   required
                   disabled={todayCount >= 2}
-                  style={{ width: "100%", padding: "7px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+                  style={{ width: "100%", padding: "7px 12px", fontSize: 13, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
                 />
               ) : (
                 <input
@@ -144,7 +144,7 @@ export default function VolunteerMediaPage() {
                   placeholder="https://example.com/image.jpg"
                   required
                   disabled={todayCount >= 2}
-                  style={{ width: "100%", padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+                  style={{ width: "100%", padding: "8px 12px", fontSize: 14, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
                 />
               )}
             </div>
@@ -153,27 +153,27 @@ export default function VolunteerMediaPage() {
               disabled={todayCount >= 2}
               onChange={e => setCaption(e.target.value)}
               placeholder="Caption (optional)"
-              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid #E4DFD1", borderRadius: 6, background: todayCount >= 2 ? "#F3F0E8" : "#FBF7EC", color: "#19140F", opacity: todayCount >= 2 ? 0.6 : 1 }}
+              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
             />
             <button
               type="submit"
               disabled={uploading || !selectedTour || todayCount >= 2}
-              style={{ background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: (uploading || todayCount >= 2) ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 6, opacity: (uploading || todayCount >= 2) ? 0.5 : 1 }}
+              style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: (uploading || todayCount >= 2) ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 6, opacity: (uploading || todayCount >= 2) ? 0.5 : 1 }}
             >
               <Upload size={14} />
               {uploading ? "Uploading..." : "Upload"}
             </button>
           </form>
-          {error && <p style={{ fontSize: 13, color: "#DC2626", marginTop: 8 }}>{error}</p>}
+          {error && <p style={{ fontSize: 13, color: "var(--gs-danger)", marginTop: 8 }}>{error}</p>}
         </div>
 
         {loading ? (
-          <p style={{ color: "#9B9188", fontSize: 14 }}>Loading...</p>
+          <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : media.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
-            <ImageIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-            <p style={{ fontSize: 15, color: "#5A5247" }}>No media for this tour yet.</p>
-            <p style={{ fontSize: 13, color: "#9B9188" }}>Upload photos from your visit to build the gallery.</p>
+          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <ImageIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+            <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No media for this tour yet.</p>
+            <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Upload photos from your visit to build the gallery.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -183,7 +183,7 @@ export default function VolunteerMediaPage() {
                 href={item.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
+                style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -193,7 +193,7 @@ export default function VolunteerMediaPage() {
                 />
                 {item.caption && (
                   <div style={{ padding: "8px 10px" }}>
-                    <p style={{ fontSize: 12, color: "#5A5247", margin: 0 }} className="truncate">{item.caption}</p>
+                    <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: 0 }} className="truncate">{item.caption}</p>
                   </div>
                 )}
               </a>

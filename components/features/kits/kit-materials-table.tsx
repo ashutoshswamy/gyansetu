@@ -25,14 +25,14 @@ interface Row {
 }
 
 const TYPE_BADGE: Record<MaterialType, { bg: string; color: string }> = {
-  reusable: { bg: "rgba(74,85,190,0.1)", color: "#4A55BE" },
-  consumable: { bg: "rgba(245,165,32,0.12)", color: "#B8860B" },
+  reusable: { bg: "rgba(var(--gs-accent-rgb), 0.1)", color: "var(--gs-accent)" },
+  consumable: { bg: "rgba(var(--gs-warning-rgb), 0.12)", color: "#B8860B" },
 };
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 10px", fontSize: 13.5,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 function toRow(item: KitItemRow): Row {
@@ -77,7 +77,7 @@ function EditableRow({
   const totalQty = row.material_type === "reusable" ? qty : qty * expectedSchools;
 
   return (
-    <tr style={{ borderBottom: "1px solid #E4DFD1" }}>
+    <tr style={{ borderBottom: "1px solid var(--border)" }}>
       <td className="p-3">
         <input
           value={row.name}
@@ -109,17 +109,17 @@ function EditableRow({
         />
       </td>
       <td className="p-3">
-        <div style={{ fontSize: 15, fontWeight: 700, color: "#2A5E3A", background: "rgba(42,94,58,0.08)", padding: "8px 12px", borderRadius: 6, textAlign: "center" }}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)", padding: "8px 12px", borderRadius: 6, textAlign: "center" }}>
           {totalQty}
         </div>
       </td>
       <td className="p-3">
         <div className="flex items-center gap-2">
-          {row.saving && <span style={{ fontSize: 11, color: "#9B9188" }}>Saving…</span>}
+          {row.saving && <span style={{ fontSize: 11, color: "var(--gs-muted)" }}>Saving…</span>}
           <button
             onClick={() => onDelete(row.key)}
             aria-label="Delete material"
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#DC2626", padding: 4 }}
+            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gs-danger)", padding: 4 }}
           >
             <Trash2 size={15} />
           </button>
@@ -153,7 +153,7 @@ export function KitMaterialsTable({ items }: { items: KitItemRow[] }) {
     <div>
       <div className="flex items-end gap-3 flex-wrap" style={{ marginBottom: 16 }}>
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Expected Number of Schools</label>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Expected Number of Schools</label>
           <input
             type="number" min={1}
             value={expectedSchools}
@@ -161,24 +161,24 @@ export function KitMaterialsTable({ items }: { items: KitItemRow[] }) {
             style={{ ...inputStyle, width: 140 }}
           />
         </div>
-        <p style={{ fontSize: 12, color: "#9B9188", marginBottom: 8 }}>Drives the Total Qty Required column below for consumable materials.</p>
+        <p style={{ fontSize: 12, color: "var(--gs-muted)", marginBottom: 8 }}>Drives the Total Qty Required column below for consumable materials.</p>
       </div>
 
-      <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+      <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
             <thead>
-              <tr style={{ background: "#F3F0E8", borderBottom: "1px solid #E4DFD1" }}>
-                <th className="p-3 font-semibold text-[#5A5247]">Material Name</th>
-                <th className="p-3 font-semibold text-[#5A5247]">Material Type</th>
-                <th className="p-3 font-semibold text-[#5A5247]">Qty Per School</th>
-                <th className="p-3 font-semibold text-[#5A5247]">Total Qty Required</th>
-                <th className="p-3 font-semibold text-[#5A5247]"></th>
+              <tr style={{ background: "var(--gs-card)", borderBottom: "1px solid var(--border)" }}>
+                <th className="p-3 font-semibold text-[var(--gs-text-secondary)]">Material Name</th>
+                <th className="p-3 font-semibold text-[var(--gs-text-secondary)]">Material Type</th>
+                <th className="p-3 font-semibold text-[var(--gs-text-secondary)]">Qty Per School</th>
+                <th className="p-3 font-semibold text-[var(--gs-text-secondary)]">Total Qty Required</th>
+                <th className="p-3 font-semibold text-[var(--gs-text-secondary)]"></th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 ? (
-                <tr><td colSpan={5} style={{ padding: "24px 0", textAlign: "center", color: "#9B9188" }}>No materials yet.</td></tr>
+                <tr><td colSpan={5} style={{ padding: "24px 0", textAlign: "center", color: "var(--gs-muted)" }}>No materials yet.</td></tr>
               ) : (
                 rows.map(row => (
                   <EditableRow key={row.key} row={row} expectedSchools={expectedSchools} onChange={handleChange} onDelete={handleDelete} />
@@ -191,7 +191,7 @@ export function KitMaterialsTable({ items }: { items: KitItemRow[] }) {
 
       <button
         onClick={handleAddRow}
-        style={{ marginTop: 12, background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: "pointer" }}
+        style={{ marginTop: 12, background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: "pointer" }}
       >
         + Add Material
       </button>

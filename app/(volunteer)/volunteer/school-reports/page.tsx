@@ -41,8 +41,8 @@ const OBSERVATION_FIELDS: { key: string; label: string }[] = [
 ];
 
 const statusColors: Record<string, { color: string; bg: string }> = {
-  draft:     { color: "#9B9188", bg: "rgba(155,145,136,0.10)" },
-  submitted: { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },
+  draft:     { color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.10)" },
+  submitted: { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
 };
 
 function wordCount(text: string) {
@@ -127,8 +127,8 @@ export default function SchoolReportsPage() {
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
   };
 
   function updateSession(i: number, field: keyof SchoolReportSession, value: string | number | boolean) {
@@ -215,56 +215,56 @@ export default function SchoolReportsPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Volunteer Portal</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>School Details</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>School visit report — fill one for each school visit. Shared with your whole group.</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Volunteer Portal</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>School Details</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>School visit report — fill one for each school visit. Shared with your whole group.</p>
         </div>
 
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24, marginBottom: 12 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group <span style={{ color: "#DC2626" }}>*</span></label>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 12 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></label>
           <select value={groupId} onChange={e => handleGroupChange(e.target.value)} style={inputStyle}>
             <option value="">Select group...</option>
             {groups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.title ? ` — ${g.tours.title}` : ""}</option>)}
           </select>
-          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6 }}>
+          <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6 }}>
             Every report submitted under this group is visible to all volunteers in the same group.
           </p>
         </div>
 
         {groupId && (
-          <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 24, marginBottom: 24 }}>
+          <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 24 }}>
             {error && (
-              <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
+              <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
                 {error}
               </div>
             )}
 
             {/* Section 1: School Details */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>1. School Details</h2>
+            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>1. School Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>School Name <span style={{ color: "#DC2626" }}>*</span></label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>School Name <span style={{ color: "var(--gs-danger)" }}>*</span></label>
                 <input value={schoolName} onChange={e => setSchoolName(e.target.value)} required placeholder="Enter full school name" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>School Type <span style={{ color: "#DC2626" }}>*</span></label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>School Type <span style={{ color: "var(--gs-danger)" }}>*</span></label>
                 <select value={schoolType} onChange={e => setSchoolType(e.target.value)} required style={inputStyle}>
                   <option value="">Select...</option>
                   {SCHOOL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Location Category <span style={{ color: "#DC2626" }}>*</span></label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Location Category <span style={{ color: "var(--gs-danger)" }}>*</span></label>
                 <select value={locationCategory} onChange={e => setLocationCategory(e.target.value)} required style={inputStyle}>
                   <option value="">Select...</option>
                   {LOCATION_CATEGORIES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Medium of Instruction <span style={{ color: "#DC2626" }}>*</span></label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Medium of Instruction <span style={{ color: "var(--gs-danger)" }}>*</span></label>
                 <select value={medium} onChange={e => setMedium(e.target.value)} required style={inputStyle}>
                   <option value="">Select...</option>
                   {MEDIUMS.map(t => <option key={t} value={t}>{t}</option>)}
@@ -272,7 +272,7 @@ export default function SchoolReportsPage() {
               </div>
             </div>
 
-            <p style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", margin: "0 0 8px" }}>School Address</p>
+            <p style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", margin: "0 0 8px" }}>School Address</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <input value={streetArea} onChange={e => setStreetArea(e.target.value)} placeholder="Street / Area" style={inputStyle} />
               <input value={villageTown} onChange={e => setVillageTown(e.target.value)} placeholder="Village / Town" style={inputStyle} />
@@ -293,38 +293,38 @@ export default function SchoolReportsPage() {
             </div>
 
             {/* Section 2: Visit Details */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>2. Visit Details</h2>
+            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>2. Visit Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Visit Date</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Visit Date</label>
                 <input value={visitDate} onChange={e => setVisitDate(e.target.value)} type="date" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Number of Volunteers Present</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Number of Volunteers Present</label>
                 <input value={volunteersPresent} onChange={e => setVolunteersPresent(e.target.value ? String(Math.min(50, Number(e.target.value))) : "")} type="number" min="0" max="50" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Arrival Time</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Arrival Time</label>
                 <input value={arrivalTime} onChange={e => setArrivalTime(e.target.value)} type="time" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Departure Time</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Departure Time</label>
                 <input value={departureTime} onChange={e => setDepartureTime(e.target.value)} type="time" style={inputStyle} />
               </div>
             </div>
-            <p style={{ fontSize: 12, color: "#5A5247", margin: "0 0 12px" }}>
+            <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 12px" }}>
               Total Duration in School: <strong>{autoDuration !== null ? `${autoDuration} minutes` : "—"}</strong>
             </p>
             <div className="mb-6">
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer Names</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Volunteer Names</label>
               {loadingGroup ? (
-                <p style={{ fontSize: 12, color: "#9B9188" }}>Loading group members...</p>
+                <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>Loading group members...</p>
               ) : members.length === 0 ? (
-                <p style={{ fontSize: 12, color: "#9B9188" }}>No members found for this group.</p>
+                <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>No members found for this group.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {members.map(m => (
-                    <label key={m.id} className="flex items-center gap-1.5" style={{ fontSize: 13, color: "#19140F", border: "1.5px solid #E4DFD1", borderRadius: 6, padding: "5px 10px", cursor: "pointer" }}>
+                    <label key={m.id} className="flex items-center gap-1.5" style={{ fontSize: 13, color: "var(--foreground)", border: "1.5px solid var(--border)", borderRadius: 6, padding: "5px 10px", cursor: "pointer" }}>
                       <input type="checkbox" checked={volunteerNames.includes(m.name)} onChange={() => toggleVolunteer(m.name)} />
                       {m.name}
                     </label>
@@ -334,19 +334,19 @@ export default function SchoolReportsPage() {
             </div>
 
             {/* Section 3: Session Details */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>3. Session Details</h2>
-            <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 12px" }}>Add one row for each session conducted.</p>
+            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>3. Session Details</h2>
+            <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 12px" }}>Add one row for each session conducted.</p>
             <div className="space-y-4 mb-3">
               {sessions.map((s, i) => {
                 const inheritedFromCombined = i > 0 && !!sessions[i - 1].combined_session;
                 return (
-                <div key={i} style={{ border: "1px solid #E4DFD1", borderRadius: 8, padding: 16, position: "relative" }}>
+                <div key={i} style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 16, position: "relative" }}>
                   {sessions.length > 1 && (
-                    <button type="button" onClick={() => setSessions(prev => prev.filter((_, idx) => idx !== i))} style={{ position: "absolute", top: 10, right: 10, background: "none", border: "none", cursor: "pointer", color: "#9B9188" }}>
+                    <button type="button" onClick={() => setSessions(prev => prev.filter((_, idx) => idx !== i))} style={{ position: "absolute", top: 10, right: 10, background: "none", border: "none", cursor: "pointer", color: "var(--gs-muted)" }}>
                       <X size={16} />
                     </button>
                   )}
-                  <p style={{ fontSize: 11, fontWeight: 700, color: "#9B9188", marginBottom: 10 }}>Session {i + 1}</p>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "var(--gs-muted)", marginBottom: 10 }}>Session {i + 1}</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <select value={s.standard} onChange={e => updateSession(i, "standard", e.target.value)} style={inputStyle}>
                       <option value="">Standard / Class...</option>
@@ -369,11 +369,11 @@ export default function SchoolReportsPage() {
                     )}
                   </div>
                   {inheritedFromCombined && (
-                    <p style={{ fontSize: 11, color: "#9B9188", marginTop: 8 }}>
+                    <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 8 }}>
                       Theme / Topic, Duration and Language carried over from the combined session above.
                     </p>
                   )}
-                  <label className="flex items-center gap-2" style={{ fontSize: 12, color: "#5A5247", marginTop: 10 }}>
+                  <label className="flex items-center gap-2" style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 10 }}>
                     <input type="checkbox" checked={!!s.combined_session} onChange={e => updateSession(i, "combined_session", e.target.checked)} />
                     Combined session (conducted for all students together)
                   </label>
@@ -391,14 +391,14 @@ export default function SchoolReportsPage() {
                 return [...prev, next];
               })}
               className="flex items-center gap-1.5"
-              style={{ fontSize: 12, fontWeight: 600, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", marginBottom: 24 }}
+              style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", marginBottom: 24 }}
             >
               <Plus size={14} /> Add another session
             </button>
 
             {/* Section 4: Reflection & Observations */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>4. Reflection & Observations</h2>
-            <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 12px" }}>Minimum 50 words each (required to submit final)</p>
+            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>4. Reflection & Observations</h2>
+            <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 12px" }}>Minimum 50 words each (required to submit final)</p>
             <div className="space-y-4 mb-6">
               {OBSERVATION_FIELDS.map(f => {
                 const text = observations[f.key] ?? "";
@@ -406,8 +406,8 @@ export default function SchoolReportsPage() {
                 return (
                   <div key={f.key}>
                     <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
-                      <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247" }}>{f.label} <span style={{ color: "#DC2626" }}>*</span></label>
-                      <span style={{ fontSize: 11, color: wc >= 50 ? "#2A5E3A" : "#9B9188" }}>{wc} / 50 words</span>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)" }}>{f.label} <span style={{ color: "var(--gs-danger)" }}>*</span></label>
+                      <span style={{ fontSize: 11, color: wc >= 50 ? "var(--gs-success)" : "var(--gs-muted)" }}>{wc} / 50 words</span>
                     </div>
                     <textarea
                       value={text}
@@ -422,10 +422,10 @@ export default function SchoolReportsPage() {
             </div>
 
             {/* Section 5: Visit Summary */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>5. Visit Summary</h2>
+            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>5. Visit Summary</h2>
             <div className="space-y-4 mb-2">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Overall Visit Rating</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Overall Visit Rating</label>
                 <select value={rating} onChange={e => setRating(e.target.value)} style={inputStyle}>
                   <option value="">Select...</option>
                   {RATINGS.map(r => <option key={r} value={r}>{r}</option>)}
@@ -433,7 +433,7 @@ export default function SchoolReportsPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Follow-up Visit Required</label>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Follow-up Visit Required</label>
                   <select value={followUpRequired} onChange={e => setFollowUpRequired(e.target.value)} style={inputStyle}>
                     <option value="">Select...</option>
                     <option value="yes">Yes</option>
@@ -442,22 +442,22 @@ export default function SchoolReportsPage() {
                 </div>
                 {followUpRequired === "yes" && (
                   <div>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Suggested Date for Follow-up</label>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Suggested Date for Follow-up</label>
                     <input value={followUpDate} onChange={e => setFollowUpDate(e.target.value)} type="date" style={inputStyle} />
                   </div>
                 )}
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Additional Remarks</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Additional Remarks</label>
                 <textarea value={remarks} onChange={e => setRemarks(e.target.value)} rows={3} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />
               </div>
             </div>
 
-            <label className="flex items-center gap-2" style={{ fontSize: 13, color: "#5A5247", margin: "20px 0 0" }}>
+            <label className="flex items-center gap-2" style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "20px 0 0" }}>
               <input type="checkbox" checked={asFinal} onChange={e => setAsFinal(e.target.checked)} />
               Submit as final (otherwise saved as draft)
             </label>
-            <button type="submit" disabled={saving} style={{ marginTop: 16, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+            <button type="submit" disabled={saving} style={{ marginTop: 16, background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
               {saving ? "Submitting..." : asFinal ? "Submit Final Report" : "Save Draft"}
             </button>
           </form>
@@ -465,28 +465,28 @@ export default function SchoolReportsPage() {
 
         {groupId && (
           loadingGroup ? (
-            <p style={{ color: "#9B9188", fontSize: 14 }}>Loading...</p>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
           ) : reports.length === 0 ? (
-            <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
-              <School className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-              <p style={{ fontSize: 15, color: "#5A5247" }}>No school reports yet for this group.</p>
+            <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+              <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+              <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No school reports yet for this group.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {reports.map(r => {
                 const s = statusColors[r.status] ?? statusColors.draft;
                 return (
-                  <div key={r.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "18px 22px" }}>
+                  <div key={r.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "18px 22px" }}>
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F" }}>{r.school_name}</span>
-                      <span style={{ fontSize: 12, color: "#9B9188" }}>by {r.submitter?.name ?? "Unknown"}</span>
+                      <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{r.school_name}</span>
+                      <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>by {r.submitter?.name ?? "Unknown"}</span>
                       <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
                         {r.status}
                       </span>
                     </div>
-                    <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 8px" }}>{new Date(r.created_at).toLocaleDateString()}</p>
+                    <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 8px" }}>{new Date(r.created_at).toLocaleDateString()}</p>
                     {r.overall_rating && (
-                      <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>Rating: <strong>{r.overall_rating}</strong></p>
+                      <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>Rating: <strong>{r.overall_rating}</strong></p>
                     )}
                   </div>
                 );

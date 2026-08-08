@@ -11,10 +11,10 @@ const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "9px 12px",
   fontSize: 14,
-  border: "1.5px solid #E4DFD1",
+  border: "1.5px solid var(--border)",
   borderRadius: 7,
   background: "white",
-  color: "#19140F",
+  color: "var(--foreground)",
   outline: "none",
   boxSizing: "border-box",
 };
@@ -22,7 +22,7 @@ const inputStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
   fontWeight: 600,
-  color: "#5A5247",
+  color: "var(--gs-text-secondary)",
   display: "block",
   marginBottom: 5,
   letterSpacing: "0.03em",
@@ -64,12 +64,12 @@ function FileImageInput({
   return (
     <div className="space-y-2">
       <div className="flex gap-4 mb-2">
-        <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "#4A55BE" : "#5A5247", fontWeight: 600 }}>
-          <input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "#4A55BE" }} />
+        <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "var(--gs-accent)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
+          <input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "var(--gs-accent)" }} />
           Upload File
         </label>
-        <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "#4A55BE" : "#5A5247", fontWeight: 600 }}>
-          <input type="radio" checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "#4A55BE" }} />
+        <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "var(--gs-accent)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
+          <input type="radio" checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "var(--gs-accent)" }} />
           Direct Link
         </label>
       </div>
@@ -83,7 +83,7 @@ function FileImageInput({
             onChange={handleFileChange}
             style={{ ...inputStyle, padding: "7px 12px", flex: 1 }}
           />
-          {uploading && <span className="text-xs text-[#9B9188] self-center">Uploading...</span>}
+          {uploading && <span className="text-xs text-[var(--gs-muted)] self-center">Uploading...</span>}
         </div>
       ) : (
         <input
@@ -96,11 +96,11 @@ function FileImageInput({
       )}
 
       {value && (
-        <p style={{ fontSize: 11, color: "#2A5E3A", margin: "4px 0 0" }}>
-          ✓ Selected: <a href={value} target="_blank" rel="noopener noreferrer" style={{ color: "#4A55BE", textDecoration: "underline" }}>View File</a>
+        <p style={{ fontSize: 11, color: "var(--gs-success)", margin: "4px 0 0" }}>
+          ✓ Selected: <a href={value} target="_blank" rel="noopener noreferrer" style={{ color: "var(--gs-accent)", textDecoration: "underline" }}>View File</a>
         </p>
       )}
-      {error && <p style={{ fontSize: 11, color: "#B8381E", margin: "4px 0 0" }}>{error}</p>}
+      {error && <p style={{ fontSize: 11, color: "var(--gs-danger-alt)", margin: "4px 0 0" }}>{error}</p>}
     </div>
   );
 }
@@ -154,8 +154,8 @@ function FieldRenderer({
       return (
         <div className="space-y-2">
           {field.options?.map((o) => (
-            <label key={o} className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 14, color: "#19140F" }}>
-              <input type="radio" {...register(field.id)} value={o} style={{ accentColor: "#4A55BE" }} />
+            <label key={o} className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 14, color: "var(--foreground)" }}>
+              <input type="radio" {...register(field.id)} value={o} style={{ accentColor: "var(--gs-accent)" }} />
               {o}
             </label>
           ))}
@@ -166,8 +166,8 @@ function FieldRenderer({
       return (
         <div className="space-y-2">
           {field.options?.map((o) => (
-            <label key={o} className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 14, color: "#19140F" }}>
-              <input type="checkbox" {...register(field.id)} value={o} style={{ accentColor: "#4A55BE" }} />
+            <label key={o} className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 14, color: "var(--foreground)" }}>
+              <input type="checkbox" {...register(field.id)} value={o} style={{ accentColor: "var(--gs-accent)" }} />
               {o}
             </label>
           ))}
@@ -220,23 +220,23 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
 
   if (submitted) {
     return (
-      <div className="rounded-xl text-center py-14" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-        <div style={{ fontSize: 32, color: "#2A5E3A", marginBottom: 10 }}>✓</div>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: "#19140F", marginBottom: 6 }}>Submitted</h3>
-        <p style={{ fontSize: 14, color: "#9B9188" }}>Your response has been recorded.</p>
+      <div className="rounded-xl text-center py-14" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <div style={{ fontSize: 32, color: "var(--gs-success)", marginBottom: 10 }}>✓</div>
+        <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--foreground)", marginBottom: 6 }}>Submitted</h3>
+        <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>Your response has been recorded.</p>
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="rounded-xl p-6" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+      <div className="rounded-xl p-6" style={{ background: "white", border: "1px solid var(--border)" }}>
         <div className="space-y-5">
           {form.fields.map((field) => (
             <div key={field.id}>
               <label style={labelStyle}>
                 {field.label}
-                {field.required && <span style={{ color: "#B8381E", marginLeft: 3 }}>*</span>}
+                {field.required && <span style={{ color: "var(--gs-danger-alt)", marginLeft: 3 }}>*</span>}
               </label>
               <FieldRenderer
                 field={field}
@@ -250,7 +250,7 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
         </div>
 
         {error && (
-          <div className="mt-4 rounded-lg px-4 py-3" style={{ background: "rgba(184,56,30,0.07)", border: "1px solid rgba(184,56,30,0.2)", fontSize: 13, color: "#B8381E" }}>
+          <div className="mt-4 rounded-lg px-4 py-3" style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-alt-rgb), 0.2)", fontSize: 13, color: "var(--gs-danger-alt)" }}>
             {error}
           </div>
         )}
@@ -258,7 +258,7 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
         <button
           type="submit"
           disabled={saving}
-          style={{ marginTop: 20, width: "100%", background: saving ? "#C8C4BC" : "#19140F", color: "white", fontSize: 14, fontWeight: 600, padding: "11px 0", borderRadius: 7, border: "none", cursor: saving ? "not-allowed" : "pointer" }}
+          style={{ marginTop: 20, width: "100%", background: saving ? "#C8C4BC" : "var(--foreground)", color: "white", fontSize: 14, fontWeight: 600, padding: "11px 0", borderRadius: 7, border: "none", cursor: saving ? "not-allowed" : "pointer" }}
         >
           {saving ? "Submitting..." : "Submit"}
         </button>

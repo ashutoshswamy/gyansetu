@@ -54,13 +54,13 @@ function ReceiptUpload({ value, onChange }: { value: string; onChange: (url: str
 
   return (
     <div style={{ position: "relative" }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Receipt</label>
+      <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Receipt</label>
       {value ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", border: "1.5px solid #E4DFD1", borderRadius: 6, background: "#FBF7EC" }}>
-          <a href={value} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#4A55BE", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: 6, background: "var(--background)" }}>
+          <a href={value} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "var(--gs-accent)", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {fileName}
           </a>
-          <button type="button" onClick={() => onChange("")} style={{ fontSize: 12, color: "#DC2626", background: "transparent", border: "none", cursor: "pointer" }}>
+          <button type="button" onClick={() => onChange("")} style={{ fontSize: 12, color: "var(--gs-danger)", background: "transparent", border: "none", cursor: "pointer" }}>
             Remove
           </button>
         </div>
@@ -69,7 +69,7 @@ function ReceiptUpload({ value, onChange }: { value: string; onChange: (url: str
           type="button"
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
-          style={{ width: "100%", padding: "10px 12px", fontSize: 13, fontWeight: 600, textAlign: "left", color: uploading ? "#9B9188" : "#19140F", background: uploading ? "#F0EEE6" : "#FBF7EC", border: "1.5px dashed #E4DFD1", borderRadius: 6, cursor: uploading ? "not-allowed" : "pointer" }}
+          style={{ width: "100%", padding: "10px 12px", fontSize: 13, fontWeight: 600, textAlign: "left", color: uploading ? "var(--gs-muted)" : "var(--foreground)", background: uploading ? "#F0EEE6" : "var(--background)", border: "1.5px dashed var(--border)", borderRadius: 6, cursor: uploading ? "not-allowed" : "pointer" }}
         >
           {uploading ? "Uploading…" : "+ Upload receipt (image or PDF)"}
         </button>
@@ -81,7 +81,7 @@ function ReceiptUpload({ value, onChange }: { value: string; onChange: (url: str
         style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", border: 0 }}
         onChange={handleFileChange}
       />
-      {uploadError && <p style={{ fontSize: 12, color: "#DC2626", marginTop: 5 }}>{uploadError}</p>}
+      {uploadError && <p style={{ fontSize: 12, color: "var(--gs-danger)", marginTop: 5 }}>{uploadError}</p>}
     </div>
   );
 }
@@ -101,8 +101,8 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
   };
 
   const subOptions = SUBCATEGORY_OPTIONS[category];
@@ -153,17 +153,17 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20, marginBottom: 24 }}>
-      <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 14px" }}>{editExpense ? "Resubmit Expense" : "Submit Expense"}</h2>
+    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20, marginBottom: 24 }}>
+      <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>{editExpense ? "Resubmit Expense" : "Submit Expense"}</h2>
       {error && (
-        <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "#DC2626" }}>
+        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "var(--gs-danger)" }}>
           {error}
         </div>
       )}
       <div className="space-y-3">
         {!groupId && (
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group <span style={{ color: "#DC2626" }}>*</span></label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></label>
             <select name="group_id" required style={inputStyle}>
               <option value="">Select group...</option>
               {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
@@ -172,16 +172,16 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
         )}
 
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Category <span style={{ color: "#DC2626" }}>*</span></label>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Category <span style={{ color: "var(--gs-danger)" }}>*</span></label>
           <select name="category" required value={category} onChange={e => setCategory(e.target.value as ExpenseInput["category"])} style={inputStyle}>
             {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
           </select>
-          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>{currentCategory.hint}</p>
+          <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4 }}>{currentCategory.hint}</p>
         </div>
 
         {subOptions ? (
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Type <span style={{ color: "#DC2626" }}>*</span></label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Type <span style={{ color: "var(--gs-danger)" }}>*</span></label>
             <select name="subcategory" required defaultValue={editExpense?.subcategory ?? ""} style={inputStyle}>
               <option value="" disabled>Select type...</option>
               {subOptions.map(o => <option key={o} value={o}>{o}</option>)}
@@ -189,8 +189,8 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
           </div>
         ) : (
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>
-              {category === "materials" ? "Items Purchased" : "Purpose of Expense"} <span style={{ color: "#DC2626" }}>*</span>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>
+              {category === "materials" ? "Items Purchased" : "Purpose of Expense"} <span style={{ color: "var(--gs-danger)" }}>*</span>
             </label>
             <input
               name="subcategory"
@@ -205,40 +205,40 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
 
         {needsVolunteerCount && (
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Number of Volunteers <span style={{ color: "#DC2626" }}>*</span></label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Number of Volunteers <span style={{ color: "var(--gs-danger)" }}>*</span></label>
             <input name="volunteer_count" type="number" min="1" step="1" required defaultValue={editExpense?.volunteer_count ?? ""} placeholder="How many volunteers?" style={inputStyle} />
           </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "#DC2626" }}>*</span></label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "var(--gs-danger)" }}>*</span></label>
             <input name="amount" type="number" min="0" step="0.01" required defaultValue={editExpense?.amount ?? ""} placeholder="Enter amount" style={inputStyle} />
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Date <span style={{ color: "#DC2626" }}>*</span></label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Date <span style={{ color: "var(--gs-danger)" }}>*</span></label>
             <input name="expense_date" type="date" required defaultValue={editExpense?.expense_date ?? new Date().toISOString().split("T")[0]} style={inputStyle} />
           </div>
         </div>
 
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Name of Person / Vendor</label>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Name of Person / Vendor</label>
           <input name="vendor_name" type="text" defaultValue={editExpense?.vendor_name ?? ""} placeholder="Who was paid?" style={inputStyle} />
         </div>
 
         <input type="hidden" name="bill_url" value={billUrl} />
         <ReceiptUpload value={billUrl} onChange={setBillUrl} />
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Additional Notes</label>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Additional Notes</label>
           <textarea name="description" rows={2} defaultValue={editExpense?.description ?? ""} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />
         </div>
       </div>
       <div className="flex gap-3">
-        <button type="submit" disabled={saving} style={{ marginTop: 14, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+        <button type="submit" disabled={saving} style={{ marginTop: 14, background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
           {saving ? "Saving..." : editExpense ? "Resubmit Expense" : "Submit Expense"}
         </button>
         {editExpense && (
-          <button type="button" onClick={onDone} style={{ marginTop: 14, background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+          <button type="button" onClick={onDone} style={{ marginTop: 14, background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
             Cancel
           </button>
         )}

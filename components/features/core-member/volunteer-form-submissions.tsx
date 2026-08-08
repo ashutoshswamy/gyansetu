@@ -22,7 +22,7 @@ export function VolunteerFormSubmissions({ submissions }: { submissions: Submiss
         const fields = form?.fields ?? [];
         const open = openId === s.id;
         return (
-          <div key={s.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden" }}>
+          <div key={s.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
             <button
               type="button"
               onClick={() => setOpenId(open ? null : s.id)}
@@ -31,18 +31,18 @@ export function VolunteerFormSubmissions({ submissions }: { submissions: Submiss
               style={{ padding: "12px 16px", background: "none", border: "none", cursor: fields.length ? "pointer" : "default", textAlign: "left" }}
             >
               <div className="flex items-center gap-2">
-                {fields.length > 0 ? (open ? <ChevronDown size={14} style={{ color: "#9B9188" }} /> : <ChevronRight size={14} style={{ color: "#9B9188" }} />) : <span style={{ width: 14 }} />}
-                <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{form?.title ?? "Form"}</span>
+                {fields.length > 0 ? (open ? <ChevronDown size={14} style={{ color: "var(--gs-muted)" }} /> : <ChevronRight size={14} style={{ color: "var(--gs-muted)" }} />) : <span style={{ width: 14 }} />}
+                <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{form?.title ?? "Form"}</span>
               </div>
-              <span style={{ fontSize: 12, color: "#9B9188" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
+              <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
             </button>
 
             {open && fields.length > 0 && (
               <div className="space-y-2" style={{ padding: "0 16px 14px" }}>
                 {fields.map((field) => (
                   <div key={field.id}>
-                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>{field.label}</p>
-                    <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{fieldValue(s.data?.[field.id])}</p>
+                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 2 }}>{field.label}</p>
+                    <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0, whiteSpace: "pre-wrap" }}>{fieldValue(s.data?.[field.id])}</p>
                   </div>
                 ))}
               </div>

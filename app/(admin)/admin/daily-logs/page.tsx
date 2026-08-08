@@ -27,40 +27,40 @@ export default async function AdminDailyLogsPage() {
   const logs = (await getAllDailyLogs()) as DailyLogRow[];
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Daily Logs</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{logs.length} entries across all volunteers</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Daily Logs</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{logs.length} entries across all volunteers</p>
         </div>
 
         <div className="space-y-3">
           {logs.length === 0 && (
-            <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
-              <BookOpen className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-              <p style={{ fontSize: 15, color: "#5A5247" }}>No daily log entries yet.</p>
+            <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+              <BookOpen className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+              <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No daily log entries yet.</p>
             </div>
           )}
           {logs.map((log) => (
-            <div key={log.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "16px 20px" }}>
+            <div key={log.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px" }}>
               <div className="flex items-start justify-between gap-4 mb-2 flex-wrap">
                 <div>
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F" }}>{log.users?.name ?? "Unknown volunteer"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#4A55BE", background: "rgba(74,85,190,0.08)" }}>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{log.users?.name ?? "Unknown volunteer"}</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
                       {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
                     </span>
                   </div>
-                  <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>
+                  <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                     {log.users?.email} {log.tours?.title && `· ${log.tours.title}`}
                   </p>
                 </div>
               </div>
               {isDelayed(log) && (
-                <div className="flex items-center gap-2" style={{ background: "rgba(245,165,32,0.08)", border: "1px solid rgba(245,165,32,0.25)", borderRadius: 6, padding: "8px 12px", margin: "10px 0" }}>
-                  <AlertTriangle size={14} style={{ color: "#F5A520", flexShrink: 0 }} />
-                  <p style={{ fontSize: 12, color: "#A8641C", margin: 0 }}>
+                <div className="flex items-center gap-2" style={{ background: "rgba(var(--gs-warning-rgb), 0.08)", border: "1px solid rgba(var(--gs-warning-rgb), 0.25)", borderRadius: 6, padding: "8px 12px", margin: "10px 0" }}>
+                  <AlertTriangle size={14} style={{ color: "var(--gs-warning)", flexShrink: 0 }} />
+                  <p style={{ fontSize: 12, color: "var(--gs-warning-alt)", margin: 0 }}>
                     Delayed entry — submitted on {new Date(log.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}, not the same day as the log date.
                   </p>
                 </div>
@@ -68,8 +68,8 @@ export default async function AdminDailyLogsPage() {
               <div className="space-y-2 mt-3">
                 {QUESTIONS.map((q, i) => (
                   <div key={q.key}>
-                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>{i + 1}. {q.label}</p>
-                    <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{log[q.key]}</p>
+                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 2 }}>{i + 1}. {q.label}</p>
+                    <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0, whiteSpace: "pre-wrap" }}>{log[q.key]}</p>
                   </div>
                 ))}
               </div>

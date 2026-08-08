@@ -8,14 +8,14 @@ export default async function AdminCertificateDetailPage({ params }: { params: P
   const cert = await getCertificate(id);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <Link href="/admin/certificates" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "#5A5247", marginBottom: 12 }}>
+          <Link href="/admin/certificates" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--gs-text-secondary)", marginBottom: 12 }}>
             <ArrowLeft size={14} /> Back to Certificates
           </Link>
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Certificate</h1>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Certificate</h1>
         </div>
 
         <CertificatePanel

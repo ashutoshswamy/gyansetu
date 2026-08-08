@@ -4,8 +4,8 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
-  draft:     { color: "#9B9188", bg: "rgba(155,145,136,0.10)" },
-  submitted: { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
+  draft:     { color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.10)" },
+  submitted: { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
 };
 
 interface SchoolSession {
@@ -64,7 +64,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
   const [open, setOpen] = useState(false);
 
   return (
-    <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden" }}>
+    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
@@ -73,13 +73,13 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
         style={{ padding: "10px 14px", background: "none", border: "none", cursor: reports.length ? "pointer" : "default", textAlign: "left" }}
       >
         <div className="flex items-center gap-2">
-          {reports.length > 0 ? (open ? <ChevronDown size={14} style={{ color: "#9B9188" }} /> : <ChevronRight size={14} style={{ color: "#9B9188" }} />) : <span style={{ width: 14 }} />}
+          {reports.length > 0 ? (open ? <ChevronDown size={14} style={{ color: "var(--gs-muted)" }} /> : <ChevronRight size={14} style={{ color: "var(--gs-muted)" }} />) : <span style={{ width: 14 }} />}
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{name}</div>
-            {email && <div style={{ fontSize: 11, color: "#9B9188" }}>{email}</div>}
+            <div style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{name}</div>
+            {email && <div style={{ fontSize: 11, color: "var(--gs-muted)" }}>{email}</div>}
           </div>
         </div>
-        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: reports.length ? "#2A5E3A" : "#9B9188", background: reports.length ? "rgba(42,94,58,0.08)" : "rgba(155,145,136,0.1)" }}>
+        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: reports.length ? "var(--gs-success)" : "var(--gs-muted)", background: reports.length ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-muted-rgb), 0.1)" }}>
           {reports.length === 0 ? "No reports" : `${reports.length} report${reports.length > 1 ? "s" : ""}`}
         </span>
       </button>
@@ -90,13 +90,13 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
             const s = statusColors[r.status] ?? statusColors.draft;
             const sessions = r.sessions ?? [];
             return (
-              <div key={r.id} style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 16px" }}>
+              <div key={r.id} style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 16px" }}>
                 <div className="flex items-start justify-between gap-4 mb-2 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span style={{ fontSize: 14, fontWeight: 600, color: "#19140F" }}>{r.school_name}</span>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>{r.school_name}</span>
                       {r.school_type && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#4A55BE", background: "rgba(74,85,190,0.08)" }}>
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
                           {r.school_type}
                         </span>
                       )}
@@ -104,7 +104,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                         {r.status}
                       </span>
                     </div>
-                    <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>
+                    <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                       {[r.village_town, r.taluka_tehsil, r.district, r.state].filter(Boolean).join(", ")}
                       {r.pincode ? ` - ${r.pincode}` : ""}
                       {" · "}{new Date(r.created_at).toLocaleDateString()}
@@ -112,7 +112,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4 mb-3" style={{ fontSize: 12, color: "#5A5247" }}>
+                <div className="flex flex-wrap gap-4 mb-3" style={{ fontSize: 12, color: "var(--gs-text-secondary)" }}>
                   {r.visit_date && <span>Visit Date: <strong>{new Date(r.visit_date).toLocaleDateString()}</strong></span>}
                   {r.location_category && <span>Location: <strong>{r.location_category}</strong></span>}
                   {r.medium_of_instruction && <span>Medium: <strong>{r.medium_of_instruction}</strong></span>}
@@ -120,7 +120,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                 </div>
 
                 {(r.principal_name || r.coordinator_name) && (
-                  <div className="flex flex-wrap gap-4 mb-3" style={{ fontSize: 12, color: "#5A5247" }}>
+                  <div className="flex flex-wrap gap-4 mb-3" style={{ fontSize: 12, color: "var(--gs-text-secondary)" }}>
                     {r.principal_name && <span>Principal: <strong>{r.principal_name}</strong>{r.principal_mobile ? ` (${r.principal_mobile})` : ""}</span>}
                     {r.coordinator_name && <span>Coordinator: <strong>{r.coordinator_name}</strong>{r.coordinator_mobile ? ` (${r.coordinator_mobile})` : ""}</span>}
                   </div>
@@ -128,10 +128,10 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
 
                 {sessions.length > 0 && (
                   <div className="mb-3">
-                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Sessions Conducted</p>
+                    <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 4 }}>Sessions Conducted</p>
                     <div className="space-y-1">
                       {sessions.map((sess, i) => (
-                        <p key={i} style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
+                        <p key={i} style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>
                           {[sess.standard, sess.division].filter(Boolean).join("-") || "Class -"} · {sess.theme_topic || "-"} · {sess.num_students ?? "-"} students · {sess.duration_minutes ?? "-"} min{sess.language_used ? ` · ${sess.language_used}` : ""}{sess.combined_session ? " · Combined" : ""}
                         </p>
                       ))}
@@ -140,8 +140,8 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                 )}
 
                 {r.volunteer_names && r.volunteer_names.length > 0 && (
-                  <p style={{ fontSize: 12, color: "#5A5247", margin: "0 0 12px" }}>
-                    <span style={{ fontWeight: 600, color: "#9B9188" }}>Volunteers: </span>{r.volunteer_names.join(", ")}
+                  <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 12px" }}>
+                    <span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Volunteers: </span>{r.volunteer_names.join(", ")}
                   </p>
                 )}
 
@@ -151,26 +151,26 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                     if (!val) return null;
                     return (
                       <div key={f.key}>
-                        <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>{f.label}</p>
-                        <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{val}</p>
+                        <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 2 }}>{f.label}</p>
+                        <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0, whiteSpace: "pre-wrap" }}>{val}</p>
                       </div>
                     );
                   })}
 
                   {r.overall_rating && (
-                    <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
-                      <span style={{ fontWeight: 600, color: "#9B9188" }}>Overall Rating: </span>{r.overall_rating}
+                    <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>
+                      <span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Overall Rating: </span>{r.overall_rating}
                     </p>
                   )}
                   {r.follow_up_required !== undefined && r.follow_up_required !== null && (
-                    <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
-                      <span style={{ fontWeight: 600, color: "#9B9188" }}>Follow-up Required: </span>{r.follow_up_required ? "Yes" : "No"}
+                    <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>
+                      <span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Follow-up Required: </span>{r.follow_up_required ? "Yes" : "No"}
                     </p>
                   )}
                   {r.additional_remarks && (
                     <div>
-                      <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>Additional Remarks</p>
-                      <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{r.additional_remarks}</p>
+                      <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 2 }}>Additional Remarks</p>
+                      <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0, whiteSpace: "pre-wrap" }}>{r.additional_remarks}</p>
                     </div>
                   )}
                 </div>

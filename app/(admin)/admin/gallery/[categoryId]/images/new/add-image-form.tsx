@@ -42,7 +42,7 @@ export default function AddImageForm({ categoryId }: Props) {
   return (
     <div style={{
       background: "white",
-      border: "1px solid #E4DFD1",
+      border: "1px solid var(--border)",
       borderRadius: 12,
       padding: 28,
     }}>
@@ -65,7 +65,7 @@ export default function AddImageForm({ categoryId }: Props) {
             display: "block",
             fontSize: 13,
             fontWeight: 600,
-            color: "#19140F",
+            color: "var(--foreground)",
             marginBottom: 6,
           }}>
             Caption
@@ -79,9 +79,9 @@ export default function AddImageForm({ categoryId }: Props) {
               width: "100%",
               padding: "9px 12px",
               fontSize: 14,
-              color: "#19140F",
-              background: "#FBF7EC",
-              border: "1.5px solid #E4DFD1",
+              color: "var(--foreground)",
+              background: "var(--background)",
+              border: "1.5px solid var(--border)",
               borderRadius: 6,
               outline: "none",
               boxSizing: "border-box",
@@ -109,12 +109,12 @@ export default function AddImageForm({ categoryId }: Props) {
             onClick={() => router.back()}
             style={{
               background: "transparent",
-              color: "#5A5247",
+              color: "var(--gs-text-secondary)",
               fontSize: 13,
               fontWeight: 500,
               padding: "8px 18px",
               borderRadius: 6,
-              border: "1.5px solid #E4DFD1",
+              border: "1.5px solid var(--border)",
               cursor: "pointer",
             }}
           >
@@ -124,7 +124,7 @@ export default function AddImageForm({ categoryId }: Props) {
             type="submit"
             disabled={loading || !url.trim()}
             style={{
-              background: loading || !url.trim() ? "#A0A7DC" : "#4A55BE",
+              background: loading || !url.trim() ? "#A0A7DC" : "var(--gs-accent)",
               color: "white",
               fontSize: 13,
               fontWeight: 600,

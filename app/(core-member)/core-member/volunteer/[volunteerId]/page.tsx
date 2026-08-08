@@ -10,16 +10,16 @@ import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/
 import { TOUR_REPORT_OBSERVATION_FIELDS, TOUR_REPORT_LOGISTICS_LABELS } from "@/lib/report-field-labels";
 import type { DemoEvaluation, FormSubmission, FormField, TourReportHost, VolunteerObservation } from "@/types";
 
-const card: React.CSSProperties = { background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20 };
+const card: React.CSSProperties = { background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20 };
 const emptyCard: React.CSSProperties = { ...card, textAlign: "center", padding: "24px 20px" };
 
 function SectionTitle({ icon: Icon, children, shared }: { icon: React.ElementType; children: React.ReactNode; shared?: boolean }) {
   return (
     <div className="flex items-center gap-2 mb-3">
-      <Icon className="w-4 h-4" style={{ color: "#4A55BE" }} />
-      <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.04em", color: "#19140F", margin: 0 }}>{children}</p>
+      <Icon className="w-4 h-4" style={{ color: "var(--gs-accent)" }} />
+      <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.04em", color: "var(--foreground)", margin: 0 }}>{children}</p>
       {shared && (
-        <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 4, color: "#A8641C", background: "rgba(168,100,28,0.08)" }}>
+        <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 4, color: "var(--gs-warning-alt)", background: "rgba(var(--gs-warning-alt-rgb), 0.08)" }}>
           Shared with your group
         </span>
       )}
@@ -47,16 +47,16 @@ export default async function CoreMemberVolunteerDetailPage({
   const { data: group } = await db.from("tour_groups").select("tour_id").eq("id", groupId).maybeSingle();
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-3xl mx-auto">
-        <Link href="/core-member/dashboard" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "#9B9188" }}>
+        <Link href="/core-member/dashboard" className="inline-flex items-center gap-1.5 mb-6 text-sm" style={{ color: "var(--gs-muted)" }}>
           <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
         </Link>
 
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Core Member Panel</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>{volunteer.name}</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{volunteer.email}</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Core Member Panel</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{volunteer.name}</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{volunteer.email}</p>
         </div>
 
         <div className="space-y-8">
@@ -81,11 +81,11 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={Wallet}>Registration Fee</SectionTitle>
             {!detail.registrationFee ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No registration fee record.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No registration fee record.</p></div>
             ) : (
               <div style={card} className="flex items-center justify-between">
-                <span style={{ fontSize: 14, fontWeight: 600, color: "#19140F", textTransform: "capitalize" }}>{detail.registrationFee.status}</span>
-                <span style={{ fontSize: 14, fontFamily: "var(--font-geist-mono), monospace", color: "#2A5E3A" }}>₹{detail.registrationFee.amount}</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", textTransform: "capitalize" }}>{detail.registrationFee.status}</span>
+                <span style={{ fontSize: 14, fontFamily: "var(--font-geist-mono), monospace", color: "var(--gs-success)" }}>₹{detail.registrationFee.amount}</span>
               </div>
             )}
           </section>
@@ -94,16 +94,16 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={GraduationCap}>Workshops ({detail.workshopAttendance.length})</SectionTitle>
             {detail.workshopAttendance.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No workshop attendance recorded.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No workshop attendance recorded.</p></div>
             ) : (
               <div className="space-y-2">
                 {detail.workshopAttendance.map((w) => (
                   <div key={w.id} style={card} className="flex items-center justify-between">
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{w.workshop?.title}</p>
-                      <p style={{ fontSize: 12, color: "#9B9188" }}>{w.workshop?.workshop_date ? new Date(w.workshop.workshop_date).toLocaleDateString() : ""}</p>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{w.workshop?.title}</p>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{w.workshop?.workshop_date ? new Date(w.workshop.workshop_date).toLocaleDateString() : ""}</p>
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "#4A55BE" }}>{w.attendance_status}</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{w.attendance_status}</span>
                   </div>
                 ))}
               </div>
@@ -114,7 +114,7 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={FileText}>Tasks &amp; Forms ({detail.formSubmissions.length})</SectionTitle>
             {detail.formSubmissions.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No forms submitted.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No forms submitted.</p></div>
             ) : (
               <VolunteerFormSubmissions
                 submissions={detail.formSubmissions as unknown as (FormSubmission & { dynamic_forms: { title: string; fields?: FormField[] } | null })[]}
@@ -126,16 +126,16 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={CalendarDays}>Events ({detail.eventRsvps.length})</SectionTitle>
             {detail.eventRsvps.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No event RSVPs.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No event RSVPs.</p></div>
             ) : (
               <div className="space-y-2">
                 {detail.eventRsvps.map((r) => (
                   <div key={r.id} style={card} className="flex items-center justify-between">
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{r.event?.title}</p>
-                      <p style={{ fontSize: 12, color: "#9B9188" }}>{r.event?.event_date ? new Date(r.event.event_date).toLocaleDateString() : ""}</p>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{r.event?.title}</p>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{r.event?.event_date ? new Date(r.event.event_date).toLocaleDateString() : ""}</p>
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "#4A55BE" }}>{r.rsvp_status}</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{r.rsvp_status}</span>
                   </div>
                 ))}
               </div>
@@ -146,15 +146,15 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={BookOpen}>Daily Log ({detail.dailyLogs.length})</SectionTitle>
             {detail.dailyLogs.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No daily logs for this tour.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No daily logs for this tour.</p></div>
             ) : (
               <div className="space-y-2">
                 {detail.dailyLogs.map((log) => (
                   <div key={log.id} style={card}>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 6 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 6 }}>
                       {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
                     </p>
-                    <p style={{ fontSize: 13, color: "#5A5247" }}><b>Activities:</b> {log.activities_conducted}</p>
+                    <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}><b>Activities:</b> {log.activities_conducted}</p>
                   </div>
                 ))}
               </div>
@@ -175,13 +175,13 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={Plane} shared>Travel ({detail.travelTickets.length})</SectionTitle>
             {detail.travelTickets.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No travel tickets for this group.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No travel tickets for this group.</p></div>
             ) : (
               <div className="space-y-2">
                 {detail.travelTickets.map((t) => (
                   <div key={t.id} style={card}>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{t.train_name ?? t.train_number ?? "Travel ticket"}</p>
-                    <p style={{ fontSize: 12, color: "#9B9188" }}>{t.departure_station} → {t.arrival_station}</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{t.train_name ?? t.train_number ?? "Travel ticket"}</p>
+                    <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{t.departure_station} → {t.arrival_station}</p>
                   </div>
                 ))}
               </div>
@@ -192,16 +192,16 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={Receipt}>Expenses ({detail.expenses.length})</SectionTitle>
             {detail.expenses.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No expenses submitted.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No expenses submitted.</p></div>
             ) : (
               <div className="space-y-2">
                 {detail.expenses.map((e) => (
                   <div key={e.id} style={card} className="flex items-center justify-between">
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{e.category}{e.subcategory ? ` · ${e.subcategory}` : ""}</p>
-                      <p style={{ fontSize: 12, color: "#9B9188", textTransform: "capitalize" }}>{e.status}</p>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{e.category}{e.subcategory ? ` · ${e.subcategory}` : ""}</p>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)", textTransform: "capitalize" }}>{e.status}</p>
                     </div>
-                    <span style={{ fontSize: 13, fontFamily: "var(--font-geist-mono), monospace", color: "#2A5E3A" }}>₹{e.amount}</span>
+                    <span style={{ fontSize: 13, fontFamily: "var(--font-geist-mono), monospace", color: "var(--gs-success)" }}>₹{e.amount}</span>
                   </div>
                 ))}
               </div>
@@ -212,7 +212,7 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={ClipboardList}>Tour Reports ({detail.tourReports.length})</SectionTitle>
             {detail.tourReports.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No tour reports submitted.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No tour reports submitted.</p></div>
             ) : (
               <div className="space-y-2">
                 {detail.tourReports.map((r) => {
@@ -222,16 +222,16 @@ export default async function CoreMemberVolunteerDetailPage({
                   return (
                     <div key={r.id} style={card}>
                       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>{r.location_name ?? r.tour?.title ?? "Tour report"}</span>
-                        <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "#4A55BE" }}>{r.status}</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{r.location_name ?? r.tour?.title ?? "Tour report"}</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{r.status}</span>
                       </div>
 
                       {hosts.length > 0 && (
                         <div className="mb-3">
-                          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Local Organisations &amp; Hosts</p>
+                          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 4 }}>Local Organisations &amp; Hosts</p>
                           <div className="space-y-1">
                             {hosts.map((h, i) => (
-                              <p key={i} style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
+                              <p key={i} style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>
                                 {h.organisation || "-"} · {h.contact_person_name || "-"} ({h.designation || "-"}) · {h.mobile_number || "-"} · {[h.village_city, h.block_taluk, h.district, h.state].filter(Boolean).join(", ")}
                               </p>
                             ))}
@@ -241,10 +241,10 @@ export default async function CoreMemberVolunteerDetailPage({
 
                       {Object.keys(scores).length > 0 && (
                         <div className="mb-3">
-                          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 4 }}>Logistics Rating</p>
+                          <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 4 }}>Logistics Rating</p>
                           <div className="flex flex-wrap gap-3">
                             {Object.entries(scores).filter(([, v]) => v).map(([k, v]) => (
-                              <span key={k} style={{ fontSize: 12, color: "#5A5247" }}>{TOUR_REPORT_LOGISTICS_LABELS[k] ?? k}: <strong>{v}/10</strong></span>
+                              <span key={k} style={{ fontSize: 12, color: "var(--gs-text-secondary)" }}>{TOUR_REPORT_LOGISTICS_LABELS[k] ?? k}: <strong>{v}/10</strong></span>
                             ))}
                           </div>
                         </div>
@@ -256,34 +256,34 @@ export default async function CoreMemberVolunteerDetailPage({
                           if (!val) return null;
                           return (
                             <div key={f.key}>
-                              <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>{f.label}</p>
-                              <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{val}</p>
+                              <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 2 }}>{f.label}</p>
+                              <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0, whiteSpace: "pre-wrap" }}>{val}</p>
                             </div>
                           );
                         })}
                         {r.overall_recommendation && (
-                          <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
-                            <span style={{ fontWeight: 600, color: "#9B9188" }}>Recommendation: </span>{r.overall_recommendation}
+                          <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>
+                            <span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Recommendation: </span>{r.overall_recommendation}
                           </p>
                         )}
                         {fields.suitable_residential_camps !== undefined && fields.suitable_residential_camps !== null && (
-                          <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
-                            <span style={{ fontWeight: 600, color: "#9B9188" }}>Suitable for Residential Camps: </span>{fields.suitable_residential_camps ? "Yes" : "No"}
+                          <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>
+                            <span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Suitable for Residential Camps: </span>{fields.suitable_residential_camps ? "Yes" : "No"}
                           </p>
                         )}
                         {fields.follow_up_required !== undefined && fields.follow_up_required !== null && (
-                          <p style={{ fontSize: 13, color: "#19140F", margin: 0 }}>
-                            <span style={{ fontWeight: 600, color: "#9B9188" }}>Follow-up Required: </span>{fields.follow_up_required ? "Yes" : "No"}
+                          <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>
+                            <span style={{ fontWeight: 600, color: "var(--gs-muted)" }}>Follow-up Required: </span>{fields.follow_up_required ? "Yes" : "No"}
                           </p>
                         )}
                         {r.additional_remarks && (
                           <div>
-                            <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188", marginBottom: 2 }}>Additional Remarks</p>
-                            <p style={{ fontSize: 13, color: "#19140F", margin: 0, whiteSpace: "pre-wrap" }}>{r.additional_remarks}</p>
+                            <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 2 }}>Additional Remarks</p>
+                            <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0, whiteSpace: "pre-wrap" }}>{r.additional_remarks}</p>
                           </div>
                         )}
                         {r.report_file_url && (
-                          <a href={r.report_file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#4A55BE", display: "inline-block" }}>
+                          <a href={r.report_file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "var(--gs-accent)", display: "inline-block" }}>
                             View report file
                           </a>
                         )}
@@ -299,7 +299,7 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={ImageIcon}>Media ({detail.media.length})</SectionTitle>
             {detail.media.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "#9B9188" }}>No media uploaded.</p></div>
+              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No media uploaded.</p></div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {detail.media.map((item) => (
@@ -308,7 +308,7 @@ export default async function CoreMemberVolunteerDetailPage({
                     href={item.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
+                    style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={item.file_url} alt={item.caption ?? "media"} style={{ width: "100%", height: 130, objectFit: "cover", display: "block" }} />

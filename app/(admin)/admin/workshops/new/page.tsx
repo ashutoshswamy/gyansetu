@@ -29,8 +29,8 @@ export default function NewWorkshopPage() {
 
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
   };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -62,32 +62,32 @@ export default function NewWorkshopPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>New Workshop</h1>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>New Workshop</h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
+            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
             </div>
           )}
           <div className="space-y-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Title <span style={{ color: "#DC2626" }}>*</span></label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Title <span style={{ color: "var(--gs-danger)" }}>*</span></label>
               <input name="title" required style={inputStyle} placeholder="e.g. Science Workshop - Solar System" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Type <span style={{ color: "#DC2626" }}>*</span></label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Type <span style={{ color: "var(--gs-danger)" }}>*</span></label>
                 <select name="workshop_type" required style={inputStyle}>
                   {WORKSHOP_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Status <span style={{ color: "#DC2626" }}>*</span></label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Status <span style={{ color: "var(--gs-danger)" }}>*</span></label>
                 <select name="status" required defaultValue="scheduled" style={inputStyle}>
                   <option value="scheduled">Scheduled</option>
                   <option value="completed">Completed</option>
@@ -97,20 +97,20 @@ export default function NewWorkshopPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Date <span style={{ color: "#DC2626" }}>*</span></label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Date <span style={{ color: "var(--gs-danger)" }}>*</span></label>
                 <input name="workshop_date" type="date" required style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Time</label>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Time</label>
                 <input name="workshop_time" type="time" style={inputStyle} />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Hall / Location</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Hall / Location</label>
               <input name="hall_location" style={inputStyle} placeholder="e.g. Main Hall" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Trainer</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Trainer</label>
               <select name="trainer_choice" value={trainerChoice} onChange={e => setTrainerChoice(e.target.value as "none" | "gs_team_other")} style={inputStyle}>
                 <option value="none">No trainer assigned</option>
                 <option value="gs_team_other">GS Team / Other</option>
@@ -120,7 +120,7 @@ export default function NewWorkshopPage() {
               )}
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Assign to Group</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Assign to Group</label>
               <select
                 multiple
                 value={selectedGroupIds}
@@ -129,22 +129,22 @@ export default function NewWorkshopPage() {
               >
                 {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
               </select>
-              <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4 }}>Ctrl/Cmd-click to select multiple groups.</p>
+              <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4 }}>Ctrl/Cmd-click to select multiple groups.</p>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Plan Notes</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Plan Notes</label>
               <textarea name="plan_notes" rows={3} placeholder="Preparation notes, agenda, materials needed..." style={{ ...inputStyle, resize: "vertical" }} />
             </div>
             <div className="flex items-center gap-2">
               <input id="kit_ready" name="kit_ready" type="checkbox" style={{ width: 16, height: 16 }} />
-              <label htmlFor="kit_ready" style={{ fontSize: 13, color: "#5A5247" }}>Kit is ready</label>
+              <label htmlFor="kit_ready" style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>Kit is ready</label>
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            <button type="submit" disabled={loading} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
               {loading ? "Creating..." : "Create Workshop"}
             </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
               Cancel
             </button>
           </div>

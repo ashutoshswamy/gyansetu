@@ -61,13 +61,13 @@ export default function NewTravelTicketPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>New Travel Ticket</h1>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>New Travel Ticket</h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
           {error && (
             <Alert variant="destructive" className="mb-5">
               <AlertDescription>{error}</AlertDescription>
@@ -75,7 +75,7 @@ export default function NewTravelTicketPage() {
           )}
           <div className="space-y-5">
             <div>
-              <Label className="mb-1.5">Group <span style={{ color: "#DC2626" }}>*</span></Label>
+              <Label className="mb-1.5">Group <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
               <Select name="group_id" required>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select group..." />
@@ -144,7 +144,7 @@ export default function NewTravelTicketPage() {
               <Label className="mb-1.5">Ticket File URL</Label>
               <Input name="ticket_file_url" type="text" placeholder="https://..." />
             </div>
-            <Label className="text-[13px] font-normal" style={{ color: "#5A5247" }}>
+            <Label className="text-[13px] font-normal" style={{ color: "var(--gs-text-secondary)" }}>
               <Checkbox name="itinerary_approved" />
               Itinerary approved
             </Label>

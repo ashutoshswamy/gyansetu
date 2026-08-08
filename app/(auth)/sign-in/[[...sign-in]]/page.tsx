@@ -10,7 +10,7 @@ export default async function SignInPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center relative"
-      style={{ background: "#FBF7EC" }}
+      style={{ background: "var(--background)" }}
     >
       {/* Subtle grid pattern */}
       <div
@@ -19,7 +19,7 @@ export default async function SignInPage() {
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "linear-gradient(#E4DFD1 1px, transparent 1px), linear-gradient(to right, #E4DFD1 1px, transparent 1px)",
+            "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(to right, var(--border) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
           opacity: 0.45,
           pointerEvents: "none",
@@ -36,7 +36,7 @@ export default async function SignInPage() {
           <p
             className="text-sm mt-1"
             style={{
-              color: "#5A5247",
+              color: "var(--gs-text-secondary)",
               fontFamily: "var(--font-plex-sans), sans-serif",
             }}
           >

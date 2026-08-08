@@ -6,8 +6,8 @@ type Volunteer = { id: string; name: string; email: string };
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 export function VolunteerCombobox({
@@ -53,9 +53,9 @@ export function VolunteerCombobox({
         style={inputStyle}
       />
       {open && (
-        <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 20, background: "white", border: "1px solid #E4DFD1", borderRadius: 6, maxHeight: 220, overflowY: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
+        <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 20, background: "white", border: "1px solid var(--border)", borderRadius: 6, maxHeight: 220, overflowY: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
           {filtered.length === 0 && (
-            <div style={{ padding: "10px 12px", fontSize: 13, color: "#9B9188" }}>No matches</div>
+            <div style={{ padding: "10px 12px", fontSize: 13, color: "var(--gs-muted)" }}>No matches</div>
           )}
           {filtered.map(v => (
             <div
@@ -63,8 +63,8 @@ export function VolunteerCombobox({
               onClick={() => { onChange(v.id); setOpen(false); setQuery(""); }}
               style={{ padding: "8px 12px", cursor: "pointer", background: v.id === value ? "#F5F3EC" : "transparent" }}
             >
-              <div style={{ fontSize: 13, fontWeight: 500, color: "#19140F" }}>{v.name}</div>
-              <div style={{ fontSize: 12, color: "#9B9188" }}>{v.email}</div>
+              <div style={{ fontSize: 13, fontWeight: 500, color: "var(--foreground)" }}>{v.name}</div>
+              <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>{v.email}</div>
             </div>
           ))}
         </div>

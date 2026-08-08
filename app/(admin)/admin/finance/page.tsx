@@ -54,16 +54,16 @@ export default async function AdminFinancePage() {
   const ledgers = buildGroupLedgers(advances, expenses);
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Finance</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Advances, expenses and bill approvals — grouped by tour group</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Finance</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Advances, expenses and bill approvals — grouped by tour group</p>
         </div>
 
-        <h2 style={{ fontSize: 16, fontWeight: 600, color: "#19140F", margin: "0 0 12px", display: "flex", alignItems: "center", gap: 8 }}>
-          <Wallet size={17} style={{ color: "#4A55BE" }} /> Record an Advance
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px", display: "flex", alignItems: "center", gap: 8 }}>
+          <Wallet size={17} style={{ color: "var(--gs-accent)" }} /> Record an Advance
         </h2>
         <AdvanceForm />
 

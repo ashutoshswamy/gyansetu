@@ -130,13 +130,13 @@ export function TestAttemptsViewer({
     return String(question.correct_answer).trim().toLowerCase() === String(studentAnswer ?? "").trim().toLowerCase();
   }
 
-  const labelStyle = { fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "#9B9188" };
+  const labelStyle = { fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--gs-muted)" };
 
   return (
     <div>
       {/* Export Bar */}
       <div className="flex justify-between items-center mb-6">
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: "#19140F" }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--foreground)" }}>
           Attempts ({attempts.length})
         </h2>
         {attempts.length > 0 && (
@@ -149,9 +149,9 @@ export function TestAttemptsViewer({
       </div>
 
       {attempts.length === 0 ? (
-        <div className="rounded-xl p-8 text-center" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-          <AlertCircle className="w-8 h-8 mx-auto mb-2 text-[#9B9188]" />
-          <p style={{ fontSize: 14, color: "#9B9188" }}>No attempts recorded for this test yet.</p>
+        <div className="rounded-xl p-8 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <AlertCircle className="w-8 h-8 mx-auto mb-2 text-[var(--gs-muted)]" />
+          <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No attempts recorded for this test yet.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -164,14 +164,14 @@ export function TestAttemptsViewer({
               const isRejected = attempt.status === "rejected";
               const didPass = (attempt.score ?? 0) >= test.passing_score;
 
-              let statusColor = "#9B9188";
+              let statusColor = "var(--gs-muted)";
               let statusBg = "rgba(90,82,71,0.08)";
-              if (isApproved) { statusColor = "#2A5E3A"; statusBg = "rgba(42,94,58,0.12)"; }
-              else if (isRejected) { statusColor = "#B8381E"; statusBg = "rgba(184,56,30,0.08)"; }
-              else if (isPending) { statusColor = "#F5A520"; statusBg = "rgba(245,165,32,0.12)"; }
+              if (isApproved) { statusColor = "var(--gs-success)"; statusBg = "rgba(var(--gs-success-rgb), 0.12)"; }
+              else if (isRejected) { statusColor = "var(--gs-danger-alt)"; statusBg = "rgba(var(--gs-danger-alt-rgb), 0.08)"; }
+              else if (isPending) { statusColor = "var(--gs-warning)"; statusBg = "rgba(var(--gs-warning-rgb), 0.12)"; }
               else if (attempt.status === "submitted" || attempt.status === "evaluated") {
-                statusColor = didPass ? "#2A5E3A" : "#B8381E";
-                statusBg = didPass ? "rgba(42,94,58,0.08)" : "rgba(184,56,30,0.08)";
+                statusColor = didPass ? "var(--gs-success)" : "var(--gs-danger-alt)";
+                statusBg = didPass ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-danger-alt-rgb), 0.08)";
               }
 
               return (
@@ -181,16 +181,16 @@ export function TestAttemptsViewer({
                   className="rounded-xl p-4 cursor-pointer transition-all border text-left"
                   style={{
                     background: "white",
-                    borderColor: isSelected ? "#4A55BE" : "#E4DFD1",
-                    boxShadow: isSelected ? "0 0 0 1px #4A55BE" : "none",
+                    borderColor: isSelected ? "var(--gs-accent)" : "var(--border)",
+                    boxShadow: isSelected ? "0 0 0 1px var(--gs-accent)" : "none",
                   }}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h4 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>
+                      <h4 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>
                         {attempt.users?.name ?? "Unknown"}
                       </h4>
-                      <p style={{ fontSize: 11, color: "#9B9188", margin: 0 }}>
+                      <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
                         {attempt.users?.email}
                       </p>
                     </div>
@@ -209,8 +209,8 @@ export function TestAttemptsViewer({
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between mt-3 pt-2.5" style={{ borderTop: "1px solid #F3F0E8" }}>
-                    <span style={{ fontSize: 11, color: "#5A5247", display: "flex", alignItems: "center", gap: 1 }}>
+                  <div className="flex items-center justify-between mt-3 pt-2.5" style={{ borderTop: "1px solid var(--gs-card)" }}>
+                    <span style={{ fontSize: 11, color: "var(--gs-text-secondary)", display: "flex", alignItems: "center", gap: 1 }}>
                       <Clock className="w-3.5 h-3.5" />
                       {attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleDateString() : "In progress"}
                     </span>
@@ -219,7 +219,7 @@ export function TestAttemptsViewer({
                         fontSize: 13,
                         fontFamily: "monospace",
                         fontWeight: 700,
-                        color: didPass ? "#2A5E3A" : "#B8381E",
+                        color: didPass ? "var(--gs-success)" : "var(--gs-danger-alt)",
                       }}
                     >
                       {attempt.score !== undefined && attempt.score !== null ? attempt.score.toFixed(0) + "%" : "N/A"}
@@ -233,15 +233,15 @@ export function TestAttemptsViewer({
           {/* Attempt Detail View */}
           <div className="lg:col-span-7">
             {selectedAttempt ? (
-              <div className="rounded-xl p-6 border bg-white" style={{ borderColor: "#E4DFD1" }}>
+              <div className="rounded-xl p-6 border bg-white" style={{ borderColor: "var(--border)" }}>
                 {/* Header */}
-                <div className="flex justify-between items-start pb-5 mb-5" style={{ borderBottom: "1px solid #E4DFD1" }}>
+                <div className="flex justify-between items-start pb-5 mb-5" style={{ borderBottom: "1px solid var(--border)" }}>
                   <div>
-                    <h3 style={{ fontSize: 18, fontWeight: 700, color: "#19140F", margin: "0 0 4px 0" }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--foreground)", margin: "0 0 4px 0" }}>
                       Response Details
                     </h3>
-                    <p style={{ fontSize: 13, color: "#5A5247", margin: 0, display: "flex", alignItems: "center", gap: 1.5 }}>
-                      <User className="w-4 h-4 text-[#9B9188]" />
+                    <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: 0, display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <User className="w-4 h-4 text-[var(--gs-muted)]" />
                       {selectedAttempt.users?.name} ({selectedAttempt.users?.email})
                     </p>
                   </div>
@@ -255,10 +255,10 @@ export function TestAttemptsViewer({
                 </div>
 
                 {/* Score Summary */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 p-4 rounded-xl" style={{ background: "#F9F8F6", border: "1px solid #E4DFD1" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 p-4 rounded-xl" style={{ background: "#F9F8F6", border: "1px solid var(--border)" }}>
                   <div>
                     <span style={labelStyle}>Status</span>
-                    <p className="mt-1" style={{ fontSize: 14, fontWeight: 700, color: "#19140F", margin: "4px 0 0 0", textTransform: "capitalize" }}>
+                    <p className="mt-1" style={{ fontSize: 14, fontWeight: 700, color: "var(--foreground)", margin: "4px 0 0 0", textTransform: "capitalize" }}>
                       {selectedAttempt.status === "pending_approval" ? "Pending Approval" : selectedAttempt.status}
                     </p>
                   </div>
@@ -274,20 +274,20 @@ export function TestAttemptsViewer({
                           value={scoreDraft}
                           onChange={(e) => setScoreDraft(e.target.value)}
                           disabled={savingScore}
-                          style={{ width: 64, fontSize: 13, padding: "4px 6px", borderRadius: 4, border: "1px solid #E4DFD1" }}
+                          style={{ width: 64, fontSize: 13, padding: "4px 6px", borderRadius: 4, border: "1px solid var(--border)" }}
                         />
-                        <span style={{ fontSize: 12, color: "#9B9188" }}>%</span>
+                        <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>%</span>
                         <button
                           onClick={handleSaveScore}
                           disabled={savingScore}
-                          style={{ fontSize: 11, fontWeight: 600, padding: "4px 8px", borderRadius: 4, border: "none", background: "#4A55BE", color: "white", cursor: savingScore ? "not-allowed" : "pointer" }}
+                          style={{ fontSize: 11, fontWeight: 600, padding: "4px 8px", borderRadius: 4, border: "none", background: "var(--gs-accent)", color: "white", cursor: savingScore ? "not-allowed" : "pointer" }}
                         >
                           {savingScore ? "..." : "Save"}
                         </button>
                         <button
                           onClick={() => setEditingScore(false)}
                           disabled={savingScore}
-                          style={{ fontSize: 11, padding: "4px 8px", borderRadius: 4, border: "1px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}
+                          style={{ fontSize: 11, padding: "4px 8px", borderRadius: 4, border: "1px solid var(--border)", background: "white", color: "var(--gs-text-secondary)", cursor: "pointer" }}
                         >
                           Cancel
                         </button>
@@ -295,13 +295,13 @@ export function TestAttemptsViewer({
                     ) : (
                       <p className="mt-1 flex items-center gap-2" style={{
                         fontSize: 14, fontWeight: 700,
-                        color: (selectedAttempt.score ?? 0) >= test.passing_score ? "#2A5E3A" : "#B8381E",
+                        color: (selectedAttempt.score ?? 0) >= test.passing_score ? "var(--gs-success)" : "var(--gs-danger-alt)",
                         margin: "4px 0 0 0"
                       }}>
                         {selectedAttempt.score !== undefined && selectedAttempt.score !== null ? selectedAttempt.score.toFixed(1) + "%" : "N/A"}
                         <button
                           onClick={() => setEditingScore(true)}
-                          style={{ fontSize: 11, fontWeight: 600, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                          style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                         >
                           Edit
                         </button>
@@ -312,7 +312,7 @@ export function TestAttemptsViewer({
                     <span style={labelStyle}>Result</span>
                     <p className="mt-1" style={{
                       fontSize: 14, fontWeight: 700,
-                      color: (selectedAttempt.score ?? 0) >= test.passing_score ? "#2A5E3A" : "#B8381E",
+                      color: (selectedAttempt.score ?? 0) >= test.passing_score ? "var(--gs-success)" : "var(--gs-danger-alt)",
                       margin: "4px 0 0 0"
                     }}>
                       {(selectedAttempt.score ?? 0) >= test.passing_score ? "PASSED" : "FAILED"}
@@ -322,7 +322,7 @@ export function TestAttemptsViewer({
 
                 {/* Questions Responses */}
                 <div className="space-y-5">
-                  <h4 style={{ fontSize: 12, fontWeight: 700, color: "#5A5247", margin: "0 0 10px 0" }}>
+                  <h4 style={{ fontSize: 12, fontWeight: 700, color: "var(--gs-text-secondary)", margin: "0 0 10px 0" }}>
                     QUESTIONS & ANSWERS
                   </h4>
 
@@ -331,47 +331,47 @@ export function TestAttemptsViewer({
                     const correctness = isAnswerCorrect(q, studentAns);
 
                     return (
-                      <div key={q.id} className="pb-4 border-b last:border-b-0" style={{ borderColor: "#F3F0E8" }}>
+                      <div key={q.id} className="pb-4 border-b last:border-b-0" style={{ borderColor: "var(--gs-card)" }}>
                         <div className="flex justify-between items-start gap-3 mb-2">
-                          <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>
                             {idx + 1}. {q.question}
                           </span>
-                          <span style={{ fontSize: 11, color: "#9B9188", fontWeight: 500, flexShrink: 0 }}>
+                          <span style={{ fontSize: 11, color: "var(--gs-muted)", fontWeight: 500, flexShrink: 0 }}>
                             {q.marks} {q.marks === 1 ? "mark" : "marks"}
                           </span>
                         </div>
 
                         {/* Student Answer */}
                         <div className="mt-2.5 p-3 rounded-lg flex items-start gap-2.5" style={{
-                          background: correctness === true ? "rgba(42,94,58,0.04)" : correctness === false ? "rgba(184,56,30,0.04)" : "#F9F8F6",
-                          border: `1px solid ${correctness === true ? "rgba(42,94,58,0.12)" : correctness === false ? "rgba(184,56,30,0.12)" : "#E4DFD1"}`
+                          background: correctness === true ? "rgba(var(--gs-success-rgb), 0.04)" : correctness === false ? "rgba(var(--gs-danger-alt-rgb), 0.04)" : "#F9F8F6",
+                          border: `1px solid ${correctness === true ? "rgba(var(--gs-success-rgb), 0.12)" : correctness === false ? "rgba(var(--gs-danger-alt-rgb), 0.12)" : "var(--border)"}`
                         }}>
-                          {correctness === true && <CheckCircle2 className="w-4 h-4 text-[#2A5E3A] flex-shrink-0 mt-0.5" />}
-                          {correctness === false && <XCircle className="w-4 h-4 text-[#B8381E] flex-shrink-0 mt-0.5" />}
-                          {correctness === null && <AlertCircle className="w-4 h-4 text-[#5A5247] flex-shrink-0 mt-0.5" />}
+                          {correctness === true && <CheckCircle2 className="w-4 h-4 text-[var(--gs-success)] flex-shrink-0 mt-0.5" />}
+                          {correctness === false && <XCircle className="w-4 h-4 text-[var(--gs-danger-alt)] flex-shrink-0 mt-0.5" />}
+                          {correctness === null && <AlertCircle className="w-4 h-4 text-[var(--gs-text-secondary)] flex-shrink-0 mt-0.5" />}
 
                           <div>
-                            <span style={{ fontSize: 10, fontWeight: 600, color: "#9B9188", textTransform: "uppercase" }}>
+                            <span style={{ fontSize: 10, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase" }}>
                               Student Answer
                             </span>
-                            <p style={{ fontSize: 13, color: "#19140F", margin: "2px 0 0 0" }}>
+                            <p style={{ fontSize: 13, color: "var(--foreground)", margin: "2px 0 0 0" }}>
                               {Array.isArray(studentAns)
                                 ? studentAns.join(", ")
                                 : (studentAns !== undefined && studentAns !== null && studentAns !== ""
                                   ? String(studentAns)
-                                  : <em style={{ color: "#9B9188" }}>No response</em>)}
+                                  : <em style={{ color: "var(--gs-muted)" }}>No response</em>)}
                             </p>
                           </div>
                         </div>
 
                         {/* Subjective marks entry */}
                         {q.type === "subjective" && (
-                          <div className="mt-2.5 p-3 rounded-lg flex items-center gap-2.5" style={{ background: "#F9F8F6", border: "1px solid #E4DFD1", marginLeft: 26 }}>
-                            <span style={{ fontSize: 10, fontWeight: 600, color: "#9B9188", textTransform: "uppercase" }}>
+                          <div className="mt-2.5 p-3 rounded-lg flex items-center gap-2.5" style={{ background: "#F9F8F6", border: "1px solid var(--border)", marginLeft: 26 }}>
+                            <span style={{ fontSize: 10, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase" }}>
                               Marks Awarded
                             </span>
                             {selectedAttempt.status === "approved" || selectedAttempt.status === "rejected" ? (
-                              <span style={{ fontSize: 13, fontWeight: 600, color: "#19140F" }}>
+                              <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>
                                 {selectedAttempt.subjective_marks?.[q.id] ?? 0} / {q.marks}
                               </span>
                             ) : (
@@ -383,9 +383,9 @@ export function TestAttemptsViewer({
                                   placeholder="Enter marks"
                                   value={marksDraft[q.id] ?? ""}
                                   onChange={(e) => setMarksDraft((prev) => ({ ...prev, [q.id]: e.target.value }))}
-                                  style={{ width: 60, fontSize: 13, padding: "4px 8px", borderRadius: 4, border: "1px solid #E4DFD1" }}
+                                  style={{ width: 60, fontSize: 13, padding: "4px 8px", borderRadius: 4, border: "1px solid var(--border)" }}
                                 />
-                                <span style={{ fontSize: 12, color: "#9B9188" }}>/ {q.marks}</span>
+                                <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>/ {q.marks}</span>
                               </>
                             )}
                           </div>
@@ -394,10 +394,10 @@ export function TestAttemptsViewer({
                         {/* Correct Answer (if incorrect or subjective) */}
                         {correctness !== true && q.correct_answer && (
                           <div className="mt-2 p-3 rounded-lg bg-[#FAF8F2] border border-[#EBE5D6]" style={{ marginLeft: 26 }}>
-                            <span style={{ fontSize: 10, fontWeight: 600, color: "#9B9188", textTransform: "uppercase" }}>
+                            <span style={{ fontSize: 10, fontWeight: 600, color: "var(--gs-muted)", textTransform: "uppercase" }}>
                               Correct Answer
                             </span>
-                            <p style={{ fontSize: 13, color: "#2A5E3A", fontWeight: 500, margin: "2px 0 0 0" }}>
+                            <p style={{ fontSize: 13, color: "var(--gs-success)", fontWeight: 500, margin: "2px 0 0 0" }}>
                               {Array.isArray(q.correct_answer) ? q.correct_answer.join(", ") : String(q.correct_answer)}
                             </p>
                           </div>
@@ -410,13 +410,13 @@ export function TestAttemptsViewer({
                 {questions.some((q) => q.type === "subjective") &&
                   selectedAttempt.status !== "approved" &&
                   selectedAttempt.status !== "rejected" && (
-                    <div className="flex justify-end pt-5 mt-5" style={{ borderTop: "1px solid #E4DFD1" }}>
+                    <div className="flex justify-end pt-5 mt-5" style={{ borderTop: "1px solid var(--border)" }}>
                       <button
                         onClick={handleSaveEvaluation}
                         disabled={savingEval}
                         style={{
                           fontSize: 12, fontWeight: 600, padding: "9px 16px", borderRadius: 6,
-                          background: savingEval ? "#C8C4BC" : "#4A55BE", color: "white", border: "none",
+                          background: savingEval ? "#C8C4BC" : "var(--gs-accent)", color: "white", border: "none",
                           cursor: savingEval ? "not-allowed" : "pointer",
                         }}
                       >
@@ -426,9 +426,9 @@ export function TestAttemptsViewer({
                   )}
               </div>
             ) : (
-              <div className="rounded-xl p-8 text-center bg-white border border-dashed" style={{ borderColor: "#E4DFD1" }}>
-                <User className="w-8 h-8 mx-auto mb-2 text-[#9B9188]" />
-                <p style={{ fontSize: 14, color: "#9B9188" }}>Select a student attempt from the list to view response details.</p>
+              <div className="rounded-xl p-8 text-center bg-white border border-dashed" style={{ borderColor: "var(--border)" }}>
+                <User className="w-8 h-8 mx-auto mb-2 text-[var(--gs-muted)]" />
+                <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>Select a student attempt from the list to view response details.</p>
               </div>
             )}
           </div>

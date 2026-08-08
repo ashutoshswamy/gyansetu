@@ -68,16 +68,16 @@ export function VolunteerLocationTable({ locations }: { locations: VolunteerLoca
   if (locations.length === 0) return null;
 
   return (
-    <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden" }}>
+    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
       <div className="overflow-x-auto">
         <table className="w-full" style={{ borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
-            <tr style={{ background: "#F3F0E8" }}>
-              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#5A5247", textTransform: "uppercase", letterSpacing: "0.06em" }}>Name</th>
-              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#5A5247", textTransform: "uppercase", letterSpacing: "0.06em" }}>Email</th>
-              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#5A5247", textTransform: "uppercase", letterSpacing: "0.06em" }}>Exact Location</th>
-              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#5A5247", textTransform: "uppercase", letterSpacing: "0.06em" }}>Coordinates</th>
-              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "#5A5247", textTransform: "uppercase", letterSpacing: "0.06em" }}>Updated</th>
+            <tr style={{ background: "var(--gs-card)" }}>
+              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Name</th>
+              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Email</th>
+              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Exact Location</th>
+              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Coordinates</th>
+              <th style={{ textAlign: "left", padding: "10px 16px", fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Updated</th>
             </tr>
           </thead>
           <tbody>
@@ -86,18 +86,18 @@ export function VolunteerLocationTable({ locations }: { locations: VolunteerLoca
               const address = addresses[key];
               return (
                 <tr key={loc.user_id} style={{ borderTop: "1px solid #F0EDE4" }}>
-                  <td style={{ padding: "10px 16px", color: "#19140F", fontWeight: 500 }}>{loc.name}</td>
-                  <td style={{ padding: "10px 16px", color: "#5A5247" }}>{loc.email}</td>
-                  <td style={{ padding: "10px 16px", color: "#5A5247", maxWidth: 320 }}>
+                  <td style={{ padding: "10px 16px", color: "var(--foreground)", fontWeight: 500 }}>{loc.name}</td>
+                  <td style={{ padding: "10px 16px", color: "var(--gs-text-secondary)" }}>{loc.email}</td>
+                  <td style={{ padding: "10px 16px", color: "var(--gs-text-secondary)", maxWidth: 320 }}>
                     <div className="flex items-start gap-1.5">
-                      <MapPin size={12} style={{ color: "#9B9188", flexShrink: 0, marginTop: 2 }} />
+                      <MapPin size={12} style={{ color: "var(--gs-muted)", flexShrink: 0, marginTop: 2 }} />
                       <span>{address ?? "Locating..."}</span>
                     </div>
                   </td>
-                  <td style={{ padding: "10px 16px", color: "#9B9188", fontFamily: "monospace", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "10px 16px", color: "var(--gs-muted)", fontFamily: "monospace", whiteSpace: "nowrap" }}>
                     {loc.latitude.toFixed(6)}, {loc.longitude.toFixed(6)}
                   </td>
-                  <td style={{ padding: "10px 16px", color: "#9B9188", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "10px 16px", color: "var(--gs-muted)", whiteSpace: "nowrap" }}>
                     {new Date(loc.updated_at).toLocaleTimeString()}
                   </td>
                 </tr>

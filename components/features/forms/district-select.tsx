@@ -27,7 +27,7 @@ export function DistrictSelect({ state, value, onChange, style, required, name }
     return (
       <div>
         <input name={name} value={districtValue} onChange={e => onChange(e.target.value)} required={required} placeholder="Enter district" style={style} />
-        <button type="button" onClick={() => { setCustomMode(false); onChange(""); }} style={{ marginTop: 4, background: "none", border: "none", padding: 0, fontSize: 11, color: "#4A55BE", cursor: "pointer" }}>
+        <button type="button" onClick={() => { setCustomMode(false); onChange(""); }} style={{ marginTop: 4, background: "none", border: "none", padding: 0, fontSize: 11, color: "var(--gs-accent)", cursor: "pointer" }}>
           ← Choose from list
         </button>
       </div>

@@ -11,8 +11,8 @@ type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 // Same fields/rating UI as the admin EvaluationForm, but the volunteer is fixed (no
@@ -65,22 +65,22 @@ export function CoreMemberEvaluationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 10, padding: 20, marginTop: 12 }}>
+    <form onSubmit={handleSubmit} style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 10, padding: 20, marginTop: 12 }}>
       {error && (
-        <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "#DC2626" }}>
+        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "var(--gs-danger)" }}>
           {error}
         </div>
       )}
       <div className="space-y-3">
         {SCORE_FIELDS.map(f => (
           <div key={f.key} className="flex items-center justify-between gap-4">
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247" }}>{f.label}</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)" }}>{f.label}</label>
             <StarRating value={scores[f.key]} onChange={v => setScores(s => ({ ...s, [f.key]: v }))} />
           </div>
         ))}
       </div>
       <div style={{ marginTop: 14 }}>
-        <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Remarks</label>
+        <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Remarks</label>
         <textarea name="remarks" rows={3} defaultValue={evaluation?.remarks ?? ""} placeholder="Observations, feedback..." style={{ ...inputStyle, resize: "vertical" }} />
       </div>
       <div className="flex gap-3 mt-4">
@@ -88,7 +88,7 @@ export function CoreMemberEvaluationForm({
           type="submit"
           disabled={loading}
           onClick={() => setIntent("submitted")}
-          style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+          style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
         >
           {loading && intent === "submitted" ? "Submitting..." : "Submit Evaluation"}
         </button>
@@ -96,11 +96,11 @@ export function CoreMemberEvaluationForm({
           type="submit"
           disabled={loading}
           onClick={() => setIntent("draft")}
-          style={{ background: "white", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #4A55BE", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+          style={{ background: "white", color: "var(--gs-accent)", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--gs-accent)", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
         >
           {loading && intent === "draft" ? "Saving..." : "Save Draft"}
         </button>
-        <button type="button" onClick={onDone} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+        <button type="button" onClick={onDone} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
           Cancel
         </button>
       </div>

@@ -57,15 +57,15 @@ export default function NewNewsletterPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "32px 24px" }}>
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ marginBottom: 28 }}>
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
             Admin Console
           </p>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>New Newsletter</h1>
-          <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>Publish a new newsletter issue.</p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>New Newsletter</h1>
+          <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginTop: 4 }}>Publish a new newsletter issue.</p>
         </div>
 
         {/* Form card */}
@@ -73,7 +73,7 @@ export default function NewNewsletterPage() {
           onSubmit={handleSubmit}
           style={{
             background: "white",
-            border: "1px solid #E4DFD1",
+            border: "1px solid var(--border)",
             borderRadius: 12,
             padding: "28px 28px 24px",
             display: "flex",

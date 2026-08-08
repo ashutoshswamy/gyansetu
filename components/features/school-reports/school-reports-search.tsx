@@ -58,7 +58,7 @@ export function SchoolReportsSearch({ byTour }: { byTour: Record<string, Tour> }
   return (
     <>
       <div className="relative mb-6">
-        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#9B9188" }} />
+        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--gs-muted)" }} />
         <input
           type="text"
           value={query}
@@ -68,34 +68,34 @@ export function SchoolReportsSearch({ byTour }: { byTour: Record<string, Tour> }
             width: "100%",
             padding: "10px 12px 10px 36px",
             fontSize: 13,
-            border: "1px solid #E4DFD1",
+            border: "1px solid var(--border)",
             borderRadius: 8,
             background: "white",
-            color: "#19140F",
+            color: "var(--foreground)",
             outline: "none",
           }}
         />
       </div>
 
       {query.trim() && entries.length === 0 && (
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
-          <School className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-          <p style={{ fontSize: 15, color: "#5A5247" }}>No reports match &quot;{query}&quot;.</p>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+          <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No reports match &quot;{query}&quot;.</p>
         </div>
       )}
 
       {entries.map(([tourId, tour]) => (
         <div key={tourId} className="mb-10">
-          <h2 style={{ fontSize: 15, fontWeight: 700, color: "#19140F", marginBottom: 14, paddingBottom: 8, borderBottom: "1.5px solid #E4DFD1" }}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--foreground)", marginBottom: 14, paddingBottom: 8, borderBottom: "1.5px solid var(--border)" }}>
             {tour.title}
           </h2>
           {tour.groups.map(group => (
             <div key={group.id} className="mb-6">
-              <h3 style={{ fontSize: 13, fontWeight: 600, color: "#5A5247", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              <h3 style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-text-secondary)", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 {group.name} ({group.members.length} volunteer{group.members.length === 1 ? "" : "s"})
               </h3>
               {group.members.length === 0 ? (
-                <p style={{ fontSize: 13, color: "#9B9188" }}>No volunteers assigned to this group.</p>
+                <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No volunteers assigned to this group.</p>
               ) : (
                 <div className="space-y-2">
                   {group.members.map(m => (

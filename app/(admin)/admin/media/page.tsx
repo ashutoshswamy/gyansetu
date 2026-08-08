@@ -34,23 +34,23 @@ export default async function AdminMediaPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Media Gallery</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Media Gallery</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
             {(media ?? []).length} files · Photos, documents and videos from visits
           </p>
         </div>
 
         {Object.keys(byTour).length === 0 && (
-          <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "48px 0" }}>No media uploaded yet.</p>
+          <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>No media uploaded yet.</p>
         )}
 
         {Object.entries(byTour).map(([tourTitle, items]) => (
           <div key={tourTitle} className="mb-8">
-            <h2 style={{ fontSize: 13, fontWeight: 600, color: "#5A5247", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-text-secondary)", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
               {tourTitle} ({items.length})
             </h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -62,18 +62,18 @@ export default async function AdminMediaPage() {
                     href={item.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
+                    style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
                   >
                     {item.media_type === "photo" ? (
                       <MediaThumb src={item.file_url} alt={item.caption ?? "photo"} />
                     ) : (
-                      <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "#F3F0E8" }}>
-                        <Icon size={32} style={{ color: "#9B9188" }} />
+                      <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--gs-card)" }}>
+                        <Icon size={32} style={{ color: "var(--gs-muted)" }} />
                       </div>
                     )}
                     <div style={{ padding: "10px 12px" }}>
-                      {item.caption && <p style={{ fontSize: 13, color: "#19140F", margin: "0 0 2px", fontWeight: 500 }} className="truncate">{item.caption}</p>}
-                      <p style={{ fontSize: 11, color: "#9B9188", margin: 0 }}>
+                      {item.caption && <p style={{ fontSize: 13, color: "var(--foreground)", margin: "0 0 2px", fontWeight: 500 }} className="truncate">{item.caption}</p>}
+                      <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
                         {item.users?.name} · {new Date(item.created_at).toLocaleDateString()}
                       </p>
                     </div>

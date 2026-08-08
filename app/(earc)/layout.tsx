@@ -48,7 +48,7 @@ export default async function EarcLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <div className="flex min-h-screen" style={{ background: "#FBF7EC" }}>
+    <div className="flex min-h-screen" style={{ background: "var(--background)" }}>
       <Sidebar role={role as UserRole} />
       <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">{children}</main>
     </div>

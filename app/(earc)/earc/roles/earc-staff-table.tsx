@@ -36,8 +36,8 @@ export function EarcStaffTable({ users, currentUserId }: { users: EarcCandidate[
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-          <p style={{ fontSize: 14, color: "#9B9188" }}>No users match &ldquo;{query}&rdquo;.</p>
+        <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No users match &ldquo;{query}&rdquo;.</p>
         </div>
       ) : (
         <Table className="rounded-xl overflow-hidden border border-border">

@@ -62,7 +62,7 @@ export function ExpenseActions({ id }: { id: string }) {
         size="sm"
         onClick={handleApprove}
         disabled={loading !== null}
-        className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/85"
+        className="bg-[var(--gs-success)] text-white hover:bg-[var(--gs-success)]/85"
       >
         {loading === "approve" ? "..." : "Approve"}
       </Button>
@@ -71,7 +71,7 @@ export function ExpenseActions({ id }: { id: string }) {
         size="sm"
         onClick={handleSendBack}
         disabled={loading !== null}
-        className="border-[#F5A520]/35 text-[#F5A520] hover:bg-[#F5A520]/10"
+        className="border-[var(--gs-warning)]/35 text-[var(--gs-warning)] hover:bg-[var(--gs-warning)]/10"
       >
         {loading === "sendback" ? "..." : "Send Back"}
       </Button>

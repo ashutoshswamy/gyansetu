@@ -34,7 +34,7 @@ export default function NewGalleryCategory() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "48px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "48px 24px" }}>
       <div style={{ maxWidth: 560, margin: "0 auto" }}>
 
         {/* Header */}
@@ -44,15 +44,15 @@ export default function NewGalleryCategory() {
             letterSpacing: "0.12em",
             textTransform: "uppercase",
             fontWeight: 600,
-            color: "#9B9188",
+            color: "var(--gs-muted)",
             marginBottom: 4,
           }}>
             Admin Console / Gallery
           </p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>
             New Category
           </h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
             Create a new gallery category to group related images.
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function NewGalleryCategory() {
         {/* Form card */}
         <div style={{
           background: "white",
-          border: "1px solid #E4DFD1",
+          border: "1px solid var(--border)",
           borderRadius: 12,
           padding: 28,
         }}>
@@ -71,7 +71,7 @@ export default function NewGalleryCategory() {
                 display: "block",
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#19140F",
+                color: "var(--foreground)",
                 marginBottom: 6,
               }}>
                 Category Name <span style={{ color: "#C0392B" }}>*</span>
@@ -86,9 +86,9 @@ export default function NewGalleryCategory() {
                   width: "100%",
                   padding: "9px 12px",
                   fontSize: 14,
-                  color: "#19140F",
-                  background: "#FBF7EC",
-                  border: "1.5px solid #E4DFD1",
+                  color: "var(--foreground)",
+                  background: "var(--background)",
+                  border: "1.5px solid var(--border)",
                   borderRadius: 6,
                   outline: "none",
                   boxSizing: "border-box",
@@ -101,7 +101,7 @@ export default function NewGalleryCategory() {
                 display: "block",
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#19140F",
+                color: "var(--foreground)",
                 marginBottom: 6,
               }}>
                 Description
@@ -115,9 +115,9 @@ export default function NewGalleryCategory() {
                   width: "100%",
                   padding: "9px 12px",
                   fontSize: 14,
-                  color: "#19140F",
-                  background: "#FBF7EC",
-                  border: "1.5px solid #E4DFD1",
+                  color: "var(--foreground)",
+                  background: "var(--background)",
+                  border: "1.5px solid var(--border)",
                   borderRadius: 6,
                   outline: "none",
                   resize: "vertical",
@@ -147,12 +147,12 @@ export default function NewGalleryCategory() {
                 onClick={() => router.back()}
                 style={{
                   background: "transparent",
-                  color: "#5A5247",
+                  color: "var(--gs-text-secondary)",
                   fontSize: 13,
                   fontWeight: 500,
                   padding: "8px 18px",
                   borderRadius: 6,
-                  border: "1.5px solid #E4DFD1",
+                  border: "1.5px solid var(--border)",
                   cursor: "pointer",
                 }}
               >
@@ -162,7 +162,7 @@ export default function NewGalleryCategory() {
                 type="submit"
                 disabled={loading || !name.trim()}
                 style={{
-                  background: loading || !name.trim() ? "#A0A7DC" : "#4A55BE",
+                  background: loading || !name.trim() ? "#A0A7DC" : "var(--gs-accent)",
                   color: "white",
                   fontSize: 13,
                   fontWeight: 600,

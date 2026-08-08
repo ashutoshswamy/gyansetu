@@ -45,7 +45,7 @@ export function TourManageClient({ tourId, currentStatus }: { tourId: string; cu
             onClick={() => run(() => reactivateTour(tourId, "all"))}
             disabled={loading}
             size="sm"
-            className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90"
+            className="bg-[var(--gs-success)] text-white hover:bg-[var(--gs-success)]/90"
           >
             For everyone
           </Button>
@@ -97,7 +97,7 @@ export function TourManageClient({ tourId, currentStatus }: { tourId: string; cu
         onClick={() => setConfirmingEnd(true)}
         disabled={loading}
         variant="outline"
-        className="border-[#B8381E]/30 text-[#B8381E] hover:bg-[#B8381E]/10"
+        className="border-[var(--gs-danger-alt)]/30 text-[var(--gs-danger-alt)] hover:bg-[var(--gs-danger-alt)]/10"
       >
         End Tour
       </Button>

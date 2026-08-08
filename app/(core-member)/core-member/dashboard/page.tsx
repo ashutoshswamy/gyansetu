@@ -11,10 +11,10 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const statusStyles: Record<string, { color: string; bg: string; label: string }> = {
-  open:      { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)",  label: "Open" },
-  closed:    { color: "#9B9188", bg: "rgba(90,82,71,0.08)",  label: "Closed" },
-  completed: { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Completed" },
-  draft:     { color: "#F5A520", bg: "rgba(245,165,32,0.08)", label: "Draft" },
+  open:      { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)",  label: "Open" },
+  closed:    { color: "var(--gs-muted)", bg: "rgba(90,82,71,0.08)",  label: "Closed" },
+  completed: { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)", label: "Completed" },
+  draft:     { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)", label: "Draft" },
 };
 
 interface Member {
@@ -54,37 +54,37 @@ export default async function CoreMemberDashboardPage() {
   const history = assignments.filter(a => ["closed", "completed"].includes(a.tour_groups?.tours?.status ?? ""));
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Core Member Panel</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Dashboard</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Your current visit and past group assignments</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Core Member Panel</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Dashboard</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Your current visit and past group assignments</p>
         </div>
 
         {assignments.length === 0 ? (
-          <div className="py-20 text-center rounded-xl" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-            <UsersRound className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-            <p style={{ fontSize: 14, color: "#9B9188" }}>Not assigned as core member of any group yet.</p>
+          <div className="py-20 text-center rounded-xl" style={{ background: "white", border: "1px solid var(--border)" }}>
+            <UsersRound className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+            <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>Not assigned as core member of any group yet.</p>
           </div>
         ) : (
           <div className="space-y-10">
             {current.length > 0 ? (
               <section>
-                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#9B9188", marginBottom: 12 }}>Current</p>
+                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 12 }}>Current</p>
                 <div className="space-y-5">
                   {current.map(a => <CurrentGroupCard key={a.id} assignment={a} />)}
                 </div>
               </section>
             ) : (
-              <div className="py-10 text-center rounded-xl" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-                <p style={{ fontSize: 14, color: "#9B9188" }}>You are not currently part of any tour.</p>
+              <div className="py-10 text-center rounded-xl" style={{ background: "white", border: "1px solid var(--border)" }}>
+                <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>You are not currently part of any tour.</p>
               </div>
             )}
 
             {history.length > 0 && (
               <section>
-                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#9B9188", marginBottom: 12 }}>History</p>
+                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 12 }}>History</p>
                 <div className="space-y-3">
                   {history.map(a => <HistoryRow key={a.id} assignment={a} />)}
                 </div>
@@ -104,16 +104,16 @@ function CurrentGroupCard({ assignment }: { assignment: Assignment }) {
   const s = statusStyles[tour?.status ?? "draft"] ?? statusStyles.draft;
 
   return (
-    <div className="rounded-xl p-5" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+    <div className="rounded-xl p-5" style={{ background: "white", border: "1px solid var(--border)" }}>
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
         <div className="min-w-0">
-          <p style={{ fontSize: 16, fontWeight: 600, color: "#19140F", marginBottom: 2 }}>{group?.name}</p>
-          {tour?.title && <p style={{ fontSize: 13, color: "#5A5247" }}>{tour.title}</p>}
+          <p style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", marginBottom: 2 }}>{group?.name}</p>
+          {tour?.title && <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>{tour.title}</p>}
         </div>
         <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: s.color, background: s.bg, flexShrink: 0 }}>{s.label}</span>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-4" style={{ fontSize: 12, color: "#9B9188" }}>
+      <div className="flex flex-wrap gap-4 mb-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
         {(group?.state_allocated || tour?.destination) && (
           <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" />{group?.state_allocated || tour?.destination}</span>
         )}
@@ -124,25 +124,25 @@ function CurrentGroupCard({ assignment }: { assignment: Assignment }) {
       </div>
 
       {members.length > 0 && (
-        <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 12 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#9B9188", marginBottom: 8 }}>Volunteers</p>
+        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 12 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 8 }}>Volunteers</p>
           <div className="space-y-1.5">
             {members.map(m => (
-              <div key={m.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderRadius: 6, background: "#F3F0E8" }}>
+              <div key={m.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderRadius: 6, background: "var(--gs-card)" }}>
                 <div>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: "#19140F" }}>{m.users?.name}</span>
-                  <span style={{ fontSize: 12, color: "#9B9188", marginLeft: 8 }}>{m.users?.email}</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "var(--foreground)" }}>{m.users?.name}</span>
+                  <span style={{ fontSize: 12, color: "var(--gs-muted)", marginLeft: 8 }}>{m.users?.email}</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {m.role_in_group && (
-                    <span style={{ fontSize: 11, fontWeight: 600, color: "#4A55BE", padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-accent)", padding: "1px 6px", background: "rgba(var(--gs-accent-rgb), 0.08)", borderRadius: 4 }}>
                       {ROLE_LABELS[m.role_in_group] ?? m.role_in_group}
                     </span>
                   )}
                   {m.users?.id && (
                     <Link
                       href={`/core-member/volunteer/${m.users.id}?group=${assignment.group_id}`}
-                      style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", padding: "3px 8px", border: "1.5px solid #E4DFD1", borderRadius: 4, textDecoration: "none" }}
+                      style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", padding: "3px 8px", border: "1.5px solid var(--border)", borderRadius: 4, textDecoration: "none" }}
                     >
                       View
                     </Link>
@@ -163,10 +163,10 @@ function HistoryRow({ assignment }: { assignment: Assignment }) {
   const s = statusStyles[tour?.status ?? "completed"] ?? statusStyles.completed;
 
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl p-4 flex-wrap" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+    <div className="flex items-center justify-between gap-4 rounded-xl p-4 flex-wrap" style={{ background: "white", border: "1px solid var(--border)" }}>
       <div className="min-w-0">
-        <p style={{ fontSize: 14, fontWeight: 600, color: "#19140F", marginBottom: 2 }}>{group?.name}</p>
-        <p style={{ fontSize: 12, color: "#9B9188" }}>
+        <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", marginBottom: 2 }}>{group?.name}</p>
+        <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>
           {tour?.title}{group?.state_allocated ? ` · ${group.state_allocated}` : ""}
           {tour?.start_date && ` · ${new Date(tour.start_date).toLocaleDateString()}`}
         </p>

@@ -16,22 +16,22 @@ export default async function EarcRolesPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
             EARC Panel
           </p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Role Management</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Role Management</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
             Grant or revoke EARC staff access for a user
           </p>
         </div>
 
         {users.length === 0 ? (
-          <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-            <ShieldCheck className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-            <p style={{ fontSize: 14, color: "#9B9188" }}>No users yet.</p>
+          <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+            <ShieldCheck className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+            <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No users yet.</p>
           </div>
         ) : (
           <EarcStaffTable users={users} currentUserId={userId} />

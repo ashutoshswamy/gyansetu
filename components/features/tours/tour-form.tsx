@@ -13,10 +13,10 @@ const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "9px 12px",
   fontSize: 14,
-  border: "1.5px solid #E4DFD1",
+  border: "1.5px solid var(--border)",
   borderRadius: 7,
   background: "white",
-  color: "#19140F",
+  color: "var(--foreground)",
   outline: "none",
   boxSizing: "border-box",
 };
@@ -26,14 +26,14 @@ const labelStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: "0.08em",
   textTransform: "uppercase",
-  color: "#9B9188",
+  color: "var(--gs-muted)",
   display: "block",
   marginBottom: 5,
 };
 
 const errStyle: React.CSSProperties = {
   fontSize: 12,
-  color: "#B8381E",
+  color: "var(--gs-danger-alt)",
   marginTop: 4,
 };
 
@@ -80,7 +80,7 @@ export function TourForm({ initialData }: { initialData?: Tour }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="rounded-xl p-6" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+      <div className="rounded-xl p-6" style={{ background: "white", border: "1px solid var(--border)" }}>
         <div className="space-y-5">
           <div>
             <label style={labelStyle}>Tour Title *</label>
@@ -142,7 +142,7 @@ export function TourForm({ initialData }: { initialData?: Tour }) {
         </div>
 
         {error && (
-          <div className="mt-4 rounded-lg px-4 py-3" style={{ background: "rgba(184,56,30,0.07)", border: "1px solid rgba(184,56,30,0.2)", fontSize: 13, color: "#B8381E" }}>
+          <div className="mt-4 rounded-lg px-4 py-3" style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-alt-rgb), 0.2)", fontSize: 13, color: "var(--gs-danger-alt)" }}>
             {error}
           </div>
         )}
@@ -151,14 +151,14 @@ export function TourForm({ initialData }: { initialData?: Tour }) {
           <button
             type="submit"
             disabled={isSubmitting}
-            style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: isSubmitting ? "#C8C4BC" : "#19140F", color: "white", cursor: isSubmitting ? "not-allowed" : "pointer" }}
+            style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: isSubmitting ? "#C8C4BC" : "var(--foreground)", color: "white", cursor: isSubmitting ? "not-allowed" : "pointer" }}
           >
             {isSubmitting ? "Saving..." : isEdit ? "Save Changes" : "Create Tour"}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}
+            style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: "var(--gs-text-secondary)", cursor: "pointer" }}
           >
             Cancel
           </button>

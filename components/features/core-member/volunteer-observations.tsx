@@ -36,7 +36,7 @@ export function VolunteerObservations({
 
   return (
     <div>
-      <div className="flex items-center gap-1.5 mb-2" style={{ fontSize: 11, color: "#9B9188" }}>
+      <div className="flex items-center gap-1.5 mb-2" style={{ fontSize: 11, color: "var(--gs-muted)" }}>
         <Lock size={11} /> Private — visible only to admins and core members
       </div>
 
@@ -46,31 +46,31 @@ export function VolunteerObservations({
           onChange={(e) => setNote(e.target.value)}
           placeholder="Add an observation about this volunteer..."
           rows={2}
-          style={{ flex: 1, minWidth: 220, fontSize: 13, padding: "9px 12px", borderRadius: 6, border: "1px solid #E4DFD1", color: "#19140F", resize: "vertical" }}
+          style={{ flex: 1, minWidth: 220, fontSize: 13, padding: "9px 12px", borderRadius: 6, border: "1px solid var(--border)", color: "var(--foreground)", resize: "vertical" }}
         />
         <button
           type="submit"
           disabled={loading || !note.trim()}
           style={{
             fontSize: 12, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", alignSelf: "flex-start",
-            background: loading || !note.trim() ? "#C8C4BC" : "#4A55BE", color: "white", cursor: loading ? "not-allowed" : "pointer",
+            background: loading || !note.trim() ? "#C8C4BC" : "var(--gs-accent)", color: "white", cursor: loading ? "not-allowed" : "pointer",
           }}
         >
           {loading ? "Adding..." : "Add"}
         </button>
       </form>
-      {error && <p style={{ fontSize: 12, color: "#DC2626", marginBottom: 8 }}>{error}</p>}
+      {error && <p style={{ fontSize: 12, color: "var(--gs-danger)", marginBottom: 8 }}>{error}</p>}
 
       {observations.length === 0 ? (
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, textAlign: "center", padding: "20px" }}>
-          <p style={{ fontSize: 13, color: "#9B9188" }}>No observations yet.</p>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, textAlign: "center", padding: "20px" }}>
+          <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No observations yet.</p>
         </div>
       ) : (
         <div className="space-y-2">
           {observations.map((o) => (
-            <div key={o.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "12px 14px" }}>
-              <p style={{ fontSize: 13, color: "#19140F", margin: "0 0 6px", whiteSpace: "pre-wrap" }}>{o.note}</p>
-              <p style={{ fontSize: 11, color: "#9B9188", margin: 0 }}>
+            <div key={o.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "12px 14px" }}>
+              <p style={{ fontSize: 13, color: "var(--foreground)", margin: "0 0 6px", whiteSpace: "pre-wrap" }}>{o.note}</p>
+              <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
                 {o.author?.name ?? "Unknown"} · {new Date(o.created_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
               </p>
             </div>

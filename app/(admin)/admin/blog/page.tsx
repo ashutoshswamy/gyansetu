@@ -13,8 +13,8 @@ interface BlogPost {
 }
 
 const statusStyle: Record<string, { color: string; background: string }> = {
-  draft:     { color: "#9B9188", background: "rgba(155,145,136,0.10)" },
-  published: { color: "#2A5E3A", background: "rgba(42,94,58,0.08)" },
+  draft:     { color: "var(--gs-muted)", background: "rgba(var(--gs-muted-rgb), 0.10)" },
+  published: { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" },
 };
 
 function formatDate(dateStr: string | null) {
@@ -32,16 +32,16 @@ export default async function AdminBlogPage() {
   const allPosts = (posts ?? []) as BlogPost[];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "32px 24px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>Blog Posts</h1>
-            <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>{allPosts.length} posts total</p>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Blog Posts</h1>
+            <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginTop: 4 }}>{allPosts.length} posts total</p>
           </div>
           <Link href="/admin/blog/new">
             <Button>+ New Post</Button>
@@ -51,7 +51,7 @@ export default async function AdminBlogPage() {
         {/* List */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {allPosts.length === 0 && (
-            <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
               No blog posts yet. Create your first post.
             </p>
           )}
@@ -66,7 +66,7 @@ export default async function AdminBlogPage() {
                   alignItems: "center",
                   justifyContent: "space-between",
                   background: "white",
-                  border: "1px solid #E4DFD1",
+                  border: "1px solid var(--border)",
                   borderRadius: 10,
                   padding: "14px 18px",
                   gap: 16,
@@ -75,7 +75,7 @@ export default async function AdminBlogPage() {
                 {/* Left */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {post.title}
                     </span>
                     <span
@@ -93,7 +93,7 @@ export default async function AdminBlogPage() {
                       {post.status}
                     </span>
                   </div>
-                  <div style={{ fontSize: 12, color: "#9B9188", display: "flex", gap: 16 }}>
+                  <div style={{ fontSize: 12, color: "var(--gs-muted)", display: "flex", gap: 16 }}>
                     <span>/{post.slug}</span>
                     <span>{post.status === "published" ? `Published ${formatDate(post.published_at)}` : `Created ${formatDate(post.created_at)}`}</span>
                   </div>
@@ -108,7 +108,7 @@ export default async function AdminBlogPage() {
                         await publishPost(post.id);
                       }}
                     >
-                      <Button type="submit" variant="outline" size="sm" className="text-[#2A5E3A] border-[#2A5E3A]/30 hover:bg-[#2A5E3A]/10">
+                      <Button type="submit" variant="outline" size="sm" className="text-[var(--gs-success)] border-[var(--gs-success)]/30 hover:bg-[var(--gs-success)]/10">
                         Publish
                       </Button>
                     </form>

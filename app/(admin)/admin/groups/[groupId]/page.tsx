@@ -106,32 +106,32 @@ export default function GroupDetailPage() {
 
   const inputStyle: React.CSSProperties = {
     padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F",
+    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+    background: "var(--background)", color: "var(--foreground)",
   };
 
-  if (loading) return <div className="p-8" style={{ color: "#9B9188" }}>Loading...</div>;
+  if (loading) return <div className="p-8" style={{ color: "var(--gs-muted)" }}>Loading...</div>;
   if (!group) return (
     <div className="p-8">
-      <p style={{ color: "#DC2626", fontSize: 14 }}>Group not found.</p>
-      <button onClick={() => router.back()} style={{ marginTop: 12, fontSize: 13, color: "#4A55BE", background: "none", border: "none", cursor: "pointer" }}>← Back</button>
+      <p style={{ color: "var(--gs-danger)", fontSize: 14 }}>Group not found.</p>
+      <button onClick={() => router.back()} style={{ marginTop: 12, fontSize: 13, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer" }}>← Back</button>
     </div>
   );
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-4xl mx-auto">
-        <button onClick={() => router.push("/admin/groups")} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>
+        <button onClick={() => router.push("/admin/groups")} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--gs-muted)", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>
           <ArrowLeft size={14} /> Back to Groups
         </button>
 
         <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>{group.name}</h1>
-            {group.tours?.title && <p style={{ fontSize: 14, color: "#9B9188", marginTop: 4 }}>{group.tours.title}</p>}
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{group.name}</h1>
+            {group.tours?.title && <p style={{ fontSize: 14, color: "var(--gs-muted)", marginTop: 4 }}>{group.tours.title}</p>}
           </div>
           {group.state_allocated && (
-            <div style={{ background: "rgba(42,94,58,0.08)", padding: "10px 16px", borderRadius: 8, display: "flex", alignItems: "center", gap: 6, color: "#2A5E3A" }}>
+            <div style={{ background: "rgba(var(--gs-success-rgb), 0.08)", padding: "10px 16px", borderRadius: 8, display: "flex", alignItems: "center", gap: 6, color: "var(--gs-success)" }}>
               <MapPin size={14} />
               <span style={{ fontSize: 14, fontWeight: 600 }}>{group.state_allocated}</span>
             </div>
@@ -139,14 +139,14 @@ export default function GroupDetailPage() {
         </div>
 
         {error && (
-          <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "#DC2626" }}>
+          <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "var(--gs-danger)" }}>
             {error}
           </div>
         )}
 
         {/* Add member */}
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20, marginBottom: 20 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 14px" }}>Add Member</h2>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20, marginBottom: 20 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>Add Member</h2>
           <div className="flex gap-3">
             <div style={{ flex: 2 }}>
               <VolunteerCombobox
@@ -169,7 +169,7 @@ export default function GroupDetailPage() {
             <button
               onClick={handleAddMember}
               disabled={saving || !newUserId}
-              style={{ background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: saving || !newUserId ? "not-allowed" : "pointer", opacity: saving || !newUserId ? 0.6 : 1, flexShrink: 0 }}
+              style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: saving || !newUserId ? "not-allowed" : "pointer", opacity: saving || !newUserId ? 0.6 : 1, flexShrink: 0 }}
             >
               Add
             </button>
@@ -177,35 +177,35 @@ export default function GroupDetailPage() {
         </div>
 
         {/* Members list */}
-        <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20 }}>
+        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20 }}>
           <div className="flex items-center gap-2 mb-14">
-            <Users size={16} style={{ color: "#9B9188" }} />
-            <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: 0 }}>Members ({(group.tour_group_members ?? []).length})</h2>
+            <Users size={16} style={{ color: "var(--gs-muted)" }} />
+            <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Members ({(group.tour_group_members ?? []).length})</h2>
           </div>
           {(group.tour_group_members ?? []).length === 0 ? (
-            <p style={{ color: "#9B9188", fontSize: 14 }}>No members yet.</p>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>No members yet.</p>
           ) : (
             <div className="space-y-2">
               {(group.tour_group_members ?? []).map((m) => (
-                <div key={m.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderRadius: 8, background: "#F3F0E8" }}>
+                <div key={m.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderRadius: 8, background: "var(--gs-card)" }}>
                   <div>
-                    <span style={{ fontSize: 14, fontWeight: 500, color: "#19140F" }}>{m.users?.name}</span>
-                    <span style={{ fontSize: 12, color: "#9B9188", marginLeft: 8 }}>{m.users?.email}</span>
-                    {m.role_in_group && <span style={{ fontSize: 12, color: "#4A55BE", marginLeft: 8, padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</span>}
+                    <span style={{ fontSize: 14, fontWeight: 500, color: "var(--foreground)" }}>{m.users?.name}</span>
+                    <span style={{ fontSize: 12, color: "var(--gs-muted)", marginLeft: 8 }}>{m.users?.email}</span>
+                    {m.role_in_group && <span style={{ fontSize: 12, color: "var(--gs-accent)", marginLeft: 8, padding: "1px 6px", background: "rgba(var(--gs-accent-rgb), 0.08)", borderRadius: 4 }}>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</span>}
                   </div>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => handleToggleCoreMember(m.user_id, m.role_in_group)}
                       disabled={saving}
                       className="flex items-center gap-1.5"
-                      style={{ background: "none", border: "none", cursor: saving ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 600, color: m.role_in_group === "group_core_member" ? "#B8381E" : "#2A5E3A" }}
+                      style={{ background: "none", border: "none", cursor: saving ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 600, color: m.role_in_group === "group_core_member" ? "var(--gs-danger-alt)" : "var(--gs-success)" }}
                     >
                       <ShieldCheck size={13} />
                       {m.role_in_group === "group_core_member" ? "Remove Core Member" : "Make Core Member"}
                     </button>
                     <button
                       onClick={() => handleRemoveMember(m.user_id)}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: "#DC2626", padding: 4 }}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gs-danger)", padding: 4 }}
                     >
                       <Trash2 size={14} />
                     </button>

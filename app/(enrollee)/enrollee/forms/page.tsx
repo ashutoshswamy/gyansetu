@@ -29,24 +29,24 @@ export default async function StudentFormsPage() {
   const { data: forms } = await formsQuery.order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Student Portal</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Forms</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Forms you need to fill</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Student Portal</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Forms</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Forms you need to fill</p>
         </div>
 
         <div className="space-y-3">
           {(forms ?? []).length === 0 && (
-            <p style={{ fontSize: 14, color: "#9B9188", textAlign: "center", padding: "48px 0" }}>No active forms right now.</p>
+            <p style={{ fontSize: 14, color: "var(--gs-muted)", textAlign: "center", padding: "48px 0" }}>No active forms right now.</p>
           )}
           {(forms ?? []).map((form: DynamicForm) => (
-            <div key={form.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div key={form.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: "0 0 4px" }}>{form.title}</h3>
-                {form.description && <p style={{ fontSize: 12, color: "#5A5247", margin: "0 0 4px" }}>{form.description}</p>}
-                <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>{form.fields?.length ?? 0} fields</p>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 4px" }}>{form.title}</h3>
+                {form.description && <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{form.description}</p>}
+                <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>{form.fields?.length ?? 0} fields</p>
               </div>
               <Link href={`/enrollee/forms/${form.id}`}>
                 <Button size="sm">

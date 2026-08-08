@@ -30,7 +30,7 @@ export function ExportCsvButton({ exportAction, filename }: { exportAction: () =
       onClick={handleExport}
       disabled={loading}
       className="flex items-center gap-1.5"
-      style={{ fontSize: 13, fontWeight: 600, color: "white", background: "#2A5E3A", padding: "8px 16px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+      style={{ fontSize: 13, fontWeight: 600, color: "white", background: "var(--gs-success)", padding: "8px 16px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
     >
       <Download size={14} />
       {loading ? "Exporting..." : "Export CSV"}

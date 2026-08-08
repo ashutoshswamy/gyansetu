@@ -109,25 +109,25 @@ export default function NewCertificatePage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Issue Certificate</h1>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Issue Certificate</h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
+            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
             </div>
           )}
           <div className="space-y-5">
             <div>
-              <Label className="mb-1.5">Volunteer <span style={{ color: "#DC2626" }}>*</span></Label>
+              <Label className="mb-1.5">Volunteer <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
               <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="user_id" />
             </div>
             <div>
-              <Label className="mb-1.5">Certificate Type <span style={{ color: "#DC2626" }}>*</span></Label>
+              <Label className="mb-1.5">Certificate Type <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
               <Select name="certificate_type" defaultValue={CERT_TYPES[0]}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select type" />
@@ -151,7 +151,7 @@ export default function NewCertificatePage() {
             </div>
 
             {volunteerId && idCardChecked && !idCard && (
-              <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", fontSize: 13, color: "#DC2626" }}>
+              <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", fontSize: 13, color: "var(--gs-danger)" }}>
                 No ID card found for this volunteer{tourId ? " on this tour" : ""}. Generate their ID card first &mdash;
                 State and Volunteer ID are filled in automatically from it.
               </div>
@@ -160,7 +160,7 @@ export default function NewCertificatePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="mb-1.5">State/Union Territory</Label>
-                <Input name="state" value={idCard?.state ?? ""} readOnly placeholder="From volunteer's ID card" className="bg-[#F0EEE6] text-[#5A5247]" />
+                <Input name="state" value={idCard?.state ?? ""} readOnly placeholder="From volunteer's ID card" className="bg-[#F0EEE6] text-[var(--gs-text-secondary)]" />
               </div>
               <div>
                 <Label className="mb-1.5">Place</Label>
@@ -180,7 +180,7 @@ export default function NewCertificatePage() {
               </div>
               <div>
                 <Label className="mb-1.5">Volunteer ID</Label>
-                <Input name="volunteer_code" value={idCard?.card_number ?? ""} readOnly placeholder="From volunteer's ID card" className="bg-[#F0EEE6] text-[#5A5247]" />
+                <Input name="volunteer_code" value={idCard?.card_number ?? ""} readOnly placeholder="From volunteer's ID card" className="bg-[#F0EEE6] text-[var(--gs-text-secondary)]" />
               </div>
             </div>
             <div>

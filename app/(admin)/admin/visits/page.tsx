@@ -21,9 +21,9 @@ function formatDate(dateStr: string) {
 }
 
 const STATUS_STYLE = {
-  upcoming:  { color: "#4A55BE", bg: "rgba(74,85,190,0.10)"  },
-  ongoing:   { color: "#2A5E3A", bg: "rgba(42,94,58,0.10)"   },
-  completed: { color: "#9B9188", bg: "rgba(155,145,136,0.12)"},
+  upcoming:  { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.10)"  },
+  ongoing:   { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.10)"   },
+  completed: { color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.12)"},
 } as const;
 
 export default async function AdminVisitsPage({
@@ -65,7 +65,7 @@ export default async function AdminVisitsPage({
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "32px 24px 80px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         {/* Header */}
@@ -76,13 +76,13 @@ export default async function AdminVisitsPage({
               fontWeight: 600,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "#9B9188",
+              color: "var(--gs-muted)",
               margin: "0 0 4px",
             }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: "0 0 4px" }}>Visits</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", margin: 0 }}>{counts.all} total visits</p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: "0 0 4px" }}>Visits</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", margin: 0 }}>{counts.all} total visits</p>
           </div>
           <Link href="/admin/visits/new">
             <Button>
@@ -96,7 +96,7 @@ export default async function AdminVisitsPage({
           display: "flex",
           gap: 4,
           marginBottom: 20,
-          background: "#F3F0E8",
+          background: "var(--gs-card)",
           padding: 4,
           borderRadius: 8,
           width: "fit-content",
@@ -110,8 +110,8 @@ export default async function AdminVisitsPage({
                 style={{
                   fontSize: 13,
                   fontWeight: isActive ? 600 : 500,
-                  color: isActive ? "#19140F" : "#9B9188",
-                  background: isActive ? "#FFFFFF" : "transparent",
+                  color: isActive ? "var(--foreground)" : "var(--gs-muted)",
+                  background: isActive ? "var(--card)" : "transparent",
                   padding: "6px 14px",
                   borderRadius: 5,
                   textDecoration: "none",
@@ -126,8 +126,8 @@ export default async function AdminVisitsPage({
                 <span style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: isActive ? "#5A5247" : "#9B9188",
-                  background: isActive ? "#F3F0E8" : "rgba(0,0,0,0.06)",
+                  color: isActive ? "var(--gs-text-secondary)" : "var(--gs-muted)",
+                  background: isActive ? "var(--gs-card)" : "rgba(0,0,0,0.06)",
                   padding: "1px 6px",
                   borderRadius: 3,
                 }}>
@@ -144,13 +144,13 @@ export default async function AdminVisitsPage({
             <div style={{
               textAlign: "center",
               padding: "56px 24px",
-              background: "#FFFFFF",
-              border: "1px solid #E4DFD1",
+              background: "var(--card)",
+              border: "1px solid var(--border)",
               borderRadius: 10,
-              color: "#9B9188",
+              color: "var(--gs-muted)",
               fontSize: 14,
             }}>
-              No visits found. <Link href="/admin/visits/new" style={{ color: "#4A55BE", textDecoration: "none", fontWeight: 500 }}>Create one</Link>.
+              No visits found. <Link href="/admin/visits/new" style={{ color: "var(--gs-accent)", textDecoration: "none", fontWeight: 500 }}>Create one</Link>.
             </div>
           )}
 
@@ -160,8 +160,8 @@ export default async function AdminVisitsPage({
               <div
                 key={visit.id}
                 style={{
-                  background: "#FFFFFF",
-                  border: "1px solid #E4DFD1",
+                  background: "var(--card)",
+                  border: "1px solid var(--border)",
                   borderRadius: 10,
                   padding: "14px 18px",
                   display: "flex",
@@ -172,7 +172,7 @@ export default async function AdminVisitsPage({
                 {/* Main info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                    <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: 0 }} className="truncate">
+                    <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }} className="truncate">
                       {visit.title}
                     </h3>
                     <span style={{
@@ -188,7 +188,7 @@ export default async function AdminVisitsPage({
                       {visit.status}
                     </span>
                   </div>
-                  <div style={{ display: "flex", gap: 16, fontSize: 12, color: "#9B9188", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--gs-muted)", flexWrap: "wrap" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>

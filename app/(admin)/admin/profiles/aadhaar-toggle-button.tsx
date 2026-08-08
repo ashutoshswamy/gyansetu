@@ -26,8 +26,8 @@ export function AadhaarToggleButton({ userId, verified }: { userId: string; veri
         style={{
           display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600,
           padding: "2px 8px", borderRadius: 4,
-          color: verified ? "#2A5E3A" : "#A8641C",
-          background: verified ? "rgba(42,94,58,0.08)" : "rgba(245,165,32,0.1)",
+          color: verified ? "var(--gs-success)" : "var(--gs-warning-alt)",
+          background: verified ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-warning-rgb), 0.1)",
         }}
       >
         {verified ? "Aadhaar Verified" : "Aadhaar Unverified"}
@@ -38,8 +38,8 @@ export function AadhaarToggleButton({ userId, verified }: { userId: string; veri
         style={{
           fontSize: 12, fontWeight: 600, padding: "9px 12px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
           background: "transparent",
-          color: "#4A55BE",
-          border: "1.5px solid rgba(74,85,190,0.3)",
+          color: "var(--gs-accent)",
+          border: "1.5px solid rgba(var(--gs-accent-rgb), 0.3)",
           cursor: loading ? "not-allowed" : "pointer",
         }}
       >

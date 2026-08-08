@@ -30,7 +30,7 @@ export const plexMono = IBM_Plex_Mono({
 export const pageVars = {
   "--gs-ink": "#14172E",
   "--gs-ink-soft": "#1E2240",
-  "--gs-paper": "#FBF7EC",
+  "--gs-paper": "var(--background)",
   "--gs-paper-deep": "#F1E8D2",
   "--gs-line": "#E1D6B8",
   "--gs-line-ink": "rgba(251,247,236,.14)",

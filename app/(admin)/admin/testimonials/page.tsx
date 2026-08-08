@@ -16,8 +16,8 @@ interface Testimonial {
 }
 
 const statusStyles: Record<Status, { color: string; background: string; label: string }> = {
-  pending: { color: "#F5A520", background: "rgba(245,165,32,0.12)", label: "Pending" },
-  approved: { color: "#2A5E3A", background: "rgba(42,94,58,0.08)", label: "Approved" },
+  pending: { color: "var(--gs-warning)", background: "rgba(var(--gs-warning-rgb), 0.12)", label: "Pending" },
+  approved: { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)", label: "Approved" },
   declined: { color: "#C0392B", background: "rgba(192,57,43,0.08)", label: "Declined" },
 };
 
@@ -63,24 +63,24 @@ export default async function AdminTestimonialsPage({
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FBF7EC", padding: "32px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--background)", padding: "32px 24px" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
             Admin Console
           </p>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>Testimonials</h1>
-          <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>{counts.all} total submissions</p>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Testimonials</h1>
+          <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginTop: 4 }}>{counts.all} total submissions</p>
         </div>
 
         {/* Stat cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
           {(["pending", "approved", "declined"] as Status[]).map((s) => (
-            <div key={s} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "16px 18px" }}>
+            <div key={s} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px" }}>
               <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: statusStyles[s].color, margin: "0 0 6px" }}>
                 {statusStyles[s].label}
               </p>
-              <p style={{ fontSize: 26, fontWeight: 700, color: "#19140F", margin: 0, fontFamily: "var(--font-geist-mono), monospace" }}>
+              <p style={{ fontSize: 26, fontWeight: 700, color: "var(--foreground)", margin: 0, fontFamily: "var(--font-geist-mono), monospace" }}>
                 {counts[s]}
               </p>
             </div>
@@ -88,7 +88,7 @@ export default async function AdminTestimonialsPage({
         </div>
 
         {/* Filter tabs */}
-        <div style={{ display: "flex", gap: 6, marginBottom: 16, borderBottom: "1px solid #E4DFD1" }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 16, borderBottom: "1px solid var(--border)" }}>
           {tabs.map((tab) => {
             const isActive = tab.key === activeTab;
             return (
@@ -99,8 +99,8 @@ export default async function AdminTestimonialsPage({
                   fontSize: 13,
                   fontWeight: 600,
                   padding: "8px 14px",
-                  color: isActive ? "#4A55BE" : "#9B9188",
-                  borderBottom: isActive ? "2px solid #4A55BE" : "2px solid transparent",
+                  color: isActive ? "var(--gs-accent)" : "var(--gs-muted)",
+                  borderBottom: isActive ? "2px solid var(--gs-accent)" : "2px solid transparent",
                   textDecoration: "none",
                 }}
               >
@@ -112,7 +112,7 @@ export default async function AdminTestimonialsPage({
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {visible.length === 0 && (
-            <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
               No testimonials in this view.
             </p>
           )}
@@ -125,7 +125,7 @@ export default async function AdminTestimonialsPage({
                 alignItems: "flex-start",
                 justifyContent: "space-between",
                 background: "white",
-                border: "1px solid #E4DFD1",
+                border: "1px solid var(--border)",
                 borderRadius: 10,
                 padding: "16px 18px",
                 gap: 16,
@@ -133,7 +133,7 @@ export default async function AdminTestimonialsPage({
             >
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F" }}>{t.name}</span>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{t.name}</span>
                   <span
                     style={{
                       fontSize: 11,
@@ -147,22 +147,22 @@ export default async function AdminTestimonialsPage({
                     {statusStyles[t.status].label}
                   </span>
                 </div>
-                <div style={{ fontSize: 12, color: "#9B9188", marginBottom: 8, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <div style={{ fontSize: 12, color: "var(--gs-muted)", marginBottom: 8, display: "flex", gap: 12, flexWrap: "wrap" }}>
                   {t.batch_year && <span>Batch: {t.batch_year}</span>}
                   {t.role && <span>Role: {t.role}</span>}
                   <span>Submitted {formatDate(t.created_at)}</span>
                 </div>
                 {t.message.length > 100 ? (
                   <details>
-                    <summary style={{ fontSize: 13, color: "#5A5247", lineHeight: 1.55, cursor: "pointer" }}>
+                    <summary style={{ fontSize: 13, color: "var(--gs-text-secondary)", lineHeight: 1.55, cursor: "pointer" }}>
                       {truncate(t.message, 100)}
                     </summary>
-                    <p style={{ fontSize: 13, color: "#5A5247", margin: "6px 0 0", lineHeight: 1.55 }}>
+                    <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "6px 0 0", lineHeight: 1.55 }}>
                       {t.message}
                     </p>
                   </details>
                 ) : (
-                  <p style={{ fontSize: 13, color: "#5A5247", margin: 0, lineHeight: 1.55 }}>
+                  <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: 0, lineHeight: 1.55 }}>
                     {t.message}
                   </p>
                 )}
@@ -180,7 +180,7 @@ export default async function AdminTestimonialsPage({
                       type="submit"
                       variant="outline"
                       size="sm"
-                      className="border-[#2A5E3A]/30 text-[#2A5E3A] hover:bg-[#2A5E3A]/10"
+                      className="border-[var(--gs-success)]/30 text-[var(--gs-success)] hover:bg-[var(--gs-success)]/10"
                     >
                       Approve
                     </Button>

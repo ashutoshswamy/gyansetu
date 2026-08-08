@@ -27,7 +27,7 @@ export function MarkAttendanceButtons({ workshopId, volunteerId, pendingApproval
         disabled={loading !== null}
         style={{
           fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: loading === "present" ? "#C8C4BC" : "#2A5E3A",
+          background: loading === "present" ? "#C8C4BC" : "var(--gs-success)",
           color: "white", border: "none", cursor: loading !== null ? "not-allowed" : "pointer",
         }}
       >
@@ -38,8 +38,8 @@ export function MarkAttendanceButtons({ workshopId, volunteerId, pendingApproval
         disabled={loading !== null}
         style={{
           fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent", color: "#B8381E",
-          border: "1.5px solid rgba(184,56,30,0.3)",
+          background: "transparent", color: "var(--gs-danger-alt)",
+          border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.3)",
           cursor: loading !== null ? "not-allowed" : "pointer",
         }}
       >
@@ -72,7 +72,7 @@ export function MakeupDecisionButtons({ workshopId, volunteerId }: { workshopId:
         disabled={loading !== null}
         style={{
           fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: loading === "allowed" ? "#C8C4BC" : "#2A5E3A",
+          background: loading === "allowed" ? "#C8C4BC" : "var(--gs-success)",
           color: "white", border: "none", cursor: loading !== null ? "not-allowed" : "pointer",
         }}
       >
@@ -83,8 +83,8 @@ export function MakeupDecisionButtons({ workshopId, volunteerId }: { workshopId:
         disabled={loading !== null}
         style={{
           fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent", color: "#B8381E",
-          border: "1.5px solid rgba(184,56,30,0.3)",
+          background: "transparent", color: "var(--gs-danger-alt)",
+          border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.3)",
           cursor: loading !== null ? "not-allowed" : "pointer",
         }}
       >

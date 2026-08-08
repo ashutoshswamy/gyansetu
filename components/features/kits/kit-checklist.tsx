@@ -13,8 +13,8 @@ interface ChecklistItem {
 }
 
 const TYPE_BADGE: Record<ChecklistItem["material_type"], { bg: string; color: string; label: string }> = {
-  reusable: { bg: "rgba(74,85,190,0.1)", color: "#4A55BE", label: "Reusable" },
-  consumable: { bg: "rgba(245,165,32,0.12)", color: "#B8860B", label: "Consumable" },
+  reusable: { bg: "rgba(var(--gs-accent-rgb), 0.1)", color: "var(--gs-accent)", label: "Reusable" },
+  consumable: { bg: "rgba(var(--gs-warning-rgb), 0.12)", color: "#B8860B", label: "Consumable" },
 };
 
 export function KitChecklist({ groupId, items }: { groupId: string; items: ChecklistItem[] }) {
@@ -32,10 +32,10 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
   const packedCount = rows.filter(r => r.checked).length;
 
   return (
-    <div style={{ background: "#FBF7EC", border: "1px solid #E4DFD1", borderRadius: 8, padding: "12px 14px" }}>
+    <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 14px" }}>
       <div className="flex items-center justify-between mb-2">
-        <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "#9B9188" }}>Packing Checklist</span>
-        <span style={{ fontSize: 11, color: "#9B9188" }}>{packedCount}/{rows.length} packed</span>
+        <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)" }}>Packing Checklist</span>
+        <span style={{ fontSize: 11, color: "var(--gs-muted)" }}>{packedCount}/{rows.length} packed</span>
       </div>
       <div className="space-y-1.5">
         {rows.map(item => {
@@ -45,14 +45,14 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
               key={item.id}
               onClick={() => handleToggle(item.id, !item.checked)}
               className="flex items-center justify-between gap-2 w-full text-left"
-              style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 6, padding: "8px 10px", cursor: "pointer" }}
+              style={{ background: "white", border: "1px solid var(--border)", borderRadius: 6, padding: "8px 10px", cursor: "pointer" }}
             >
               <div className="flex items-center gap-2 min-w-0">
-                {item.checked ? <CheckSquare size={16} style={{ color: "#2A5E3A", flexShrink: 0 }} /> : <Square size={16} style={{ color: "#9B9188", flexShrink: 0 }} />}
-                <span style={{ fontSize: 13, color: item.checked ? "#9B9188" : "#19140F", textDecoration: item.checked ? "line-through" : "none" }}>{item.name}</span>
+                {item.checked ? <CheckSquare size={16} style={{ color: "var(--gs-success)", flexShrink: 0 }} /> : <Square size={16} style={{ color: "var(--gs-muted)", flexShrink: 0 }} />}
+                <span style={{ fontSize: 13, color: item.checked ? "var(--gs-muted)" : "var(--foreground)", textDecoration: item.checked ? "line-through" : "none" }}>{item.name}</span>
                 <span style={{ fontSize: 10.5, fontWeight: 600, padding: "1px 6px", borderRadius: 4, color: badge.color, background: badge.bg, flexShrink: 0 }}>{badge.label}</span>
               </div>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#2A5E3A", flexShrink: 0 }}>{item.total_qty}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", flexShrink: 0 }}>{item.total_qty}</span>
             </button>
           );
         })}

@@ -11,9 +11,9 @@ interface StatCardProps {
 
 const accentMap = {
   indigo: {
-    border: "#4A55BE",
-    glow: "rgba(74,85,190,0.06)",
-    iconColor: "#4A55BE",
+    border: "var(--gs-accent)",
+    glow: "rgba(var(--gs-accent-rgb), 0.06)",
+    iconColor: "var(--gs-accent)",
   },
   sky: {
     border: "#1E5A8A",
@@ -21,19 +21,19 @@ const accentMap = {
     iconColor: "#1E5A8A",
   },
   emerald: {
-    border: "#2A5E3A",
-    glow: "rgba(42,94,58,0.06)",
-    iconColor: "#2A5E3A",
+    border: "var(--gs-success)",
+    glow: "rgba(var(--gs-success-rgb), 0.06)",
+    iconColor: "var(--gs-success)",
   },
   amber: {
-    border: "#F5A520",
-    glow: "rgba(245,165,32,0.06)",
-    iconColor: "#F5A520",
+    border: "var(--gs-warning)",
+    glow: "rgba(var(--gs-warning-rgb), 0.06)",
+    iconColor: "var(--gs-warning)",
   },
   rose: {
-    border: "#B8381E",
-    glow: "rgba(184,56,30,0.06)",
-    iconColor: "#B8381E",
+    border: "var(--gs-danger-alt)",
+    glow: "rgba(var(--gs-danger-alt-rgb), 0.06)",
+    iconColor: "var(--gs-danger-alt)",
   },
 };
 
@@ -51,8 +51,8 @@ export function StatCard({
     <div
       className="relative p-5 rounded-[10px] overflow-hidden h-full"
       style={{
-        background: "#FFFFFF",
-        border: "1px solid #E4DFD1",
+        background: "var(--card)",
+        border: "1px solid var(--border)",
         borderLeft: `3px solid ${a.border}`,
         transition: "box-shadow 0.15s, transform 0.15s",
       }}
@@ -68,7 +68,7 @@ export function StatCard({
           <p
             className="text-[11px] font-semibold tracking-widest uppercase mb-2"
             style={{
-              color: "#9B9188",
+              color: "var(--gs-muted)",
               fontFamily: "'IBM Plex Sans', var(--font-plex-sans), sans-serif",
             }}
           >
@@ -77,7 +77,7 @@ export function StatCard({
           <p
             className="text-3xl font-bold leading-none"
             style={{
-              color: "#4A55BE",
+              color: "var(--gs-accent)",
               fontVariantNumeric: "tabular-nums",
               fontFamily: "var(--font-geist-mono), 'Cormorant Garamond', monospace",
             }}
@@ -88,7 +88,7 @@ export function StatCard({
             <p
               className="text-xs mt-2"
               style={{
-                color: "#9B9188",
+                color: "var(--gs-muted)",
                 fontFamily: "'IBM Plex Sans', var(--font-plex-sans), sans-serif",
               }}
             >

@@ -9,10 +9,10 @@ const inp = {
   width: "100%",
   padding: "10px 14px",
   fontSize: 14,
-  border: "1.5px solid #E4DFD1",
+  border: "1.5px solid var(--border)",
   borderRadius: 8,
   background: "white",
-  color: "#19140F",
+  color: "var(--foreground)",
   outline: "none",
   resize: "none" as const,
 };
@@ -73,29 +73,29 @@ export function TestRunner({ test }: { test: Test }) {
   if (result) {
     const passed = result.passed;
     return (
-      <div className="rounded-xl p-10 text-center" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-        <div style={{ fontSize: 36, marginBottom: 12, color: passed ? "#2A5E3A" : "#B8381E" }}>
+      <div className="rounded-xl p-10 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <div style={{ fontSize: 36, marginBottom: 12, color: passed ? "var(--gs-success)" : "var(--gs-danger-alt)" }}>
           {passed ? "✓" : "✗"}
         </div>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", marginBottom: 8 }}>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", marginBottom: 8 }}>
           {passed ? "Test Passed" : "Test Submitted"}
         </h2>
-        <p style={{ fontSize: 14, color: "#5A5247", marginBottom: 20 }}>
+        <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginBottom: 20 }}>
           Your score:{" "}
-          <span style={{ fontWeight: 700, color: passed ? "#2A5E3A" : "#B8381E", fontFamily: "monospace" }}>
+          <span style={{ fontWeight: 700, color: passed ? "var(--gs-success)" : "var(--gs-danger-alt)", fontFamily: "monospace" }}>
             {result.score.toFixed(1)}%
           </span>
         </p>
 
         {passed ? (
-          <div style={{ background: "rgba(245,165,32,0.07)", border: "1px solid rgba(245,165,32,0.25)", borderRadius: 8, padding: "14px 20px", display: "inline-block", marginBottom: 16, maxWidth: 360 }}>
+          <div style={{ background: "rgba(var(--gs-warning-rgb), 0.07)", border: "1px solid rgba(var(--gs-warning-rgb), 0.25)", borderRadius: 8, padding: "14px 20px", display: "inline-block", marginBottom: 16, maxWidth: 360 }}>
             <p style={{ fontSize: 13, fontWeight: 600, color: "#B45309", marginBottom: 4 }}>Pending Admin Approval</p>
             <p style={{ fontSize: 12, color: "#9B7830", lineHeight: 1.6 }}>
               Your result has been sent for admin review. Once approved, sign in again to access your volunteer dashboard.
             </p>
           </div>
         ) : (
-          <p style={{ fontSize: 13, color: "#9B9188", marginBottom: 16 }}>
+          <p style={{ fontSize: 13, color: "var(--gs-muted)", marginBottom: 16 }}>
             Minimum required: {test.passing_score}%
           </p>
         )}
@@ -103,7 +103,7 @@ export function TestRunner({ test }: { test: Test }) {
         <div>
           <button
             onClick={() => router.push("/enrollee/tests")}
-            style={{ background: "#19140F", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: "pointer" }}
+            style={{ background: "var(--foreground)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: "pointer" }}
           >
             Back to Tests
           </button>
@@ -119,20 +119,20 @@ export function TestRunner({ test }: { test: Test }) {
     <div>
       {/* Progress bar + timer */}
       <div className="flex items-center justify-between mb-3">
-        <span style={{ fontSize: 12, color: "#9B9188" }}>
+        <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>
           Question {current + 1} of {test.questions.length}
         </span>
-        <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 600, color: isTimeLow ? "#B8381E" : "#19140F" }}>
+        <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 600, color: isTimeLow ? "var(--gs-danger-alt)" : "var(--foreground)" }}>
           {mins}:{secs}
         </span>
       </div>
-      <div style={{ height: 4, background: "#E4DFD1", borderRadius: 2, marginBottom: 20, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${progress}%`, background: "#4A55BE", borderRadius: 2, transition: "width 0.2s" }} />
+      <div style={{ height: 4, background: "var(--border)", borderRadius: 2, marginBottom: 20, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${progress}%`, background: "var(--gs-accent)", borderRadius: 2, transition: "width 0.2s" }} />
       </div>
 
       {/* Question card */}
-      <div className="rounded-xl p-6 mb-5" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-        <p style={{ fontSize: 15, fontWeight: 600, color: "#19140F", marginBottom: 16 }}>{question.question}</p>
+      <div className="rounded-xl p-6 mb-5" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <p style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", marginBottom: 16 }}>{question.question}</p>
 
         {question.type === "mcq" && (
           <div className="space-y-2">
@@ -142,10 +142,10 @@ export function TestRunner({ test }: { test: Test }) {
                 <label
                   key={opt}
                   className="flex items-center gap-3 p-3 rounded-lg cursor-pointer"
-                  style={{ border: `1.5px solid ${selected ? "#4A55BE" : "#E4DFD1"}`, background: selected ? "rgba(74,85,190,0.06)" : "white", transition: "all 0.1s" }}
+                  style={{ border: `1.5px solid ${selected ? "var(--gs-accent)" : "var(--border)"}`, background: selected ? "rgba(var(--gs-accent-rgb), 0.06)" : "white", transition: "all 0.1s" }}
                 >
-                  <input type="radio" name={question.id} value={opt} checked={selected} onChange={() => setAnswer(question.id, opt)} style={{ accentColor: "#4A55BE" }} />
-                  <span style={{ fontSize: 14, color: "#19140F" }}>{opt}</span>
+                  <input type="radio" name={question.id} value={opt} checked={selected} onChange={() => setAnswer(question.id, opt)} style={{ accentColor: "var(--gs-accent)" }} />
+                  <span style={{ fontSize: 14, color: "var(--foreground)" }}>{opt}</span>
                 </label>
               );
             })}
@@ -160,10 +160,10 @@ export function TestRunner({ test }: { test: Test }) {
                 <label
                   key={opt}
                   className="flex items-center gap-3 p-3 rounded-lg cursor-pointer"
-                  style={{ border: `1.5px solid ${selected ? "#4A55BE" : "#E4DFD1"}`, background: selected ? "rgba(74,85,190,0.06)" : "white", transition: "all 0.1s" }}
+                  style={{ border: `1.5px solid ${selected ? "var(--gs-accent)" : "var(--border)"}`, background: selected ? "rgba(var(--gs-accent-rgb), 0.06)" : "white", transition: "all 0.1s" }}
                 >
-                  <input type="checkbox" checked={selected} onChange={() => toggleMulti(question.id, opt)} style={{ accentColor: "#4A55BE" }} />
-                  <span style={{ fontSize: 14, color: "#19140F" }}>{opt}</span>
+                  <input type="checkbox" checked={selected} onChange={() => toggleMulti(question.id, opt)} style={{ accentColor: "var(--gs-accent)" }} />
+                  <span style={{ fontSize: 14, color: "var(--foreground)" }}>{opt}</span>
                 </label>
               );
             })}
@@ -186,7 +186,7 @@ export function TestRunner({ test }: { test: Test }) {
         <button
           onClick={() => setCurrent((c) => c - 1)}
           disabled={current === 0}
-          style={{ fontSize: 13, fontWeight: 500, padding: "9px 18px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: current === 0 ? "#C8C4BC" : "#5A5247", cursor: current === 0 ? "not-allowed" : "pointer" }}
+          style={{ fontSize: 13, fontWeight: 500, padding: "9px 18px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: current === 0 ? "#C8C4BC" : "var(--gs-text-secondary)", cursor: current === 0 ? "not-allowed" : "pointer" }}
         >
           Previous
         </button>
@@ -194,7 +194,7 @@ export function TestRunner({ test }: { test: Test }) {
         {current < test.questions.length - 1 ? (
           <button
             onClick={() => setCurrent((c) => c + 1)}
-            style={{ fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", background: "#4A55BE", color: "white", cursor: "pointer" }}
+            style={{ fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", background: "var(--gs-accent)", color: "white", cursor: "pointer" }}
           >
             Next
           </button>
@@ -202,7 +202,7 @@ export function TestRunner({ test }: { test: Test }) {
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            style={{ fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", background: submitting ? "#C8C4BC" : "#2A5E3A", color: "white", cursor: submitting ? "not-allowed" : "pointer" }}
+            style={{ fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", background: submitting ? "#C8C4BC" : "var(--gs-success)", color: "white", cursor: submitting ? "not-allowed" : "pointer" }}
           >
             {submitting ? "Submitting..." : "Submit Test"}
           </button>

@@ -22,7 +22,7 @@ export function ApproveReportButton({ id }: { id: string }) {
   }
 
   return (
-    <Button onClick={handleClick} disabled={loading} className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90">
+    <Button onClick={handleClick} disabled={loading} className="bg-[var(--gs-success)] text-white hover:bg-[var(--gs-success)]/90">
       {loading ? "..." : "Approve"}
     </Button>
   );

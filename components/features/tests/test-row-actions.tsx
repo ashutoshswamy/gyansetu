@@ -30,15 +30,15 @@ export function TestRowActions({ testId, status }: { testId: string; status: "dr
         disabled={toggling}
         style={{
           fontSize: 12, fontWeight: 500, padding: "6px 14px", borderRadius: 5,
-          border: `1.5px solid ${status === "active" ? "rgba(184,56,30,0.28)" : "rgba(42,94,58,0.28)"}`,
-          background: "transparent", color: status === "active" ? "#B8381E" : "#2A5E3A",
+          border: `1.5px solid ${status === "active" ? "rgba(var(--gs-danger-alt-rgb), 0.28)" : "rgba(var(--gs-success-rgb), 0.28)"}`,
+          background: "transparent", color: status === "active" ? "var(--gs-danger-alt)" : "var(--gs-success)",
           cursor: toggling ? "not-allowed" : "pointer",
         }}
       >
         {toggling ? "..." : status === "active" ? "Disable" : "Enable"}
       </button>
       <Link href={`/admin/tests/${testId}/edit`}>
-        <button style={{ background: "transparent", color: "#4A55BE", fontSize: 12, fontWeight: 500, padding: "6px 14px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
+        <button style={{ background: "transparent", color: "var(--gs-accent)", fontSize: 12, fontWeight: 500, padding: "6px 14px", borderRadius: 5, border: "1.5px solid rgba(var(--gs-accent-rgb), 0.28)", cursor: "pointer" }}>
           Edit
         </button>
       </Link>

@@ -42,13 +42,13 @@ export default async function SchoolProfilePage() {
   const profiles = (await getSchoolProfiles()) as unknown as SchoolProfileRow[];
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>EARC Panel</p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>School Profile</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{profiles.length} school profiles submitted</p>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>EARC Panel</p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>School Profile</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{profiles.length} school profiles submitted</p>
           </div>
           {isAdmin && (
             <ExportCsvButton exportAction={exportSchoolProfilesCsv} filename="earc-school-profiles.csv" />
@@ -59,35 +59,35 @@ export default async function SchoolProfilePage() {
           <SchoolProfileForm />
         </div>
 
-        <div className="mb-8" style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 16 }}>
-          <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", margin: "0 0 8px" }}>Bulk Upload</p>
-          <p style={{ fontSize: 12, color: "#9B9188", margin: "0 0 10px" }}>
+        <div className="mb-8" style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 16 }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", margin: "0 0 8px" }}>Bulk Upload</p>
+          <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 10px" }}>
             Have data for many schools? Download the template, fill it in the same format as the form above, then upload it here.
             The <code>student_strength</code> column takes JSON, e.g. <code>{`[{"standard":"5th","boys":10,"girls":8}]`}</code>.
           </p>
           <SchoolBulkUploadButton />
         </div>
 
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 12px" }}>Submitted Profiles</h2>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Submitted Profiles</h2>
         {profiles.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
-            <School className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
-            <p style={{ fontSize: 15, color: "#5A5247" }}>No school profiles submitted yet.</p>
+          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+            <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No school profiles submitted yet.</p>
           </div>
         ) : (
           <div className="space-y-3">
             {profiles.map(p => (
-              <div key={p.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px" }}>
+              <div key={p.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px" }}>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span style={{ fontSize: 15, fontWeight: 600, color: "#19140F" }}>{p.school_name}</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#4A55BE", background: "rgba(74,85,190,0.08)" }}>{p.project}</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#2A5E3A", background: "rgba(42,94,58,0.08)" }}>{p.academic_year}</span>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{p.school_name}</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>{p.project}</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>{p.academic_year}</span>
                 </div>
-                <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>
+                <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                   {[p.village_city, p.taluka_block, p.district, p.state].filter(Boolean).join(", ")}
                   {" · "}{p.school_type} · {p.module} · {p.mode}
                 </p>
-                <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: 12, color: "#5A5247" }}>
+                <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: 12, color: "var(--gs-text-secondary)" }}>
                   <span>Students: <strong>{p.total_students ?? "-"}</strong></span>
                   <span>Teachers: <strong>{p.num_teachers_involved}</strong></span>
                   <span>Sessions: <strong>{p.num_sessions_conducted}</strong> ({p.duration_per_session} each)</span>
@@ -95,7 +95,7 @@ export default async function SchoolProfilePage() {
                   <span>Medium: <strong>{p.medium_of_instruction}</strong></span>
                   <span>Location: <strong>{p.location_type}</strong></span>
                 </div>
-                <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6 }}>
+                <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6 }}>
                   Submitted by {p.submitter?.name ?? "Unknown"} · {new Date(p.created_at).toLocaleDateString()}
                 </p>
               </div>

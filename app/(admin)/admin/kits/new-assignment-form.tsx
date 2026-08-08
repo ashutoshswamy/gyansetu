@@ -8,8 +8,8 @@ import { createClientClient } from "@/lib/supabase/client";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: string[] }) {
@@ -55,26 +55,26 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
   if (availableGroups.length === 0) return null;
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: 16, marginBottom: 16 }}>
+    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: 16, marginBottom: 16 }}>
       {error && (
-        <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "8px 12px", marginBottom: 12, fontSize: 12, color: "#DC2626" }}>
+        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "8px 12px", marginBottom: 12, fontSize: 12, color: "var(--gs-danger)" }}>
           {error}
         </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
         <div style={{ gridColumn: "span 2" }}>
-          <label style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 4 }}>Group *</label>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 4 }}>Group *</label>
           <select name="group_id" required style={inputStyle}>
             <option value="">Select group...</option>
             {availableGroups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.[0]?.title ? ` — ${g.tours[0].title}` : ""}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 4 }}>School Count *</label>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 4 }}>School Count *</label>
           <input name="school_count" type="number" min={1} defaultValue={1} required placeholder="Enter number of schools" style={inputStyle} />
         </div>
       </div>
-      <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: 12 }}>
+      <button type="submit" disabled={loading} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: 12 }}>
         {loading ? "Saving..." : "+ Assign Kit"}
       </button>
     </form>

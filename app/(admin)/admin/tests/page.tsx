@@ -7,9 +7,9 @@ import { ClipboardList, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const testStatusStyles: Record<string, { color: string; background: string }> = {
-  active: { color: "#2A5E3A", background: "rgba(42,94,58,0.08)" },
-  draft:  { color: "#F5A520", background: "rgba(245,165,32,0.08)" },
-  closed: { color: "#9B9188", background: "rgba(90,82,71,0.08)" },
+  active: { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" },
+  draft:  { color: "var(--gs-warning)", background: "rgba(var(--gs-warning-rgb), 0.08)" },
+  closed: { color: "var(--gs-muted)", background: "rgba(90,82,71,0.08)" },
 };
 
 interface TestAttemptRow {
@@ -73,16 +73,16 @@ export default async function AdminTestsPage() {
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
               Admin Console
             </p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Eligibility Tests</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Eligibility Tests</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
               {tests?.length ?? 0} tests &middot; results and pass rates
             </p>
           </div>
@@ -104,10 +104,10 @@ export default async function AdminTestsPage() {
           {(tests ?? []).length === 0 && (
             <div
               className="py-16 text-center rounded-xl"
-              style={{ background: "white", border: "1px solid #E4DFD1" }}
+              style={{ background: "white", border: "1px solid var(--border)" }}
             >
-              <ClipboardList className="w-8 h-8 mx-auto mb-2" style={{ color: "#E4DFD1" }} />
-              <p style={{ fontSize: 14, color: "#9B9188" }}>
+              <ClipboardList className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+              <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>
                 No tests created yet.
               </p>
             </div>
@@ -129,20 +129,20 @@ export default async function AdminTestsPage() {
               <div
                 key={test.id}
                 className="rounded-xl overflow-hidden"
-                style={{ background: "white", border: "1px solid #E4DFD1" }}
+                style={{ background: "white", border: "1px solid var(--border)" }}
               >
                 {/* Test header */}
                 <div className="flex items-center justify-between p-5">
                   <div className="min-w-0">
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: 0 }}>{test.title}</h3>
+                      <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{test.title}</h3>
                       <span
                         style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.background, textTransform: "capitalize" }}
                       >
                         {test.status}
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "#9B9188" }}>
+                    <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                       <span>Tour: {test.tours?.title ?? "Unlinked"}</span>
                       <span>{test.questions?.length ?? 0} questions</span>
                       <span>{test.duration_minutes} min</span>
@@ -154,10 +154,10 @@ export default async function AdminTestsPage() {
                     {testAttempts.length > 0 && (
                       <>
                         <div className="text-center">
-                          <p style={{ fontWeight: 700, fontSize: 20, lineHeight: 1, color: "#4A55BE", fontFamily: "var(--font-geist-mono), monospace" }}>
+                          <p style={{ fontWeight: 700, fontSize: 20, lineHeight: 1, color: "var(--gs-accent)", fontFamily: "var(--font-geist-mono), monospace" }}>
                             {testAttempts.length}
                           </p>
-                          <p style={{ fontSize: 11, marginTop: 2, color: "#9B9188" }}>attempts</p>
+                          <p style={{ fontSize: 11, marginTop: 2, color: "var(--gs-muted)" }}>attempts</p>
                         </div>
                         {avg !== null && (
                           <div className="text-center">
@@ -165,21 +165,21 @@ export default async function AdminTestsPage() {
                               fontWeight: 700,
                               fontSize: 20,
                               lineHeight: 1,
-                              color: avg >= test.passing_score ? "#2A5E3A" : "#B8381E",
+                              color: avg >= test.passing_score ? "var(--gs-success)" : "var(--gs-danger-alt)",
                               fontFamily: "var(--font-geist-mono), monospace",
                             }}>
                               {avg.toFixed(0)}%
                             </p>
-                            <p style={{ fontSize: 11, marginTop: 2, color: "#9B9188" }}>avg score</p>
+                            <p style={{ fontSize: 11, marginTop: 2, color: "var(--gs-muted)" }}>avg score</p>
                           </div>
                         )}
                         <div className="text-center">
-                          <p style={{ fontWeight: 700, fontSize: 20, lineHeight: 1, color: "#4A55BE", fontFamily: "var(--font-geist-mono), monospace" }}>
+                          <p style={{ fontWeight: 700, fontSize: 20, lineHeight: 1, color: "var(--gs-accent)", fontFamily: "var(--font-geist-mono), monospace" }}>
                             {testAttempts.length > 0
                               ? Math.round((passed / testAttempts.length) * 100)
                               : 0}%
                           </p>
-                          <p style={{ fontSize: 11, marginTop: 2, color: "#9B9188" }}>pass rate</p>
+                          <p style={{ fontSize: 11, marginTop: 2, color: "var(--gs-muted)" }}>pass rate</p>
                         </div>
                       </>
                     )}
@@ -196,9 +196,9 @@ export default async function AdminTestsPage() {
                 {testAttempts.length > 0 && (
                   <div
                     className="px-5 pb-4"
-                    style={{ borderTop: "1px solid #E4DFD1" }}
+                    style={{ borderTop: "1px solid var(--border)" }}
                   >
-                    <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9B9188", paddingTop: 12, paddingBottom: 8 }}>
+                    <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-muted)", paddingTop: 12, paddingBottom: 8 }}>
                       Results
                     </p>
                     <div className="space-y-1.5">
@@ -210,26 +210,26 @@ export default async function AdminTestsPage() {
                         const didPass = score >= test.passing_score;
 
                         let statusLabel = didPass ? "Passed" : "Failed";
-                        let statusColor = didPass ? "#2A5E3A" : "#B8381E";
-                        let statusBg = didPass ? "rgba(42,94,58,0.08)" : "rgba(184,56,30,0.08)";
-                        if (isPendingApproval) { statusLabel = "Pending Approval"; statusColor = "#F5A520"; statusBg = "rgba(245,165,32,0.08)"; }
-                        if (isApproved)        { statusLabel = "Approved ✓";       statusColor = "#2A5E3A"; statusBg = "rgba(42,94,58,0.12)"; }
-                        if (isRejected)        { statusLabel = "Rejected";          statusColor = "#B8381E"; statusBg = "rgba(184,56,30,0.08)"; }
+                        let statusColor = didPass ? "var(--gs-success)" : "var(--gs-danger-alt)";
+                        let statusBg = didPass ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-danger-alt-rgb), 0.08)";
+                        if (isPendingApproval) { statusLabel = "Pending Approval"; statusColor = "var(--gs-warning)"; statusBg = "rgba(var(--gs-warning-rgb), 0.08)"; }
+                        if (isApproved)        { statusLabel = "Approved ✓";       statusColor = "var(--gs-success)"; statusBg = "rgba(var(--gs-success-rgb), 0.12)"; }
+                        if (isRejected)        { statusLabel = "Rejected";          statusColor = "var(--gs-danger-alt)"; statusBg = "rgba(var(--gs-danger-alt-rgb), 0.08)"; }
 
                         return (
                           <div
                             key={`${attempt.test_id}-${attempt.student_id}`}
                             className="flex items-center justify-between py-2.5 px-3 rounded"
-                            style={{ background: isPendingApproval ? "rgba(245,165,32,0.05)" : "#F3F0E8", border: isPendingApproval ? "1px solid rgba(245,165,32,0.2)" : "none" }}
+                            style={{ background: isPendingApproval ? "rgba(var(--gs-warning-rgb), 0.05)" : "var(--gs-card)", border: isPendingApproval ? "1px solid rgba(var(--gs-warning-rgb), 0.2)" : "none" }}
                           >
                             <div>
-                              <p style={{ fontSize: 12, fontWeight: 500, color: "#19140F" }}>
+                              <p style={{ fontSize: 12, fontWeight: 500, color: "var(--foreground)" }}>
                                 {attempt.users?.name ?? "Unknown"}
                               </p>
-                              <p style={{ fontSize: 11, color: "#9B9188" }}>{attempt.users?.email}</p>
+                              <p style={{ fontSize: 11, color: "var(--gs-muted)" }}>{attempt.users?.email}</p>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span style={{ fontSize: 12, fontFamily: "monospace", color: didPass ? "#2A5E3A" : "#B8381E" }}>
+                              <span style={{ fontSize: 12, fontFamily: "monospace", color: didPass ? "var(--gs-success)" : "var(--gs-danger-alt)" }}>
                                 {score.toFixed(1)}%
                               </span>
                               <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: statusColor, background: statusBg }}>
@@ -241,7 +241,7 @@ export default async function AdminTestsPage() {
                         );
                       })}
                       {testAttempts.length > 8 && (
-                        <p style={{ fontSize: 12, textAlign: "center", paddingTop: 4, color: "#9B9188" }}>
+                        <p style={{ fontSize: 12, textAlign: "center", paddingTop: 4, color: "var(--gs-muted)" }}>
                           +{testAttempts.length - 8} more results
                         </p>
                       )}

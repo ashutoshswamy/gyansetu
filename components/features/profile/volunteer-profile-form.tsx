@@ -11,8 +11,8 @@ import type { VolunteerProfile } from "@/types";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
+  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
+  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Don't Know"];
@@ -40,7 +40,7 @@ interface Props {
 }
 
 export function VolunteerProfileForm({ variant }: Props) {
-  const accent = variant === "enrollee" ? "#1E5A8A" : "#2A5E3A";
+  const accent = variant === "enrollee" ? "#1E5A8A" : "var(--gs-success)";
   const [profile, setProfile] = useState<VolunteerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -223,7 +223,7 @@ export function VolunteerProfileForm({ variant }: Props) {
     }
   }
 
-  if (loading) return <div className="p-8" style={{ color: "#9B9188" }}>Loading...</div>;
+  if (loading) return <div className="p-8" style={{ color: "var(--gs-muted)" }}>Loading...</div>;
 
   const age = dob ? getAge(dob) : null;
   const underAge = variant === "enrollee" && age !== null && age < 18;
@@ -237,68 +237,68 @@ export function VolunteerProfileForm({ variant }: Props) {
   ];
 
   return (
-    <div className="min-h-screen p-4 pb-32 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 pb-32 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>
             {variant === "enrollee" ? "Enrollee Portal" : "Volunteer Portal"}
           </p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>My Profile</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>My Profile</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>
             {variant === "enrollee" ? "Your profile is retained if you are promoted to volunteer." : "Volunteer database entry, skills, and emergency contacts."}
           </p>
         </div>
 
         {variant === "enrollee" && (
-          <div style={{ background: "rgba(74,85,190,0.06)", border: "1px solid rgba(74,85,190,0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13, color: "#4A55BE" }}>
+          <div style={{ background: "rgba(var(--gs-accent-rgb), 0.06)", border: "1px solid rgba(var(--gs-accent-rgb), 0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13, color: "var(--gs-accent)" }}>
             <Info size={15} style={{ flexShrink: 0, marginTop: 1 }} />
             <span>You must be <strong>18 or older</strong> to apply for a tour. Set your date of birth to enable tour applications.</span>
           </div>
         )}
 
         {underAge && (
-          <div style={{ background: "rgba(184,56,30,0.06)", border: "1px solid rgba(184,56,30,0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "#B8381E" }}>
+          <div style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.06)", border: "1px solid rgba(var(--gs-danger-alt-rgb), 0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "var(--gs-danger-alt)" }}>
             <AlertCircle size={15} />
             Your age ({age}) does not meet the minimum requirement of 18 to apply for tours.
           </div>
         )}
 
         {variant === "enrollee" && age !== null && !underAge && (
-          <div style={{ background: "rgba(42,94,58,0.07)", border: "1px solid rgba(42,94,58,0.2)", borderRadius: 8, padding: "10px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#2A5E3A" }}>
+          <div style={{ background: "rgba(var(--gs-success-rgb), 0.07)", border: "1px solid rgba(var(--gs-success-rgb), 0.2)", borderRadius: 8, padding: "10px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--gs-success)" }}>
             <CheckCircle size={15} />
             Age verified ({age} years) — you are eligible to apply for tours.
           </div>
         )}
 
         {variant === "volunteer" && profile?.consent_given && (
-          <div style={{ background: "rgba(42,94,58,0.07)", border: "1px solid rgba(42,94,58,0.2)", borderRadius: 8, padding: "10px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#2A5E3A" }}>
+          <div style={{ background: "rgba(var(--gs-success-rgb), 0.07)", border: "1px solid rgba(var(--gs-success-rgb), 0.2)", borderRadius: 8, padding: "10px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--gs-success)" }}>
             <CheckCircle size={15} />
             Consent given on {profile.consent_given_at ? new Date(profile.consent_given_at).toLocaleDateString() : "-"}
           </div>
         )}
 
         {/* Tabs */}
-        <div style={{ display: "flex", gap: 2, marginBottom: 20, background: "white", border: "1px solid #E4DFD1", borderRadius: 8, padding: 4, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 2, marginBottom: 20, background: "white", border: "1px solid var(--border)", borderRadius: 8, padding: 4, flexWrap: "wrap" }}>
           {tabs.map(t => (
             <button
               key={t.id}
               type="button"
               onClick={() => setActiveTab(t.id)}
-              style={{ flex: 1, minWidth: 120, padding: "8px 0", fontSize: 13, fontWeight: 600, borderRadius: 6, border: "none", cursor: "pointer", background: activeTab === t.id ? accent : "transparent", color: activeTab === t.id ? "white" : "#5A5247" }}
+              style={{ flex: 1, minWidth: 120, padding: "8px 0", fontSize: 13, fontWeight: 600, borderRadius: 6, border: "none", cursor: "pointer", background: activeTab === t.id ? accent : "transparent", color: activeTab === t.id ? "white" : "var(--gs-text-secondary)" }}
             >
               {t.label}
             </button>
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} noValidate style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} noValidate style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626", display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)", display: "flex", gap: 8, alignItems: "center" }}>
               <AlertCircle size={14} /> {error}
             </div>
           )}
           {saved && (
-            <div style={{ background: "rgba(42,94,58,0.07)", border: "1px solid rgba(42,94,58,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#2A5E3A", display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{ background: "rgba(var(--gs-success-rgb), 0.07)", border: "1px solid rgba(var(--gs-success-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-success)", display: "flex", gap: 8, alignItems: "center" }}>
               <CheckCircle size={14} /> Profile saved.
             </div>
           )}
@@ -335,8 +335,8 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} style={inputStyle} /></F>
               </div>
 
-              <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Current Address</p>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Current Address</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <F label="House / Flat No." required><input name="house_no" required placeholder="Enter house / flat number" defaultValue={profile?.house_no ?? ""} style={inputStyle} /></F>
                   <F label="Street / Area" required><input name="street" required placeholder="Enter street / area" defaultValue={profile?.street ?? ""} style={inputStyle} /></F>
@@ -366,7 +366,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <F label="Additional Address Notes"><textarea name="address" rows={2} placeholder="Enter additional address notes" defaultValue={profile?.address ?? ""} style={{ ...inputStyle, resize: "vertical", marginTop: 16 }} /></F>
               </div>
 
-              <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                 <F label="Permanent Address Same as Current?" required>
                   <div style={{ display: "flex", gap: 20 }}>
                     <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
@@ -430,7 +430,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <F label="States Visited (previous Gyan Setu)">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 mt-1">
                     {INDIAN_STATES.map(s => (
-                      <label key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#5A5247", cursor: "pointer" }}>
+                      <label key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--gs-text-secondary)", cursor: "pointer" }}>
                         <input type="checkbox" name="states_visited" value={s} defaultChecked={(profile?.states_visited ?? []).includes(s)} />
                         {s}
                       </label>
@@ -498,8 +498,8 @@ export function VolunteerProfileForm({ variant }: Props) {
               <YesNo label="Are you currently working?" checked={isCurrentlyWorking} onChange={setIsCurrentlyWorking} />
 
               {isCurrentlyWorking && (
-                <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Professional Details</p>
+                <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Professional Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <F label="Company / Organization Name" required><input name="company_name" required={isCurrentlyWorking} placeholder="Enter company name" defaultValue={profile?.company_name ?? ""} style={inputStyle} /></F>
                     <F label="Designation" required><input name="designation" required={isCurrentlyWorking} placeholder="Enter designation" defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
@@ -534,8 +534,8 @@ export function VolunteerProfileForm({ variant }: Props) {
           </div>
 
           <div className="space-y-5" data-tab="emergency" style={{ display: activeTab === "emergency" ? undefined : "none" }}>
-              <div style={{ background: "rgba(168,100,28,0.06)", border: "1px solid rgba(168,100,28,0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 4 }}>
-                <p style={{ fontSize: 13, color: "#A8641C", margin: 0 }}>
+              <div style={{ background: "rgba(var(--gs-warning-alt-rgb), 0.06)", border: "1px solid rgba(var(--gs-warning-alt-rgb), 0.2)", borderRadius: 8, padding: "12px 16px", marginBottom: 4 }}>
+                <p style={{ fontSize: 13, color: "var(--gs-warning-alt)", margin: 0 }}>
                   This information is kept confidential and only accessed in case of emergencies during visits.
                 </p>
               </div>
@@ -551,8 +551,8 @@ export function VolunteerProfileForm({ variant }: Props) {
               <F label="Emergency Contact Phone" required hint="Exactly 10 digits"><input name="emergency_contact_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter contact phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.emergency_contact_phone ?? ""} style={inputStyle} /></F>
               <F label="Emergency Contact Address" required><textarea name="emergency_contact_address" rows={2} required placeholder="Enter contact address" defaultValue={profile?.emergency_contact_address ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
 
-              <div style={{ borderTop: "1px solid #E4DFD1", paddingTop: 16 }}>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "#19140F", marginBottom: 10 }}>Medical Information</p>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Medical Information</p>
                 <YesNo label="Do you have any allergies?" checked={hasAllergies} onChange={setHasAllergies} />
                 {hasAllergies && <F label="Specify allergies" required><textarea name="allergies_detail" rows={2} required placeholder="Describe allergies" defaultValue={profile?.allergies_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
 
@@ -565,7 +565,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <F label="Dietary Restrictions">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 mt-1">
                     {DIETARY.map(d => (
-                      <label key={d} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#5A5247", cursor: "pointer" }}>
+                      <label key={d} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--gs-text-secondary)", cursor: "pointer" }}>
                         <input type="checkbox" name="dietary_restrictions" value={d} defaultChecked={(profile?.dietary_restrictions ?? []).includes(d)} />
                         {d}
                       </label>
@@ -583,18 +583,18 @@ export function VolunteerProfileForm({ variant }: Props) {
           <div className="space-y-5" data-tab="declaration" style={{ display: activeTab === "declaration" ? undefined : "none" }}>
               <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
                 <input type="checkbox" name="certified_true" required defaultChecked={profile?.certified_true ?? false} style={{ marginTop: 2 }} />
-                <span style={{ fontSize: 13, color: "#19140F", lineHeight: 1.5 }}>
+                <span style={{ fontSize: 13, color: "var(--foreground)", lineHeight: 1.5 }}>
                   I certify that the information provided is true and accurate to the best of my knowledge.
                 </span>
               </label>
               <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
                 <input type="checkbox" name="consent_given" required defaultChecked={profile?.consent_given ?? false} style={{ marginTop: 2 }} />
-                <span style={{ fontSize: 13, color: "#19140F", lineHeight: 1.5 }}>
+                <span style={{ fontSize: 13, color: "var(--foreground)", lineHeight: 1.5 }}>
                   I consent to Gyan Setu collecting and using my information for volunteer management, communication, event coordination, and emergency purposes in accordance with applicable privacy policies.
                 </span>
               </label>
               <F label="Digital Signature / Name" required><input name="signature_name" required placeholder="Type full name to sign" defaultValue={profile?.signature_name ?? ""} style={inputStyle} /></F>
-              <F label="Date"><input disabled value={profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : new Date().toLocaleDateString()} style={{ ...inputStyle, color: "#9B9188" }} /></F>
+              <F label="Date"><input disabled value={profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : new Date().toLocaleDateString()} style={{ ...inputStyle, color: "var(--gs-muted)" }} /></F>
           </div>
 
           {activeTab === "declaration" && (
@@ -611,10 +611,10 @@ export function VolunteerProfileForm({ variant }: Props) {
 function F({ label, hint, required, children }: { label: string; hint?: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: hint ? 2 : 6 }}>
-        {label}{required && <span style={{ color: "#DC2626", marginLeft: 2 }}>*</span>}
+      <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: hint ? 2 : 6 }}>
+        {label}{required && <span style={{ color: "var(--gs-danger)", marginLeft: 2 }}>*</span>}
       </label>
-      {hint && <p style={{ fontSize: 11, color: "#9B9188", margin: "0 0 6px" }}>{hint}</p>}
+      {hint && <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: "0 0 6px" }}>{hint}</p>}
       {children}
     </div>
   );

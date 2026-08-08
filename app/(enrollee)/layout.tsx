@@ -18,7 +18,7 @@ export default async function EnrolleeLayout({
   if (!isEnrolleeRole(role)) redirect("/dashboard");
 
   return (
-    <div className="flex min-h-screen" style={{ background: "#FBF7EC" }}>
+    <div className="flex min-h-screen" style={{ background: "var(--background)" }}>
       <RealtimeRefresher tables={["tour_applications", "test_attempts", "notifications", "dynamic_forms", "eligibility_tests", "tours"]} />
       <Sidebar role={role ?? "enrollee"} />
       <main className="flex-1 overflow-auto min-w-0 pt-14 lg:pt-0">{children}</main>

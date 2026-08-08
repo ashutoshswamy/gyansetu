@@ -94,16 +94,16 @@ export default function BulkIdCardsPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Bulk Issue ID Cards</h1>
-          <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>Pick a tour, optionally narrow to one group, select volunteers, and issue cards to all of them at once.</p>
+          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Bulk Issue ID Cards</h1>
+          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Pick a tour, optionally narrow to one group, select volunteers, and issue cards to all of them at once.</p>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
+        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
+            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
             </div>
           )}
@@ -132,7 +132,7 @@ export default function BulkIdCardsPage() {
                 </Select>
               </div>
             </div>
-            <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>
+            <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: "-10px 0 0" }}>
               Card numbers are generated automatically per volunteer. State comes from the group&apos;s allocated state.
             </p>
             <div>
