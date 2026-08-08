@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import type { DynamicForm } from "@/types";
 
 function FormCard({ form, status }: { form: DynamicForm; status: "submitted" | "draft" }) {
@@ -25,9 +26,9 @@ function FormCard({ form, status }: { form: DynamicForm; status: "submitted" | "
         <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>{form.fields?.length ?? 0} fields</p>
       </div>
       <Link href={`/volunteer/forms/${form.id}`}>
-        <button style={{ background: isSubmitted ? "white" : "#4A55BE", color: isSubmitted ? "#5A5247" : "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: isSubmitted ? "1px solid #E4DFD1" : "none", cursor: "pointer" }}>
+        <Button variant={isSubmitted ? "outline" : "default"} size="sm">
           {isSubmitted ? "Open Form" : "Fill Form"}
-        </button>
+        </Button>
       </Link>
     </div>
   );

@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { postLocationUpdate } from "@/actions/travel";
 import type { LocationUpdateInput } from "@/lib/validations";
 
@@ -18,11 +24,6 @@ export function LocationUpdateForm({ groupId }: { groupId: string }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
-  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,40 +51,46 @@ export function LocationUpdateForm({ groupId }: { groupId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 20, marginBottom: 20 }}>
-      <h2 style={{ fontSize: 14, fontWeight: 600, color: "#19140F", margin: "0 0 14px" }}>Post Location Update</h2>
+    <form onSubmit={handleSubmit} className="bg-white border border-border rounded-lg p-5 mb-5">
+      <h2 className="text-sm font-semibold text-foreground mb-3.5">Post Location Update</h2>
       {error && (
-        <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "#DC2626" }}>
-          {error}
-        </div>
+        <Alert variant="destructive" className="mb-3.5">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
       <div className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Status Type</label>
-            <select name="status_type" style={inputStyle}>
-              <option value="">Select...</option>
-              {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
+            <Label htmlFor="status_type" className="text-xs mb-1.5">Status Type</Label>
+            <Select name="status_type">
+              <SelectTrigger id="status_type">
+                <SelectValue placeholder="Select..." />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map(o => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div />
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>From</label>
-            <input name="from_location" type="text" placeholder="e.g. New Delhi" style={inputStyle} />
+            <Label htmlFor="from_location" className="text-xs mb-1.5">From</Label>
+            <Input id="from_location" name="from_location" type="text" placeholder="e.g. New Delhi" />
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>To</label>
-            <input name="to_location" type="text" placeholder="e.g. Mumbai Central" style={inputStyle} />
+            <Label htmlFor="to_location" className="text-xs mb-1.5">To</Label>
+            <Input id="to_location" name="to_location" type="text" placeholder="e.g. Mumbai Central" />
           </div>
         </div>
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Note</label>
-          <textarea name="note" rows={2} placeholder="e.g. Train running 40 min late" style={{ ...inputStyle, resize: "vertical" }} />
+          <Label htmlFor="note" className="text-xs mb-1.5">Note</Label>
+          <Textarea id="note" name="note" rows={2} placeholder="e.g. Train running 40 min late" />
         </div>
       </div>
-      <button type="submit" disabled={saving} style={{ marginTop: 14, background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+      <Button type="submit" disabled={saving} className="mt-3.5">
         {saving ? "Posting..." : "Post Update"}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import type { EligibilityTest } from "@/types";
 
 export default async function StudentTestsPage() {
@@ -80,9 +81,9 @@ export default async function StudentTestsPage() {
                     </>
                   ) : (
                     <Link href={`/enrollee/tests/${test.id}`}>
-                      <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
+                      <Button size="sm">
                         Start Test
-                      </button>
+                      </Button>
                     </Link>
                   )}
                 </div>

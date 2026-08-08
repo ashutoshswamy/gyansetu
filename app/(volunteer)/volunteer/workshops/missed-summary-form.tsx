@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { submitMissedWorkshopSummary } from "@/actions/workshops";
 
 export function MissedSummaryForm({ workshopId, isPast }: { workshopId: string; isPast: boolean }) {
@@ -36,44 +39,45 @@ export function MissedSummaryForm({ workshopId, isPast }: { workshopId: string; 
 
   if (!open) {
     return (
-      <button
+      <Button
         onClick={() => setOpen(true)}
-        style={{ fontSize: 11, fontWeight: 600, minHeight: 40, padding: "0 14px", borderRadius: 4, background: "transparent", color: "#F5A520", border: "1.5px solid rgba(245,165,32,0.35)", cursor: "pointer" }}
+        variant="outline"
+        size="xs"
       >
         {isPast ? "I didn't attend" : "I will not attend"}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <div style={{ marginTop: 10, width: "100%" }}>
+    <div className="mt-2.5 w-full">
       {error && (
-        <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "8px 12px", marginBottom: 8, fontSize: 12, color: "#DC2626" }}>
-          {error}
-        </div>
+        <Alert variant="destructive" className="mb-2">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
-      <textarea
+      <Textarea
         value={summary}
         onChange={e => setSummary(e.target.value)}
         rows={3}
         placeholder={isPast ? "Explain why you missed this workshop (emergency reason)..." : "Let us know why you won't be able to attend..."}
-        style={{ width: "100%", padding: "8px 12px", fontSize: 13, border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none", background: "#FBF7EC", color: "#19140F", boxSizing: "border-box", resize: "vertical" }}
       />
-      <div className="flex items-center gap-3" style={{ marginTop: 8 }}>
-        <button
+      <div className="flex items-center gap-3 mt-2">
+        <Button
           onClick={handleSubmit}
           disabled={loading || !summary.trim()}
-          style={{ fontSize: 12, fontWeight: 600, minHeight: 40, padding: "0 16px", borderRadius: 4, background: "#4A55BE", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+          size="sm"
         >
           {loading ? "Submitting..." : "Submit"}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => { setOpen(false); setError(null); }}
           disabled={loading}
-          style={{ fontSize: 12, fontWeight: 500, minHeight: 40, padding: "0 16px", borderRadius: 4, background: "transparent", color: "#5A5247", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
+          variant="outline"
+          size="sm"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );

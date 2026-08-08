@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import type { Tour } from "@/types";
 
 export default async function StudentToursPage() {
@@ -50,18 +51,18 @@ export default async function StudentToursPage() {
                 <span>{tour.capacity} seats</span>
               </div>
               {appliedSet.has(tour.id) ? (
-                <button disabled style={{ width: "100%", background: "transparent", color: "#9B9188", fontSize: 13, fontWeight: 500, padding: "8px 0", borderRadius: 5, border: "1px solid #E4DFD1", cursor: "default" }}>
+                <Button disabled variant="outline" className="w-full">
                   Applied
-                </button>
+                </Button>
               ) : hasAnyApplication ? (
-                <button disabled style={{ width: "100%", background: "transparent", color: "#9B9188", fontSize: 13, fontWeight: 500, padding: "8px 0", borderRadius: 5, border: "1px solid #E4DFD1", cursor: "default" }}>
+                <Button disabled variant="outline" className="w-full">
                   Already applied elsewhere
-                </button>
+                </Button>
               ) : (
-                <Link href={`/enrollee/tours/${tour.id}`} style={{ display: "block" }}>
-                  <button style={{ width: "100%", background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 0", borderRadius: 5, border: "none", cursor: "pointer" }}>
+                <Link href={`/enrollee/tours/${tour.id}`} className="block">
+                  <Button className="w-full">
                     View &amp; Apply
-                  </button>
+                  </Button>
                 </Link>
               )}
             </div>
