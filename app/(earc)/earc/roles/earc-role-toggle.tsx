@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { setEarcStaffRole } from "@/actions/users";
 
 export function EarcRoleToggle({ clerkId, isEarcStaff }: { clerkId: string; isEarcStaff: boolean }) {
@@ -27,23 +28,15 @@ export function EarcRoleToggle({ clerkId, isEarcStaff }: { clerkId: string; isEa
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
         onClick={handleToggle}
         disabled={loading}
-        style={{
-          fontSize: 12,
-          fontWeight: 600,
-          padding: "8px 10px",
-          borderRadius: 6,
-          border: isEarcStaff ? "1.5px solid #E4B8AE" : "1.5px solid #E4DFD1",
-          color: isEarcStaff ? "#B8381E" : "#19140F",
-          background: "white",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
+        variant={isEarcStaff ? "destructive" : "outline"}
+        size="sm"
       >
         {loading ? "Updating…" : isEarcStaff ? "Remove EARC Staff" : "Make EARC Staff"}
-      </button>
-      {error && <span style={{ fontSize: 12, fontWeight: 600, color: "#B8381E" }}>{error}</span>}
+      </Button>
+      {error && <span className="text-xs font-semibold text-destructive">{error}</span>}
     </div>
   );
 }

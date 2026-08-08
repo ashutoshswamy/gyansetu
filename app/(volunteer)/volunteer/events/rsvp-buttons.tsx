@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { rsvpEvent } from "@/actions/events";
 
 const OPTIONS = [
-  { status: "confirmed" as const, label: "Will attend", color: "#2A5E3A" },
-  { status: "maybe" as const, label: "Maybe", color: "#F5A520" },
-  { status: "absent" as const, label: "Will not attend", color: "#B8381E" },
+  { status: "confirmed" as const, label: "Will attend", variant: "default" as const },
+  { status: "maybe" as const, label: "Maybe", variant: "secondary" as const },
+  { status: "absent" as const, label: "Will not attend", variant: "destructive" as const },
 ];
 
 export function RsvpButtons({ eventId, current }: { eventId: string; current?: string }) {
@@ -32,21 +33,16 @@ export function RsvpButtons({ eventId, current }: { eventId: string; current?: s
       {OPTIONS.map(o => {
         const active = current === o.status;
         return (
-          <button
+          <Button
             key={o.status}
             onClick={() => rsvp(o.status)}
             disabled={loading !== null}
-            style={{
-              fontSize: 11, fontWeight: 600, minHeight: 34, padding: "0 12px", borderRadius: 4,
-              background: active ? o.color : "transparent",
-              color: active ? "white" : o.color,
-              border: `1.5px solid ${active ? o.color : `${o.color}59`}`,
-              cursor: loading !== null ? "not-allowed" : "pointer",
-              opacity: loading !== null && loading !== o.status ? 0.6 : 1,
-            }}
+            variant={active ? o.variant : "outline"}
+            size="xs"
+            className={loading !== null && loading !== o.status ? "opacity-60" : ""}
           >
             {loading === o.status ? "..." : o.label}
-          </button>
+          </Button>
         );
       })}
     </div>

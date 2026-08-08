@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ExpenseForm } from "./expense-form";
 import type { Expense } from "@/types";
 
@@ -75,12 +77,13 @@ export function ExpenseItem({ expense }: { expense: Expense & { group?: { id: st
               {expense.rejection_reason && (
                 <p style={{ fontSize: 12, color: "#B8381E", margin: "0 0 8px" }}>Needs revision: {expense.rejection_reason}</p>
               )}
-              <button
+              <Button
                 onClick={() => setEditing(true)}
-                style={{ fontSize: 12, fontWeight: 600, padding: "7px 14px", borderRadius: 6, background: "#B8381E", color: "white", border: "none", cursor: "pointer" }}
+                variant="destructive"
+                size="sm"
               >
                 Fix & Resubmit
-              </button>
+              </Button>
             </div>
           )}
         </div>
