@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { approveTestResult, rejectTestResult } from "@/actions/tests";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function ApproveRejectButtons({ attemptId }: { attemptId: string }) {
   const router = useRouter();
@@ -34,29 +35,21 @@ export function ApproveRejectButtons({ attemptId }: { attemptId: string }) {
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
         onClick={handleApprove}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: loading === "approve" ? "#C8C4BC" : "#2A5E3A",
-          color: "white", border: "none", cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90"
       >
         {loading === "approve" ? "..." : "Approve"}
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={handleReject}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent", color: "#B8381E",
-          border: "1.5px solid rgba(184,56,30,0.3)",
-          cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        variant="outline"
+        className="border-[#B8381E]/30 text-[#B8381E] hover:bg-[#B8381E]/10"
       >
         {loading === "reject" ? "..." : "Reject"}
-      </button>
+      </Button>
     </div>
   );
 }

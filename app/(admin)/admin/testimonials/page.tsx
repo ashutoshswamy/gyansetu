@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { approveTestimonial, declineTestimonial, deleteTestimonial } from "@/actions/public-forms";
+import { Button } from "@/components/ui/button";
 
 type Status = "pending" | "approved" | "declined";
 
@@ -175,21 +176,14 @@ export default async function AdminTestimonialsPage({
                       await approveTestimonial(t.id);
                     }}
                   >
-                    <button
+                    <Button
                       type="submit"
-                      style={{
-                        background: "transparent",
-                        color: "#2A5E3A",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        padding: "6px 14px",
-                        borderRadius: 5,
-                        border: "1.5px solid rgba(42,94,58,0.30)",
-                        cursor: "pointer",
-                      }}
+                      variant="outline"
+                      size="sm"
+                      className="border-[#2A5E3A]/30 text-[#2A5E3A] hover:bg-[#2A5E3A]/10"
                     >
                       Approve
-                    </button>
+                    </Button>
                   </form>
                 )}
                 {t.status !== "declined" && (
@@ -199,21 +193,14 @@ export default async function AdminTestimonialsPage({
                       await declineTestimonial(t.id);
                     }}
                   >
-                    <button
+                    <Button
                       type="submit"
-                      style={{
-                        background: "transparent",
-                        color: "#B8860B",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        padding: "6px 14px",
-                        borderRadius: 5,
-                        border: "1.5px solid rgba(184,134,11,0.30)",
-                        cursor: "pointer",
-                      }}
+                      variant="outline"
+                      size="sm"
+                      className="border-[#B8860B]/30 text-[#B8860B] hover:bg-[#B8860B]/10"
                     >
                       Decline
-                    </button>
+                    </Button>
                   </form>
                 )}
                 <form
@@ -222,21 +209,9 @@ export default async function AdminTestimonialsPage({
                     await deleteTestimonial(t.id);
                   }}
                 >
-                  <button
-                    type="submit"
-                    style={{
-                      background: "transparent",
-                      color: "#C0392B",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      padding: "6px 14px",
-                      borderRadius: 5,
-                      border: "1.5px solid rgba(192,57,43,0.25)",
-                      cursor: "pointer",
-                    }}
-                  >
+                  <Button type="submit" variant="destructive" size="sm">
                     Delete
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>

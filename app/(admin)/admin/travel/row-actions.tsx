@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateTravelTicket } from "@/actions/travel";
+import { Button } from "@/components/ui/button";
 
 export function ConfirmButton({ id, disabled }: { id: string; disabled: boolean }) {
   const router = useRouter();
@@ -23,17 +24,14 @@ export function ConfirmButton({ id, disabled }: { id: string; disabled: boolean 
   if (disabled) return null;
 
   return (
-    <button
+    <Button
       onClick={handleClick}
       disabled={loading}
-      style={{
-        fontSize: 12, fontWeight: 600, padding: "9px 12px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: loading ? "#C8C4BC" : "#2A5E3A", color: "white", border: "none",
-        cursor: loading ? "not-allowed" : "pointer",
-      }}
+      size="sm"
+      className="bg-[#2A5E3A] text-white hover:bg-[#234a2f]"
     >
       {loading ? "..." : "Confirm"}
-    </button>
+    </Button>
   );
 }
 
@@ -54,17 +52,14 @@ export function ApproveItineraryButton({ id, approved }: { id: string; approved:
   }
 
   return (
-    <button
+    <Button
       onClick={handleClick}
       disabled={loading}
-      style={{
-        fontSize: 12, fontWeight: 600, padding: "9px 12px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: "transparent", color: approved ? "#2A5E3A" : "#5A5247",
-        border: `1.5px solid ${approved ? "rgba(42,94,58,0.3)" : "#E4DFD1"}`,
-        cursor: loading ? "not-allowed" : "pointer",
-      }}
+      variant="outline"
+      size="sm"
+      className={approved ? "border-[rgba(42,94,58,0.3)] text-[#2A5E3A]" : ""}
     >
       {loading ? "..." : approved ? "Itinerary Approved" : "Approve Itinerary"}
-    </button>
+    </Button>
   );
 }

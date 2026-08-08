@@ -4,6 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createGroup } from "@/actions/groups";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function NewGroupPage() {
   const router = useRouter();
@@ -37,12 +42,6 @@ export default function NewGroupPage() {
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
-  };
-
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-2xl mx-auto">
@@ -58,32 +57,36 @@ export default function NewGroupPage() {
           )}
           <div className="space-y-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
-              <select name="tour_id" required style={inputStyle}>
-                <option value="">Select tour...</option>
-                {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
+              <Label className="mb-1.5">Tour <span className="text-destructive">*</span></Label>
+              <Select name="tour_id" required>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select tour..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group Name <span style={{ color: "#DC2626" }}>*</span></label>
-              <input name="name" required placeholder="e.g. Team Rajasthan" style={inputStyle} />
+              <Label className="mb-1.5">Group Name <span className="text-destructive">*</span></Label>
+              <Input name="name" required placeholder="e.g. Team Rajasthan" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory Allocated</label>
-              <input name="state_allocated" placeholder="e.g. Rajasthan" style={inputStyle} />
+              <Label className="mb-1.5">State/Union Territory Allocated</Label>
+              <Input name="state_allocated" placeholder="e.g. Rajasthan" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea name="notes" rows={3} placeholder="Enter notes" style={{ ...inputStyle, resize: "vertical" }} />
+              <Label className="mb-1.5">Notes</Label>
+              <Textarea name="notes" rows={3} placeholder="Enter notes" />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            <Button type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create Group"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Tour } from "@/types";
 import { ToursListClient } from "./tours-list-client";
+import { Button } from "@/components/ui/button";
 
 export default async function AdminToursPage() {
   const db = createServerClient();
@@ -25,9 +26,7 @@ export default async function AdminToursPage() {
             </p>
           </div>
           <Link href="/admin/tours/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + New Tour
-            </button>
+            <Button>+ New Tour</Button>
           </Link>
         </div>
 

@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Show } from "@clerk/nextjs";
 import { ChevronRight, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { F_BODY, btnMarigold } from "./theme";
 
 const navLinks = [
@@ -106,15 +107,15 @@ export function SiteNavbar() {
           </Show>
         </motion.div>
 
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="icon-sm"
           className="mobile-menu-btn"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           onClick={() => setMobileOpen((v) => !v)}
-          style={{ display: "none", alignItems: "center", justifyContent: "center", width: 38, height: 38, background: "transparent", border: "1px solid var(--gs-line)", borderRadius: 6, cursor: "pointer", color: "var(--gs-text)" }}
         >
           {mobileOpen ? <X size={19} /> : <Menu size={19} />}
-        </button>
+        </Button>
       </div>
 
       {mobileOpen && (

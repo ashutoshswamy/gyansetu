@@ -4,6 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createForm, updateForm } from "@/actions/forms";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { DynamicForm, FormField } from "@/types";
 
 type Tour = { id: string; title: string };
@@ -89,6 +101,27 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
     }));
   }
 
+  function applyTemplate(tId: string) {
+    if (!tId) return;
+    const selected = templates.find(t => t.id === tId);
+    if (selected) {
+      setTitle(selected.title);
+      setDescription(selected.description ?? "");
+      setTargetRole(selected.target_role as "enrollee" | "volunteer" | "all");
+      setStatus(selected.status);
+      setIsTemplate(false); // Default to saving as new linked form
+      setFields(selected.fields.map((f: FormField) => ({
+        id: uid(),
+        type: f.type,
+        label: f.label,
+        placeholder: f.placeholder ?? "",
+        required: !!f.required,
+        options: f.options ?? [],
+        accept: f.accept ?? "",
+      })));
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -131,122 +164,112 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
     }
   }
 
-  const inputStyle = { fontSize: 13, padding: "8px 12px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#19140F", width: "100%", outline: "none" };
-  const labelStyle = { fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "#9B9188", display: "block", marginBottom: 4 };
-
   return (
     <form onSubmit={handleSubmit}>
       {/* Template Importer */}
       {!isEdit && templates.length > 0 && (
-        <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1.5px dashed #4A55BE", color: "#4A55BE" }}>
-          <label style={{ ...labelStyle, color: "#4A55BE" }}>Import from existing Template</label>
+        <div className="rounded-xl p-5 mb-4 border-[1.5px] border-dashed border-[#4A55BE] bg-white text-[#4A55BE]">
+          <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#4A55BE]">
+            Import from existing Template
+          </Label>
           <div className="flex gap-3 items-center mt-1">
-            <select
-              style={{ ...inputStyle, borderColor: "rgba(74,85,190,0.3)" }}
-              defaultValue=""
-              onChange={e => {
-                const tId = e.target.value;
-                if (!tId) return;
-                const selected = templates.find(t => t.id === tId);
-                if (selected) {
-                  setTitle(selected.title);
-                  setDescription(selected.description ?? "");
-                  setTargetRole(selected.target_role as "enrollee" | "volunteer" | "all");
-                  setStatus(selected.status);
-                  setIsTemplate(false); // Default to saving as new linked form
-                  setFields(selected.fields.map((f: FormField) => ({
-                    id: uid(),
-                    type: f.type,
-                    label: f.label,
-                    placeholder: f.placeholder ?? "",
-                    required: !!f.required,
-                    options: f.options ?? [],
-                    accept: f.accept ?? "",
-                  })));
-                }
-              }}
-            >
-              <option value="">Select a template to import...</option>
-              {templates.map(t => (
-                <option key={t.id} value={t.id}>
-                  {t.title} ({t.fields?.length ?? 0} fields)
-                </option>
-              ))}
-            </select>
+            <Select value="" onValueChange={(v: string | null) => applyTemplate(v ?? "")}>
+              <SelectTrigger className="w-full border-[#4A55BE]/30">
+                <SelectValue placeholder="Select a template to import..." />
+              </SelectTrigger>
+              <SelectContent>
+                {templates.map(t => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.title} ({t.fields?.length ?? 0} fields)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <p style={{ fontSize: 11, color: "#9B9188", marginTop: 6, margin: "6px 0 0 0" }}>
+          <p className="mt-1.5 text-[11px] text-[#9B9188]">
             * Selecting a template will overwrite the title, description, and fields in the builder below.
           </p>
         </div>
       )}
 
       {/* Meta */}
-      <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-        <p style={{ fontSize: 12, fontWeight: 600, color: "#9B9188", marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Form Details</p>
+      <div className="rounded-xl p-5 mb-4 border border-[#E4DFD1] bg-white">
+        <p className="mb-3 text-xs font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Form Details</p>
         <div className="space-y-3">
           <div>
-            <label style={labelStyle}>Title *</label>
-            <input required style={inputStyle} value={title} onChange={e => setTitle(e.target.value)} placeholder="Form title" />
+            <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Title *</Label>
+            <Input required value={title} onChange={e => setTitle(e.target.value)} placeholder="Form title" />
           </div>
           <div>
-            <label style={labelStyle}>Description</label>
-            <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 56 }} value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional description" />
+            <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Description</Label>
+            <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional description" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <label style={labelStyle}>Form Type *</label>
-              <select style={inputStyle} value={isTemplate ? "template" : "link"} onChange={e => {
-                const val = e.target.value === "template";
-                setIsTemplate(val);
-                if (val) {
-                  setTourIds([]);
-                }
-              }}>
-                <option value="link">Standard Form</option>
-                <option value="template">Template</option>
-              </select>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Form Type *</Label>
+              <Select
+                value={isTemplate ? "template" : "link"}
+                onValueChange={(v: string | null) => {
+                  const val = v === "template";
+                  setIsTemplate(val);
+                  if (val) {
+                    setTourIds([]);
+                  }
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="link">Standard Form</SelectItem>
+                  <SelectItem value="template">Template</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={labelStyle}>{isEdit ? "Linked Tour" : "Linked Tour(s)"}</label>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">
+                {isEdit ? "Linked Tour" : "Linked Tour(s)"}
+              </Label>
               {isEdit ? (
-                <select disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourIds[0] ?? ""} onChange={e => setTourIds(e.target.value ? [e.target.value] : [])}>
-                  <option value="">No tour</option>
-                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
+                <Select
+                  disabled={isTemplate}
+                  value={tourIds[0] ?? ""}
+                  onValueChange={(v: string | null) => setTourIds(v ? [v] : [])}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="No tour" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               ) : (
                 <div
-                  style={{
-                    ...inputStyle, padding: 6, opacity: isTemplate ? 0.5 : 1, pointerEvents: isTemplate ? "none" : "auto",
-                    maxHeight: 140, overflowY: "auto", display: "flex", flexDirection: "column", gap: 1,
-                  }}
+                  className="flex max-h-[140px] flex-col gap-px overflow-y-auto rounded-md border-[1.5px] border-[#E4DFD1] bg-white p-1.5"
+                  style={{ opacity: isTemplate ? 0.5 : 1, pointerEvents: isTemplate ? "none" : "auto" }}
                 >
                   {tours.length === 0 && (
-                    <span style={{ fontSize: 12.5, color: "#9B9188", padding: "6px 6px" }}>No tours available</span>
+                    <span className="px-1.5 py-1.5 text-[12.5px] text-[#9B9188]">No tours available</span>
                   )}
                   {tours.map(t => {
                     const checked = tourIds.includes(t.id);
                     return (
-                      <label
+                      <Label
                         key={t.id}
-                        style={{
-                          display: "flex", alignItems: "center", gap: 8, padding: "6px 6px", borderRadius: 4,
-                          fontSize: 13, color: "#19140F", cursor: "pointer",
-                          background: checked ? "rgba(74,85,190,0.07)" : "transparent",
-                        }}
+                        className={`cursor-pointer gap-2 rounded px-1.5 py-1.5 text-sm text-[#19140F] ${checked ? "bg-[#4A55BE]/[0.07]" : ""}`}
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={checked}
-                          onChange={() => setTourIds(checked ? tourIds.filter(id => id !== t.id) : [...tourIds, t.id])}
+                          onCheckedChange={() => setTourIds(checked ? tourIds.filter(id => id !== t.id) : [...tourIds, t.id])}
                         />
                         {t.title}
-                      </label>
+                      </Label>
                     );
                   })}
                 </div>
               )}
               {!isTemplate && (
-                <p style={{ fontSize: 11, color: "#9B9188", marginTop: 4, margin: "4px 0 0 0" }}>
+                <p className="mt-1 text-[11px] text-[#9B9188]">
                   {isEdit
                     ? "Assigning a tour makes this visible to every group in that tour."
                     : "Check multiple tours to create one linked copy per tour, each visible to every group in that tour. Leave unchecked for no tour."}
@@ -254,29 +277,44 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
               )}
             </div>
             <div>
-              <label style={labelStyle}>Target Role *</label>
-              <select required style={inputStyle} value={targetRole} onChange={e => setTargetRole(e.target.value as "enrollee" | "volunteer" | "all")}>
-                <option value="enrollee">Enrollees</option>
-                <option value="volunteer">Volunteers</option>
-                <option value="all">All</option>
-              </select>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Target Role *</Label>
+              <Select value={targetRole} onValueChange={(v: string | null) => setTargetRole((v ?? "enrollee") as "enrollee" | "volunteer" | "all")}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="enrollee">Enrollees</SelectItem>
+                  <SelectItem value="volunteer">Volunteers</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={labelStyle}>Status</label>
-              <select style={inputStyle} value={status} onChange={e => setStatus(e.target.value as "draft" | "active" | "closed")}>
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="closed">Closed</option>
-              </select>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Status</Label>
+              <Select value={status} onValueChange={(v: string | null) => setStatus((v ?? "draft") as "draft" | "active" | "closed")}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={labelStyle}>Category</label>
-              <select style={inputStyle} value={category} onChange={e => setCategory(e.target.value as "general" | "task" | "survey" | "cultural_activity")}>
-                <option value="general">General</option>
-                <option value="task">Task Assignment / PPT Submission</option>
-                <option value="survey">Survey / Interesting Facts</option>
-                <option value="cultural_activity">Cultural Activity</option>
-              </select>
+              <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Category</Label>
+              <Select value={category} onValueChange={(v: string | null) => setCategory((v ?? "general") as "general" | "task" | "survey" | "cultural_activity")}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="general">General</SelectItem>
+                  <SelectItem value="task">Task Assignment / PPT Submission</SelectItem>
+                  <SelectItem value="survey">Survey / Interesting Facts</SelectItem>
+                  <SelectItem value="cultural_activity">Cultural Activity</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
@@ -285,89 +323,119 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
       {/* Fields */}
       <div className="space-y-3 mb-4">
         {fields.map((f, fIdx) => (
-          <div key={f.id} className="rounded-xl p-5" style={{ background: "white", border: "1px solid #E4DFD1" }}>
+          <div key={f.id} className="rounded-xl p-5 border border-[#E4DFD1] bg-white">
             <div className="flex items-center justify-between mb-3">
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#4A55BE", letterSpacing: "0.08em" }}>Field {fIdx + 1}</span>
+              <span className="text-[11px] font-bold tracking-[0.08em] text-[#4A55BE]">Field {fIdx + 1}</span>
               {fields.length > 1 && (
-                <button type="button" onClick={() => removeField(fIdx)} style={{ fontSize: 11, color: "#B8381E", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                <Button
+                  type="button"
+                  variant="link"
+                  size="xs"
+                  onClick={() => removeField(fIdx)}
+                  className="h-auto p-0 text-[11px] text-[#B8381E]"
+                >
                   Remove
-                </button>
+                </Button>
               )}
             </div>
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label style={labelStyle}>Label *</label>
-                  <input required style={inputStyle} value={f.label} onChange={e => updateField(fIdx, { label: e.target.value })} placeholder="Field label" />
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Label *</Label>
+                  <Input required value={f.label} onChange={e => updateField(fIdx, { label: e.target.value })} placeholder="Field label" />
                 </div>
                 <div>
-                  <label style={labelStyle}>Type</label>
-                  <select style={inputStyle} value={f.type} onChange={e => updateField(fIdx, { type: e.target.value as FieldType, options: [] })}>
-                    {FIELD_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                  </select>
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Type</Label>
+                  <Select value={f.type} onValueChange={(v: string | null) => updateField(fIdx, { type: (v ?? "text") as FieldType, options: [] })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FIELD_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
               {!["file", "image", "checkbox", "date"].includes(f.type) && (
                 <div>
-                  <label style={labelStyle}>Placeholder</label>
-                  <input style={inputStyle} value={f.placeholder ?? ""} onChange={e => updateField(fIdx, { placeholder: e.target.value })} placeholder="Placeholder text" />
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Placeholder</Label>
+                  <Input value={f.placeholder ?? ""} onChange={e => updateField(fIdx, { placeholder: e.target.value })} placeholder="Placeholder text" />
                 </div>
               )}
 
               {(f.type === "file" || f.type === "image") && (
                 <div>
-                  <label style={labelStyle}>Accepted Types</label>
-                  <input style={inputStyle} value={f.accept ?? ""} onChange={e => updateField(fIdx, { accept: e.target.value })} placeholder={f.type === "image" ? "image/*" : ".pdf,.doc,.docx"} />
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Accepted Types</Label>
+                  <Input value={f.accept ?? ""} onChange={e => updateField(fIdx, { accept: e.target.value })} placeholder={f.type === "image" ? "image/*" : ".pdf,.doc,.docx"} />
                 </div>
               )}
 
               {NEEDS_OPTIONS.includes(f.type) && (
                 <div>
-                  <label style={labelStyle}>Options</label>
+                  <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[#9B9188]">Options</Label>
                   <div className="space-y-2">
                     {(f.options.length === 0 ? [""] : f.options).map((opt, oIdx) => (
                       <div key={oIdx} className="flex gap-2">
-                        <input
-                          style={{ ...inputStyle, flex: 1 }}
+                        <Input
+                          className="flex-1"
                           value={opt}
                           onChange={e => updateOption(fIdx, oIdx, e.target.value)}
                           placeholder={`Option ${oIdx + 1}`}
                         />
                         {f.options.length > 1 && (
-                          <button type="button" onClick={() => updateField(fIdx, { options: f.options.filter((_, oi) => oi !== oIdx) })} style={{ fontSize: 11, color: "#B8381E", background: "none", border: "none", cursor: "pointer" }}>✕</button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => updateField(fIdx, { options: f.options.filter((_, oi) => oi !== oIdx) })}
+                            className="text-[11px] text-[#B8381E]"
+                          >
+                            ✕
+                          </Button>
                         )}
                       </div>
                     ))}
-                    <button type="button" onClick={() => updateField(fIdx, { options: [...f.options, ""] })} style={{ fontSize: 12, color: "#4A55BE", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="xs"
+                      onClick={() => updateField(fIdx, { options: [...f.options, ""] })}
+                      className="h-auto p-0 text-xs text-[#4A55BE]"
+                    >
                       + Add option
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
 
-              <label className="flex items-center gap-2" style={{ cursor: "pointer" }}>
-                <input type="checkbox" checked={f.required} onChange={e => updateField(fIdx, { required: e.target.checked })} />
-                <span style={{ fontSize: 12, color: "#5A5247" }}>Required field</span>
-              </label>
+              <Label className="cursor-pointer">
+                <Checkbox checked={f.required} onCheckedChange={(checked) => updateField(fIdx, { required: checked === true })} />
+                <span className="text-xs text-[#5A5247]">Required field</span>
+              </Label>
             </div>
           </div>
         ))}
       </div>
 
-      <button type="button" onClick={addField} style={{ fontSize: 13, color: "#4A55BE", background: "rgba(74,85,190,0.07)", border: "1.5px dashed rgba(74,85,190,0.3)", borderRadius: 8, padding: "10px 20px", cursor: "pointer", width: "100%", marginBottom: 16 }}>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={addField}
+        className="mb-4 w-full border-[1.5px] border-dashed border-[#4A55BE]/30 bg-[#4A55BE]/[0.07] text-[#4A55BE] hover:bg-[#4A55BE]/[0.12]"
+      >
         + Add Field
-      </button>
+      </Button>
 
-      {error && <p style={{ fontSize: 13, color: "#B8381E", marginBottom: 12 }}>{error}</p>}
+      {error && <p className="mb-3 text-sm text-[#B8381E]">{error}</p>}
 
       <div className="flex gap-3 justify-end">
-        <button type="button" onClick={() => router.push("/admin/forms")} style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}>
+        <Button type="button" variant="outline" onClick={() => router.push("/admin/forms")}>
           Cancel
-        </button>
-        <button type="submit" disabled={saving} style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: saving ? "#C8C4BC" : "#19140F", color: "white", cursor: saving ? "not-allowed" : "pointer" }}>
+        </Button>
+        <Button type="submit" disabled={saving} className="bg-[#19140F] text-white hover:bg-[#19140F]/85">
           {saving ? "Saving..." : isEdit ? "Save Changes" : "Create Form"}
-        </button>
+        </Button>
       </div>
     </form>
   );

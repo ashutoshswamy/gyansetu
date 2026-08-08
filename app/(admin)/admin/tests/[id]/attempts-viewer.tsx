@@ -8,6 +8,8 @@ import { saveSubjectiveEvaluation, editTestResult } from "@/actions/tests";
 import { useRouter } from "next/navigation";
 import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import type { EligibilityTest, TestQuestion } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export interface Attempt {
   id: string;

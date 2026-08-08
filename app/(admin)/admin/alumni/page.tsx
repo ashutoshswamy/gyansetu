@@ -1,6 +1,7 @@
 import { getAllAlumniRegistrations } from "@/actions/alumni-registration";
 import { ExportButton } from "@/components/features/export-button";
 import { Inbox } from "lucide-react";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 type Visit = { year?: string; month?: string; location?: string; role?: string };
 
@@ -46,40 +47,38 @@ export default async function AlumniAdminPage() {
               <p style={{ fontSize: 14, color: "#9B9188" }}>No alumni registrations yet.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
-                <thead>
-                  <tr style={{ background: "#F3F0E8", borderBottom: "1px solid #E4DFD1" }}>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 160 }}>Name</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 200 }}>Email</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 150 }}>Mobile</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 220 }}>Latest Visit</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 180 }}>Company / Institution</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 130 }}>Willing to Mentor</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 130 }}>Registered</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {registrations.map((r) => {
-                    const visits = (r.visit_history as Visit[]) ?? [];
-                    const latest = visits[0];
-                    return (
-                      <tr key={r.id} style={{ borderBottom: "1px solid #E4DFD1" }} className="hover:bg-slate-50/50">
-                        <td className="p-4 font-medium text-[#19140F]">{r.name}</td>
-                        <td className="p-4 text-[#5A5247]">{r.email}</td>
-                        <td className="p-4 text-[#19140F]">{r.mobile_number || "-"}</td>
-                        <td className="p-4 text-[#19140F]">
-                          {latest ? [latest.year, latest.month, latest.location, latest.role].filter(Boolean).join(" · ") : (r.tour_destination || "-")}
-                        </td>
-                        <td className="p-4 text-[#19140F]">{r.company_name || r.institution || "-"}</td>
-                        <td className="p-4 text-[#19140F]">{r.willing_to_mentor_new || (r.willing_to_mentor ? "Yes" : "-")}</td>
-                        <td className="p-4 text-[#5A5247]">{new Date(r.created_at).toLocaleDateString()}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <Table className="text-left text-[13px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[160px] whitespace-normal">Name</TableHead>
+                  <TableHead className="min-w-[200px] whitespace-normal">Email</TableHead>
+                  <TableHead className="min-w-[150px] whitespace-normal">Mobile</TableHead>
+                  <TableHead className="min-w-[220px] whitespace-normal">Latest Visit</TableHead>
+                  <TableHead className="min-w-[180px] whitespace-normal">Company / Institution</TableHead>
+                  <TableHead className="min-w-[130px] whitespace-normal">Willing to Mentor</TableHead>
+                  <TableHead className="min-w-[130px] whitespace-normal">Registered</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {registrations.map((r) => {
+                  const visits = (r.visit_history as Visit[]) ?? [];
+                  const latest = visits[0];
+                  return (
+                    <TableRow key={r.id}>
+                      <TableCell className="font-medium whitespace-normal">{r.name}</TableCell>
+                      <TableCell className="whitespace-normal">{r.email}</TableCell>
+                      <TableCell className="whitespace-normal">{r.mobile_number || "-"}</TableCell>
+                      <TableCell className="whitespace-normal">
+                        {latest ? [latest.year, latest.month, latest.location, latest.role].filter(Boolean).join(" · ") : (r.tour_destination || "-")}
+                      </TableCell>
+                      <TableCell className="whitespace-normal">{r.company_name || r.institution || "-"}</TableCell>
+                      <TableCell className="whitespace-normal">{r.willing_to_mentor_new || (r.willing_to_mentor ? "Yes" : "-")}</TableCell>
+                      <TableCell className="whitespace-normal">{new Date(r.created_at).toLocaleDateString()}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           )}
         </div>
       </div>

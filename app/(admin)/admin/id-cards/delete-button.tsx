@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { deleteIdCard } from "@/actions/id-cards";
+import { Button } from "@/components/ui/button";
 
 export function DeleteIdCardButton({ id }: { id: string }) {
   const router = useRouter();
@@ -22,17 +23,8 @@ export function DeleteIdCardButton({ id }: { id: string }) {
   }
 
   return (
-    <button
-      onClick={handleDelete}
-      disabled={loading}
-      style={{
-        fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: "transparent", color: "#B8381E",
-        border: "1.5px solid rgba(184,56,30,0.3)",
-        cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,
-      }}
-    >
+    <Button variant="destructive" size="sm" onClick={handleDelete} disabled={loading} className="shrink-0">
       {loading ? "..." : "Delete"}
-    </button>
+    </Button>
   );
 }

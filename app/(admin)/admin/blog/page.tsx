@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { publishPost, deletePost } from "@/actions/blog";
+import { Button } from "@/components/ui/button";
 
 interface BlogPost {
   id: string;
@@ -43,20 +44,7 @@ export default async function AdminBlogPage() {
             <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>{allPosts.length} posts total</p>
           </div>
           <Link href="/admin/blog/new">
-            <button
-              style={{
-                background: "#4A55BE",
-                color: "white",
-                fontSize: 13,
-                fontWeight: 600,
-                padding: "8px 16px",
-                borderRadius: 6,
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              + New Post
-            </button>
+            <Button>+ New Post</Button>
           </Link>
         </div>
 
@@ -120,21 +108,9 @@ export default async function AdminBlogPage() {
                         await publishPost(post.id);
                       }}
                     >
-                      <button
-                        type="submit"
-                        style={{
-                          background: "transparent",
-                          color: "#2A5E3A",
-                          fontSize: 12,
-                          fontWeight: 600,
-                          padding: "6px 14px",
-                          borderRadius: 5,
-                          border: "1.5px solid rgba(42,94,58,0.30)",
-                          cursor: "pointer",
-                        }}
-                      >
+                      <Button type="submit" variant="outline" size="sm" className="text-[#2A5E3A] border-[#2A5E3A]/30 hover:bg-[#2A5E3A]/10">
                         Publish
-                      </button>
+                      </Button>
                     </form>
                   )}
                   <form
@@ -143,21 +119,9 @@ export default async function AdminBlogPage() {
                       await deletePost(post.id);
                     }}
                   >
-                    <button
-                      type="submit"
-                      style={{
-                        background: "transparent",
-                        color: "#C0392B",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        padding: "6px 14px",
-                        borderRadius: 5,
-                        border: "1.5px solid rgba(192,57,43,0.25)",
-                        cursor: "pointer",
-                      }}
-                    >
+                    <Button type="submit" variant="destructive" size="sm">
                       Delete
-                    </button>
+                    </Button>
                   </form>
                 </div>
               </div>

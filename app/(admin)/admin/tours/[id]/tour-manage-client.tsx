@@ -3,6 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateTour, endTour, reactivateTour } from "@/actions/tours";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const STATUSES = ["draft", "open", "closed"] as const;
 
@@ -30,81 +38,69 @@ export function TourManageClient({ tourId, currentStatus }: { tourId: string; cu
     if (choosingReactivate) {
       return (
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => run(() => reactivateTour(tourId, "admin"))}
-            disabled={loading}
-            style={{ fontSize: 12, fontWeight: 600, padding: "7px 12px", borderRadius: 5, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}
-          >
+          <Button onClick={() => run(() => reactivateTour(tourId, "admin"))} disabled={loading} variant="outline" size="sm">
             Just for admin
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => run(() => reactivateTour(tourId, "all"))}
             disabled={loading}
-            style={{ fontSize: 12, fontWeight: 600, padding: "7px 12px", borderRadius: 5, border: "none", background: "#2A5E3A", color: "white", cursor: "pointer" }}
+            size="sm"
+            className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90"
           >
             For everyone
-          </button>
-          <button
-            onClick={() => setChoosingReactivate(false)}
-            disabled={loading}
-            style={{ fontSize: 12, padding: "7px 10px", borderRadius: 5, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}
-          >
+          </Button>
+          <Button onClick={() => setChoosingReactivate(false)} disabled={loading} variant="outline" size="sm">
             Cancel
-          </button>
+          </Button>
         </div>
       );
     }
     return (
-      <button
-        onClick={() => setChoosingReactivate(true)}
-        disabled={loading}
-        style={{ fontSize: 13, fontWeight: 600, padding: "7px 14px", borderRadius: 5, border: "none", background: "#4A55BE", color: "white", cursor: "pointer" }}
-      >
+      <Button onClick={() => setChoosingReactivate(true)} disabled={loading}>
         Reactivate
-      </button>
+      </Button>
     );
   }
 
   if (confirmingEnd) {
     return (
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => run(() => endTour(tourId))}
-          disabled={loading}
-          style={{ fontSize: 12, fontWeight: 600, padding: "7px 12px", borderRadius: 5, border: "none", background: "#B8381E", color: "white", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
-        >
+        <Button onClick={() => run(() => endTour(tourId))} disabled={loading} variant="destructive" size="sm">
           {loading ? "Ending..." : "Confirm End Tour"}
-        </button>
-        <button
-          onClick={() => setConfirmingEnd(false)}
-          disabled={loading}
-          style={{ fontSize: 12, padding: "7px 10px", borderRadius: 5, border: "1.5px solid #E4DFD1", background: "white", color: "#5A5247", cursor: "pointer" }}
-        >
+        </Button>
+        <Button onClick={() => setConfirmingEnd(false)} disabled={loading} variant="outline" size="sm">
           Cancel
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
     <div className="flex items-center gap-2">
-      <select
+      <Select
         value={currentStatus}
         disabled={loading}
-        onChange={(e) => run(() => updateTour(tourId, { status: e.target.value as "draft" | "open" | "closed" }))}
-        style={{ fontSize: 13, padding: "7px 12px", borderRadius: 5, border: "1.5px solid #E4DFD1", background: "white", color: "#19140F", cursor: "pointer" }}
+        onValueChange={(value) => run(() => updateTour(tourId, { status: value as "draft" | "open" | "closed" }))}
       >
-        {STATUSES.map(s => (
-          <option key={s} value={s} style={{ textTransform: "capitalize" }}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
-        ))}
-      </select>
-      <button
+        <SelectTrigger size="sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {STATUSES.map((s) => (
+            <SelectItem key={s} value={s} className="capitalize">
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Button
         onClick={() => setConfirmingEnd(true)}
         disabled={loading}
-        style={{ fontSize: 13, fontWeight: 600, padding: "7px 14px", borderRadius: 5, border: "1.5px solid rgba(184,56,30,0.28)", background: "white", color: "#B8381E", cursor: "pointer" }}
+        variant="outline"
+        className="border-[#B8381E]/30 text-[#B8381E] hover:bg-[#B8381E]/10"
       >
         End Tour
-      </button>
+      </Button>
     </div>
   );
 }

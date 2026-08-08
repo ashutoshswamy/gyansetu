@@ -1,6 +1,7 @@
 import { getAllDemoEvaluations } from "@/actions/demo-evaluations";
 import Link from "next/link";
 import { ClipboardCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function scoreColor(total: number) {
   if (total >= 80) return "#2A5E3A"; // 80%+
@@ -21,9 +22,7 @@ export default async function AdminDemoEvaluationsPage() {
             <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{evaluations.length} evaluation{evaluations.length !== 1 ? "s" : ""} recorded</p>
           </div>
           <Link href="/admin/demo-evaluations/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + New Evaluation
-            </button>
+            <Button>+ New Evaluation</Button>
           </Link>
         </div>
 

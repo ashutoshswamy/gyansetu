@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DeleteTestButton } from "@/components/features/tests/delete-test-button";
 import { ArrowLeft } from "lucide-react";
 import type { EligibilityTest } from "@/types";
+import { Button } from "@/components/ui/button";
 
 export default async function TestTemplatesPage() {
   const db = createServerClient();
@@ -30,9 +31,7 @@ export default async function TestTemplatesPage() {
             </p>
           </div>
           <Link href="/admin/tests/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + New Template
-            </button>
+            <Button>+ New Template</Button>
           </Link>
         </div>
 
@@ -73,9 +72,7 @@ export default async function TestTemplatesPage() {
               </div>
               <div className="flex gap-2">
                 <Link href={`/admin/tests/${template.id}/edit`}>
-                  <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                    Edit
-                  </button>
+                  <Button variant="outline">Edit</Button>
                 </Link>
                 <DeleteTestButton testId={template.id} />
               </div>

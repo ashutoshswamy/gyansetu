@@ -6,15 +6,12 @@ import { toast } from "sonner";
 import { assignVolunteerToTour, removeVolunteerFromTour } from "@/actions/tours";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Volunteer = { id: string; name: string; email: string };
 type Assignment = { id: string; role_description?: string; users?: { id: string; name: string; email: string } };
-
-const inputStyle: React.CSSProperties = {
-  padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F",
-};
 
 export function VolunteerAssign({ tourId, assignments }: { tourId: string; assignments: Assignment[] }) {
   const router = useRouter();
@@ -63,9 +60,9 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
       </p>
 
       {error && (
-        <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "8px 12px", marginBottom: 12, fontSize: 12, color: "#DC2626" }}>
-          {error}
-        </div>
+        <Alert variant="destructive" className="mb-3">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       <div className="flex gap-2 mb-4">
@@ -77,19 +74,19 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
             excludeIds={new Set(assignments.map(a => a.users?.id).filter((id): id is string => !!id))}
           />
         </div>
-        <input
+        <Input
           value={role}
           onChange={e => setRole(e.target.value)}
           placeholder="Role (optional)"
-          style={{ ...inputStyle, flex: 1 }}
+          className="flex-1"
         />
-        <button
+        <Button
           onClick={handleAdd}
           disabled={saving || !userId}
-          style={{ background: "#2A5E3A", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: saving || !userId ? "not-allowed" : "pointer", opacity: saving || !userId ? 0.6 : 1, flexShrink: 0 }}
+          className="flex-shrink-0 bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90"
         >
           Add
-        </button>
+        </Button>
       </div>
 
       {assignments.length === 0 ? (
@@ -103,13 +100,15 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
                 <span style={{ fontSize: 12, color: "#9B9188", marginLeft: 8 }}>{a.users?.email}</span>
                 {a.role_description && <span style={{ fontSize: 12, color: "#4A55BE", marginLeft: 8, padding: "1px 6px", background: "rgba(74,85,190,0.08)", borderRadius: 4 }}>{a.role_description}</span>}
               </div>
-              <button
+              <Button
                 onClick={() => a.users?.id && handleRemove(a.users.id)}
                 disabled={saving}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "#DC2626", padding: 4 }}
+                variant="ghost"
+                size="icon-sm"
+                className="text-[#DC2626] hover:text-[#DC2626]"
               >
                 <Trash2 size={14} />
-              </button>
+              </Button>
             </div>
           ))}
         </div>

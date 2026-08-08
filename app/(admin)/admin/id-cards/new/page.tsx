@@ -6,6 +6,10 @@ import { toast } from "sonner";
 import { createIdCard } from "@/actions/id-cards";
 import { getGroupsByTour, getCurrentTourForVolunteer } from "@/actions/groups";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Group = { id: string; name: string; state_allocated?: string | null; tour_group_members?: { users?: { id: string } | null }[] };
 
@@ -64,12 +68,6 @@ export default function NewIdCardPage() {
     }).catch(() => {});
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
-  };
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -110,7 +108,7 @@ export default function NewIdCardPage() {
           )}
           <div className="space-y-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
+              <Label className="mb-1.5">Volunteer <span className="text-destructive">*</span></Label>
               <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="volunteer_id" />
               {volunteerId && (
                 selectedPhoto ? (
@@ -123,29 +121,37 @@ export default function NewIdCardPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
-                <select name="tour_id" required value={tourId} onChange={e => handleTourChange(e.target.value)} style={inputStyle}>
-                  <option value="">Select tour...</option>
-                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
+                <Label className="mb-1.5">Tour <span className="text-destructive">*</span></Label>
+                <Select name="tour_id" required value={tourId} onValueChange={v => handleTourChange(v ?? "")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select tour..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group</label>
-                <select name="group_id" value={groupId} onChange={e => setGroupId(e.target.value)} disabled={!tourId} style={inputStyle}>
-                  <option value="">No group / General</option>
-                  {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                </select>
+                <Label className="mb-1.5">Group</Label>
+                <Select name="group_id" value={groupId} onValueChange={v => setGroupId(v ?? "")} disabled={!tourId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="No group / General" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groups.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>Card number is generated automatically from the tour, group, and issue sequence.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
-                <input name="state" value={state} readOnly placeholder="From group's allocated state" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
+                <Label className="mb-1.5">State/Union Territory</Label>
+                <Input name="state" value={state} readOnly placeholder="From group's allocated state" className="bg-muted text-muted-foreground" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
-                <input name="place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" style={inputStyle} />
+                <Label className="mb-1.5">Place</Label>
+                <Input name="place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" />
               </div>
             </div>
             {tourId && !groupId && (
@@ -153,22 +159,22 @@ export default function NewIdCardPage() {
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>
-                <input name="valid_from" type="date" required style={inputStyle} />
+                <Label className="mb-1.5">Valid From <span className="text-destructive">*</span></Label>
+                <Input name="valid_from" type="date" required />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid To <span style={{ color: "#DC2626" }}>*</span></label>
-                <input name="valid_to" type="date" required style={inputStyle} />
+                <Label className="mb-1.5">Valid To <span className="text-destructive">*</span></Label>
+                <Input name="valid_to" type="date" required />
               </div>
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            <Button type="submit" disabled={loading}>
               {loading ? "Issuing..." : "Issue ID Card"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

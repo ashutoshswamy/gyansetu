@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { deleteVisit } from "@/actions/visits";
+import { Button } from "@/components/ui/button";
 
 type Visit = {
   id: string;
@@ -84,21 +85,9 @@ export default async function AdminVisitsPage({
             <p style={{ fontSize: 14, color: "#5A5247", margin: 0 }}>{counts.all} total visits</p>
           </div>
           <Link href="/admin/visits/new">
-            <button style={{
-              background: "#4A55BE",
-              color: "white",
-              fontSize: 13,
-              fontWeight: 600,
-              padding: "9px 18px",
-              borderRadius: 6,
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-            }}>
+            <Button>
               <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> New Visit
-            </button>
+            </Button>
           </Link>
         </div>
 
@@ -230,28 +219,12 @@ export default async function AdminVisitsPage({
                     await deleteVisit(visit.id);
                   }}
                 >
-                  <button
-                    type="submit"
-                    style={{
-                      background: "transparent",
-                      color: "#9B9188",
-                      fontSize: 12,
-                      fontWeight: 500,
-                      padding: "7px 13px",
-                      borderRadius: 5,
-                      border: "1.5px solid #E4DFD1",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                    }}
-                    title="Delete visit"
-                  >
+                  <Button type="submit" variant="outline" size="sm" title="Delete visit">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
                     </svg>
                     Delete
-                  </button>
+                  </Button>
                 </form>
               </div>
             );

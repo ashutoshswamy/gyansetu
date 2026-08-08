@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Award } from "lucide-react";
 import type { Certificate } from "@/types";
 import { DeleteCertificateButton } from "./delete-button";
+import { Button } from "@/components/ui/button";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   participation: { color: "#4A55BE", bg: "rgba(74,85,190,0.08)" },
@@ -38,14 +39,10 @@ export default async function AdminCertificatesPage() {
           </div>
           <div className="flex gap-3">
             <Link href="/admin/certificates/bulk">
-              <button style={{ background: "white", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid #4A55BE", cursor: "pointer" }}>
-                Bulk Generate
-              </button>
+              <Button variant="outline">Bulk Generate</Button>
             </Link>
             <Link href="/admin/certificates/new">
-              <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-                + Issue Certificate
-              </button>
+              <Button>+ Issue Certificate</Button>
             </Link>
           </div>
         </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Tour } from "@/types";
 import { MapPin, Calendar, Users } from "lucide-react";
 import { DeleteTourButton } from "@/components/features/tours/delete-tour-button";
+import { Button } from "@/components/ui/button";
 
 const statusStyles: Record<Tour["status"], { color: string; background: string }> = {
   draft:     { color: "#9B9188", background: "rgba(90,82,71,0.08)" },
@@ -28,18 +29,15 @@ export function ToursListClient({ tours }: { tours: Tour[] }) {
     <>
       <div className="flex gap-2 mb-4">
         {TABS.map((t) => (
-          <button
+          <Button
             key={t}
+            size="sm"
+            variant={tab === t ? "default" : "outline"}
+            className="rounded-full"
             onClick={() => setTab(t)}
-            style={{
-              fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 999, cursor: "pointer",
-              border: tab === t ? "none" : "1.5px solid #E4DFD1",
-              background: tab === t ? "#4A55BE" : "white",
-              color: tab === t ? "white" : "#5A5247",
-            }}
           >
             {t}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -77,14 +75,10 @@ export function ToursListClient({ tours }: { tours: Tour[] }) {
               </div>
               <div className="flex gap-2 ml-4">
                 <Link href={`/admin/tours/${tour.id}`}>
-                  <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                    Manage
-                  </button>
+                  <Button variant="outline" size="sm">Manage</Button>
                 </Link>
                 <Link href={`/admin/tours/${tour.id}/edit`}>
-                  <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                    Edit
-                  </button>
+                  <Button variant="outline" size="sm">Edit</Button>
                 </Link>
                 <DeleteTourButton tourId={tour.id} />
               </div>

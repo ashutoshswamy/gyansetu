@@ -7,6 +7,11 @@ import { createLocalHost } from "@/actions/local-hosts";
 import { createClientClient } from "@/lib/supabase/client";
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function NewLocalHostPage() {
   const router = useRouter();

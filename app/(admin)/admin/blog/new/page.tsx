@@ -5,33 +5,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createPost } from "@/actions/blog";
 import { FileUploadField } from "@/components/features/file-upload-field";
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: 12,
-  fontWeight: 600,
-  color: "#5A5247",
-  marginBottom: 6,
-  letterSpacing: "0.04em",
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  fontSize: 14,
-  color: "#19140F",
-  background: "white",
-  border: "1px solid #E4DFD1",
-  borderRadius: 7,
-  padding: "9px 12px",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  cursor: "pointer",
-  appearance: "none",
-};
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -47,7 +25,7 @@ export default function NewBlogPostPage() {
     status: "draft" as "draft" | "published",
   });
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
@@ -127,30 +105,28 @@ export default function NewBlogPostPage() {
         >
           {/* Title */}
           <div>
-            <label style={labelStyle} htmlFor="title">Title *</label>
-            <input
+            <Label htmlFor="title" className="mb-1.5">Title *</Label>
+            <Input
               id="title"
               name="title"
               type="text"
               placeholder="e.g. Our Journey to Rajasthan"
               value={form.title}
               onChange={handleTitleChange}
-              style={inputStyle}
               required
             />
           </div>
 
           {/* Slug */}
           <div>
-            <label style={labelStyle} htmlFor="slug">Slug *</label>
-            <input
+            <Label htmlFor="slug" className="mb-1.5">Slug *</Label>
+            <Input
               id="slug"
               name="slug"
               type="text"
               placeholder="e.g. our-journey-to-rajasthan"
               value={form.slug}
               onChange={handleChange}
-              style={inputStyle}
               required
             />
             <p style={{ fontSize: 11, color: "#9B9188", marginTop: 5 }}>
@@ -160,29 +136,27 @@ export default function NewBlogPostPage() {
 
           {/* Excerpt */}
           <div>
-            <label style={labelStyle} htmlFor="excerpt">Excerpt</label>
-            <textarea
+            <Label htmlFor="excerpt" className="mb-1.5">Excerpt</Label>
+            <Textarea
               id="excerpt"
               name="excerpt"
               placeholder="A short summary shown on the blog listing..."
               value={form.excerpt}
               onChange={handleChange}
               rows={2}
-              style={{ ...inputStyle, resize: "vertical", lineHeight: 1.5 }}
             />
           </div>
 
           {/* Content */}
           <div>
-            <label style={labelStyle} htmlFor="content">Content *</label>
-            <textarea
+            <Label htmlFor="content" className="mb-1.5">Content *</Label>
+            <Textarea
               id="content"
               name="content"
               placeholder="Write the full blog post content here..."
               value={form.content}
               onChange={handleChange}
               rows={14}
-              style={{ ...inputStyle, resize: "vertical", lineHeight: 1.7 }}
               required
             />
           </div>
@@ -202,28 +176,19 @@ export default function NewBlogPostPage() {
 
           {/* Status */}
           <div>
-            <label style={labelStyle} htmlFor="status">Status</label>
-            <div style={{ position: "relative" }}>
-              <select
-                id="status"
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                style={selectStyle}
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 16 16"
-                fill="none"
-                style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
-              >
-                <path d="M4 6l4 4 4-4" stroke="#9B9188" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
+            <Label htmlFor="status" className="mb-1.5">Status</Label>
+            <Select
+              value={form.status}
+              onValueChange={(v) => setForm((prev) => ({ ...prev, status: (v as "draft" | "published") ?? "draft" }))}
+            >
+              <SelectTrigger id="status" className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Error */}
@@ -234,40 +199,13 @@ export default function NewBlogPostPage() {
           )}
 
           {/* Actions */}
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 4 }}>
-            <button
-              type="button"
-              onClick={() => router.push("/admin/blog")}
-              style={{
-                background: "transparent",
-                color: "#5A5247",
-                fontSize: 13,
-                fontWeight: 500,
-                padding: "8px 18px",
-                borderRadius: 6,
-                border: "1.5px solid #E4DFD1",
-                cursor: "pointer",
-              }}
-            >
+          <div className="flex gap-2.5 justify-end pt-1">
+            <Button type="button" variant="outline" onClick={() => router.push("/admin/blog")}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                background: loading ? "#9B9188" : "#4A55BE",
-                color: "white",
-                fontSize: 13,
-                fontWeight: 600,
-                padding: "8px 22px",
-                borderRadius: 6,
-                border: "none",
-                cursor: loading ? "not-allowed" : "pointer",
-                transition: "background 0.15s",
-              }}
-            >
+            </Button>
+            <Button type="submit" disabled={loading}>
               {loading ? "Saving..." : "Save Post"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

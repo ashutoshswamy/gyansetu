@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { approveExpense, rejectExpense, sendBackExpense } from "@/actions/finance";
+import { Button } from "@/components/ui/button";
 
 export function ExpenseActions({ id }: { id: string }) {
   const router = useRouter();
@@ -57,41 +58,31 @@ export function ExpenseActions({ id }: { id: string }) {
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
+        size="sm"
         onClick={handleApprove}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: loading === "approve" ? "#C8C4BC" : "#2A5E3A",
-          color: "white", border: "none", cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/85"
       >
         {loading === "approve" ? "..." : "Approve"}
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
         onClick={handleSendBack}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent", color: "#F5A520",
-          border: "1.5px solid rgba(245,165,32,0.35)",
-          cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        className="border-[#F5A520]/35 text-[#F5A520] hover:bg-[#F5A520]/10"
       >
         {loading === "sendback" ? "..." : "Send Back"}
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="destructive"
+        size="sm"
         onClick={handleReject}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent", color: "#B8381E",
-          border: "1.5px solid rgba(184,56,30,0.3)",
-          cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
       >
         {loading === "reject" ? "..." : "Reject"}
-      </button>
+      </Button>
     </div>
   );
 }

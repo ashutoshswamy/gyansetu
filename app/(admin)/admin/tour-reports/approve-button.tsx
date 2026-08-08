@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { approveTourReport } from "@/actions/tour-reports";
+import { Button } from "@/components/ui/button";
 
 export function ApproveReportButton({ id }: { id: string }) {
   const router = useRouter();
@@ -21,16 +22,8 @@ export function ApproveReportButton({ id }: { id: string }) {
   }
 
   return (
-    <button
-      onClick={handleClick}
-      disabled={loading}
-      style={{
-        fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: loading ? "#C8C4BC" : "#2A5E3A", color: "white", border: "none",
-        cursor: loading ? "not-allowed" : "pointer",
-      }}
-    >
+    <Button onClick={handleClick} disabled={loading} className="bg-[#2A5E3A] text-white hover:bg-[#2A5E3A]/90">
       {loading ? "..." : "Approve"}
-    </button>
+    </Button>
   );
 }

@@ -7,17 +7,18 @@ import { bulkIssueCertificates } from "@/actions/certificates";
 import { getGroupsByTour } from "@/actions/groups";
 import { VolunteerChecklist } from "@/components/features/volunteers/volunteer-checklist";
 import type { CertificateType } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CERT_TYPES: CertificateType[] = ["participation", "excellence", "leadership", "mentor"];
 
+const NO_GROUP = "__all__";
+
 type Volunteer = { id: string; name: string; email: string };
 type Group = { id: string; name: string; tour_group_members?: { users?: Volunteer | null }[] };
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
-};
 
 export default function BulkCertificatesPage() {
   const router = useRouter();
@@ -106,52 +107,69 @@ export default function BulkCertificatesPage() {
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
-                <select value={tourId} onChange={e => handleTourChange(e.target.value)} required style={inputStyle}>
-                  <option value="">Select tour...</option>
-                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
+                <Label className="mb-1.5">Tour <span style={{ color: "#DC2626" }}>*</span></Label>
+                <Select value={tourId || null} onValueChange={(v) => handleTourChange(v ?? "")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select tour..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Certificate Category <span style={{ color: "#DC2626" }}>*</span></label>
-                <select value={certificateType} onChange={e => setCertificateType(e.target.value as CertificateType)} required style={inputStyle}>
-                  <option value="">Select category...</option>
-                  {CERT_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
-                </select>
+                <Label className="mb-1.5">Certificate Category <span style={{ color: "#DC2626" }}>*</span></Label>
+                <Select value={certificateType || null} onValueChange={(v) => setCertificateType((v as CertificateType) ?? "")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select category..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CERT_TYPES.map(t => <SelectItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group</label>
-              <select value={groupId} onChange={e => { setGroupId(e.target.value); setSelected(new Set()); }} disabled={!tourId} style={inputStyle}>
-                <option value="">All applied volunteers</option>
-                {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-              </select>
+              <Label className="mb-1.5">Group</Label>
+              <Select
+                value={groupId || NO_GROUP}
+                onValueChange={(v) => { setGroupId(v === NO_GROUP ? "" : (v ?? "")); setSelected(new Set()); }}
+                disabled={!tourId}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All applied volunteers" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_GROUP}>All applied volunteers</SelectItem>
+                  {groups.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>
               State, Place, and Volunteer ID are pulled from each volunteer&apos;s ID card for this tour &mdash; anyone without one is skipped.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit (days)</label>
-                <input type="number" min={1} step={1} value={durationDays} onChange={e => setDurationDays(e.target.value)} placeholder="Optional" style={inputStyle} />
+                <Label className="mb-1.5">Duration of Visit (days)</Label>
+                <Input type="number" min={1} step={1} value={durationDays} onChange={e => setDurationDays(e.target.value)} placeholder="Optional" />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Reason for certificate, achievements... (applied to all)" style={{ ...inputStyle, resize: "vertical" }} />
+              <Label className="mb-1.5">Notes</Label>
+              <Textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Reason for certificate, achievements... (applied to all)" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteers <span style={{ color: "#DC2626" }}>*</span></label>
+              <Label className="mb-1.5">Volunteers <span style={{ color: "#DC2626" }}>*</span></Label>
               <VolunteerChecklist volunteers={roster} selected={selected} onChange={setSelected} />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading || selected.size === 0} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading || selected.size === 0 ? "not-allowed" : "pointer", opacity: loading || selected.size === 0 ? 0.7 : 1 }}>
+            <Button type="submit" disabled={loading || selected.size === 0}>
               {loading ? "Issuing..." : selected.size ? `Issue ${selected.size} Certificate${selected.size === 1 ? "" : "s"}` : "Issue Certificates"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { publishNewsletter, deleteNewsletter } from "@/actions/newsletter";
+import { Button } from "@/components/ui/button";
 
 interface Newsletter {
   id: string;
@@ -42,22 +43,9 @@ export default async function AdminNewsletterPage() {
             <h1 style={{ fontSize: 22, fontWeight: 700, color: "#19140F", margin: 0 }}>Newsletters</h1>
             <p style={{ fontSize: 13, color: "#5A5247", marginTop: 4 }}>{items.length} issues total</p>
           </div>
-          <Link href="/admin/newsletter/new">
-            <button
-              style={{
-                background: "#4A55BE",
-                color: "white",
-                fontSize: 13,
-                fontWeight: 600,
-                padding: "8px 16px",
-                borderRadius: 6,
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              + New Newsletter
-            </button>
-          </Link>
+          <Button render={<Link href="/admin/newsletter/new" />}>
+            + New Newsletter
+          </Button>
         </div>
 
         {/* List */}
@@ -136,21 +124,9 @@ export default async function AdminNewsletterPage() {
                         await publishNewsletter(item.id);
                       }}
                     >
-                      <button
-                        type="submit"
-                        style={{
-                          background: "transparent",
-                          color: "#2A5E3A",
-                          fontSize: 12,
-                          fontWeight: 600,
-                          padding: "6px 14px",
-                          borderRadius: 5,
-                          border: "1.5px solid rgba(42,94,58,0.30)",
-                          cursor: "pointer",
-                        }}
-                      >
+                      <Button type="submit" variant="outline" size="sm">
                         Publish
-                      </button>
+                      </Button>
                     </form>
                   )}
                   <form
@@ -159,21 +135,9 @@ export default async function AdminNewsletterPage() {
                       await deleteNewsletter(item.id);
                     }}
                   >
-                    <button
-                      type="submit"
-                      style={{
-                        background: "transparent",
-                        color: "#C0392B",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        padding: "6px 14px",
-                        borderRadius: 5,
-                        border: "1.5px solid rgba(192,57,43,0.25)",
-                        cursor: "pointer",
-                      }}
-                    >
+                    <Button type="submit" variant="destructive" size="sm">
                       Delete
-                    </button>
+                    </Button>
                   </form>
                 </div>
               </div>

@@ -3,6 +3,14 @@ import { ExportButton } from "@/components/features/export-button";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Inbox } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { FormField, FormSubmission } from "@/types";
 
 type Submission = Pick<FormSubmission, "id" | "data" | "submitted_at"> & {
@@ -73,28 +81,28 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
-                <thead>
-                  <tr style={{ background: "#F3F0E8", borderBottom: "1px solid #E4DFD1" }}>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 150 }}>Submitter</th>
-                    <th className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 160 }}>Submitted At</th>
+              <Table className="text-[13px]">
+                <TableHeader>
+                  <TableRow className="bg-[#F3F0E8] hover:bg-[#F3F0E8]">
+                    <TableHead className="min-w-[150px] p-4 font-semibold text-[#5A5247]">Submitter</TableHead>
+                    <TableHead className="min-w-[160px] p-4 font-semibold text-[#5A5247]">Submitted At</TableHead>
                     {fields.map((f) => (
-                      <th key={f.id} className="p-4 font-semibold text-[#5A5247]" style={{ minWidth: 150 }}>
+                      <TableHead key={f.id} className="min-w-[150px] p-4 font-semibold text-[#5A5247]">
                         {f.label}
-                      </th>
+                      </TableHead>
                     ))}
-                  </tr>
-                </thead>
-                <tbody>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {subs.map((sub) => (
-                    <tr key={sub.id} style={{ borderBottom: "1px solid #E4DFD1" }} className="hover:bg-slate-50/50">
-                      <td className="p-4">
+                    <TableRow key={sub.id} className="hover:bg-slate-50/50">
+                      <TableCell className="p-4">
                         <div className="font-medium text-[#19140F]">{sub.users?.name ?? "Unknown"}</div>
                         <div className="text-xs text-[#9B9188]">{sub.users?.email ?? "Unknown"}</div>
-                      </td>
-                      <td className="p-4 text-[#5A5247]">
+                      </TableCell>
+                      <TableCell className="p-4 text-[#5A5247]">
                         {new Date(sub.submitted_at).toLocaleString()}
-                      </td>
+                      </TableCell>
                       {fields.map((field) => {
                         const val = sub.data?.[field.id];
                         let content = "";
@@ -106,15 +114,15 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
                           content = val !== undefined && val !== null ? String(val) : "-";
                         }
                         return (
-                          <td key={field.id} className="p-4 text-[#19140F]">
+                          <TableCell key={field.id} className="p-4 text-[#19140F]">
                             {content}
-                          </td>
+                          </TableCell>
                         );
                       })}
-                    </tr>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>

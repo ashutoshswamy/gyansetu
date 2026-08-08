@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateUserRole, deleteUser, syncDeletedUsers } from "@/actions/users";
 import type { UserRole } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: "admin", label: "Admin" },
@@ -37,22 +39,22 @@ export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole 
 
   return (
     <div className="flex items-center gap-2">
-      <select
+      <Select
         value={role ?? "enrollee"}
         disabled={loading}
-        onChange={(e) => handleChange(e.target.value)}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "8px 10px", borderRadius: 6,
-          border: "1.5px solid #E4DFD1", color: "#19140F", background: "white",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
+        onValueChange={(v) => handleChange(v ?? "enrollee")}
       >
-        {ROLE_OPTIONS.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger size="sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {ROLE_OPTIONS.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {loading && (
         <span style={{ fontSize: 12, color: "#9B9188" }}>Updating role&hellip;</span>
@@ -89,17 +91,9 @@ export function DeleteUserButton({ clerkId, name }: { clerkId: string; name: str
 
   return (
     <div className="flex items-center gap-2">
-      <button
-        onClick={handleDelete}
-        disabled={loading}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "8px 10px", borderRadius: 6,
-          border: "1.5px solid #E4B8AE", color: "#B8381E", background: "white",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
-      >
+      <Button onClick={handleDelete} disabled={loading} variant="destructive" size="sm">
         {loading ? "Deleting…" : "Delete"}
-      </button>
+      </Button>
       {error && <span style={{ fontSize: 12, fontWeight: 600, color: "#B8381E" }}>{error}</span>}
     </div>
   );
@@ -130,17 +124,9 @@ export function SyncDeletedUsersButton() {
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <button
-        onClick={handleSync}
-        disabled={loading}
-        style={{
-          fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 6,
-          border: "1.5px solid #E4DFD1", color: "#5A5247", background: "white",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
-      >
+      <Button onClick={handleSync} disabled={loading} variant="outline" size="sm">
         {loading ? "Checking Clerk…" : "Sync Deleted Users"}
-      </button>
+      </Button>
       {result && (
         <span style={{ fontSize: 12, fontWeight: 600, color: result.type === "success" ? "#2A5E3A" : "#B8381E" }}>
           {result.text}

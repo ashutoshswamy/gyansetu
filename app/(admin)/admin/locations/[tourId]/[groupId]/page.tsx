@@ -8,6 +8,7 @@ import { createClientClient } from "@/lib/supabase/client";
 import { ArrowLeft, Radio } from "lucide-react";
 import type { VolunteerLocation } from "@/components/features/locations/volunteer-map";
 import { VolunteerLocationTable } from "@/components/features/locations/volunteer-location-table";
+import { Button } from "@/components/ui/button";
 
 const VolunteerMap = dynamic(
   () => import("@/components/features/locations/volunteer-map").then((m) => m.VolunteerMap),
@@ -59,12 +60,14 @@ export default function AdminLocationsGroupPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FBF7EC" }}>
       <div className="p-4 sm:p-8 pb-4">
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => router.push(`/admin/locations/${tourId}`)}
-          style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", background: "none", border: "none", cursor: "pointer", marginBottom: 16 }}
+          className="mb-4 text-muted-foreground"
         >
           <ArrowLeft size={14} /> Back to Groups
-        </button>
+        </Button>
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
             <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>

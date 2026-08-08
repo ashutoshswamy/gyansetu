@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ExportButton } from "@/components/features/export-button";
 import { Users, MapPin, Calendar } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const tourStatusStyles: Record<string, { color: string; bg: string }> = {
   open:      { color: "#2A5E3A", bg: "rgba(42,94,58,0.08)" },

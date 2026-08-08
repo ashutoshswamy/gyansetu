@@ -4,6 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createVisit } from "@/actions/visits";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type FormState = {
   title: string;
@@ -27,28 +39,6 @@ const INITIAL: FormState = {
   timetable_url: "",
   capacity: "",
   status: "upcoming",
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "9px 12px",
-  fontSize: 14,
-  color: "#19140F",
-  background: "#FBF7EC",
-  border: "1.5px solid #E4DFD1",
-  borderRadius: 6,
-  outline: "none",
-  fontFamily: "inherit",
-  transition: "border-color 0.15s",
-};
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: 12.5,
-  fontWeight: 600,
-  color: "#5A5247",
-  letterSpacing: "0.03em",
-  marginBottom: 6,
 };
 
 const fieldStyle: React.CSSProperties = {
@@ -108,27 +98,16 @@ export default function NewVisitPage() {
 
         {/* Page header */}
         <div style={{ marginBottom: 32 }}>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => router.back()}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              fontSize: 13,
-              color: "#9B9188",
-              fontWeight: 500,
-              padding: "0 0 18px",
-              fontFamily: "inherit",
-            }}
+            className="mb-1 h-auto p-0 pb-[18px] font-medium text-[#9B9188] hover:bg-transparent hover:text-[#9B9188]"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
             </svg>
             Back
-          </button>
+          </Button>
           <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#9B9188", margin: "0 0 6px" }}>
             Admin Console
           </p>
@@ -147,9 +126,8 @@ export default function NewVisitPage() {
 
             {/* Title */}
             <div style={fieldStyle}>
-              <label style={labelStyle}>Visit Title <span style={{ color: "#F5A520" }}>*</span></label>
-              <input
-                style={inputStyle}
+              <Label className="mb-1.5">Visit Title <span style={{ color: "#F5A520" }}>*</span></Label>
+              <Input
                 type="text"
                 placeholder="e.g. Rajasthan Jnana Pravas 2025"
                 value={form.title}
@@ -161,9 +139,8 @@ export default function NewVisitPage() {
             {/* Destination + State */}
             <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
-                <label style={labelStyle}>Destination <span style={{ color: "#F5A520" }}>*</span></label>
-                <input
-                  style={inputStyle}
+                <Label className="mb-1.5">Destination <span style={{ color: "#F5A520" }}>*</span></Label>
+                <Input
                   type="text"
                   placeholder="e.g. Jaipur"
                   value={form.destination}
@@ -172,9 +149,8 @@ export default function NewVisitPage() {
                 />
               </div>
               <div style={fieldStyle}>
-                <label style={labelStyle}>State/Union Territory</label>
-                <input
-                  style={inputStyle}
+                <Label className="mb-1.5">State/Union Territory</Label>
+                <Input
                   type="text"
                   placeholder="e.g. Rajasthan"
                   value={form.state}
@@ -186,9 +162,8 @@ export default function NewVisitPage() {
             {/* Start + End dates */}
             <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
-                <label style={labelStyle}>Start Date <span style={{ color: "#F5A520" }}>*</span></label>
-                <input
-                  style={inputStyle}
+                <Label className="mb-1.5">Start Date <span style={{ color: "#F5A520" }}>*</span></Label>
+                <Input
                   type="date"
                   value={form.start_date}
                   onChange={(e) => set("start_date", e.target.value)}
@@ -196,9 +171,8 @@ export default function NewVisitPage() {
                 />
               </div>
               <div style={fieldStyle}>
-                <label style={labelStyle}>End Date <span style={{ color: "#F5A520" }}>*</span></label>
-                <input
-                  style={inputStyle}
+                <Label className="mb-1.5">End Date <span style={{ color: "#F5A520" }}>*</span></Label>
+                <Input
                   type="date"
                   value={form.end_date}
                   min={form.start_date || undefined}
@@ -210,9 +184,9 @@ export default function NewVisitPage() {
 
             {/* Description */}
             <div style={fieldStyle}>
-              <label style={labelStyle}>Description</label>
-              <textarea
-                style={{ ...inputStyle, resize: "vertical", minHeight: 96 }}
+              <Label className="mb-1.5">Description</Label>
+              <Textarea
+                className="min-h-24"
                 placeholder="Visit objectives, activities, program outline..."
                 value={form.description}
                 onChange={(e) => set("description", e.target.value)}
@@ -222,9 +196,8 @@ export default function NewVisitPage() {
 
             {/* Timetable URL */}
             <div style={fieldStyle}>
-              <label style={labelStyle}>Timetable URL</label>
-              <input
-                style={inputStyle}
+              <Label className="mb-1.5">Timetable URL</Label>
+              <Input
                 type="url"
                 placeholder="https://drive.google.com/... or direct PDF link"
                 value={form.timetable_url}
@@ -238,9 +211,8 @@ export default function NewVisitPage() {
             {/* Capacity + Status */}
             <div className="form-row-2" style={{ gap: 16 }}>
               <div style={fieldStyle}>
-                <label style={labelStyle}>Capacity (seats)</label>
-                <input
-                  style={inputStyle}
+                <Label className="mb-1.5">Capacity (seats)</Label>
+                <Input
                   type="number"
                   min="1"
                   placeholder="e.g. 40"
@@ -249,72 +221,38 @@ export default function NewVisitPage() {
                 />
               </div>
               <div style={fieldStyle}>
-                <label style={labelStyle}>Status</label>
-                <select
-                  style={{ ...inputStyle, appearance: "auto" }}
+                <Label className="mb-1.5">Status</Label>
+                <Select
                   value={form.status}
-                  onChange={(e) => set("status", e.target.value as FormState["status"])}
+                  onValueChange={(value) => set("status", value as FormState["status"])}
                 >
-                  <option value="upcoming">Upcoming</option>
-                  <option value="ongoing">Ongoing</option>
-                  <option value="completed">Completed</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    <SelectItem value="ongoing">Ongoing</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             {/* Error */}
             {error && (
-              <div style={{
-                background: "rgba(220,38,38,0.06)",
-                border: "1.5px solid rgba(220,38,38,0.2)",
-                borderRadius: 7,
-                padding: "12px 16px",
-                fontSize: 13.5,
-                color: "#b91c1c",
-              }}>
-                {error}
-              </div>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             {/* Actions */}
             <div style={{ display: "flex", gap: 10, paddingTop: 4 }}>
-              <button
-                type="submit"
-                disabled={submitting}
-                style={{
-                  background: submitting ? "#8B93D4" : "#4A55BE",
-                  color: "#FFFFFF",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  padding: "10px 24px",
-                  borderRadius: 6,
-                  border: "none",
-                  cursor: submitting ? "not-allowed" : "pointer",
-                  fontFamily: "inherit",
-                  transition: "background 0.15s",
-                  letterSpacing: "0.01em",
-                }}
-              >
+              <Button type="submit" disabled={submitting}>
                 {submitting ? "Creating…" : "Create Visit"}
-              </button>
-              <button
-                type="button"
-                onClick={() => router.back()}
-                style={{
-                  background: "transparent",
-                  color: "#5A5247",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  padding: "10px 20px",
-                  borderRadius: 6,
-                  border: "1.5px solid #E4DFD1",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  transition: "border-color 0.15s",
-                }}
-              >
+              </Button>
+              <Button type="button" variant="outline" onClick={() => router.back()}>
                 Cancel
-              </button>
+              </Button>
             </div>
 
           </form>

@@ -3,6 +3,14 @@
 import { useState } from "react";
 import { ExpenseActions } from "./expense-actions";
 import { ReceiptButton } from "@/components/features/expenses/receipt-button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { GroupLedger, ExpenseRow } from "./page";
 
 const ALL = "all";
@@ -35,12 +43,6 @@ const statusLabels: Record<string, string> = {
   approved: "approved",
   rejected: "rejected",
   sent_back: "sent back",
-};
-
-const selectStyle: React.CSSProperties = {
-  fontSize: 14, fontWeight: 600, color: "#19140F",
-  background: "white", border: "1.5px solid #E4DFD1", borderRadius: 7,
-  padding: "9px 14px", outline: "none", cursor: "pointer",
 };
 
 function GroupSection({ g }: { g: GroupLedger }) {
@@ -150,14 +152,19 @@ export function FinanceGroupBoard({ ledgers }: { ledgers: GroupLedger[] }) {
 
   return (
     <div>
-      <div style={{ marginBottom: 20 }}>
-        <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#5A5247", marginBottom: 6 }}>Group</label>
-        <select value={selected} onChange={(e) => setSelected(e.target.value)} style={selectStyle}>
-          <option value={ALL}>All Groups</option>
-          {ledgers.map((g) => (
-            <option key={g.groupId} value={g.groupId}>{g.groupName}</option>
-          ))}
-        </select>
+      <div className="mb-5">
+        <Label className="mb-1.5 text-[#5A5247]">Group</Label>
+        <Select value={selected} onValueChange={(v) => setSelected(v ?? ALL)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL}>All Groups</SelectItem>
+            {ledgers.map((g) => (
+              <SelectItem key={g.groupId} value={g.groupId}>{g.groupName}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {visible.map((g) => <GroupSection key={g.groupId} g={g} />)}

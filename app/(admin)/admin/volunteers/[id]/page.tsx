@@ -4,6 +4,7 @@ import { ArrowLeft, Phone, AlertCircle, CheckCircle, MapPin, NotebookPen } from 
 import { getVolunteerObservations } from "@/actions/core-member";
 import { VolunteerObservations } from "@/components/features/core-member/volunteer-observations";
 import type { VolunteerObservation } from "@/types";
+import { Button } from "@/components/ui/button";
 
 interface VolunteerAssignment {
   id: string;
@@ -28,9 +29,9 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
       <div className="max-w-4xl mx-auto">
         <Link href="/admin/volunteers">
-          <button style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#9B9188", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>
+          <Button variant="ghost" className="mb-5 h-auto p-0 text-[#9B9188] hover:bg-transparent hover:text-[#9B9188]">
             <ArrowLeft size={14} /> Back to Volunteers
-          </button>
+          </Button>
         </Link>
 
         {/* Header */}

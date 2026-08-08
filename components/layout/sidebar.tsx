@@ -49,6 +49,7 @@ import {
   Globe,
   HelpCircle,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type NavItem = { label: string; href: string; Icon: React.ElementType; description: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -294,11 +295,11 @@ function CollapsibleGroup({
 
   return (
     <div style={{ marginBottom: 2 }}>
-      <button
+      <Button
         onClick={() => setOpen((v) => !v)}
+        variant="ghost"
         aria-expanded={open}
-        className="sb-group-btn w-full flex items-center justify-between px-3 py-1.5 rounded transition-colors duration-150"
-        style={{ background: "none", border: "none", cursor: "pointer" }}
+        className="sb-group-btn w-full flex items-center justify-between px-3 py-1.5"
       >
         <span
           className="text-[10px] font-semibold tracking-widest uppercase"
@@ -310,7 +311,7 @@ function CollapsibleGroup({
           className="sb-chevron w-3 h-3"
           style={{ color: "#C4BDB5", transform: open ? "rotate(90deg)" : "rotate(0deg)" }}
         />
-      </button>
+      </Button>
 
       {open && (
         <div className="mt-0.5 space-y-0.5">
@@ -434,15 +435,15 @@ export function Sidebar({ role }: { role: SidebarRole }) {
         <NextImage src="/logo_wide.png" alt="Gyan Setu" width={100} height={30} style={{ height: 30, width: "auto", objectFit: "contain" }} />
         <div className="flex items-center gap-2">
           {role === "volunteer" && <NotificationBell />}
-          <button
+          <Button
+            variant="outline"
+            size="icon-sm"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
-            className="flex items-center justify-center rounded"
-            style={{ width: 36, height: 36, background: "none", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
           >
-            {mobileOpen ? <X className="w-4 h-4" style={{ color: "#19140F" }} /> : <Menu className="w-4 h-4" style={{ color: "#19140F" }} />}
-          </button>
+            {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </Button>
         </div>
       </div>
 
@@ -542,29 +543,30 @@ export function Sidebar({ role }: { role: SidebarRole }) {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-          <button
+          <Button
+            variant="outline"
+            size="icon-xs"
             onClick={() => signOut({ redirectUrl: "/" })}
             aria-label="Log out"
             title="Log out"
-            className="flex items-center justify-center rounded flex-shrink-0"
-            style={{ width: 28, height: 28, background: "none", border: "1.5px solid #E4DFD1" }}
+            className="flex-shrink-0"
           >
-            <LogOut className="w-3.5 h-3.5" style={{ color: "#9B9188" }} />
-          </button>
+            <LogOut className="w-3.5 h-3.5" />
+          </Button>
           </div>
         </div>
       </div>
       </aside>
 
-      <button
+      <Button
         onClick={() => setHelpOpen(true)}
         aria-label="Help"
         title="Help"
-        className="fixed z-40 flex items-center justify-center rounded-full shadow-lg"
-        style={{ bottom: 20, right: 20, width: 46, height: 46, background: accentColor, border: "none", cursor: "pointer" }}
+        className="fixed z-40 rounded-full shadow-lg"
+        style={{ bottom: 20, right: 20, background: accentColor }}
       >
-        <HelpCircle className="w-5 h-5" style={{ color: "white" }} />
-      </button>
+        <HelpCircle className="w-5 h-5" />
+      </Button>
 
       {helpOpen && (
         <div

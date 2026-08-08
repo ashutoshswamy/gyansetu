@@ -8,6 +8,13 @@ import { getLatestIdCardForVolunteer } from "@/actions/id-cards";
 import { getCurrentTourForVolunteer } from "@/actions/groups";
 import type { CertificateType } from "@/types";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const NO_TOUR = "__general__";
 
 const CERT_TYPES = ["participation", "excellence", "leadership", "mentor"] as const;
 
@@ -74,21 +81,16 @@ export default function NewCertificatePage() {
     }).catch(() => {});
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
-  };
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
     try {
+      const rawTourId = fd.get("tour_id") as string;
       const cert = await issueCertificate({
         user_id: fd.get("user_id") as string,
-        tour_id: fd.get("tour_id") as string || undefined,
+        tour_id: rawTourId && rawTourId !== NO_TOUR ? rawTourId : undefined,
         certificate_type: fd.get("certificate_type") as CertificateType,
         notes: fd.get("notes") as string || undefined,
         state: fd.get("state") as string || undefined,
@@ -121,21 +123,31 @@ export default function NewCertificatePage() {
           )}
           <div className="space-y-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "#DC2626" }}>*</span></label>
+              <Label className="mb-1.5">Volunteer <span style={{ color: "#DC2626" }}>*</span></Label>
               <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="user_id" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Certificate Type <span style={{ color: "#DC2626" }}>*</span></label>
-              <select name="certificate_type" required style={inputStyle}>
-                {CERT_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
-              </select>
+              <Label className="mb-1.5">Certificate Type <span style={{ color: "#DC2626" }}>*</span></Label>
+              <Select name="certificate_type" defaultValue={CERT_TYPES[0]}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CERT_TYPES.map(t => <SelectItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour (optional)</label>
-              <select name="tour_id" value={tourId} onChange={e => setTourId(e.target.value)} style={inputStyle}>
-                <option value="">General (no specific tour)</option>
-                {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
+              <Label className="mb-1.5">Tour (optional)</Label>
+              <Select name="tour_id" value={tourId || NO_TOUR} onValueChange={(v) => setTourId(v === NO_TOUR ? "" : (v ?? ""))}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="General (no specific tour)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_TOUR}>General (no specific tour)</SelectItem>
+                  {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
 
             {volunteerId && idCardChecked && !idCard && (
@@ -147,16 +159,16 @@ export default function NewCertificatePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>State/Union Territory</label>
-                <input name="state" value={idCard?.state ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
+                <Label className="mb-1.5">State/Union Territory</Label>
+                <Input name="state" value={idCard?.state ?? ""} readOnly placeholder="From volunteer's ID card" className="bg-[#F0EEE6] text-[#5A5247]" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
-                <input name="place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" style={inputStyle} />
+                <Label className="mb-1.5">Place</Label>
+                <Input name="place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Duration of Visit (days)</label>
-                <input
+                <Label className="mb-1.5">Duration of Visit (days)</Label>
+                <Input
                   name="duration_of_visit_days"
                   type="number"
                   min={1}
@@ -164,26 +176,25 @@ export default function NewCertificatePage() {
                   value={durationDays}
                   onChange={e => setDurationDays(e.target.value)}
                   placeholder="From ID card validity"
-                  style={inputStyle}
                 />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteer ID</label>
-                <input name="volunteer_code" value={idCard?.card_number ?? ""} readOnly placeholder="From volunteer's ID card" style={{ ...inputStyle, background: "#F0EEE6", color: "#5A5247" }} />
+                <Label className="mb-1.5">Volunteer ID</Label>
+                <Input name="volunteer_code" value={idCard?.card_number ?? ""} readOnly placeholder="From volunteer's ID card" className="bg-[#F0EEE6] text-[#5A5247]" />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea name="notes" rows={3} placeholder="Reason for certificate, achievements..." style={{ ...inputStyle, resize: "vertical" }} />
+              <Label className="mb-1.5">Notes</Label>
+              <Textarea name="notes" rows={3} placeholder="Reason for certificate, achievements..." />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            <Button type="submit" disabled={loading}>
               {loading ? "Issuing..." : "Issue Certificate"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

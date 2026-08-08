@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const TOTAL_POSTS = 260;
 const SLIDE_COUNT = 8;
@@ -84,50 +85,38 @@ export function HeroCarousel() {
         </AnimatePresence>
 
         {/* Arrow controls */}
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="icon-sm"
           aria-label="Previous photo"
           onClick={() => go(index - 1)}
-          style={{
-            position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)",
-            width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(251,247,236,.3)",
-            background: "rgba(20,23,46,.5)", color: "var(--gs-paper)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", zIndex: 2,
-          }}
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 rounded-full"
         >
           <ChevronLeft size={16} />
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
+          size="icon-sm"
           aria-label="Next photo"
           onClick={() => go(index + 1)}
-          style={{
-            position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
-            width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(251,247,236,.3)",
-            background: "rgba(20,23,46,.5)", color: "var(--gs-paper)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", zIndex: 2,
-          }}
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 rounded-full"
         >
           <ChevronRight size={16} />
-        </button>
+        </Button>
       </div>
 
       {/* Dots */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 12 }}>
         <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
           {slides.map((s, i) => (
-            <button
+            <Button
               key={s.src}
-              type="button"
+              variant="ghost"
+              size="icon-xs"
               aria-label={`Go to photo ${i + 1}`}
               onClick={() => go(i)}
-              style={{
-                width: i === index ? 16 : 6, height: 6, borderRadius: 3, border: "none",
-                background: i === index ? "var(--gs-marigold)" : "rgba(251,247,236,.22)",
-                cursor: "pointer", transition: "all 0.25s ease", padding: 0,
-              }}
+              className={`rounded-full transition-all duration-250 ${i === index ? "bg-yellow-500 w-4" : "bg-gray-500/30 w-1.5"}`}
+              style={{ height: 6, padding: 0 }}
             />
           ))}
         </div>

@@ -6,6 +6,19 @@ import { toast } from "sonner";
 import { createTravelTicket } from "@/actions/travel";
 import { getAllGroups } from "@/actions/groups";
 import type { TravelTicketInput } from "@/lib/validations";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function NewTravelTicketPage() {
   const router = useRouter();
@@ -16,12 +29,6 @@ export default function NewTravelTicketPage() {
   useEffect(() => {
     getAllGroups().then(data => setGroups(data as unknown as typeof groups)).catch(() => setGroups([]));
   }, []);
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-    background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
-  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,80 +69,93 @@ export default function NewTravelTicketPage() {
         </div>
         <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: 28 }}>
           {error && (
-            <div style={{ background: "rgba(220,38,38,0.07)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "#DC2626" }}>
-              {error}
-            </div>
+            <Alert variant="destructive" className="mb-5">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
           <div className="space-y-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group <span style={{ color: "#DC2626" }}>*</span></label>
-              <select name="group_id" required style={inputStyle}>
-                <option value="">Select group...</option>
-                {groups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.title ? ` — ${g.tours.title}` : ""}</option>)}
-              </select>
+              <Label className="mb-1.5">Group <span style={{ color: "#DC2626" }}>*</span></Label>
+              <Select name="group_id" required>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select group..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {groups.map(g => (
+                    <SelectItem key={g.id} value={g.id}>
+                      {g.name}{g.tours?.title ? ` — ${g.tours.title}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Train Number</label>
-                <input name="train_number" type="text" placeholder="Enter train number" style={inputStyle} />
+                <Label className="mb-1.5">Train Number</Label>
+                <Input name="train_number" type="text" placeholder="Enter train number" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Train Name</label>
-                <input name="train_name" type="text" placeholder="Enter train name" style={inputStyle} />
+                <Label className="mb-1.5">Train Name</Label>
+                <Input name="train_name" type="text" placeholder="Enter train name" />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>From</label>
-                <input name="departure_station" type="text" placeholder="Departure station" style={inputStyle} />
+                <Label className="mb-1.5">From</Label>
+                <Input name="departure_station" type="text" placeholder="Departure station" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Time</label>
-                <input name="departure_at" type="datetime-local" style={inputStyle} />
+                <Label className="mb-1.5">Time</Label>
+                <Input name="departure_at" type="datetime-local" />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>To</label>
-                <input name="arrival_station" type="text" placeholder="Arrival station" style={inputStyle} />
+                <Label className="mb-1.5">To</Label>
+                <Input name="arrival_station" type="text" placeholder="Arrival station" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Time</label>
-                <input name="arrival_at" type="datetime-local" style={inputStyle} />
+                <Label className="mb-1.5">Time</Label>
+                <Input name="arrival_at" type="datetime-local" />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>PNR Number</label>
-              <input name="pnr" type="text" placeholder="Enter PNR" style={inputStyle} />
+              <Label className="mb-1.5">PNR Number</Label>
+              <Input name="pnr" type="text" placeholder="Enter PNR" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Current Status</label>
-              <select name="confirmation_status" defaultValue="pending" style={inputStyle}>
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+              <Label className="mb-1.5">Current Status</Label>
+              <Select name="confirmation_status" defaultValue="pending">
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Note</label>
-              <textarea name="note" rows={3} placeholder="Any additional notes..." style={{ ...inputStyle, resize: "vertical" }} />
+              <Label className="mb-1.5">Note</Label>
+              <Textarea name="note" rows={3} placeholder="Any additional notes..." />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Ticket File URL</label>
-              <input name="ticket_file_url" type="text" placeholder="https://..." style={inputStyle} />
+              <Label className="mb-1.5">Ticket File URL</Label>
+              <Input name="ticket_file_url" type="text" placeholder="https://..." />
             </div>
-            <label className="flex items-center gap-2" style={{ fontSize: 13, color: "#5A5247" }}>
-              <input name="itinerary_approved" type="checkbox" />
+            <Label className="text-[13px] font-normal" style={{ color: "#5A5247" }}>
+              <Checkbox name="itinerary_approved" />
               Itinerary approved
-            </label>
+            </Label>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            <Button type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create Ticket"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

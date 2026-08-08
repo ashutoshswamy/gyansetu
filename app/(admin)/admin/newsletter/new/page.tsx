@@ -5,33 +5,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createNewsletter } from "@/actions/newsletter";
 import { FileUploadField } from "@/components/features/file-upload-field";
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: 12,
-  fontWeight: 600,
-  color: "#5A5247",
-  marginBottom: 6,
-  letterSpacing: "0.04em",
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  fontSize: 14,
-  color: "#19140F",
-  background: "white",
-  border: "1px solid #E4DFD1",
-  borderRadius: 7,
-  padding: "9px 12px",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  cursor: "pointer",
-  appearance: "none",
-};
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function NewNewsletterPage() {
   const router = useRouter();
@@ -105,23 +83,22 @@ export default function NewNewsletterPage() {
         >
           {/* Title */}
           <div>
-            <label style={labelStyle} htmlFor="title">Title *</label>
-            <input
+            <Label htmlFor="title" className="mb-1.5">Title *</Label>
+            <Input
               id="title"
               name="title"
               type="text"
               placeholder="e.g. Gyan Setu Winter Dispatch"
               value={form.title}
               onChange={handleChange}
-              style={inputStyle}
               required
             />
           </div>
 
           {/* Issue number */}
           <div>
-            <label style={labelStyle} htmlFor="issue_number">Issue Number</label>
-            <input
+            <Label htmlFor="issue_number" className="mb-1.5">Issue Number</Label>
+            <Input
               id="issue_number"
               name="issue_number"
               type="number"
@@ -129,21 +106,19 @@ export default function NewNewsletterPage() {
               value={form.issue_number}
               onChange={handleChange}
               min={1}
-              style={inputStyle}
             />
           </div>
 
           {/* Description */}
           <div>
-            <label style={labelStyle} htmlFor="description">Description</label>
-            <textarea
+            <Label htmlFor="description" className="mb-1.5">Description</Label>
+            <Textarea
               id="description"
               name="description"
               placeholder="What's in this issue? A short summary..."
               value={form.description}
               onChange={handleChange}
               rows={4}
-              style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6 }}
             />
           </div>
 
@@ -161,28 +136,19 @@ export default function NewNewsletterPage() {
 
           {/* Status */}
           <div>
-            <label style={labelStyle} htmlFor="status">Status</label>
-            <div style={{ position: "relative" }}>
-              <select
-                id="status"
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                style={selectStyle}
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 16 16"
-                fill="none"
-                style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
-              >
-                <path d="M4 6l4 4 4-4" stroke="#9B9188" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
+            <Label htmlFor="status" className="mb-1.5">Status</Label>
+            <Select
+              value={form.status}
+              onValueChange={(v) => setForm((prev) => ({ ...prev, status: (v ?? "draft") as "draft" | "published" }))}
+            >
+              <SelectTrigger id="status" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Error */}
@@ -193,40 +159,17 @@ export default function NewNewsletterPage() {
           )}
 
           {/* Actions */}
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 4 }}>
-            <button
+          <div className="flex justify-end gap-2.5 pt-1">
+            <Button
               type="button"
+              variant="outline"
               onClick={() => router.push("/admin/newsletter")}
-              style={{
-                background: "transparent",
-                color: "#5A5247",
-                fontSize: 13,
-                fontWeight: 500,
-                padding: "8px 18px",
-                borderRadius: 6,
-                border: "1.5px solid #E4DFD1",
-                cursor: "pointer",
-              }}
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                background: loading ? "#9B9188" : "#4A55BE",
-                color: "white",
-                fontSize: 13,
-                fontWeight: 600,
-                padding: "8px 22px",
-                borderRadius: 6,
-                border: "none",
-                cursor: loading ? "not-allowed" : "pointer",
-                transition: "background 0.15s",
-              }}
-            >
+            </Button>
+            <Button type="submit" disabled={loading}>
               {loading ? "Saving..." : "Save Newsletter"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

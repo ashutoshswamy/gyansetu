@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Train } from "lucide-react";
 import { getAllTravelTickets } from "@/actions/travel";
 import { ConfirmButton, ApproveItineraryButton } from "./row-actions";
+import { Button } from "@/components/ui/button";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   pending:   { color: "#F5A520", bg: "rgba(245,165,32,0.08)" },
@@ -22,9 +23,7 @@ export default async function AdminTravelPage() {
             <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{tickets.length} travel tickets</p>
           </div>
           <Link href="/admin/travel/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + New Ticket
-            </button>
+            <Button>+ New Ticket</Button>
           </Link>
         </div>
 

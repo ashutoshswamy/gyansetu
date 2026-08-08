@@ -6,6 +6,10 @@ import { toast } from "sonner";
 import { bulkCreateIdCards } from "@/actions/id-cards";
 import { getGroupsByTour } from "@/actions/groups";
 import { VolunteerChecklist } from "@/components/features/volunteers/volunteer-checklist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Volunteer = { id: string; name: string; email: string };
 type Group = {
@@ -13,12 +17,6 @@ type Group = {
   name: string;
   state_allocated?: string | null;
   tour_group_members?: { users?: Volunteer | null }[];
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid #E4DFD1", borderRadius: 6, outline: "none",
-  background: "#FBF7EC", color: "#19140F", boxSizing: "border-box",
 };
 
 export default function BulkIdCardsPage() {
@@ -112,49 +110,57 @@ export default function BulkIdCardsPage() {
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "#DC2626" }}>*</span></label>
-                <select value={tourId} onChange={e => handleTourChange(e.target.value)} required style={inputStyle}>
-                  <option value="">Select tour...</option>
-                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
+                <Label className="mb-1.5">Tour <span className="text-destructive">*</span></Label>
+                <Select value={tourId} onValueChange={v => handleTourChange(v ?? "")} required>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select tour..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Group</label>
-                <select value={groupId} onChange={e => { setGroupId(e.target.value); setSelected(new Set()); }} disabled={!tourId} style={inputStyle}>
-                  <option value="">All applied volunteers</option>
-                  {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                </select>
+                <Label className="mb-1.5">Group</Label>
+                <Select value={groupId} onValueChange={v => { setGroupId(v ?? ""); setSelected(new Set()); }} disabled={!tourId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="All applied volunteers" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groups.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <p style={{ fontSize: 11, color: "#9B9188", margin: "-10px 0 0" }}>
               Card numbers are generated automatically per volunteer. State comes from the group&apos;s allocated state.
             </p>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Place</label>
-              <input value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" style={inputStyle} />
+              <Label className="mb-1.5">Place</Label>
+              <Input value={place} onChange={e => setPlace(e.target.value)} placeholder="Enter place" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid From <span style={{ color: "#DC2626" }}>*</span></label>
-                <input type="date" value={validFrom} onChange={e => setValidFrom(e.target.value)} required style={inputStyle} />
+                <Label className="mb-1.5">Valid From <span className="text-destructive">*</span></Label>
+                <Input type="date" value={validFrom} onChange={e => setValidFrom(e.target.value)} required />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Valid To <span style={{ color: "#DC2626" }}>*</span></label>
-                <input type="date" value={validTo} onChange={e => setValidTo(e.target.value)} required style={inputStyle} />
+                <Label className="mb-1.5">Valid To <span className="text-destructive">*</span></Label>
+                <Input type="date" value={validTo} onChange={e => setValidTo(e.target.value)} required />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#5A5247", display: "block", marginBottom: 6 }}>Volunteers <span style={{ color: "#DC2626" }}>*</span></label>
+              <Label className="mb-1.5">Volunteers <span className="text-destructive">*</span></Label>
               <VolunteerChecklist volunteers={roster} selected={selected} onChange={setSelected} />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading || selected.size === 0} style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading || selected.size === 0 ? "not-allowed" : "pointer", opacity: loading || selected.size === 0 ? 0.7 : 1 }}>
+            <Button type="submit" disabled={loading || selected.size === 0}>
               {loading ? "Issuing..." : selected.size ? `Issue ${selected.size} Card${selected.size === 1 ? "" : "s"}` : "Issue Cards"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "#5A5247", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid #E4DFD1", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       </div>

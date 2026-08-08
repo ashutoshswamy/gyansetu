@@ -4,6 +4,7 @@ import { ApproveRejectButtons } from "./approve-button";
 import { TestRowActions } from "@/components/features/tests/test-row-actions";
 import Link from "next/link";
 import { ClipboardList, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const testStatusStyles: Record<string, { color: string; background: string }> = {
   active: { color: "#2A5E3A", background: "rgba(42,94,58,0.08)" },
@@ -88,18 +89,13 @@ export default async function AdminTestsPage() {
           <div className="flex items-center gap-3">
             <ExportButton data={exportData} filename="test-results.csv" />
             <Link href="/admin/tests/templates">
-              <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                Test Templates
-              </button>
+              <Button variant="outline">Test Templates</Button>
             </Link>
             <Link href="/admin/tests/new">
-              <button
-                className="flex items-center gap-2"
-                style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}
-              >
+              <Button>
                 <Plus className="w-4 h-4" />
                 New Test
-              </button>
+              </Button>
             </Link>
           </div>
         </div>
@@ -188,11 +184,9 @@ export default async function AdminTestsPage() {
                       </>
                     )}
                     <Link href={`/admin/tests/${test.id}`}>
-                      <button
-                        style={{ background: "transparent", color: "#4A55BE", fontSize: 12, fontWeight: 500, padding: "6px 14px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}
-                      >
+                      <Button variant="outline" size="sm">
                         Manage
-                      </button>
+                      </Button>
                     </Link>
                     <TestRowActions testId={test.id} status={test.status} />
                   </div>
