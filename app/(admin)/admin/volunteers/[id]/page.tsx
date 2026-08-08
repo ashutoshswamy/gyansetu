@@ -1,4 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowLeft, Phone, AlertCircle, CheckCircle, MapPin, NotebookPen } from "lucide-react";
 import { getVolunteerObservations } from "@/actions/core-member";
@@ -35,8 +37,9 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
         </Link>
 
         {/* Header */}
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", marginBottom: 20 }}>
-          <div className="flex items-start justify-between flex-wrap gap-4">
+        <Card className="mb-5">
+          <CardContent>
+            <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{user.name}</h1>
               <p style={{ fontSize: 14, color: "var(--gs-muted)", margin: "4px 0 0" }}>{user.email}</p>
@@ -44,22 +47,24 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
             </div>
             <div className="text-right">
               {profile?.consent_given ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)", padding: "4px 10px", borderRadius: 6 }}>
+                <Badge className="flex items-center gap-1" style={{ color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>
                   <CheckCircle size={12} /> Consent given
-                </div>
+                </Badge>
               ) : (
-                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--gs-warning-alt)", background: "rgba(var(--gs-warning-alt-rgb), 0.08)", padding: "4px 10px", borderRadius: 6 }}>
+                <Badge className="flex items-center gap-1" style={{ color: "var(--gs-warning-alt)", background: "rgba(var(--gs-warning-alt-rgb), 0.08)" }}>
                   <AlertCircle size={12} /> No consent yet
-                </div>
+                </Badge>
               )}
             </div>
           </div>
-        </div>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Info */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
-            <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>Personal Information</h2>
+          <Card>
+            <CardContent>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>Personal Information</h2>
             {!profile ? (
               <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Profile not filled yet.</p>
             ) : (
@@ -76,11 +81,13 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
                 {profile.availability_notes && <Row label="Availability">{profile.availability_notes}</Row>}
               </div>
             )}
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Emergency & Consent */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
-            <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>Emergency Contact & Consent</h2>
+          <Card>
+            <CardContent>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>Emergency Contact & Consent</h2>
             {!profile?.emergency_contact_name ? (
               <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Emergency contact not filled yet.</p>
             ) : (
@@ -99,11 +106,13 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
                 )}
               </div>
             )}
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Tour Assignments */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
-            <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>Tour Assignments ({(assignments ?? []).length})</h2>
+          <Card>
+            <CardContent>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>Tour Assignments ({(assignments ?? []).length})</h2>
             {(assignments ?? []).length === 0 ? (
               <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No assignments yet.</p>
             ) : (
@@ -119,7 +128,8 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
                 ))}
               </div>
             )}
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Observations — private, admin + core member only */}
