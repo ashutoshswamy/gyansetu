@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import type { DynamicForm } from "@/types";
 
 export default async function StudentFormsPage() {
@@ -48,9 +49,9 @@ export default async function StudentFormsPage() {
                 <p style={{ fontSize: 12, color: "#9B9188", margin: 0 }}>{form.fields?.length ?? 0} fields</p>
               </div>
               <Link href={`/enrollee/forms/${form.id}`}>
-                <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
+                <Button size="sm">
                   Fill Form
-                </button>
+                </Button>
               </Link>
             </div>
           ))}
