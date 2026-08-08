@@ -1,4 +1,5 @@
 import { getAllVolunteerProfiles } from "@/actions/profiles";
+import { Card, CardContent } from "@/components/ui/card";
 import { ExportButton } from "@/components/features/export-button";
 import { Inbox, CheckCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
@@ -38,12 +39,12 @@ export default async function ProfilesPage() {
           )}
         </div>
 
-        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <Card>
           {profiles.length === 0 ? (
-            <div className="py-16 text-center">
+            <CardContent className="text-center py-16">
               <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No profile submissions yet.</p>
-            </div>
+            </CardContent>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
@@ -112,7 +113,7 @@ export default async function ProfilesPage() {
               </table>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

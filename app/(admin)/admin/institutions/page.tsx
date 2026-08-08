@@ -1,4 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
 
 interface InstitutionInquiry {
@@ -61,32 +63,16 @@ export default async function AdminInstitutionsPage() {
           )}
 
           {inquiries.map((inquiry) => (
-            <div
-              key={inquiry.id}
-              style={{
-                background: "white",
-                border: "1px solid var(--border)",
-                borderRadius: 10,
-                padding: "16px 18px",
-              }}
-            >
+            <Card key={inquiry.id}>
+              <CardContent className="pt-4">
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 8 }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 2, flexWrap: "wrap" }}>
                     <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{inquiry.institution_name}</span>
                     {inquiry.institution_type && (
-                      <span
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 600,
-                          padding: "2px 8px",
-                          borderRadius: 4,
-                          color: "var(--gs-accent)",
-                          background: "rgba(var(--gs-accent-rgb), 0.08)",
-                        }}
-                      >
+                      <Badge style={{ color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
                         {inquiry.institution_type}
-                      </span>
+                      </Badge>
                     )}
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>Submitted {formatDate(inquiry.created_at)}</p>
@@ -127,7 +113,8 @@ export default async function AdminInstitutionsPage() {
                   <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: 0, lineHeight: 1.55 }}>{inquiry.message}</p>
                 </div>
               )}
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

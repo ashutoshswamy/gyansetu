@@ -1,4 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
 import { ApproveRejectButtons } from "./approve-button";
 import { TestRowActions } from "@/components/features/tests/test-row-actions";
@@ -102,15 +104,14 @@ export default async function AdminTestsPage() {
 
         <div className="space-y-4">
           {(tests ?? []).length === 0 && (
-            <div
-              className="py-16 text-center rounded-xl"
-              style={{ background: "white", border: "1px solid var(--border)" }}
-            >
-              <ClipboardList className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
-              <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>
-                No tests created yet.
-              </p>
-            </div>
+            <Card>
+              <CardContent className="text-center py-16">
+                <ClipboardList className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
+                <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>
+                  No tests created yet.
+                </p>
+              </CardContent>
+            </Card>
           )}
 
           {((tests ?? []) as TestRow[]).map((test) => {
@@ -126,21 +127,15 @@ export default async function AdminTestsPage() {
             const s = testStatusStyles[test.status] ?? testStatusStyles.draft;
 
             return (
-              <div
-                key={test.id}
-                className="rounded-xl overflow-hidden"
-                style={{ background: "white", border: "1px solid var(--border)" }}
-              >
+              <Card key={test.id}>
                 {/* Test header */}
                 <div className="flex items-center justify-between p-5">
                   <div className="min-w-0">
                     <div className="flex items-center gap-3 mb-1">
                       <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{test.title}</h3>
-                      <span
-                        style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.background, textTransform: "capitalize" }}
-                      >
+                      <Badge style={{ color: s.color, background: s.background, textTransform: "capitalize" }}>
                         {test.status}
-                      </span>
+                      </Badge>
                     </div>
                     <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                       <span>Tour: {test.tours?.title ?? "Unlinked"}</span>
@@ -232,9 +227,9 @@ export default async function AdminTestsPage() {
                               <span style={{ fontSize: 12, fontFamily: "monospace", color: didPass ? "var(--gs-success)" : "var(--gs-danger-alt)" }}>
                                 {score.toFixed(1)}%
                               </span>
-                              <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: statusColor, background: statusBg }}>
+                              <Badge style={{ color: statusColor, background: statusBg }}>
                                 {statusLabel}
-                              </span>
+                              </Badge>
                               {isPendingApproval && <ApproveRejectButtons attemptId={attempt.id} />}
                             </div>
                           </div>
@@ -248,7 +243,7 @@ export default async function AdminTestsPage() {
                     </div>
                   </div>
                 )}
-              </div>
+              </Card>
             );
           })}
         </div>

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { approveTestimonial, declineTestimonial, deleteTestimonial } from "@/actions/public-forms";
 import { Button } from "@/components/ui/button";
 
@@ -76,14 +78,16 @@ export default async function AdminTestimonialsPage({
         {/* Stat cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
           {(["pending", "approved", "declined"] as Status[]).map((s) => (
-            <div key={s} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px" }}>
-              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: statusStyles[s].color, margin: "0 0 6px" }}>
-                {statusStyles[s].label}
-              </p>
-              <p style={{ fontSize: 26, fontWeight: 700, color: "var(--foreground)", margin: 0, fontFamily: "var(--font-geist-mono), monospace" }}>
-                {counts[s]}
-              </p>
-            </div>
+            <Card key={s}>
+              <CardContent className="pt-4">
+                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: statusStyles[s].color, margin: "0 0 6px" }}>
+                  {statusStyles[s].label}
+                </p>
+                <p style={{ fontSize: 26, fontWeight: 700, color: "var(--foreground)", margin: 0, fontFamily: "var(--font-geist-mono), monospace" }}>
+                  {counts[s]}
+                </p>
+              </CardContent>
+            </Card>
           ))}
         </div>
 
@@ -118,34 +122,14 @@ export default async function AdminTestimonialsPage({
           )}
 
           {visible.map((t) => (
-            <div
-              key={t.id}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "space-between",
-                background: "white",
-                border: "1px solid var(--border)",
-                borderRadius: 10,
-                padding: "16px 18px",
-                gap: 16,
-              }}
-            >
+            <Card key={t.id}>
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", padding: "16px 18px", gap: 16 }}>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
                   <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{t.name}</span>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      padding: "2px 8px",
-                      borderRadius: 4,
-                      color: statusStyles[t.status].color,
-                      background: statusStyles[t.status].background,
-                    }}
-                  >
+                  <Badge style={{ color: statusStyles[t.status].color, background: statusStyles[t.status].background }}>
                     {statusStyles[t.status].label}
-                  </span>
+                  </Badge>
                 </div>
                 <div style={{ fontSize: 12, color: "var(--gs-muted)", marginBottom: 8, display: "flex", gap: 12, flexWrap: "wrap" }}>
                   {t.batch_year && <span>Batch: {t.batch_year}</span>}
@@ -214,7 +198,8 @@ export default async function AdminTestimonialsPage({
                   </Button>
                 </form>
               </div>
-            </div>
+              </div>
+            </Card>
           ))}
         </div>
       </div>
