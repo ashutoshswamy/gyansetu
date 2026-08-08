@@ -20,13 +20,17 @@
     "delete:clerk-users": "node --env-file=.env.local scripts/delete-all-clerk-users.mjs"
   },
   "dependencies": {
+    "@base-ui/react": "^1.7.0",
     "@clerk/nextjs": "^7.5.7",
     "@hookform/resolvers": "^5.4.0",
+    "@hugeicons/core-free-icons": "^4.2.3",
+    "@hugeicons/react": "^1.1.9",
     "@radix-ui/react-avatar": "^1.2.0",
     "@supabase/supabase-js": "^2.108.2",
     "@tanstack/react-query": "^5.101.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.40.0",
     "html-to-image": "^1.11.13",
