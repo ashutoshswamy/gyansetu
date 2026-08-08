@@ -438,6 +438,7 @@ export function Sidebar({ role }: { role: SidebarRole }) {
           <Button
             variant="outline"
             size="icon-sm"
+            className="lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
