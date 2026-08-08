@@ -1,6 +1,7 @@
 import { requireEarcUser } from "@/lib/clerk/action-auth";
 import { getStudentProfiles, exportStudentProfilesCsv } from "@/actions/earc";
 import { GraduationCap } from "lucide-react";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { StudentProfileForm } from "@/components/features/earc/student-profile-form";
 import { ExportCsvButton } from "@/components/features/earc/export-csv-button";
 import { BulkUploadButton } from "@/components/features/earc/bulk-upload-button";
@@ -59,36 +60,32 @@ export default async function StudentProfilePage() {
             <p style={{ fontSize: 15, color: "#5A5247" }}>No student profiles submitted yet.</p>
           </div>
         ) : (
-          <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid #E4DFD1" }}>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
-                <thead>
-                  <tr style={{ background: "#F3F0E8", borderBottom: "1px solid #E4DFD1" }}>
-                    <th className="p-3 font-semibold text-[#5A5247]">Name</th>
-                    <th className="p-3 font-semibold text-[#5A5247]">Gender</th>
-                    <th className="p-3 font-semibold text-[#5A5247]">Standard</th>
-                    <th className="p-3 font-semibold text-[#5A5247]">DOB</th>
-                    <th className="p-3 font-semibold text-[#5A5247]">Mobile</th>
-                    <th className="p-3 font-semibold text-[#5A5247]">Blood Group</th>
-                    <th className="p-3 font-semibold text-[#5A5247]">Submitted By</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {profiles.map(s => (
-                    <tr key={s.id} style={{ borderBottom: "1px solid #E4DFD1" }}>
-                      <td className="p-3 text-[#19140F]">{[s.first_name, s.middle_name, s.last_name].filter(Boolean).join(" ")}</td>
-                      <td className="p-3 text-[#5A5247]">{s.gender}</td>
-                      <td className="p-3 text-[#5A5247]">{s.standard}</td>
-                      <td className="p-3 text-[#5A5247]">{s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString() : "-"}</td>
-                      <td className="p-3 text-[#5A5247]">{s.mobile_number ?? "-"}</td>
-                      <td className="p-3 text-[#5A5247]">{s.blood_group ?? "-"}</td>
-                      <td className="p-3 text-[#9B9188]">{s.submitter?.name ?? "Unknown"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Table className="rounded-xl overflow-hidden border border-border">
+            <TableHeader>
+              <TableRow className="bg-muted">
+                <TableHead>Name</TableHead>
+                <TableHead>Gender</TableHead>
+                <TableHead>Standard</TableHead>
+                <TableHead>DOB</TableHead>
+                <TableHead>Mobile</TableHead>
+                <TableHead>Blood Group</TableHead>
+                <TableHead>Submitted By</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {profiles.map(s => (
+                <TableRow key={s.id}>
+                  <TableCell>{[s.first_name, s.middle_name, s.last_name].filter(Boolean).join(" ")}</TableCell>
+                  <TableCell>{s.gender}</TableCell>
+                  <TableCell>{s.standard}</TableCell>
+                  <TableCell>{s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString() : "-"}</TableCell>
+                  <TableCell>{s.mobile_number ?? "-"}</TableCell>
+                  <TableCell>{s.blood_group ?? "-"}</TableCell>
+                  <TableCell className="text-muted-foreground">{s.submitter?.name ?? "Unknown"}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>
