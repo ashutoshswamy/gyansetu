@@ -110,7 +110,7 @@ export function SiteNavbar() {
         <Button
           variant="outline"
           size="icon-sm"
-          className="mobile-menu-btn"
+          className="mobile-menu-btn md:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           onClick={() => setMobileOpen((v) => !v)}
         >
