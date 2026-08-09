@@ -7,6 +7,11 @@ import { createRegistrationFee } from "@/actions/registration-fees";
 import type { RegistrationFeeInput } from "@/lib/validations";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 const STATUSES = ["pending", "paid", "waived", "refunded"] as const;
 
@@ -20,12 +25,6 @@ export default function NewRegistrationFeePage() {
   useEffect(() => {
     fetch("/api/volunteers").then(r => r.json()).then(d => setVolunteers(d.volunteers ?? []));
   }, []);
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -71,31 +70,36 @@ export default function NewRegistrationFeePage() {
               <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={setVolunteerId} name="volunteer_id" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-              <input type="number" name="amount" min={0} step="0.01" required placeholder="Enter amount" style={inputStyle} />
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
+              <Input type="number" name="amount" min={0} step="0.01" required placeholder="Enter amount" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Status <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-              <select name="status" required defaultValue="pending" style={inputStyle}>
-                {STATUSES.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
-              </select>
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Status <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
+              <Select name="status" required defaultValue="pending">
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUSES.map(s => <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Payment Reference</label>
-              <input type="text" name="payment_reference" placeholder="Transaction ID / UPI ref..." style={inputStyle} />
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Payment Reference</Label>
+              <Input type="text" name="payment_reference" placeholder="Transaction ID / UPI ref..." />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea name="notes" rows={3} placeholder="Additional notes..." style={{ ...inputStyle, resize: "vertical" }} />
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Notes</Label>
+              <Textarea name="notes" rows={3} placeholder="Additional notes..." />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            <Button type="submit" disabled={loading}>
               {loading ? "Saving..." : "Record Fee"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
 </CardContent>

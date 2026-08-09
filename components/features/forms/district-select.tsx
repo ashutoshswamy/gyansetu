@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { STATE_DISTRICTS } from "@/lib/locations";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface DistrictSelectProps {
   state: string | undefined;
   value: string | undefined;
   onChange: (value: string) => void;
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
   required?: boolean;
   name?: string;
 }
@@ -20,33 +23,34 @@ export function DistrictSelect({ state, value, onChange, style, required, name }
   const [customMode, setCustomMode] = useState(districts.length > 0 && districtValue !== "" && !districts.includes(districtValue));
 
   if (districts.length === 0) {
-    return <input name={name} value={districtValue} onChange={e => onChange(e.target.value)} required={required} placeholder="Enter district" style={style} disabled={!state} />;
+    return <Input name={name} value={districtValue} onChange={e => onChange(e.target.value)} required={required} placeholder="Enter district" style={style} disabled={!state} />;
   }
 
   if (customMode) {
     return (
       <div>
-        <input name={name} value={districtValue} onChange={e => onChange(e.target.value)} required={required} placeholder="Enter district" style={style} />
-        <button type="button" onClick={() => { setCustomMode(false); onChange(""); }} style={{ marginTop: 4, background: "none", border: "none", padding: 0, fontSize: 11, color: "var(--gs-accent)", cursor: "pointer" }}>
+        <Input name={name} value={districtValue} onChange={e => onChange(e.target.value)} required={required} placeholder="Enter district" style={style} />
+        <Button type="button" variant="link" size="xs" onClick={() => { setCustomMode(false); onChange(""); }} className="mt-1 p-0 h-auto text-[var(--gs-accent)]">
           ← Choose from list
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
-    <select
+    <Select
       name={name}
-      value={districtValue}
-      onChange={e => {
-        if (e.target.value === "Other") { setCustomMode(true); onChange(""); }
-        else onChange(e.target.value);
+      value={districtValue || undefined}
+      onValueChange={(v) => {
+        const val = v ?? "";
+        if (val === "Other") { setCustomMode(true); onChange(""); }
+        else onChange(val);
       }}
-      required={required}
-      style={{ ...style, appearance: "none" }}
     >
-      <option value="">Select district</option>
-      {districts.map(d => <option key={d} value={d}>{d}</option>)}
-    </select>
+      <SelectTrigger className="w-full" style={style}><SelectValue placeholder="Select district" /></SelectTrigger>
+      <SelectContent>
+        {districts.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+      </SelectContent>
+    </Select>
   );
 }

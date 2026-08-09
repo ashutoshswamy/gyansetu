@@ -1,14 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
 
 type Volunteer = { id: string; name: string; email: string };
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
 
 export function VolunteerCombobox({
   volunteers,
@@ -50,7 +45,7 @@ export function VolunteerCombobox({
         placeholder={placeholder}
         onFocus={() => { setOpen(true); setQuery(""); }}
         onChange={e => setQuery(e.target.value)}
-        style={inputStyle}
+        style={{ width: "100%", height: 36, border: "1px solid var(--border)", borderRadius: 24, padding: "0 12px", fontSize: 14, fontFamily: "inherit", outline: "none" }}
       />
       {open && (
         <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 20, background: "white", border: "1px solid var(--border)", borderRadius: 6, maxHeight: 220, overflowY: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>

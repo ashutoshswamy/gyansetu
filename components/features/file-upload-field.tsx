@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 import { uploadFileToStorage } from "@/actions/upload";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   label: string;
@@ -16,18 +18,6 @@ interface Props {
   showImagePreview?: boolean;
   required?: boolean;
 }
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  fontSize: 14,
-  color: "var(--foreground)",
-  background: "white",
-  border: "1px solid var(--border)",
-  borderRadius: 7,
-  padding: "9px 12px",
-  outline: "none",
-  boxSizing: "border-box",
-};
 
 export function FileUploadField({
   label,
@@ -84,35 +74,25 @@ export function FileUploadField({
 
       {/* URL input + upload button row */}
       <div style={{ display: "flex", gap: 8, alignItems: "center", position: "relative" }}>
-        <input
+        <Input
           type="url"
           name={label}
           value={value}
           onChange={(e) => { onChange(e.target.value); setPreviewError(false); }}
           placeholder={placeholder}
           required={required}
-          style={{ ...inputStyle, flex: 1 }}
+          className="flex-1"
         />
-        <button
+        <Button
           type="button"
+          variant="secondary"
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
-          style={{
-            flexShrink: 0,
-            background: uploading ? "#C8C4BC" : "var(--gs-card)",
-            color: uploading ? "var(--gs-muted)" : "var(--foreground)",
-            fontSize: 13,
-            fontWeight: 600,
-            padding: "9px 14px",
-            borderRadius: 7,
-            border: "1px solid var(--border)",
-            cursor: uploading ? "not-allowed" : "pointer",
-            whiteSpace: "nowrap",
-          }}
+          className="flex-shrink-0 whitespace-nowrap"
         >
           {uploading ? "Uploading…" : "Upload"}
-        </button>
-        <input
+        </Button>
+        <Input
           ref={fileRef}
           type="file"
           accept={accept}

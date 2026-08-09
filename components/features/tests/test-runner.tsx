@@ -6,18 +6,9 @@ import { submitTestAttempt } from "@/actions/tests";
 import type { TestQuestion } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-const inp = {
-  width: "100%",
-  padding: "10px 14px",
-  fontSize: 14,
-  border: "1.5px solid var(--border)",
-  borderRadius: 8,
-  background: "white",
-  color: "var(--foreground)",
-  outline: "none",
-  resize: "none" as const,
-};
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface Test {
   id: string;
@@ -104,12 +95,9 @@ export function TestRunner({ test }: { test: Test }) {
         )}
 
         <div>
-          <button
-            onClick={() => router.push("/enrollee/tests")}
-            style={{ background: "var(--foreground)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: "pointer" }}
-          >
+          <Button onClick={() => router.push("/enrollee/tests")}>
             Back to Tests
-          </button>
+          </Button>
         </div>
       </CardContent>
 </Card>
@@ -140,7 +128,12 @@ export function TestRunner({ test }: { test: Test }) {
         <p style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", marginBottom: 16 }}>{question.question}</p>
 
         {question.type === "mcq" && (
-          <div className="space-y-2">
+          <RadioGroup
+            name={question.id}
+            value={(answers[question.id] as string) ?? ""}
+            onValueChange={(v) => setAnswer(question.id, v as string)}
+            className="space-y-2"
+          >
             {question.options?.map((opt) => {
               const selected = answers[question.id] === opt;
               return (
@@ -149,12 +142,12 @@ export function TestRunner({ test }: { test: Test }) {
                   className="flex items-center gap-3 p-3 rounded-lg cursor-pointer"
                   style={{ border: `1.5px solid ${selected ? "var(--gs-accent)" : "var(--border)"}`, background: selected ? "rgba(var(--gs-accent-rgb), 0.06)" : "white", transition: "all 0.1s" }}
                 >
-                  <input type="radio" name={question.id} value={opt} checked={selected} onChange={() => setAnswer(question.id, opt)} style={{ accentColor: "var(--gs-accent)" }} />
+                  <RadioGroupItem value={opt} />
                   <span style={{ fontSize: 14, color: "var(--foreground)" }}>{opt}</span>
                 </label>
               );
             })}
-          </div>
+          </RadioGroup>
         )}
 
         {question.type === "multi_select" && (
@@ -167,7 +160,7 @@ export function TestRunner({ test }: { test: Test }) {
                   className="flex items-center gap-3 p-3 rounded-lg cursor-pointer"
                   style={{ border: `1.5px solid ${selected ? "var(--gs-accent)" : "var(--border)"}`, background: selected ? "rgba(var(--gs-accent-rgb), 0.06)" : "white", transition: "all 0.1s" }}
                 >
-                  <input type="checkbox" checked={selected} onChange={() => toggleMulti(question.id, opt)} style={{ accentColor: "var(--gs-accent)" }} />
+                  <Checkbox checked={selected} onCheckedChange={() => toggleMulti(question.id, opt)} />
                   <span style={{ fontSize: 14, color: "var(--foreground)" }}>{opt}</span>
                 </label>
               );
@@ -176,12 +169,11 @@ export function TestRunner({ test }: { test: Test }) {
         )}
 
         {question.type === "subjective" && (
-          <textarea
+          <Textarea
             value={(answers[question.id] as string) ?? ""}
             onChange={(e) => setAnswer(question.id, e.target.value)}
             rows={5}
             placeholder="Type your answer here..."
-            style={{ ...inp, display: "block" }}
           />
         )}
       </CardContent>

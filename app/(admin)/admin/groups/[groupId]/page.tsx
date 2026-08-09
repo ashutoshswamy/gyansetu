@@ -7,6 +7,8 @@ import { addGroupMember, removeGroupMember, setGroupCoreMember } from "@/actions
 import { Users, MapPin, Trash2, ArrowLeft, ShieldCheck } from "lucide-react";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -105,26 +107,20 @@ export default function GroupDetailPage() {
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)",
-  };
-
   if (loading) return <div className="p-8" style={{ color: "var(--gs-muted)" }}>Loading...</div>;
   if (!group) return (
     <div className="p-8">
       <p style={{ color: "var(--gs-danger)", fontSize: 14 }}>Group not found.</p>
-      <button onClick={() => router.back()} style={{ marginTop: 12, fontSize: 13, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer" }}>← Back</button>
+      <Button variant="link" onClick={() => router.back()} className="mt-3 px-0">← Back</Button>
     </div>
   );
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-4xl mx-auto">
-        <button onClick={() => router.push("/admin/groups")} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--gs-muted)", background: "none", border: "none", cursor: "pointer", marginBottom: 20 }}>
+        <Button variant="ghost" onClick={() => router.push("/admin/groups")} className="mb-5 gap-1.5 px-0 hover:bg-transparent" style={{ color: "var(--gs-muted)" }}>
           <ArrowLeft size={14} /> Back to Groups
-        </button>
+        </Button>
 
         <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
           <div>
@@ -158,23 +154,23 @@ export default function GroupDetailPage() {
                 excludeIds={new Set((group.tour_group_members ?? []).map(m => m.user_id))}
               />
             </div>
-            <select
-              value={newRole}
-              onChange={e => setNewRole(e.target.value)}
-              style={{ ...inputStyle, flex: 2 }}
-            >
-              <option value="">Select role (optional)</option>
-              <option value="volunteer">Volunteer</option>
-              <option value="group_leader">Group Leader</option>
-              <option value="project_member">Project Member</option>
-            </select>
-            <button
+            <Select value={newRole || undefined} onValueChange={v => setNewRole(v ?? "")}>
+              <SelectTrigger className="flex-[2]">
+                <SelectValue placeholder="Select role (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="volunteer">Volunteer</SelectItem>
+                <SelectItem value="group_leader">Group Leader</SelectItem>
+                <SelectItem value="project_member">Project Member</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
               onClick={handleAddMember}
               disabled={saving || !newUserId}
-              style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: saving || !newUserId ? "not-allowed" : "pointer", opacity: saving || !newUserId ? 0.6 : 1, flexShrink: 0 }}
+              className="flex-shrink-0 bg-[var(--gs-success)] text-white hover:bg-[var(--gs-success)]/90"
             >
               Add
-            </button>
+            </Button>
           </div>
         </CardContent>
 </Card>

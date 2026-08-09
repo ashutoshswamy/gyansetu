@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
+import { Button } from "@/components/ui/button";
 
 const categories = [
   {
@@ -190,20 +191,11 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
     <div
       style={{ borderBottom: "1px dashed var(--gs-line)" }}
     >
-      <button
+      <Button
+        type="button"
+        variant="ghost"
         onClick={() => setOpen((v) => !v)}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 16,
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: "22px 0",
-          textAlign: "left",
-        }}
+        className="h-auto w-full items-start justify-between gap-4 rounded-none bg-transparent px-0 py-[22px] text-left hover:bg-transparent"
       >
         <span
           style={{
@@ -220,7 +212,7 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
         <span style={{ flexShrink: 0, marginTop: 2, color: open ? "var(--gs-rust)" : "var(--gs-text-mute)" }}>
           {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </span>
-      </button>
+      </Button>
       {open && (
         <p
           style={{
@@ -281,34 +273,28 @@ export default function FAQPage() {
 
           {/* Tabs */}
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="icon"
               aria-label="Scroll tabs left"
               onClick={() => scrollByAmount(tabsRef, -1)}
-              style={{
-                flexShrink: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                border: "1px solid var(--gs-line)",
-                background: "var(--gs-paper)",
-                color: "var(--gs-text-soft)",
-                cursor: "pointer",
-              }}
+              className="size-7 shrink-0 rounded-full"
+              style={{ border: "1px solid var(--gs-line)", background: "var(--gs-paper)", color: "var(--gs-text-soft)" }}
             >
               <ChevronLeft size={16} />
-            </button>
+            </Button>
             <div
               ref={tabsRef}
               style={{ display: "flex", gap: 0, borderBottom: "none", overflowX: "auto", scrollBehavior: "smooth" }}
             >
               {categories.map((cat) => (
-                <button
+                <Button
                   key={cat.id}
+                  type="button"
+                  variant="ghost"
                   onClick={() => setActiveTab(cat.id)}
+                  className="h-auto shrink-0 rounded-none bg-transparent px-5 py-2.5 whitespace-nowrap hover:bg-transparent"
                   style={{
                     fontFamily: F_MONO,
                     fontSize: 11.5,
@@ -316,39 +302,25 @@ export default function FAQPage() {
                     letterSpacing: "0.05em",
                     textTransform: "uppercase",
                     color: activeTab === cat.id ? "var(--gs-rust)" : "var(--gs-text-mute)",
-                    background: "none",
-                    border: "none",
                     borderBottom: activeTab === cat.id ? "2px solid var(--gs-marigold)" : "2px solid transparent",
-                    padding: "10px 20px",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
                     transition: "color .2s, border-color .2s",
                   }}
                 >
                   {cat.label}
-                </button>
+                </Button>
               ))}
             </div>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="icon"
               aria-label="Scroll tabs right"
               onClick={() => scrollByAmount(tabsRef, 1)}
-              style={{
-                flexShrink: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                border: "1px solid var(--gs-line)",
-                background: "var(--gs-paper)",
-                color: "var(--gs-text-soft)",
-                cursor: "pointer",
-              }}
+              className="size-7 shrink-0 rounded-full"
+              style={{ border: "1px solid var(--gs-line)", background: "var(--gs-paper)", color: "var(--gs-text-soft)" }}
             >
               <ChevronRight size={16} />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { deleteLocalHost } from "@/actions/local-hosts";
+import { Button } from "@/components/ui/button";
 
 export function DeleteHostButton({ id }: { id: string }) {
   const router = useRouter();
@@ -22,17 +23,14 @@ export function DeleteHostButton({ id }: { id: string }) {
   }
 
   return (
-    <button
+    <Button
       onClick={handleDelete}
       disabled={loading}
-      style={{
-        fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: "transparent", color: "var(--gs-danger-alt)",
-        border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.3)",
-        cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,
-      }}
+      variant="destructive"
+      size="sm"
+      className="flex-shrink-0"
     >
       {loading ? "..." : "Delete"}
-    </button>
+    </Button>
   );
 }

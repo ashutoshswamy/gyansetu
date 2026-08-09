@@ -6,6 +6,7 @@ import type { DashboardStats, Tour } from "@/types";
 import { Plane, Users, UserCheck, ClipboardList, Clock, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 async function getStats(): Promise<DashboardStats> {
   const cached = await getCached<DashboardStats>(CACHE_KEYS.dashboardStats);
@@ -152,12 +153,9 @@ export default async function AdminDashboard() {
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Active Tours</h2>
               <Link href="/admin/tours">
-                <button
-                  className="flex items-center gap-1"
-                  style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
-                >
+                <Button variant="ghost" size="sm" className="flex items-center gap-1" style={{ color: "var(--gs-accent)" }}>
                   Manage <ArrowRight className="w-3 h-3" />
-                </button>
+                </Button>
               </Link>
             </div>
 
@@ -195,12 +193,9 @@ export default async function AdminDashboard() {
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Pending Applications</h2>
               <Link href="/admin/students">
-                <button
-                  className="flex items-center gap-1"
-                  style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
-                >
+                <Button variant="ghost" size="sm" className="flex items-center gap-1" style={{ color: "var(--gs-accent)" }}>
                   Review <ArrowRight className="w-3 h-3" />
-                </button>
+                </Button>
               </Link>
             </div>
 

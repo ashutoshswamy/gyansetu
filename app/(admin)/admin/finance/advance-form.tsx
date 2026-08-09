@@ -6,6 +6,10 @@ import { toast } from "sonner";
 import { createExpenseAdvance } from "@/actions/finance";
 import { getAllGroups } from "@/actions/groups";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export function AdvanceForm() {
   const router = useRouter();
@@ -16,12 +20,6 @@ export function AdvanceForm() {
   useEffect(() => {
     getAllGroups().then(data => setGroups(data as unknown as typeof groups)).catch(() => setGroups([]));
   }, []);
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,23 +60,27 @@ export function AdvanceForm() {
       )}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-          <select name="group_id" required style={inputStyle}>
-            <option value="">Select group...</option>
-            {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-          </select>
+          <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
+          <Select name="group_id">
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select group..." />
+            </SelectTrigger>
+            <SelectContent>
+              {groups.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-          <input name="amount" type="number" min="0" step="0.01" required placeholder="Enter amount" style={inputStyle} />
+          <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
+          <Input name="amount" type="number" min="0" step="0.01" required placeholder="Enter amount" />
         </div>
-        <button type="submit" disabled={saving} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1, height: 37 }}>
+        <Button type="submit" disabled={saving} className="h-[37px]">
           {saving ? "Saving..." : "Record Advance"}
-        </button>
+        </Button>
       </div>
       <div style={{ marginTop: 12 }}>
-        <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Notes</label>
-        <input name="notes" type="text" placeholder="Enter notes" style={inputStyle} />
+        <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Notes</Label>
+        <Input name="notes" type="text" placeholder="Enter notes" />
       </div>
     </form>
 </CardContent>

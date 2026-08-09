@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setAadhaarVerified } from "@/actions/profiles";
+import { Button } from "@/components/ui/button";
 
 export function AadhaarToggleButton({ userId, verified }: { userId: string; verified: boolean }) {
   const router = useRouter();
@@ -32,19 +33,15 @@ export function AadhaarToggleButton({ userId, verified }: { userId: string; veri
       >
         {verified ? "Aadhaar Verified" : "Aadhaar Unverified"}
       </span>
-      <button
+      <Button
         onClick={handleClick}
         disabled={loading}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 12px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent",
-          color: "var(--gs-accent)",
-          border: "1.5px solid rgba(var(--gs-accent-rgb), 0.3)",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
+        variant="outline"
+        size="sm"
+        style={{ color: "var(--gs-accent)" }}
       >
         {loading ? "..." : verified ? "Unverify" : "Verify"}
-      </button>
+      </Button>
     </div>
   );
 }

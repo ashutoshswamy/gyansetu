@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { updateTestStatus } from "@/actions/tests";
 import { DeleteTestButton } from "./delete-test-button";
+import { Button } from "@/components/ui/button";
 
 export function TestRowActions({ testId, status }: { testId: string; status: "draft" | "active" | "closed" }) {
   const router = useRouter();
@@ -25,22 +26,22 @@ export function TestRowActions({ testId, status }: { testId: string; status: "dr
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         onClick={handleToggle}
         disabled={toggling}
         style={{
-          fontSize: 12, fontWeight: 500, padding: "6px 14px", borderRadius: 5,
-          border: `1.5px solid ${status === "active" ? "rgba(var(--gs-danger-alt-rgb), 0.28)" : "rgba(var(--gs-success-rgb), 0.28)"}`,
-          background: "transparent", color: status === "active" ? "var(--gs-danger-alt)" : "var(--gs-success)",
-          cursor: toggling ? "not-allowed" : "pointer",
+          borderColor: status === "active" ? "rgba(var(--gs-danger-alt-rgb), 0.28)" : "rgba(var(--gs-success-rgb), 0.28)",
+          color: status === "active" ? "var(--gs-danger-alt)" : "var(--gs-success)",
         }}
       >
         {toggling ? "..." : status === "active" ? "Disable" : "Enable"}
-      </button>
+      </Button>
       <Link href={`/admin/tests/${testId}/edit`}>
-        <button style={{ background: "transparent", color: "var(--gs-accent)", fontSize: 12, fontWeight: 500, padding: "6px 14px", borderRadius: 5, border: "1.5px solid rgba(var(--gs-accent-rgb), 0.28)", cursor: "pointer" }}>
+        <Button variant="outline" size="sm" style={{ borderColor: "rgba(var(--gs-accent-rgb), 0.28)", color: "var(--gs-accent)" }}>
           Edit
-        </button>
+        </Button>
       </Link>
       <DeleteTestButton testId={testId} />
     </div>

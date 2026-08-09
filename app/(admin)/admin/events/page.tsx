@@ -6,6 +6,7 @@ import { DeleteEventButton } from "@/components/features/events/delete-event-but
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
@@ -57,9 +58,7 @@ export default async function AdminEventsPage() {
             </p>
           </div>
           <Link href="/admin/events/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + New Event
-            </button>
+            <Button>+ New Event</Button>
           </Link>
         </div>
 
@@ -125,9 +124,7 @@ function EventRow({ event }: { event: EventWithTour }) {
       </div>
       <div className="flex gap-2 ml-4">
         <Link href={`/admin/events/${event.id}/edit`}>
-          <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "6px 14px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-            Edit
-          </button>
+          <Button variant="outline" size="sm">Edit</Button>
         </Link>
         <DeleteEventButton eventId={event.id} />
       </div>

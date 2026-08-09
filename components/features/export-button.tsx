@@ -1,6 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ExportButtonProps {
   data: Record<string, unknown>[];
@@ -29,18 +30,9 @@ export function ExportButton({ data, filename, label = "Export CSV" }: ExportBut
   }
 
   return (
-    <button
-      onClick={download}
-      disabled={!data.length}
-      className="flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      style={{
-        background: "oklch(1 0 0 / 5%)",
-        border: "1px solid oklch(1 0 0 / 10%)",
-        color: "oklch(0.65 0 0)",
-      }}
-    >
+    <Button variant="secondary" size="sm" onClick={download} disabled={!data.length} className="text-xs">
       <Download className="w-3.5 h-3.5" />
       {label}
-    </button>
+    </Button>
   );
 }

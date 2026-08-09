@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import type { DynamicForm } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default async function FormTemplatesPage() {
   const db = createServerClient();
@@ -34,9 +35,7 @@ export default async function FormTemplatesPage() {
             </p>
           </div>
           <Link href="/admin/forms/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + New Template
-            </button>
+            <Button>+ New Template</Button>
           </Link>
         </div>
 
@@ -63,9 +62,7 @@ export default async function FormTemplatesPage() {
               </div>
               <div className="flex gap-2">
                 <Link href={`/admin/forms/${template.id}/edit`}>
-                  <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                    Edit
-                  </button>
+                  <Button variant="outline">Edit</Button>
                 </Link>
                 <DeleteFormButton formId={template.id} />
               </div>

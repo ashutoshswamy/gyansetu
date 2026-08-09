@@ -4,6 +4,7 @@ import { DeleteFormButton } from "@/components/features/forms/delete-form-button
 import type { DynamicForm } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default async function AdminFormsPage() {
   const db = createServerClient();
@@ -29,14 +30,10 @@ export default async function AdminFormsPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/admin/forms/templates">
-              <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                Form Templates
-              </button>
+              <Button variant="outline">Form Templates</Button>
             </Link>
             <Link href="/admin/forms/new">
-              <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-                + New Form
-              </button>
+              <Button>+ New Form</Button>
             </Link>
           </div>
         </div>
@@ -64,14 +61,10 @@ export default async function AdminFormsPage() {
               </div>
               <div className="flex gap-2">
                 <Link href={`/admin/forms/${form.id}/submissions`}>
-                  <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                    Submissions
-                  </button>
+                  <Button variant="outline">Submissions</Button>
                 </Link>
                 <Link href={`/admin/forms/${form.id}/edit`}>
-                  <button style={{ background: "transparent", color: "#4A55BE", fontSize: 13, fontWeight: 500, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(74,85,190,0.28)", cursor: "pointer" }}>
-                    Edit
-                  </button>
+                  <Button variant="outline">Edit</Button>
                 </Link>
                 <DeleteFormButton formId={form.id} />
               </div>

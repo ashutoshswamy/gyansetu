@@ -8,6 +8,11 @@ import { createClientClient } from "@/lib/supabase/client";
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 export default function EditLocalHostPage() {
   const params = useParams();
@@ -79,7 +84,7 @@ export default function EditLocalHostPage() {
     }
   }
 
-  const inputStyle: React.CSSProperties = {
+  const districtStyle: React.CSSProperties = {
     width: "100%", padding: "8px 12px", fontSize: 14,
     border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
     background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
@@ -104,69 +109,75 @@ export default function EditLocalHostPage() {
           )}
           <div className="space-y-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Name <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-              <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} placeholder="Local host name" />
+              <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Name <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
+              <Input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Local host name" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Phone</label>
-                <input type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))} style={inputStyle} placeholder="10-digit phone number" />
+                <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Phone</Label>
+                <Input type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))} placeholder="10-digit phone number" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Email</label>
-                <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} style={inputStyle} placeholder="host@example.com" />
+                <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Email</Label>
+                <Input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="host@example.com" />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Linked Tour (optional)</label>
-                <select value={tourId} onChange={e => { setTourId(e.target.value); setGroupId(""); }} style={inputStyle}>
-                  <option value="">None</option>
-                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
+                <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Linked Tour (optional)</Label>
+                <Select value={tourId || undefined} onValueChange={v => { setTourId(v ?? ""); setGroupId(""); }}>
+                  <SelectTrigger className="w-full"><SelectValue placeholder="None" /></SelectTrigger>
+                  <SelectContent>
+                    {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Linked Group (optional)</label>
-                <select value={groupId} onChange={e => setGroupId(e.target.value)} style={inputStyle}>
-                  <option value="">None</option>
-                  {groupsForTour.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                </select>
+                <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Linked Group (optional)</Label>
+                <Select value={groupId || undefined} onValueChange={v => setGroupId(v ?? "")}>
+                  <SelectTrigger className="w-full"><SelectValue placeholder="None" /></SelectTrigger>
+                  <SelectContent>
+                    {groupsForTour.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: "-10px 0 0" }}>Selecting a tour filters the group list to that tour. State follows the linked group&apos;s allocated state below.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>State/Union Territory</label>
+                <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>State/Union Territory</Label>
                 {groupState ? (
-                  <input value={groupState} readOnly placeholder="From linked group" style={{ ...inputStyle, background: "#F0EEE6", color: "var(--gs-text-secondary)" }} />
+                  <Input value={groupState} readOnly placeholder="From linked group" style={{ background: "#F0EEE6", color: "var(--gs-text-secondary)" }} />
                 ) : (
-                  <select value={manualState} onChange={e => { setManualState(e.target.value); setDistrict(""); }} style={inputStyle}>
-                    <option value="">Select State/Union Territory</option>
-                    {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <Select value={manualState || undefined} onValueChange={v => { setManualState(v ?? ""); setDistrict(""); }}>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select State/Union Territory" /></SelectTrigger>
+                    <SelectContent>
+                      {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 )}
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>District</label>
-                <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} style={inputStyle} />
+                <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>District</Label>
+                <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} style={districtStyle} />
               </div>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Address</label>
-              <textarea rows={2} value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="Enter address" style={{ ...inputStyle, resize: "vertical" }} />
+              <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Address</Label>
+              <Textarea rows={2} value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="Enter address" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea rows={3} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Enter notes" style={{ ...inputStyle, resize: "vertical" }} />
+              <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Notes</Label>
+              <Textarea rows={3} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Enter notes" />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={saving} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+            <Button type="submit" disabled={saving}>
               {saving ? "Saving..." : "Save Changes"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
 </CardContent>

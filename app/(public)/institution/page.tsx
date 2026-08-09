@@ -5,6 +5,13 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { submitInstitutionInquiry } from "@/actions/public-forms";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, btnMarigold, Eyebrow } from "@/components/landing/theme";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
+const INSTITUTION_TYPES = ["School", "Junior College", "Degree College", "University", "Research Institute", "Other"];
+const STUDENT_COUNTS = ["Under 100", "100–500", "500–1000", "1000–5000", "5000+"];
 
 export default function InstitutionPage() {
   const [form, setForm] = useState({
@@ -20,8 +27,12 @@ export default function InstitutionPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  function setField(name: keyof typeof form, value: string) {
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -51,27 +62,6 @@ export default function InstitutionPage() {
       toast.error(message);
       setStatus("error");
     }
-  }
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 14px",
-    fontSize: 14,
-    color: "var(--gs-text)",
-    background: "var(--gs-paper)",
-    border: "1.5px solid var(--gs-line)",
-    borderRadius: 4,
-    outline: "none",
-    fontFamily: F_BODY,
-    boxSizing: "border-box",
-    transition: "border-color .15s",
-  };
-
-  function handleFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-    e.currentTarget.style.borderColor = "var(--gs-rust)";
-  }
-  function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-    e.currentTarget.style.borderColor = "var(--gs-line)";
   }
 
   const labelStyle: React.CSSProperties = {
@@ -142,55 +132,46 @@ export default function InstitutionPage() {
           <form onSubmit={handleSubmit}>
             <div style={fieldStyle}>
               <label htmlFor="institution_name" style={labelStyle}>Institution Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
-              <input
+              <Input
                 id="institution_name"
                 name="institution_name"
                 type="text"
                 required
                 value={form.institution_name}
                 onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
                 placeholder="e.g. Kendriya Vidyalaya, IIT Bombay"
-                style={inputStyle}
               />
             </div>
 
             <div style={fieldStyle}>
               <label htmlFor="contact_name" style={labelStyle}>Contact Person Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
-              <input
+              <Input
                 id="contact_name"
                 name="contact_name"
                 type="text"
                 required
                 value={form.contact_name}
                 onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
                 placeholder="Full name"
-                style={inputStyle}
               />
             </div>
 
             <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="email" style={labelStyle}>Email <span style={{ color: "var(--gs-rust)" }}>*</span></label>
-                <input
+                <Input
                   id="email"
                   name="email"
                   type="email"
                   required
                   value={form.email}
                   onChange={handleChange}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
                   placeholder="contact@institution.edu"
-                  style={inputStyle}
                 />
               </div>
               <div>
                 <label htmlFor="phone" style={labelStyle}>Phone</label>
-                <input
+                <Input
                   id="phone"
                   name="phone"
                   type="tel"
@@ -199,10 +180,7 @@ export default function InstitutionPage() {
                   maxLength={10}
                   value={form.phone}
                   onChange={(e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10); handleChange(e); }}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
                   placeholder="10-digit phone number"
-                  style={inputStyle}
                 />
               </div>
             </div>
@@ -210,72 +188,54 @@ export default function InstitutionPage() {
             <div className="form-row-2" style={{ marginBottom: 18 }}>
               <div>
                 <label htmlFor="institution_type" style={labelStyle}>Institution Type</label>
-                <select
-                  id="institution_type"
-                  name="institution_type"
-                  value={form.institution_type}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  style={{ ...inputStyle, appearance: "none" }}
-                >
-                  <option value="">Select</option>
-                  <option value="School">School</option>
-                  <option value="Junior College">Junior College</option>
-                  <option value="Degree College">Degree College</option>
-                  <option value="University">University</option>
-                  <option value="Research Institute">Research Institute</option>
-                  <option value="Other">Other</option>
-                </select>
+                <Select name="institution_type" value={form.institution_type || undefined} onValueChange={(v) => setField("institution_type", v ?? "")}>
+                  <SelectTrigger id="institution_type" className="w-full">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INSTITUTION_TYPES.map((t) => (
+                      <SelectItem key={t} value={t}>{t}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label htmlFor="city" style={labelStyle}>City</label>
-                <input
+                <Input
                   id="city"
                   name="city"
                   type="text"
                   value={form.city}
                   onChange={handleChange}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
                   placeholder="e.g. Pune"
-                  style={inputStyle}
                 />
               </div>
             </div>
 
             <div style={fieldStyle}>
               <label htmlFor="student_count" style={labelStyle}>Approximate Number of Students</label>
-              <select
-                id="student_count"
-                name="student_count"
-                value={form.student_count}
-                onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                style={{ ...inputStyle, appearance: "none" }}
-              >
-                <option value="">Select</option>
-                <option value="Under 100">Under 100</option>
-                <option value="100–500">100–500</option>
-                <option value="500–1000">500–1,000</option>
-                <option value="1000–5000">1,000–5,000</option>
-                <option value="5000+">5,000+</option>
-              </select>
+              <Select name="student_count" value={form.student_count || undefined} onValueChange={(v) => setField("student_count", v ?? "")}>
+                <SelectTrigger id="student_count" className="w-full">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STUDENT_COUNTS.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div style={fieldStyle}>
               <label htmlFor="message" style={labelStyle}>How do you want to collaborate?</label>
-              <textarea
+              <Textarea
                 id="message"
                 name="message"
                 value={form.message}
                 onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
                 placeholder="Tell us about your institution's goals and how you'd like to work with Gyan Setu..."
                 rows={4}
-                style={{ ...inputStyle, resize: "vertical", minHeight: 100 }}
+                className="min-h-[100px]"
               />
             </div>
 

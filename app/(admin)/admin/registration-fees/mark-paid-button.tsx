@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { verifyRegistrationFee } from "@/actions/registration-fees";
+import { Button } from "@/components/ui/button";
 
 export function MarkPaidButton({ feeId, label = "Mark Paid" }: { feeId: string; label?: string }) {
   const router = useRouter();
@@ -21,16 +22,14 @@ export function MarkPaidButton({ feeId, label = "Mark Paid" }: { feeId: string; 
   }
 
   return (
-    <button
+    <Button
       onClick={handleClick}
       disabled={loading}
-      style={{
-        fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-        background: loading ? "#C8C4BC" : "var(--gs-success)",
-        color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer", flexShrink: 0,
-      }}
+      size="sm"
+      className="flex-shrink-0"
+      style={{ background: loading ? "#C8C4BC" : "var(--gs-success)", color: "white" }}
     >
       {loading ? "..." : label}
-    </button>
+    </Button>
   );
 }

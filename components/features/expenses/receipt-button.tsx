@@ -1,16 +1,19 @@
 "use client";
 
 import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { downloadExpenseReceipt } from "./receipt";
 import type { Expense } from "@/types";
 
 export function ReceiptButton({ expense }: { expense: Expense & { group?: { name: string } | null; submitter?: { name: string } | null } }) {
   return (
-    <button
+    <Button
+      variant="link"
+      size="xs"
       onClick={() => downloadExpenseReceipt(expense)}
-      style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--gs-success)", background: "none", border: "none", padding: 0, cursor: "pointer" }}
+      className="gap-1 p-0 h-auto text-[var(--gs-success)]"
     >
       <Download size={12} /> Download receipt
-    </button>
+    </Button>
   );
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { deleteCategory } from "@/actions/gallery";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface CategoryRow {
   id: string;
@@ -45,18 +46,7 @@ export default async function AdminGalleryPage() {
             </p>
           </div>
           <Link href="/admin/gallery/new">
-            <button style={{
-              background: "#4A55BE",
-              color: "white",
-              fontSize: 13,
-              fontWeight: 600,
-              padding: "8px 16px",
-              borderRadius: 5,
-              border: "none",
-              cursor: "pointer",
-            }}>
-              + New Category
-            </button>
+            <Button>+ New Category</Button>
           </Link>
         </div>
 
@@ -91,19 +81,7 @@ export default async function AdminGalleryPage() {
 
                 <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                   <Link href={`/admin/gallery/${category.id}/images/new`}>
-                    <button style={{
-                      background: "transparent",
-                      color: "#4A55BE",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      padding: "7px 14px",
-                      borderRadius: 5,
-                      border: "1.5px solid rgba(74,85,190,0.28)",
-                      cursor: "pointer",
-                      whiteSpace: "nowrap",
-                    }}>
-                      + Add Image
-                    </button>
+                    <Button variant="outline" className="whitespace-nowrap">+ Add Image</Button>
                   </Link>
 
                   <form
@@ -112,21 +90,9 @@ export default async function AdminGalleryPage() {
                       await deleteCategory(category.id);
                     }}
                   >
-                    <button
-                      type="submit"
-                      style={{
-                        background: "transparent",
-                        color: "#C0392B",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        padding: "7px 14px",
-                        borderRadius: 5,
-                        border: "1.5px solid rgba(192,57,43,0.25)",
-                        cursor: "pointer",
-                      }}
-                    >
+                    <Button type="submit" variant="destructive">
                       Delete
-                    </button>
+                    </Button>
                   </form>
                 </div>
               </CardContent>

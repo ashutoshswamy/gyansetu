@@ -6,6 +6,11 @@ import { toast } from "sonner";
 import { createEvent, updateEvent } from "@/actions/events";
 import type { EventType } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 const EVENT_TYPES = ["katta", "melawa", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"] as const;
 const EVENT_STATUSES = ["upcoming", "ongoing", "completed", "cancelled"] as const;
@@ -24,18 +29,12 @@ interface InitialData {
   status: string;
 }
 
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
-
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>
+      <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>
         {label}{required && <span style={{ color: "var(--gs-danger)", marginLeft: 2 }}>*</span>}
-      </label>
+      </Label>
       {children}
     </div>
   );
@@ -90,70 +89,76 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
 
       <div className="space-y-5">
         <Field label="Title" required>
-          <input name="title" required defaultValue={initialData?.title} placeholder="e.g. Gyan Setu Katta – Pre-Visit Orientation" style={inputStyle} />
+          <Input name="title" required defaultValue={initialData?.title} placeholder="e.g. Gyan Setu Katta – Pre-Visit Orientation" />
         </Field>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Event Type" required>
-            <select name="event_type" required defaultValue={initialData?.event_type ?? "katta"} style={inputStyle}>
-              {EVENT_TYPES.map(t => (
-                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-              ))}
-            </select>
+            <Select name="event_type" defaultValue={initialData?.event_type ?? "katta"}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select event type..." />
+              </SelectTrigger>
+              <SelectContent>
+                {EVENT_TYPES.map(t => (
+                  <SelectItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
 
           <Field label="Status" required>
-            <select name="status" required defaultValue={initialData?.status ?? "upcoming"} style={inputStyle}>
-              {EVENT_STATUSES.map(s => (
-                <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
-              ))}
-            </select>
+            <Select name="status" defaultValue={initialData?.status ?? "upcoming"}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status..." />
+              </SelectTrigger>
+              <SelectContent>
+                {EVENT_STATUSES.map(s => (
+                  <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Date" required>
-            <input name="event_date" type="date" required defaultValue={initialData?.event_date} style={inputStyle} />
+            <Input name="event_date" type="date" required defaultValue={initialData?.event_date} />
           </Field>
 
           <Field label="Time">
-            <input name="event_time" type="time" defaultValue={initialData?.event_time ?? ""} style={inputStyle} />
+            <Input name="event_time" type="time" defaultValue={initialData?.event_time ?? ""} />
           </Field>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Location">
-            <input name="location" defaultValue={initialData?.location ?? ""} placeholder="e.g. Pune / Online / School Hall" style={inputStyle} />
+            <Input name="location" defaultValue={initialData?.location ?? ""} placeholder="e.g. Pune / Online / School Hall" />
           </Field>
 
           <Field label="Linked Tour">
-            <select name="tour_id" defaultValue={initialData?.tour_id ?? ""} style={inputStyle}>
-              <option value="">No tour</option>
-              {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-            </select>
+            <Select name="tour_id" defaultValue={initialData?.tour_id ?? undefined}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="No tour" />
+              </SelectTrigger>
+              <SelectContent>
+                {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </Field>
         </div>
 
         <Field label="Description">
-          <textarea name="description" rows={4} defaultValue={initialData?.description ?? ""} placeholder="Agenda, objectives, notes..." style={{ ...inputStyle, resize: "vertical" }} />
+          <Textarea name="description" rows={4} defaultValue={initialData?.description ?? ""} placeholder="Agenda, objectives, notes..." />
         </Field>
       </div>
 
       <div className="flex gap-3 mt-6">
-        <button
-          type="submit"
-          disabled={loading}
-          style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
-        >
+        <Button type="submit" disabled={loading}>
           {loading ? "Saving..." : isEdit ? "Save Changes" : "Create Event"}
-        </button>
-        <button
-          type="button"
-          onClick={() => router.push("/admin/events")}
-          style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}
-        >
+        </Button>
+        <Button type="button" variant="outline" onClick={() => router.push("/admin/events")}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
 </CardContent>

@@ -5,6 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateGroup } from "@/actions/groups";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function EditGroupPage() {
   const params = useParams();
@@ -53,12 +58,6 @@ export default function EditGroupPage() {
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
-
   if (loading) return <div className="p-8" style={{ color: "var(--gs-muted)" }}>Loading...</div>;
 
   return (
@@ -78,32 +77,36 @@ export default function EditGroupPage() {
           )}
           <div className="space-y-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-              <select required value={form.tour_id} onChange={e => setForm(f => ({ ...f, tour_id: e.target.value }))} style={inputStyle}>
-                <option value="">Select tour...</option>
-                {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
+              <Select value={form.tour_id} onValueChange={(v) => setForm(f => ({ ...f, tour_id: v ?? "" }))}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select tour..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group Name <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-              <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Team Rajasthan" style={inputStyle} />
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group Name <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
+              <Input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Team Rajasthan" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>State/Union Territory Allocated</label>
-              <input value={form.state_allocated} onChange={e => setForm(f => ({ ...f, state_allocated: e.target.value }))} placeholder="e.g. Rajasthan" style={inputStyle} />
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>State/Union Territory Allocated</Label>
+              <Input value={form.state_allocated} onChange={e => setForm(f => ({ ...f, state_allocated: e.target.value }))} placeholder="e.g. Rajasthan" />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Notes</label>
-              <textarea rows={3} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Enter notes" style={{ ...inputStyle, resize: "vertical" }} />
+              <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Notes</Label>
+              <Textarea rows={3} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Enter notes" />
             </div>
           </div>
           <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={saving} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+            <Button type="submit" disabled={saving}>
               {saving ? "Saving..." : "Save Changes"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
 </CardContent>

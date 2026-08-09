@@ -7,18 +7,13 @@ import { submitForm } from "@/actions/forms";
 import { uploadFileToStorage } from "@/actions/upload";
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "9px 12px",
-  fontSize: 14,
-  border: "1.5px solid var(--border)",
-  borderRadius: 7,
-  background: "white",
-  color: "var(--foreground)",
-  outline: "none",
-  boxSizing: "border-box",
-};
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
@@ -64,35 +59,34 @@ function FileImageInput({
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-4 mb-2">
+      <RadioGroup value={mode} onValueChange={(v) => setMode(v as "upload" | "link")} className="flex gap-4 mb-2">
         <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "var(--gs-accent)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
-          <input type="radio" checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "var(--gs-accent)" }} />
+          <RadioGroupItem value="upload" />
           Upload File
         </label>
         <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "var(--gs-accent)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
-          <input type="radio" checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "var(--gs-accent)" }} />
+          <RadioGroupItem value="link" />
           Direct Link
         </label>
-      </div>
+      </RadioGroup>
 
       {mode === "upload" ? (
         <div className="flex gap-2">
-          <input
+          <Input
             ref={fileRef}
             type="file"
             accept={field.accept ?? (field.type === "image" ? "image/*" : undefined)}
             onChange={handleFileChange}
-            style={{ ...inputStyle, padding: "7px 12px", flex: 1 }}
+            className="flex-1"
           />
           {uploading && <span className="text-xs text-[var(--gs-muted)] self-center">Uploading...</span>}
         </div>
       ) : (
-        <input
+        <Input
           type="url"
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://example.com/file.pdf"
-          style={inputStyle}
         />
       )}
 
@@ -114,77 +108,83 @@ function FieldRenderer({
 }: {
   field: FormField;
   register: UseFormRegister<FieldValues>;
-  value: string;
-  onChange: (url: string) => void;
+  value: string | string[] | undefined;
+  onChange: (v: string | string[]) => void;
 }) {
   switch (field.type) {
     case "textarea":
       return (
-        <textarea
+        <Textarea
           {...register(field.id)}
           placeholder={field.placeholder}
           rows={4}
-          style={{ ...inputStyle, resize: "vertical" }}
         />
       );
 
     case "number":
       return (
-        <input
+        <Input
           type="number"
           {...register(field.id, { valueAsNumber: true })}
           placeholder={field.placeholder}
-          style={inputStyle}
         />
       );
 
     case "date":
-      return <input type="date" {...register(field.id)} style={inputStyle} />;
+      return <Input type="date" {...register(field.id)} />;
 
     case "select":
       return (
-        <select {...register(field.id)} style={inputStyle}>
-          <option value="">Select...</option>
-          {field.options?.map((o) => (
-            <option key={o} value={o}>{o}</option>
-          ))}
-        </select>
+        <Select value={(value as string) || undefined} onValueChange={v => onChange(v ?? "")}>
+          <SelectTrigger className="w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+          <SelectContent>
+            {field.options?.map((o) => (
+              <SelectItem key={o} value={o}>{o}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       );
 
     case "radio":
       return (
-        <div className="space-y-2">
+        <RadioGroup value={(value as string) || undefined} onValueChange={onChange} className="space-y-2">
           {field.options?.map((o) => (
             <label key={o} className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 14, color: "var(--foreground)" }}>
-              <input type="radio" {...register(field.id)} value={o} style={{ accentColor: "var(--gs-accent)" }} />
+              <RadioGroupItem value={o} />
               {o}
             </label>
           ))}
-        </div>
+        </RadioGroup>
       );
 
-    case "checkbox":
+    case "checkbox": {
+      const selected = Array.isArray(value) ? value : [];
       return (
         <div className="space-y-2">
           {field.options?.map((o) => (
             <label key={o} className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 14, color: "var(--foreground)" }}>
-              <input type="checkbox" {...register(field.id)} value={o} style={{ accentColor: "var(--gs-accent)" }} />
+              <Checkbox
+                checked={selected.includes(o)}
+                onCheckedChange={(checked) => {
+                  onChange(checked ? [...selected, o] : selected.filter((v) => v !== o));
+                }}
+              />
               {o}
             </label>
           ))}
         </div>
       );
+    }
 
     case "file":
     case "image":
-      return <FileImageInput field={field} value={value} onChange={onChange} />;
+      return <FileImageInput field={field} value={(value as string) ?? ""} onChange={onChange} />;
 
     default:
       return (
-        <input
+        <Input
           {...register(field.id)}
           placeholder={field.placeholder}
-          style={inputStyle}
         />
       );
   }
@@ -198,7 +198,7 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
 
   useEffect(() => {
     form.fields.forEach((field) => {
-      if (field.type === "file" || field.type === "image") {
+      if (["file", "image", "select", "radio", "checkbox"].includes(field.type)) {
         register(field.id, { required: field.required });
       }
     });
@@ -247,25 +247,21 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
                 register={register}
                 // eslint-disable-next-line react-hooks/incompatible-library -- react-hook-form's watch() is inherently non-memoizable
                 value={watch(field.id)}
-                onChange={(url) => setValue(field.id, url, { shouldValidate: true })}
+                onChange={(v) => setValue(field.id, v, { shouldValidate: true })}
               />
             </div>
           ))}
         </div>
 
         {error && (
-          <div className="mt-4 rounded-lg px-4 py-3" style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-alt-rgb), 0.2)", fontSize: 13, color: "var(--gs-danger-alt)" }}>
-            {error}
-          </div>
+          <Alert variant="destructive" className="mt-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
-        <button
-          type="submit"
-          disabled={saving}
-          style={{ marginTop: 20, width: "100%", background: saving ? "#C8C4BC" : "var(--foreground)", color: "white", fontSize: 14, fontWeight: 600, padding: "11px 0", borderRadius: 7, border: "none", cursor: saving ? "not-allowed" : "pointer" }}
-        >
+        <Button type="submit" disabled={saving} className="w-full mt-5">
           {saving ? "Submitting..." : "Submit"}
-        </button>
+        </Button>
       </CardContent>
 </Card>
     </form>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { applyForTour } from "@/actions/tours";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function ApplyButton({ tourId }: { tourId: string }) {
   const router = useRouter();
@@ -31,13 +32,9 @@ export function ApplyButton({ tourId }: { tourId: string }) {
           {error}
         </div>
       )}
-      <button
-        onClick={handleApply}
-        disabled={loading}
-        style={{ width: "100%", background: loading ? "#C8C4BC" : "var(--gs-accent)", color: "white", fontSize: 14, fontWeight: 600, padding: "12px 0", borderRadius: 7, border: "none", cursor: loading ? "not-allowed" : "pointer" }}
-      >
+      <Button onClick={handleApply} disabled={loading} className="w-full">
         {loading ? "Applying..." : "Apply for this Tour"}
-      </button>
+      </Button>
     </div>
   );
 }

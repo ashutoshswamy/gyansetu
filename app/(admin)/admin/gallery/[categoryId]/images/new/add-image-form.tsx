@@ -6,6 +6,9 @@ import { toast } from "sonner";
 import { addImage } from "@/actions/gallery";
 import { FileUploadField } from "@/components/features/file-upload-field";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   categoryId: string;
@@ -58,7 +61,7 @@ export default function AddImageForm({ categoryId }: Props) {
         />
 
         <div>
-          <label style={{
+          <Label style={{
             display: "block",
             fontSize: 13,
             fontWeight: 600,
@@ -66,23 +69,12 @@ export default function AddImageForm({ categoryId }: Props) {
             marginBottom: 6,
           }}>
             Caption
-          </label>
-          <input
+          </Label>
+          <Input
             type="text"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             placeholder="Optional caption for this image"
-            style={{
-              width: "100%",
-              padding: "9px 12px",
-              fontSize: 14,
-              color: "var(--foreground)",
-              background: "var(--background)",
-              border: "1.5px solid var(--border)",
-              borderRadius: 6,
-              outline: "none",
-              boxSizing: "border-box",
-            }}
           />
         </div>
 
@@ -101,39 +93,12 @@ export default function AddImageForm({ categoryId }: Props) {
         )}
 
         <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 4 }}>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            style={{
-              background: "transparent",
-              color: "var(--gs-text-secondary)",
-              fontSize: 13,
-              fontWeight: 500,
-              padding: "8px 18px",
-              borderRadius: 6,
-              border: "1.5px solid var(--border)",
-              cursor: "pointer",
-            }}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading || !url.trim()}
-            style={{
-              background: loading || !url.trim() ? "#A0A7DC" : "var(--gs-accent)",
-              color: "white",
-              fontSize: 13,
-              fontWeight: 600,
-              padding: "8px 20px",
-              borderRadius: 6,
-              border: "none",
-              cursor: loading || !url.trim() ? "not-allowed" : "pointer",
-              transition: "background 0.15s",
-            }}
-          >
+          </Button>
+          <Button type="submit" disabled={loading || !url.trim()}>
             {loading ? "Adding..." : "Add Image"}
-          </button>
+          </Button>
         </div>
       </form>
     </CardContent>

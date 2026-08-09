@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   draft:     { color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.10)" },
@@ -68,12 +69,12 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
   return (
     <Card>
 <CardContent>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setOpen(v => !v)}
         disabled={reports.length === 0}
-        className="flex items-center justify-between w-full"
-        style={{ padding: "10px 14px", background: "none", border: "none", cursor: reports.length ? "pointer" : "default", textAlign: "left" }}
+        className="flex items-center justify-between w-full rounded-none px-3.5 py-2.5 h-auto text-left disabled:cursor-default disabled:opacity-100"
       >
         <div className="flex items-center gap-2">
           {reports.length > 0 ? (open ? <ChevronDown size={14} style={{ color: "var(--gs-muted)" }} /> : <ChevronRight size={14} style={{ color: "var(--gs-muted)" }} />) : <span style={{ width: 14 }} />}
@@ -85,7 +86,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
         <Badge style={{color: reports.length ? "var(--gs-success)" : "var(--gs-muted)", background: reports.length ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-muted-rgb), 0.1)"}}>
           {reports.length === 0 ? "No reports" : `${reports.length} report${reports.length > 1 ? "s" : ""}`}
         </Badge>
-      </button>
+      </Button>
 
       {open && reports.length > 0 && (
         <div className="space-y-3" style={{ padding: "0 14px 14px" }}>

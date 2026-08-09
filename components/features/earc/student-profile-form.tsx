@@ -7,14 +7,12 @@ import { createStudentProfile } from "@/actions/earc";
 import type { EarcStudentProfileInput } from "@/lib/validations";
 import { BLOOD_GROUPS, STANDARDS } from "@/lib/constants/earc";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const GENDERS = ["Male", "Female", "Other"] as const;
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
 
 function F({ label, required, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {
   return (
@@ -85,78 +83,84 @@ export function StudentProfileForm({ onSaved }: { onSaved?: () => void }) {
 <CardContent>
 <form onSubmit={handleSubmit}>
       {error && (
-        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
-          {error}
-        </div>
+        <Alert variant="destructive" className="mb-5">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
         <F label="First Name" required>
-          <input value={firstName} onChange={e => setFirstName(e.target.value)} required placeholder="Enter first name" style={inputStyle} />
+          <Input value={firstName} onChange={e => setFirstName(e.target.value)} required placeholder="Enter first name" />
         </F>
         <F label="Middle Name">
-          <input value={middleName} onChange={e => setMiddleName(e.target.value)} placeholder="Enter middle name" style={inputStyle} />
+          <Input value={middleName} onChange={e => setMiddleName(e.target.value)} placeholder="Enter middle name" />
         </F>
         <F label="Last Name" required>
-          <input value={lastName} onChange={e => setLastName(e.target.value)} required placeholder="Enter last name" style={inputStyle} />
+          <Input value={lastName} onChange={e => setLastName(e.target.value)} required placeholder="Enter last name" />
         </F>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <F label="Mobile Number" hint="Optional, 10 digits">
-          <input
+          <Input
             value={mobileNumber}
             onChange={e => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
             type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10}
-            placeholder="10-digit mobile number" style={inputStyle}
+            placeholder="10-digit mobile number"
           />
         </F>
         <F label="Date of Birth">
-          <input value={dob} onChange={e => setDob(e.target.value)} type="date" style={inputStyle} />
+          <Input value={dob} onChange={e => setDob(e.target.value)} type="date" />
         </F>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <F label="Gender" required>
-          <select value={gender} onChange={e => setGender(e.target.value)} required style={inputStyle}>
-            <option value="">Select gender...</option>
-            {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
-          </select>
+          <Select value={gender || undefined} onValueChange={v => setGender(v ?? "")}>
+            <SelectTrigger className="w-full"><SelectValue placeholder="Select gender..." /></SelectTrigger>
+            <SelectContent>
+              {GENDERS.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </F>
         <F label="Blood Group" hint="Optional">
-          <select value={bloodGroup} onChange={e => setBloodGroup(e.target.value)} style={inputStyle}>
-            <option value="">Select blood group...</option>
-            {BLOOD_GROUPS.map(b => <option key={b} value={b}>{b}</option>)}
-          </select>
+          <Select value={bloodGroup || undefined} onValueChange={v => setBloodGroup(v ?? "")}>
+            <SelectTrigger className="w-full"><SelectValue placeholder="Select blood group..." /></SelectTrigger>
+            <SelectContent>
+              {BLOOD_GROUPS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </F>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <F label="Standard" required>
-          <select value={standard} onChange={e => setStandard(e.target.value)} required style={inputStyle}>
-            <option value="">Select standard...</option>
-            {STANDARDS.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+          <Select value={standard || undefined} onValueChange={v => setStandard(v ?? "")}>
+            <SelectTrigger className="w-full"><SelectValue placeholder="Select standard..." /></SelectTrigger>
+            <SelectContent>
+              {STANDARDS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </F>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <F label="APAAR ID" hint="Optional">
-          <input value={apaarId} onChange={e => setApaarId(e.target.value)} placeholder="Enter APAAR ID" style={inputStyle} />
+          <Input value={apaarId} onChange={e => setApaarId(e.target.value)} placeholder="Enter APAAR ID" />
         </F>
         <F label="Aadhaar Number" hint="Optional">
-          <input
+          <Input
             value={aadhaarNumber}
             onChange={e => setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))}
             inputMode="numeric" pattern="[0-9]*" maxLength={12}
-            placeholder="Enter Aadhaar number" style={inputStyle}
+            placeholder="Enter Aadhaar number"
           />
         </F>
       </div>
 
-      <button type="submit" disabled={saving} style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+      <Button type="submit" disabled={saving}>
         {saving ? "Saving..." : "Submit Student Profile"}
-      </button>
+      </Button>
     </form>
 </CardContent>
 </Card>

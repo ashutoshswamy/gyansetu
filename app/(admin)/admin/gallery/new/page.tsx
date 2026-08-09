@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createCategory } from "@/actions/gallery";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function NewGalleryCategory() {
   const router = useRouter();
@@ -64,7 +68,7 @@ export default function NewGalleryCategory() {
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
             <div>
-              <label style={{
+              <Label style={{
                 display: "block",
                 fontSize: 13,
                 fontWeight: 600,
@@ -72,29 +76,18 @@ export default function NewGalleryCategory() {
                 marginBottom: 6,
               }}>
                 Category Name <span style={{ color: "#C0392B" }}>*</span>
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Rajasthan 2024"
                 required
-                style={{
-                  width: "100%",
-                  padding: "9px 12px",
-                  fontSize: 14,
-                  color: "var(--foreground)",
-                  background: "var(--background)",
-                  border: "1.5px solid var(--border)",
-                  borderRadius: 6,
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
               />
             </div>
 
             <div>
-              <label style={{
+              <Label style={{
                 display: "block",
                 fontSize: 13,
                 fontWeight: 600,
@@ -102,25 +95,12 @@ export default function NewGalleryCategory() {
                 marginBottom: 6,
               }}>
                 Description
-              </label>
-              <textarea
+              </Label>
+              <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="A brief description of this category (optional)"
                 rows={3}
-                style={{
-                  width: "100%",
-                  padding: "9px 12px",
-                  fontSize: 14,
-                  color: "var(--foreground)",
-                  background: "var(--background)",
-                  border: "1.5px solid var(--border)",
-                  borderRadius: 6,
-                  outline: "none",
-                  resize: "vertical",
-                  boxSizing: "border-box",
-                  fontFamily: "inherit",
-                }}
               />
             </div>
 
@@ -139,39 +119,12 @@ export default function NewGalleryCategory() {
             )}
 
             <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 4 }}>
-              <button
-                type="button"
-                onClick={() => router.back()}
-                style={{
-                  background: "transparent",
-                  color: "var(--gs-text-secondary)",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  padding: "8px 18px",
-                  borderRadius: 6,
-                  border: "1.5px solid var(--border)",
-                  cursor: "pointer",
-                }}
-              >
+              <Button type="button" variant="outline" onClick={() => router.back()}>
                 Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading || !name.trim()}
-                style={{
-                  background: loading || !name.trim() ? "#A0A7DC" : "var(--gs-accent)",
-                  color: "white",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  padding: "8px 20px",
-                  borderRadius: 6,
-                  border: "none",
-                  cursor: loading || !name.trim() ? "not-allowed" : "pointer",
-                  transition: "background 0.15s",
-                }}
-              >
+              </Button>
+              <Button type="submit" disabled={loading || !name.trim()}>
                 {loading ? "Creating..." : "Create Category"}
-              </button>
+              </Button>
             </div>
           </form>
         </CardContent>
