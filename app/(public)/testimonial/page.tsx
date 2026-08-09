@@ -3,8 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
 import { submitTestimonial } from "@/actions/public-forms";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, btnInk, Eyebrow } from "@/components/landing/theme";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 export default function TestimonialPage() {
   const [form, setForm] = useState({
@@ -110,22 +116,23 @@ export default function TestimonialPage() {
         <div style={{ position: "relative", background: "var(--gs-paper)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "36px 32px" }}>
           {/* Postmark corner */}
           <div style={{ position: "absolute", top: 14, right: 14, width: 30, height: 30, borderRadius: "50%", border: "1.5px dashed var(--gs-rust)", opacity: 0.55 }} />
+          <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--gs-ink-light)", textDecoration: "none", marginBottom: 20 }}>
+            <ArrowLeft size={14} /> Back to Home
+          </Link>
+          <Eyebrow>Share Your Story</Eyebrow>
+          <h1 style={{ fontFamily: F_DISPLAY, fontSize: 32, fontWeight: 700, color: "var(--gs-ink)", margin: "8px 0 12px" }}>
+            Submit a Testimonial
+          </h1>
+          <p style={{ fontSize: 15, color: "var(--gs-ink-light)", lineHeight: 1.6, margin: 0 }}>
+            Tell us about your experience with Gyan Setu. All testimonials are reviewed before publishing.
+          </p>
+        </div>
 
-          <div style={{ marginBottom: 28 }}>
-            <Eyebrow>Share Your Story</Eyebrow>
-            <div style={{ color: "var(--gs-marigold)", fontFamily: F_DISPLAY, fontSize: 34, lineHeight: 0.5, fontWeight: 700, marginBottom: 10 }}>&ldquo;</div>
-            <h1 style={{ fontFamily: F_DISPLAY, fontSize: "clamp(26px,3.4vw,34px)", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--gs-text)", margin: "0 0 8px" }}>
-              Submit a Testimonial
-            </h1>
-            <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "var(--gs-text-soft)", margin: 0, lineHeight: 1.6 }}>
-              Tell us about your experience with Gyan Setu. All testimonials are reviewed before publishing.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            <div style={fieldStyle}>
-              <label htmlFor="name" style={labelStyle}>Full Name <span style={{ color: "var(--gs-rust)" }}>*</span></label>
-              <input
+        <div style={{ background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 6, padding: "32px 28px" }}>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-xs font-semibold text-muted-foreground">Full Name <span className="text-destructive">*</span></Label>
+              <Input
                 id="name"
                 name="name"
                 type="text"
@@ -133,39 +140,36 @@ export default function TestimonialPage() {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Your full name"
-                style={inputStyle}
               />
             </div>
 
-            <div style={fieldStyle}>
-              <label htmlFor="batch_year" style={labelStyle}>Batch Year</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="batch_year" className="text-xs font-semibold text-muted-foreground">Batch Year</Label>
+              <Input
                 id="batch_year"
                 name="batch_year"
                 type="text"
                 value={form.batch_year}
                 onChange={handleChange}
                 placeholder="e.g. 2019–20"
-                style={inputStyle}
               />
             </div>
 
-            <div style={fieldStyle}>
-              <label htmlFor="role" style={labelStyle}>Your Role During Tour</label>
-              <input
+            <div className="space-y-1.5">
+              <Label htmlFor="role" className="text-xs font-semibold text-muted-foreground">Your Role During Tour</Label>
+              <Input
                 id="role"
                 name="role"
                 type="text"
                 value={form.role}
                 onChange={handleChange}
                 placeholder="e.g. Volunteer, Rajasthan 2019"
-                style={inputStyle}
               />
             </div>
 
-            <div style={fieldStyle}>
-              <label htmlFor="message" style={labelStyle}>Your Experience <span style={{ color: "var(--gs-rust)" }}>*</span></label>
-              <textarea
+            <div className="space-y-1.5">
+              <Label htmlFor="message" className="text-xs font-semibold text-muted-foreground">Your Experience <span className="text-destructive">*</span></Label>
+              <Textarea
                 id="message"
                 name="message"
                 required
@@ -174,32 +178,26 @@ export default function TestimonialPage() {
                 onChange={handleChange}
                 placeholder="Share your experience..."
                 rows={5}
-                style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
+                className="min-h-[120px]"
               />
-              <p style={{ fontFamily: F_MONO, fontSize: 11, color: "var(--gs-text-mute)", marginTop: 6, textAlign: "right" }}>
+              <p className="text-[11px] text-muted-foreground mt-1 text-right">
                 {form.message.length}/250
               </p>
             </div>
 
             {status === "error" && (
-              <div style={{ background: "rgba(184,73,46,0.06)", border: "1px solid rgba(184,73,46,0.25)", borderRadius: 4, padding: "10px 14px", marginBottom: 16 }}>
-                <p style={{ fontFamily: F_BODY, fontSize: 13, color: "var(--gs-rust)", margin: 0 }}>{errorMsg}</p>
-              </div>
+              <Alert variant="destructive">
+                <AlertDescription>{errorMsg}</AlertDescription>
+              </Alert>
             )}
 
-            <button
+            <Button
               type="submit"
               disabled={status === "loading"}
-              style={{
-                ...btnInk,
-                width: "100%",
-                justifyContent: "center",
-                opacity: status === "loading" ? 0.6 : 1,
-                cursor: status === "loading" ? "not-allowed" : "pointer",
-              }}
+              className="w-full justify-center text-sm py-3 font-bold"
             >
-              {status === "loading" ? "Submitting..." : "Submit Testimonial"}
-            </button>
+              {status === "loading" ? "Submitting..." : "Submit Testimonial →"}
+            </Button>
           </form>
         </div>
       </div>

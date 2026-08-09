@@ -115,9 +115,9 @@ export default async function EnrollmentDashboard() {
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>My Applications</h2>
               <Link href="/enrollee/tours">
-                <button className="flex items-center gap-1" style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
+                <Button variant="link" size="sm" className="h-auto p-0 flex items-center gap-1 text-xs text-accent font-medium hover:text-accent/90">
                   View all <ArrowRight className="w-3 h-3" />
-                </button>
+                </Button>
               </Link>
             </div>
 
@@ -165,9 +165,9 @@ export default async function EnrollmentDashboard() {
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Eligibility Tests</h2>
               <Link href="/enrollee/tests">
-                <button className="flex items-center gap-1" style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
+                <Button variant="link" size="sm" className="h-auto p-0 flex items-center gap-1 text-xs text-accent font-medium hover:text-accent/90">
                   View all <ArrowRight className="w-3 h-3" />
-                </button>
+                </Button>
               </Link>
             </div>
 
@@ -212,9 +212,9 @@ export default async function EnrollmentDashboard() {
           <div className="flex items-center justify-between mb-5">
             <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Upcoming Open Tours</h2>
             <Link href="/enrollee/tours">
-              <button className="flex items-center gap-1" style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
+              <Button variant="link" size="sm" className="h-auto p-0 flex items-center gap-1 text-xs text-accent font-medium hover:text-accent/90">
                 Browse all <ArrowRight className="w-3 h-3" />
-              </button>
+              </Button>
             </Link>
           </div>
 
@@ -234,11 +234,9 @@ export default async function EnrollmentDashboard() {
                     {tour.destination} · {new Date(tour.start_date).toLocaleDateString()}
                   </p>
                   <Link href={`/enrollee/tours/${tour.id}`} style={{ display: "block" }}>
-                    <button
-                      style={{ width: "100%", background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}
-                    >
+                    <Button className="w-full">
                       Apply Now
-                    </button>
+                    </Button>
                   </Link>
                 </CardContent>
 </Card>

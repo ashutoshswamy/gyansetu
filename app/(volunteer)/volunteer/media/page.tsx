@@ -8,6 +8,12 @@ import { uploadFileToStorage } from "@/actions/upload";
 import { Image as ImageIcon, Upload } from "lucide-react";
 import type { MediaGalleryItem } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function VolunteerMediaPage() {
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
@@ -23,63 +29,68 @@ export default function VolunteerMediaPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    getMyToursForSelect().then(t => {
-      setTours(t);
-      if (t.length > 0) setSelectedTour(t[0].id);
+    getMyToursForSelect().then(data => {
+      setTours(data);
+      if (data[0]) setSelectedTour(data[0].id);
     });
-    getTodayUploadCount().then(setTodayCount).catch(console.error);
+    getTodayUploadCount().then(setTodayCount);
   }, []);
 
   useEffect(() => {
     if (!selectedTour) return;
-    let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- loading flag for the fetch kicked off right below
-    setLoading(true);
-    getMediaByTour(selectedTour)
-      .then(d => { if (!cancelled) { setMedia(d); setLoading(false); } })
-      .catch(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+    let isMounted = true;
+    async function loadMedia() {
+      setLoading(true);
+      try {
+        const data = await getMediaByTour(selectedTour);
+        if (isMounted) setMedia(data);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadMedia();
+    return () => { isMounted = false; };
   }, [selectedTour]);
 
-  async function handleUpload(e: React.FormEvent<HTMLFormElement>) {
+  async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
+    if (!selectedTour) return;
     if (todayCount >= 2) {
-      const msg = "Daily upload limit reached. You can only upload 2 media files per day.";
+      const msg = "Daily upload limit reached (2 media items per day). Please try again tomorrow.";
       setError(msg);
       toast.error(msg);
       return;
     }
+
     setUploading(true);
     setError(null);
+
     try {
-      let finalUrl = "";
-      let isVideo = false;
+      let finalUrl = directUrl;
+      let type: "photo" | "video" = "photo";
 
-      if (mode === "link") {
-        if (!directUrl.startsWith("http://") && !directUrl.startsWith("https://")) {
-          throw new Error("Invalid URL. Must start with http:// or https://");
-        }
-        finalUrl = directUrl.trim();
-        const ext = finalUrl.split(".").pop()?.toLowerCase() ?? "";
-        isVideo = ["mp4", "webm", "ogg", "mov"].includes(ext);
-      } else {
+      if (mode === "upload") {
         const file = fileRef.current?.files?.[0];
-        if (!file || !selectedTour) return;
-
+        if (!file) {
+          setError("Please select a file.");
+          setUploading(false);
+          return;
+        }
+        type = file.type.startsWith("video/") ? "video" : "photo";
         const fd = new FormData();
         fd.append("file", file);
         finalUrl = await uploadFileToStorage(fd, "media", selectedTour);
-        isVideo = file.type.startsWith("video/");
       }
 
-      const item = await uploadMedia(selectedTour, finalUrl, caption || undefined, isVideo ? "video" : "photo");
+      const item = await uploadMedia(selectedTour, finalUrl, caption || undefined, type);
       setMedia(prev => [item, ...prev]);
       setCaption("");
       setDirectUrl("");
-      setTodayCount(prev => prev + 1);
       if (fileRef.current) fileRef.current.value = "";
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Upload failed";
+      setTodayCount(c => c + 1);
+      toast.success("Media uploaded successfully");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to upload media";
       setError(message);
       toast.error(message);
     } finally {
@@ -88,98 +99,97 @@ export default function VolunteerMediaPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen p-4 sm:p-8 bg-background">
+      <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Volunteer Portal</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Media Gallery</h1>
-          <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Upload photos and documents from your visit</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Volunteer Portal</p>
+          <h1 className="text-2xl font-bold text-foreground m-0">Media Uploads</h1>
+          <p className="text-sm text-muted-foreground mt-1">Photos and videos from your tour activities</p>
         </div>
 
-        {/* Tour selector + upload */}
-        <Card>
-<CardContent>
-          {todayCount >= 2 && (
-            <div style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.06)", border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.2)", borderRadius: 8, padding: "12px 16px", color: "var(--gs-danger-alt)", fontSize: 13, marginBottom: 16 }}>
-              Daily upload limit reached ({todayCount}/2 uploaded today). You can only upload up to 2 media files per day. Please try again tomorrow.
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            {todayCount >= 2 && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertDescription>
+                  Daily upload limit reached ({todayCount}/2 uploaded today). You can only upload up to 2 media files per day. Please try again tomorrow.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <div className="flex gap-3 mb-4">
+              <Select value={selectedTour} disabled={todayCount >= 2} onValueChange={(val) => setSelectedTour(val ?? "")}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select tour..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
-          )}
 
-          <div className="flex gap-3 mb-4">
-            <select
-              value={selectedTour}
-              disabled={todayCount >= 2}
-              onChange={e => setSelectedTour(e.target.value)}
-              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
-            >
-              {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-            </select>
-          </div>
+            <RadioGroup value={mode} onValueChange={(v) => setMode(v as "upload" | "link")} disabled={todayCount >= 2} className="flex gap-4 mb-4">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="upload" id="mode-upload" />
+                <Label htmlFor="mode-upload" className="text-xs font-semibold cursor-pointer">Upload Image/Video</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="link" id="mode-link" />
+                <Label htmlFor="mode-link" className="text-xs font-semibold cursor-pointer">Direct Link</Label>
+              </div>
+            </RadioGroup>
 
-          <div className="flex gap-4 mb-4">
-            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "upload" ? "var(--gs-success)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
-              <input type="radio" disabled={todayCount >= 2} checked={mode === "upload"} onChange={() => setMode("upload")} style={{ accentColor: "var(--gs-success)" }} />
-              Upload Image/Video
-            </label>
-            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: mode === "link" ? "var(--gs-success)" : "var(--gs-text-secondary)", fontWeight: 600 }}>
-              <input type="radio" disabled={todayCount >= 2} checked={mode === "link"} onChange={() => setMode("link")} style={{ accentColor: "var(--gs-success)" }} />
-              Direct Link
-            </label>
-          </div>
-
-          <form onSubmit={handleUpload} className="flex flex-col sm:flex-row gap-3 sm:items-end">
-            <div style={{ flex: 1 }}>
-              {mode === "upload" ? (
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*,video/*"
-                  required
-                  disabled={todayCount >= 2}
-                  style={{ width: "100%", padding: "7px 12px", fontSize: 13, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
-                />
-              ) : (
-                <input
-                  type="url"
-                  value={directUrl}
-                  onChange={e => setDirectUrl(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  required
-                  disabled={todayCount >= 2}
-                  style={{ width: "100%", padding: "8px 12px", fontSize: 14, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
-                />
-              )}
-            </div>
-            <input
-              value={caption}
-              disabled={todayCount >= 2}
-              onChange={e => setCaption(e.target.value)}
-              placeholder="Caption (optional)"
-              style={{ flex: 1, padding: "8px 12px", fontSize: 14, border: "1.5px solid var(--border)", borderRadius: 6, background: todayCount >= 2 ? "var(--gs-card)" : "var(--background)", color: "var(--foreground)", opacity: todayCount >= 2 ? 0.6 : 1 }}
-            />
-            <button
-              type="submit"
-              disabled={uploading || !selectedTour || todayCount >= 2}
-              style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: (uploading || todayCount >= 2) ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 6, opacity: (uploading || todayCount >= 2) ? 0.5 : 1 }}
-            >
-              <Upload size={14} />
-              {uploading ? "Uploading..." : "Upload"}
-            </button>
-          </form>
-          {error && <p style={{ fontSize: 13, color: "var(--gs-danger)", marginTop: 8 }}>{error}</p>}
-        </CardContent>
-</Card>
+            <form onSubmit={handleUpload} className="flex flex-col sm:flex-row gap-3 sm:items-end">
+              <div className="flex-1">
+                {mode === "upload" ? (
+                  <Input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    required
+                    disabled={todayCount >= 2}
+                  />
+                ) : (
+                  <Input
+                    type="url"
+                    value={directUrl}
+                    onChange={e => setDirectUrl(e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    required
+                    disabled={todayCount >= 2}
+                  />
+                )}
+              </div>
+              <Input
+                value={caption}
+                disabled={todayCount >= 2}
+                onChange={e => setCaption(e.target.value)}
+                placeholder="Caption (optional)"
+                className="flex-1"
+              />
+              <Button
+                type="submit"
+                disabled={uploading || !selectedTour || todayCount >= 2}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1.5"
+              >
+                <Upload size={14} />
+                {uploading ? "Uploading..." : "Upload"}
+              </Button>
+            </form>
+            {error && <p className="text-xs text-destructive mt-2">{error}</p>}
+          </CardContent>
+        </Card>
 
         {loading ? (
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : media.length === 0 ? (
           <Card>
-<CardContent className="text-center">
-            <ImageIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
-            <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No media for this tour yet.</p>
-            <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Upload photos from your visit to build the gallery.</p>
-          </CardContent>
-</Card>
+            <CardContent className="text-center pt-6">
+              <ImageIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+              <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No media for this tour yet.</p>
+              <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Upload photos from your visit to build the gallery.</p>
+            </CardContent>
+          </Card>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {media.map((item) => (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function GlobalError({
   error,
@@ -32,18 +33,13 @@ export default function GlobalError({
         <p style={{ maxWidth: "28rem", color: "#71717a" }}>
           A critical error occurred. Please try again.
         </p>
-        <button
+        <Button
+          variant="outline"
           onClick={() => unstable_retry()}
-          style={{
-            padding: "0.5rem 1rem",
-            borderRadius: "9999px",
-            border: "1px solid #d4d4d8",
-            background: "transparent",
-            cursor: "pointer",
-          }}
+          className="rounded-full"
         >
           Try again
-        </button>
+        </Button>
       </body>
     </html>
   );

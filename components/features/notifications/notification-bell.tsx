@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Bell } from "lucide-react";
 import { useNotifications, useMarkRead, useMarkAllRead } from "@/hooks/use-notifications";
 import type { Notification } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const TYPE_DOT: Record<Notification["type"], string> = {
   info: "var(--gs-accent)",
@@ -33,27 +35,25 @@ export function NotificationBell() {
   const unreadCount = items.filter(n => !n.read).length;
 
   return (
-    <div style={{ position: "relative" }}>
-      <button
+    <div className="relative">
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={() => setOpen(v => !v)}
         aria-label="Notifications"
         aria-expanded={open}
-        className="flex items-center justify-center rounded relative"
-        style={{ width: 32, height: 32, background: "none", border: "1.5px solid var(--border)", cursor: "pointer" }}
+        className="w-8 h-8 rounded relative border border-border"
       >
-        <Bell className="w-4 h-4" style={{ color: "var(--gs-text-secondary)" }} />
+        <Bell className="w-4 h-4 text-muted-foreground" />
         {unreadCount > 0 && (
-          <span
-            style={{
-              position: "absolute", top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8,
-              background: "var(--gs-danger)", color: "white", fontSize: 10, fontWeight: 700,
-              display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px",
-            }}
+          <Badge
+            variant="destructive"
+            className="absolute -top-1 -right-1 min-w-4 h-4 rounded-full p-0 flex items-center justify-center text-[10px] font-bold"
           >
             {unreadCount > 9 ? "9+" : unreadCount}
-          </span>
+          </Badge>
         )}
-      </button>
+      </Button>
 
       {open && (
         <>
@@ -63,50 +63,43 @@ export function NotificationBell() {
             aria-hidden="true"
           />
           <div
-            className="absolute z-50"
-            style={{
-              top: "calc(100% + 8px)", right: 0, width: "min(320px, calc(100vw - 24px))", maxHeight: 420,
-              background: "white", border: "1px solid var(--border)", borderRadius: 10,
-              boxShadow: "0 8px 24px rgba(25,20,15,0.12)", display: "flex", flexDirection: "column", overflow: "hidden",
-            }}
+            className="absolute z-50 mt-2 right-0 w-[min(320px,calc(100vw-24px))] max-h-[420px] bg-background border border-border rounded-lg shadow-lg flex flex-col overflow-hidden"
           >
-            <div className="flex items-center justify-between" style={{ padding: "12px 14px", borderBottom: "1px solid var(--border)" }}>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Notifications</p>
+            <div className="flex items-center justify-between p-3 border-b border-border">
+              <p className="text-xs font-bold text-foreground m-0">Notifications</p>
               {unreadCount > 0 && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => markAllRead.mutate()}
                   disabled={markAllRead.isPending}
-                  style={{ fontSize: 11.5, fontWeight: 600, color: "var(--gs-accent)", background: "none", border: "none", cursor: markAllRead.isPending ? "not-allowed" : "pointer" }}
+                  className="h-auto p-0 text-[11.5px] font-semibold text-accent hover:text-accent/90"
                 >
                   Mark all read
-                </button>
+                </Button>
               )}
             </div>
 
-            <div style={{ overflowY: "auto" }}>
+            <div className="overflow-y-auto">
               {items.length === 0 ? (
-                <p style={{ fontSize: 13, color: "var(--gs-muted)", padding: "24px 14px", textAlign: "center", margin: 0 }}>
+                <p className="text-xs text-muted-foreground p-6 text-center m-0">
                   No notifications yet.
                 </p>
               ) : (
                 items.map(n => (
-                  <button
+                  <Button
                     key={n.id}
+                    variant="ghost"
                     onClick={() => !n.read && markRead.mutate(n.id)}
-                    className="flex items-start gap-2 w-full text-left"
-                    style={{
-                      padding: "10px 14px", borderBottom: "1px solid var(--gs-card)", background: n.read ? "white" : "#F7F8FD",
-                      border: "none", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "var(--gs-card)",
-                      cursor: n.read ? "default" : "pointer",
-                    }}
+                    className={`flex items-start justify-start gap-2 w-full text-left p-3 h-auto rounded-none border-b border-border ${n.read ? "bg-background" : "bg-accent/5"}`}
                   >
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", marginTop: 5, flexShrink: 0, background: n.read ? "transparent" : TYPE_DOT[n.type] }} />
-                    <span style={{ minWidth: 0, flex: 1 }}>
-                      <p style={{ fontSize: 12.5, fontWeight: n.read ? 500 : 700, color: "var(--foreground)", margin: 0 }}>{n.title}</p>
-                      <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "2px 0 0", lineHeight: 1.4 }}>{n.message}</p>
-                      <p style={{ fontSize: 10.5, color: "var(--gs-muted)", margin: "4px 0 0" }}>{timeAgo(n.created_at)}</p>
+                    <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: n.read ? "transparent" : TYPE_DOT[n.type] }} />
+                    <span className="min-w-0 flex-1 whitespace-normal">
+                      <p className={`text-xs ${n.read ? "font-medium" : "font-bold"} text-foreground m-0`}>{n.title}</p>
+                      <p className="text-[12px] text-muted-foreground m-0 mt-0.5 leading-snug">{n.message}</p>
+                      <p className="text-[10.5px] text-muted-foreground m-0 mt-1">{timeAgo(n.created_at)}</p>
                     </span>
-                  </button>
+                  </Button>
                 ))
               )}
             </div>

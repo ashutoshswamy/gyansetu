@@ -10,6 +10,13 @@ import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { SchoolReportSession } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Group = { id: string; name: string; tours?: { title: string } | null };
 type Member = { id: string; name: string };
@@ -225,170 +232,207 @@ export default function SchoolReportsPage() {
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>School visit report — fill one for each school visit. Shared with your whole group.</p>
         </div>
 
-        <Card>
-<CardContent>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-          <select value={groupId} onChange={e => handleGroupChange(e.target.value)} style={inputStyle}>
-            <option value="">Select group...</option>
-            {groups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.title ? ` — ${g.tours.title}` : ""}</option>)}
-          </select>
-          <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6 }}>
-            Every report submitted under this group is visible to all volunteers in the same group.
-          </p>
-        </CardContent>
-</Card>
+        <Card className="mb-6">
+          <CardContent className="pt-6 space-y-2">
+            <Label className="text-xs font-semibold text-muted-foreground">Group <span className="text-destructive">*</span></Label>
+            <Select value={groupId} onValueChange={(val) => { if (val) handleGroupChange(val); }}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select group..." />
+              </SelectTrigger>
+              <SelectContent>
+                {groups.map(g => (
+                  <SelectItem key={g.id} value={g.id}>
+                    {g.name}{g.tours?.title ? ` — ${g.tours.title}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Every report submitted under this group is visible to all volunteers in the same group.
+            </p>
+          </CardContent>
+        </Card>
 
         {groupId && (
           <Card className="mb-6">
-<CardContent>
-<form onSubmit={handleSubmit}>
-            {error && (
-              <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
-                {error}
-              </div>
-            )}
+            <CardContent className="pt-6">
+              <form onSubmit={handleSubmit}>
+                {error && (
+                  <Alert variant="destructive" className="mb-5">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-            {/* Section 1: School Details */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>1. School Details</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>School Name <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                <input value={schoolName} onChange={e => setSchoolName(e.target.value)} required placeholder="Enter full school name" style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>School Type <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                <select value={schoolType} onChange={e => setSchoolType(e.target.value)} required style={inputStyle}>
-                  <option value="">Select...</option>
-                  {SCHOOL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Location Category <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                <select value={locationCategory} onChange={e => setLocationCategory(e.target.value)} required style={inputStyle}>
-                  <option value="">Select...</option>
-                  {LOCATION_CATEGORIES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Medium of Instruction <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                <select value={medium} onChange={e => setMedium(e.target.value)} required style={inputStyle}>
-                  <option value="">Select...</option>
-                  {MEDIUMS.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-            </div>
+                {/* Section 1: School Details */}
+                <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-3 m-0">1. School Details</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">School Name <span className="text-destructive">*</span></Label>
+                    <Input value={schoolName} onChange={e => setSchoolName(e.target.value)} required placeholder="Enter full school name" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">School Type <span className="text-destructive">*</span></Label>
+                    <Select value={schoolType} onValueChange={(val) => setSchoolType(val ?? "")}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SCHOOL_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">Location Category <span className="text-destructive">*</span></Label>
+                    <Select value={locationCategory} onValueChange={(val) => setLocationCategory(val ?? "")}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {LOCATION_CATEGORIES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">Medium of Instruction <span className="text-destructive">*</span></Label>
+                    <Select value={medium} onValueChange={(val) => setMedium(val ?? "")}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MEDIUMS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-            <p style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", margin: "0 0 8px" }}>School Address</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <input value={streetArea} onChange={e => setStreetArea(e.target.value)} placeholder="Street / Area" style={inputStyle} />
-              <input value={villageTown} onChange={e => setVillageTown(e.target.value)} placeholder="Village / Town" style={inputStyle} />
-              <input value={talukaTehsil} onChange={e => setTalukaTehsil(e.target.value)} placeholder="Taluka / Tehsil" style={inputStyle} />
-              <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} style={inputStyle} />
-              <select value={state} onChange={e => { setState(e.target.value); setDistrict(""); }} style={inputStyle}>
-                <option value="">Select State/Union Territory...</option>
-                {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <input value={pincode} onChange={e => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))} type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="PIN Code (6 digits)" style={inputStyle} />
-            </div>
+                <p className="text-xs font-semibold text-muted-foreground mb-2 m-0">School Address</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <Input value={streetArea} onChange={e => setStreetArea(e.target.value)} placeholder="Street / Area" />
+                  <Input value={villageTown} onChange={e => setVillageTown(e.target.value)} placeholder="Village / Town" />
+                  <Input value={talukaTehsil} onChange={e => setTalukaTehsil(e.target.value)} placeholder="Taluka / Tehsil" />
+                  <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} />
+                  <Select value={state} onValueChange={val => { setState(val ?? ""); setDistrict(""); }}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select State/UT..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Input value={pincode} onChange={e => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))} type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="PIN Code (6 digits)" />
+                </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              <input value={principalName} onChange={e => setPrincipalName(e.target.value)} placeholder="Principal Name" style={inputStyle} />
-              <input value={principalMobile} onChange={e => setPrincipalMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Principal Mobile Number (10 digits)" style={inputStyle} />
-              <input value={coordinatorName} onChange={e => setCoordinatorName(e.target.value)} placeholder="School Coordinator / Science Teacher Name" style={inputStyle} />
-              <input value={coordinatorMobile} onChange={e => setCoordinatorMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Coordinator Contact Number (10 digits)" style={inputStyle} />
+              <Input value={principalName} onChange={e => setPrincipalName(e.target.value)} placeholder="Principal Name" />
+              <Input value={principalMobile} onChange={e => setPrincipalMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Principal Mobile (10 digits)" />
+              <Input value={coordinatorName} onChange={e => setCoordinatorName(e.target.value)} placeholder="School Coordinator / Science Teacher Name" />
+              <Input value={coordinatorMobile} onChange={e => setCoordinatorMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Coordinator Contact (10 digits)" />
             </div>
 
             {/* Section 2: Visit Details */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>2. Visit Details</h2>
+            <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-3 m-0">2. Visit Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Visit Date</label>
-                <input value={visitDate} onChange={e => setVisitDate(e.target.value)} type="date" style={inputStyle} />
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Visit Date</Label>
+                <Input value={visitDate} onChange={e => setVisitDate(e.target.value)} type="date" />
               </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Number of Volunteers Present</label>
-                <input value={volunteersPresent} onChange={e => setVolunteersPresent(e.target.value ? String(Math.min(50, Number(e.target.value))) : "")} type="number" min="0" max="50" style={inputStyle} />
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Number of Volunteers Present</Label>
+                <Input value={volunteersPresent} onChange={e => setVolunteersPresent(e.target.value ? String(Math.min(50, Number(e.target.value))) : "")} type="number" min="0" max="50" />
               </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Arrival Time</label>
-                <input value={arrivalTime} onChange={e => setArrivalTime(e.target.value)} type="time" style={inputStyle} />
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Arrival Time</Label>
+                <Input value={arrivalTime} onChange={e => setArrivalTime(e.target.value)} type="time" />
               </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Departure Time</label>
-                <input value={departureTime} onChange={e => setDepartureTime(e.target.value)} type="time" style={inputStyle} />
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Departure Time</Label>
+                <Input value={departureTime} onChange={e => setDepartureTime(e.target.value)} type="time" />
               </div>
             </div>
-            <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 12px" }}>
+            <p className="text-xs text-muted-foreground mb-4">
               Total Duration in School: <strong>{autoDuration !== null ? `${autoDuration} minutes` : "—"}</strong>
             </p>
-            <div className="mb-6">
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Volunteer Names</label>
+            <div className="mb-6 space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">Volunteer Names</Label>
               {loadingGroup ? (
-                <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>Loading group members...</p>
+                <p className="text-xs text-muted-foreground">Loading group members...</p>
               ) : members.length === 0 ? (
-                <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>No members found for this group.</p>
+                <p className="text-xs text-muted-foreground">No members found for this group.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {members.map(m => (
-                    <label key={m.id} className="flex items-center gap-1.5" style={{ fontSize: 13, color: "var(--foreground)", border: "1.5px solid var(--border)", borderRadius: 6, padding: "5px 10px", cursor: "pointer" }}>
-                      <input type="checkbox" checked={volunteerNames.includes(m.name)} onChange={() => toggleVolunteer(m.name)} />
+                    <Label key={m.id} className="flex items-center gap-1.5 border border-border rounded-md px-2.5 py-1.5 cursor-pointer text-xs">
+                      <Checkbox checked={volunteerNames.includes(m.name)} onCheckedChange={() => toggleVolunteer(m.name)} />
                       {m.name}
-                    </label>
+                    </Label>
                   ))}
                 </div>
               )}
             </div>
 
             {/* Section 3: Session Details */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>3. Session Details</h2>
-            <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 12px" }}>Add one row for each session conducted.</p>
+            <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1 m-0">3. Session Details</h2>
+            <p className="text-xs text-muted-foreground mb-3">Add one row for each session conducted.</p>
             <div className="space-y-4 mb-3">
               {sessions.map((s, i) => {
                 const inheritedFromCombined = i > 0 && !!sessions[i - 1].combined_session;
                 return (
-                <div key={i} style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 16, position: "relative" }}>
+                <div key={i} className="border border-border rounded-lg p-4 relative space-y-3">
                   {sessions.length > 1 && (
-                    <button type="button" onClick={() => setSessions(prev => prev.filter((_, idx) => idx !== i))} style={{ position: "absolute", top: 10, right: 10, background: "none", border: "none", cursor: "pointer", color: "var(--gs-muted)" }}>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => setSessions(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 h-7 w-7 text-muted-foreground">
                       <X size={16} />
-                    </button>
+                    </Button>
                   )}
-                  <p style={{ fontSize: 11, fontWeight: 700, color: "var(--gs-muted)", marginBottom: 10 }}>Session {i + 1}</p>
+                  <p className="text-[11px] font-bold text-muted-foreground m-0">Session {i + 1}</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <select value={s.standard} onChange={e => updateSession(i, "standard", e.target.value)} style={inputStyle}>
-                      <option value="">Standard / Class...</option>
-                      {STANDARDS.map(st => <option key={st} value={st}>{st}</option>)}
-                    </select>
-                    <input value={s.division ?? ""} onChange={e => updateSession(i, "division", e.target.value)} placeholder="Division" style={inputStyle} />
-                    <input value={s.num_students ?? ""} onChange={e => updateSession(i, "num_students", e.target.value ? Math.min(500, Number(e.target.value)) : "")} type="number" min="0" max="500" placeholder="No. of Students" style={inputStyle} />
+                    <Select value={s.standard} onValueChange={val => updateSession(i, "standard", val ?? "")}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Standard / Class..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STANDARDS.map(st => <SelectItem key={st} value={st}>{st}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Input value={s.division ?? ""} onChange={e => updateSession(i, "division", e.target.value)} placeholder="Division" />
+                    <Input value={s.num_students ?? ""} onChange={e => updateSession(i, "num_students", e.target.value ? Math.min(500, Number(e.target.value)) : "")} type="number" min="0" max="500" placeholder="No. of Students" />
                     {!inheritedFromCombined && (
                       <>
-                        <select value={s.theme_topic ?? ""} onChange={e => updateSession(i, "theme_topic", e.target.value)} style={inputStyle}>
-                          <option value="">Theme / Topic...</option>
-                          {THEMES.map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
-                        <input value={s.duration_minutes ?? ""} onChange={e => updateSession(i, "duration_minutes", e.target.value ? Math.min(480, Number(e.target.value)) : "")} type="number" min="0" max="480" placeholder="Duration (Minutes)" style={inputStyle} />
-                        <select value={s.language_used ?? ""} onChange={e => updateSession(i, "language_used", e.target.value)} style={inputStyle}>
-                          <option value="">Language Used...</option>
-                          {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-                        </select>
+                        <Select value={s.theme_topic ?? ""} onValueChange={val => updateSession(i, "theme_topic", val ?? "")}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Theme / Topic..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {THEMES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        <Input value={s.duration_minutes ?? ""} onChange={e => updateSession(i, "duration_minutes", e.target.value ? Math.min(480, Number(e.target.value)) : "")} type="number" min="0" max="480" placeholder="Duration (Minutes)" />
+                        <Select value={s.language_used ?? ""} onValueChange={val => updateSession(i, "language_used", val ?? "")}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Language Used..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {LANGUAGES.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </>
                     )}
                   </div>
                   {inheritedFromCombined && (
-                    <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 8 }}>
+                    <p className="text-[11px] text-muted-foreground mt-2">
                       Theme / Topic, Duration and Language carried over from the combined session above.
                     </p>
                   )}
-                  <label className="flex items-center gap-2" style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 10 }}>
-                    <input type="checkbox" checked={!!s.combined_session} onChange={e => updateSession(i, "combined_session", e.target.checked)} />
+                  <Label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer pt-1">
+                    <Checkbox checked={!!s.combined_session} onCheckedChange={c => updateSession(i, "combined_session", !!c)} />
                     Combined session (conducted for all students together)
-                  </label>
+                  </Label>
                 </div>
                 );
               })}
             </div>
-            <button
+            <Button
               type="button"
+              variant="link"
               onClick={() => setSessions(prev => {
                 const last = prev[prev.length - 1];
                 const next: SchoolReportSession = last?.combined_session
@@ -396,31 +440,29 @@ export default function SchoolReportsPage() {
                   : { ...EMPTY_SESSION };
                 return [...prev, next];
               })}
-              className="flex items-center gap-1.5"
-              style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", marginBottom: 24 }}
+              className="flex items-center gap-1.5 h-auto p-0 text-xs text-accent font-semibold mb-6"
             >
               <Plus size={14} /> Add another session
-            </button>
+            </Button>
 
             {/* Section 4: Reflection & Observations */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>4. Reflection & Observations</h2>
-            <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 12px" }}>Minimum 50 words each (required to submit final)</p>
+            <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1 m-0">4. Reflection & Observations</h2>
+            <p className="text-xs text-muted-foreground mb-4">Minimum 50 words each (required to submit final)</p>
             <div className="space-y-4 mb-6">
               {OBSERVATION_FIELDS.map(f => {
                 const text = observations[f.key] ?? "";
                 const wc = wordCount(text);
                 return (
-                  <div key={f.key}>
-                    <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
-                      <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)" }}>{f.label} <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                      <span style={{ fontSize: 11, color: wc >= 50 ? "var(--gs-success)" : "var(--gs-muted)" }}>{wc} / 50 words</span>
+                  <div key={f.key} className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-semibold text-muted-foreground">{f.label} <span className="text-destructive">*</span></Label>
+                      <span className={`text-[11px] ${wc >= 50 ? "text-emerald-600" : "text-muted-foreground"}`}>{wc} / 50 words</span>
                     </div>
-                    <textarea
+                    <Textarea
                       value={text}
                       onChange={e => setObservations(o => ({ ...o, [f.key]: e.target.value }))}
                       rows={4}
                       placeholder="Minimum 50 words..."
-                      style={{ ...inputStyle, resize: "vertical" }}
                     />
                   </div>
                 );
@@ -428,44 +470,52 @@ export default function SchoolReportsPage() {
             </div>
 
             {/* Section 5: Visit Summary */}
-            <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.06em" }}>5. Visit Summary</h2>
-            <div className="space-y-4 mb-2">
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Overall Visit Rating</label>
-                <select value={rating} onChange={e => setRating(e.target.value)} style={inputStyle}>
-                  <option value="">Select...</option>
-                  {RATINGS.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
+            <h2 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-3 m-0">5. Visit Summary</h2>
+            <div className="space-y-4 mb-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Overall Visit Rating</Label>
+                <Select value={rating} onValueChange={(val) => setRating(val ?? "")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RATINGS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Follow-up Visit Required</label>
-                  <select value={followUpRequired} onChange={e => setFollowUpRequired(e.target.value)} style={inputStyle}>
-                    <option value="">Select...</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Follow-up Visit Required</Label>
+                  <Select value={followUpRequired} onValueChange={(val) => setFollowUpRequired(val ?? "")}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 {followUpRequired === "yes" && (
-                  <div>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Suggested Date for Follow-up</label>
-                    <input value={followUpDate} onChange={e => setFollowUpDate(e.target.value)} type="date" style={inputStyle} />
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">Suggested Date for Follow-up</Label>
+                    <Input value={followUpDate} onChange={e => setFollowUpDate(e.target.value)} type="date" />
                   </div>
                 )}
               </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Additional Remarks</label>
-                <textarea value={remarks} onChange={e => setRemarks(e.target.value)} rows={3} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Additional Remarks</Label>
+                <Textarea value={remarks} onChange={e => setRemarks(e.target.value)} rows={3} placeholder="Anything else to add..." />
               </div>
             </div>
 
-            <label className="flex items-center gap-2" style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "20px 0 0" }}>
-              <input type="checkbox" checked={asFinal} onChange={e => setAsFinal(e.target.checked)} />
+            <Label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer mt-5">
+              <Checkbox checked={asFinal} onCheckedChange={c => setAsFinal(!!c)} />
               Submit as final (otherwise saved as draft)
-            </label>
-            <button type="submit" disabled={saving} style={{ marginTop: 16, background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+            </Label>
+            <Button type="submit" disabled={saving} className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
               {saving ? "Submitting..." : asFinal ? "Submit Final Report" : "Save Draft"}
-            </button>
+            </Button>
           </form>
 </CardContent>
 </Card>

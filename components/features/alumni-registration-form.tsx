@@ -73,11 +73,13 @@ function SectionHeader({ num, label, hint }: { num: string; label: string; hint?
   );
 }
 
+import { Button } from "@/components/ui/button";
+
 function NextSectionButton({ onClick }: { onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} style={{ ...btnInk, marginTop: 24, display: "inline-flex", alignItems: "center", gap: 8 }}>
+    <Button type="button" onClick={onClick} className="mt-6 flex items-center gap-2 font-bold">
       Next Section <ArrowRight size={14} />
-    </button>
+    </Button>
   );
 }
 
@@ -481,9 +483,9 @@ export function AlumniRegistrationForm() {
               <F label="Any suggestions for strengthening the Alumni Network?"><textarea name="suggestions" placeholder="Your suggestions" value={form.suggestions} onChange={handleChange} rows={3} className="gs-field" style={{ ...inputStyle, resize: "vertical" }} /></F>
               <F label="Additional Remarks"><textarea name="additional_remarks" placeholder="Additional remarks" value={form.additional_remarks} onChange={handleChange} rows={3} className="gs-field" style={{ ...inputStyle, resize: "vertical" }} /></F>
 
-              <button type="submit" disabled={status === "loading"} style={{ ...btnMarigold, marginTop: 24, cursor: status === "loading" ? "not-allowed" : "pointer", opacity: status === "loading" ? 0.65 : 1 }}>
+              <Button type="submit" disabled={status === "loading"} className="mt-6 font-bold bg-amber-600 hover:bg-amber-700 text-white">
                 {status === "loading" ? "Submitting..." : "Register as Alumni"}
-              </button>
+              </Button>
           </div>
         </form>
       </div>

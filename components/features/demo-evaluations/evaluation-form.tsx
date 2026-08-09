@@ -9,6 +9,11 @@ import { getCurrentTourForVolunteer } from "@/actions/groups";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import type { DemoEvaluation } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const SCORE_FIELDS = [
   { key: "hindi_english_communication", label: "Hindi / English Communication" },
@@ -119,67 +124,73 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
           </h1>
         </div>
         <Card>
-<CardContent>
-<form onSubmit={handleSubmit}>
-          {error && (
-            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
-              {error}
-            </div>
-          )}
-          <div className="space-y-5">
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Volunteer <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-              <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="volunteer_id" />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Tour (optional)</label>
-              <select name="tour_id" value={tourId} onChange={e => setTourId(e.target.value)} style={inputStyle}>
-                <option value="">General (no specific tour)</option>
-                {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
-            </div>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit}>
+              {error && (
+                <Alert variant="destructive" className="mb-5">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              <div className="space-y-5">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Volunteer <span className="text-destructive">*</span></Label>
+                  <VolunteerCombobox volunteers={volunteers} value={volunteerId} onChange={handleVolunteerChange} name="volunteer_id" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Tour (optional)</Label>
+                  <Select value={tourId} onValueChange={(val) => setTourId(val ?? "")}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="General (no specific tour)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">General (no specific tour)</SelectItem>
+                      {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 700, color: "var(--foreground)", display: "block", marginBottom: 10 }}>Scores (0-10 each · 10 parameters)</label>
-              <div className="space-y-3">
-                {SCORE_FIELDS.map(f => (
-                  <div key={f.key} className="flex items-center justify-between gap-4">
-                    <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)" }}>{f.label}</label>
-                    <StarRating value={scores[f.key]} onChange={v => setScores(s => ({ ...s, [f.key]: v }))} />
+                <div>
+                  <Label className="text-xs font-bold text-foreground block mb-3">Scores (0-10 each · 10 parameters)</Label>
+                  <div className="space-y-3">
+                    {SCORE_FIELDS.map(f => (
+                      <div key={f.key} className="flex items-center justify-between gap-4">
+                        <Label className="text-xs font-semibold text-muted-foreground">{f.label}</Label>
+                        <StarRating value={scores[f.key]} onChange={v => setScores(s => ({ ...s, [f.key]: v }))} />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Remarks</label>
-              <textarea name="remarks" rows={3} defaultValue={evaluation?.remarks ?? ""} placeholder="Observations, feedback..." style={{ ...inputStyle, resize: "vertical" }} />
-            </div>
-          </div>
-          <div className="flex gap-3 mt-6">
-            <button
-              type="submit"
-              disabled={loading}
-              onClick={() => setIntent("submitted")}
-              style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
-            >
-              {loading && intent === "submitted" ? "Submitting..." : "Submit Evaluation"}
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              onClick={() => setIntent("draft")}
-              style={{ background: "white", color: "var(--gs-accent)", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--gs-accent)", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
-            >
-              {loading && intent === "draft" ? "Saving..." : "Save Draft"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
-              Cancel
-            </button>
-          </div>
-        </form>
-</CardContent>
-</Card>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Remarks</Label>
+                  <Textarea name="remarks" rows={3} defaultValue={evaluation?.remarks ?? ""} placeholder="Observations, feedback..." />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  onClick={() => setIntent("submitted")}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                >
+                  {loading && intent === "submitted" ? "Submitting..." : "Submit Evaluation"}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  variant="outline"
+                  onClick={() => setIntent("draft")}
+                  className="border-emerald-600 text-emerald-600 hover:bg-emerald-600/10 font-semibold"
+                >
+                  {loading && intent === "draft" ? "Saving..." : "Save Draft"}
+                </Button>
+                <Button type="button" variant="outline" onClick={() => router.back()}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

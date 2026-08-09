@@ -7,6 +7,13 @@ import { createWorkshop } from "@/actions/workshops";
 import { getAllGroups } from "@/actions/groups";
 import type { WorkshopType } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const WORKSHOP_TYPES: { value: WorkshopType; label: string }[] = [
   { value: "science", label: "Science" },
@@ -23,36 +30,44 @@ export default function NewWorkshopPage() {
   const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
   const [trainerChoice, setTrainerChoice] = useState<"none" | "gs_team_other">("none");
+  const [workshopType, setWorkshopType] = useState<WorkshopType>("science");
+  const [status, setStatus] = useState<"scheduled" | "completed" | "cancelled">("scheduled");
+  const [kitReady, setKitReady] = useState(false);
 
   useEffect(() => {
     getAllGroups().then(data => setGroups(data.map(g => ({ id: g.id, name: g.name }))));
   }, []);
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
     const fd = new FormData(e.currentTarget);
+    const title = fd.get("title") as string;
+    const date = fd.get("workshop_date") as string;
+    const time = (fd.get("workshop_time") as string) || undefined;
+    const hall_location = (fd.get("hall_location") as string) || undefined;
+    const plan_notes = (fd.get("plan_notes") as string) || undefined;
+    const trainer_name = trainerChoice === "gs_team_other" ? (fd.get("trainer_name") as string) || undefined : undefined;
+
     try {
       await createWorkshop({
-        title: fd.get("title") as string,
-        workshop_type: fd.get("workshop_type") as WorkshopType,
-        workshop_date: fd.get("workshop_date") as string,
-        workshop_time: (fd.get("workshop_time") as string) || undefined,
-        hall_location: (fd.get("hall_location") as string) || undefined,
-        trainer_name: trainerChoice === "gs_team_other" ? (fd.get("trainer_name") as string) || undefined : undefined,
-        status: fd.get("status") as "scheduled" | "completed" | "cancelled",
-        kit_ready: fd.get("kit_ready") === "on",
-        plan_notes: (fd.get("plan_notes") as string) || undefined,
+        title,
+        workshop_type: workshopType,
+        workshop_date: date,
+        workshop_time: time,
+        hall_location,
+        trainer_name,
+        plan_notes,
+        kit_ready: kitReady,
+        status,
         group_ids: selectedGroupIds,
       });
+
+      toast.success("Workshop created successfully");
       router.push("/admin/workshops");
+      router.refresh();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to create workshop";
       setError(message);
@@ -63,97 +78,116 @@ export default function NewWorkshopPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-8">
-          <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>New Workshop</h1>
+    <div className="min-h-screen p-6 md:p-10 max-w-3xl mx-auto">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-foreground">New Workshop</h1>
         </div>
         <Card>
-<CardContent>
-<form onSubmit={handleSubmit}>
-          {error && (
-            <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
-              {error}
-            </div>
-          )}
-          <div className="space-y-5">
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Title <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-              <input name="title" required style={inputStyle} placeholder="e.g. Science Workshop - Solar System" />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Type <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                <select name="workshop_type" required style={inputStyle}>
-                  {WORKSHOP_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Status <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                <select name="status" required defaultValue="scheduled" style={inputStyle}>
-                  <option value="scheduled">Scheduled</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Date <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                <input name="workshop_date" type="date" required style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Time</label>
-                <input name="workshop_time" type="time" style={inputStyle} />
-              </div>
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Hall / Location</label>
-              <input name="hall_location" style={inputStyle} placeholder="e.g. Main Hall" />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Trainer</label>
-              <select name="trainer_choice" value={trainerChoice} onChange={e => setTrainerChoice(e.target.value as "none" | "gs_team_other")} style={inputStyle}>
-                <option value="none">No trainer assigned</option>
-                <option value="gs_team_other">GS Team / Other</option>
-              </select>
-              {trainerChoice === "gs_team_other" && (
-                <input name="trainer_name" placeholder="Name" style={{ ...inputStyle, marginTop: 8 }} />
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit}>
+              {error && (
+                <Alert variant="destructive" className="mb-5">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Assign to Group</label>
-              <select
-                multiple
-                value={selectedGroupIds}
-                onChange={e => setSelectedGroupIds(Array.from(e.target.selectedOptions, o => o.value))}
-                style={{ ...inputStyle, height: 110 }}
-              >
-                {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-              </select>
-              <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4 }}>Ctrl/Cmd-click to select multiple groups.</p>
-            </div>
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Plan Notes</label>
-              <textarea name="plan_notes" rows={3} placeholder="Preparation notes, agenda, materials needed..." style={{ ...inputStyle, resize: "vertical" }} />
-            </div>
-            <div className="flex items-center gap-2">
-              <input id="kit_ready" name="kit_ready" type="checkbox" style={{ width: 16, height: 16 }} />
-              <label htmlFor="kit_ready" style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>Kit is ready</label>
-            </div>
-          </div>
-          <div className="flex gap-3 mt-6">
-            <button type="submit" disabled={loading} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
-              {loading ? "Creating..." : "Create Workshop"}
-            </button>
-            <button type="button" onClick={() => router.back()} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
-              Cancel
-            </button>
-          </div>
-        </form>
-</CardContent>
-</Card>
+              <div className="space-y-5">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Title <span className="text-destructive">*</span></Label>
+                  <Input name="title" required placeholder="e.g. Science Workshop - Solar System" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">Type <span className="text-destructive">*</span></Label>
+                    <Select value={workshopType} onValueChange={(v) => setWorkshopType(v as WorkshopType)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WORKSHOP_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">Status <span className="text-destructive">*</span></Label>
+                    <Select value={status} onValueChange={(v) => setStatus(v as "scheduled" | "completed" | "cancelled")}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="scheduled">Scheduled</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">Date <span className="text-destructive">*</span></Label>
+                    <Input name="workshop_date" type="date" required />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">Time</Label>
+                    <Input name="workshop_time" type="time" />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Hall / Location</Label>
+                  <Input name="hall_location" placeholder="e.g. Main Hall" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Trainer</Label>
+                  <Select value={trainerChoice} onValueChange={(v) => setTrainerChoice(v as "none" | "gs_team_other")}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select trainer choice" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No trainer assigned</SelectItem>
+                      <SelectItem value="gs_team_other">GS Team / Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {trainerChoice === "gs_team_other" && (
+                    <Input name="trainer_name" placeholder="Trainer Name" className="mt-2" />
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Assign to Group</Label>
+                  <div className="border border-input rounded-md p-2 max-h-35 overflow-y-auto space-y-1">
+                    {groups.map(g => {
+                      const checked = selectedGroupIds.includes(g.id);
+                      return (
+                        <Label key={g.id} className="flex items-center gap-2 p-1 rounded hover:bg-accent/10 cursor-pointer text-xs">
+                          <Checkbox
+                            checked={checked}
+                            onCheckedChange={(c) => setSelectedGroupIds(c ? [...selectedGroupIds, g.id] : selectedGroupIds.filter(id => id !== g.id))}
+                          />
+                          {g.name}
+                        </Label>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground">Plan Notes</Label>
+                  <Textarea name="plan_notes" rows={3} placeholder="Preparation notes, agenda, materials needed..." />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="kit_ready" checked={kitReady} onCheckedChange={(c) => setKitReady(!!c)} />
+                  <Label htmlFor="kit_ready" className="text-xs font-normal text-muted-foreground cursor-pointer">Kit is ready</Label>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <Button type="submit" disabled={loading} className="font-semibold">
+                  {loading ? "Creating..." : "Create Workshop"}
+                </Button>
+                <Button type="button" variant="outline" onClick={() => router.back()}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -245,21 +245,13 @@ export default function InstitutionPage() {
               </div>
             )}
 
-            <button
+            <Button
               type="submit"
               disabled={status === "loading"}
-              style={{
-                ...btnMarigold,
-                width: "100%",
-                justifyContent: "center",
-                fontSize: 14,
-                padding: "13px 24px",
-                background: status === "loading" ? "var(--gs-text-mute)" : "var(--gs-marigold)",
-                cursor: status === "loading" ? "not-allowed" : "pointer",
-              }}
+              className="w-full justify-center text-sm py-3 font-bold bg-[#D97706] hover:bg-[#B45309] text-white"
             >
-              {status === "loading" ? "Submitting..." : "Submit Application"}
-            </button>
+              {status === "loading" ? "Submitting Inquiry..." : "Submit Institution Inquiry →"}
+            </Button>
           </form>
         </div>
       </div>

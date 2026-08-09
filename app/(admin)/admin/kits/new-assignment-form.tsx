@@ -6,18 +6,18 @@ import { toast } from "sonner";
 import { upsertKitAssignment } from "@/actions/kits";
 import { createClientClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: string[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<{ id: string; name: string; tours?: { title: string }[] | null }[]>([]);
+  const [groupId, setGroupId] = useState("");
 
   useEffect(() => {
     createClientClient()
@@ -31,17 +31,22 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!groupId) {
+      setError("Please select a group");
+      return;
+    }
     setLoading(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
     try {
       await upsertKitAssignment({
-        group_id: fd.get("group_id") as string,
+        group_id: groupId,
         school_count: Number(fd.get("school_count")) || 1,
         packed: false,
         distributed: false,
       });
       (e.target as HTMLFormElement).reset();
+      setGroupId("");
       toast.success("Kit assigned successfully");
       router.refresh();
     } catch (err: unknown) {
@@ -57,31 +62,39 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
 
   return (
     <Card className="mb-4">
-<CardContent>
-<form onSubmit={handleSubmit}>
-      {error && (
-        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "8px 12px", marginBottom: 12, fontSize: 12, color: "var(--gs-danger)" }}>
-          {error}
-        </div>
-      )}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
-        <div style={{ gridColumn: "span 2" }}>
-          <label style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 4 }}>Group *</label>
-          <select name="group_id" required style={inputStyle}>
-            <option value="">Select group...</option>
-            {availableGroups.map(g => <option key={g.id} value={g.id}>{g.name}{g.tours?.[0]?.title ? ` — ${g.tours[0].title}` : ""}</option>)}
-          </select>
-        </div>
-        <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 4 }}>School Count *</label>
-          <input name="school_count" type="number" min={1} defaultValue={1} required placeholder="Enter number of schools" style={inputStyle} />
-        </div>
-      </div>
-      <button type="submit" disabled={loading} style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: 12 }}>
-        {loading ? "Saving..." : "+ Assign Kit"}
-      </button>
-    </form>
-</CardContent>
-</Card>
+      <CardContent className="pt-6">
+        <form onSubmit={handleSubmit}>
+          {error && (
+            <Alert variant="destructive" className="mb-3">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+            <div className="sm:col-span-2 space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">Group *</Label>
+              <Select value={groupId} onValueChange={(val) => setGroupId(val ?? "")}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select group..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableGroups.map(g => (
+                    <SelectItem key={g.id} value={g.id}>
+                      {g.name}{g.tours?.[0]?.title ? ` — ${g.tours[0].title}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">School Count *</Label>
+              <Input name="school_count" type="number" min={1} defaultValue={1} required placeholder="Enter number of schools" />
+            </div>
+          </div>
+          <Button type="submit" disabled={loading} className="mt-4 font-semibold">
+            {loading ? "Saving..." : "+ Assign Kit"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

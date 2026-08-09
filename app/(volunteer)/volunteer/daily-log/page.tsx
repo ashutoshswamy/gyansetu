@@ -7,6 +7,12 @@ import { getMyToursForSelect } from "@/actions/tours";
 import { BookOpen, Plus, X, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type DailyLogRow = DailyLog & { tours?: { id: string; title: string } | null };
 
@@ -30,62 +36,70 @@ function isDelayed(log: DailyLogRow) {
   return logDate !== submittedDate;
 }
 
-export default function VolunteerDailyLogPage() {
+export default function DailyLogPage() {
   const [logs, setLogs] = useState<DailyLogRow[]>([]);
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
-  const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tourId, setTourId] = useState("");
 
   useEffect(() => {
-    Promise.all([
-      getMyDailyLogs(),
-      getMyToursForSelect(),
-    ]).then(([logsData, toursData]) => {
-      setLogs(logsData);
-      setTours(toursData);
+    Promise.all([getMyDailyLogs(), getMyToursForSelect()]).then(([logData, tourData]) => {
+      setLogs(logData as DailyLogRow[]);
+      setTours(tourData);
       setLoading(false);
-    }).catch(() => setLoading(false));
+    });
   }, []);
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!tourId) {
+      setError("Please select a tour.");
+      return;
+    }
+    setSaving(true);
     setError(null);
-    const fd = new FormData(e.currentTarget);
 
-    for (const q of QUESTIONS) {
-      const text = (fd.get(q.key) as string) || "";
-      if (wordCount(text) < 50) {
-        const msg = `"${q.label}" must be at least 50 words (currently ${wordCount(text)}).`;
-        setError(msg);
-        toast.error(msg);
-        return;
-      }
+    const fd = new FormData(e.currentTarget);
+    const date = fd.get("log_date") as string;
+    const activities = (fd.get("activities_conducted") as string) || "";
+    const achievements = (fd.get("key_achievements") as string) || "";
+    const challenges = (fd.get("challenges_faced") as string) || "";
+    const learning = (fd.get("biggest_learning") as string) || "";
+    const impact = (fd.get("participant_impact") as string) || "";
+
+    const allShort = [activities, achievements, challenges, learning, impact].filter(
+      t => wordCount(t) < 50
+    );
+
+    if (allShort.length > 0) {
+      const msg = "Each question answer must contain at least 50 words.";
+      setError(msg);
+      toast.error(msg);
+      setSaving(false);
+      return;
     }
 
-    setSaving(true);
     try {
-      const log = await createDailyLog({
-        tour_id: fd.get("tour_id") as string,
-        log_date: fd.get("log_date") as string,
-        activities_conducted: fd.get("activities_conducted") as string,
-        key_achievements: fd.get("key_achievements") as string,
-        challenges_faced: fd.get("challenges_faced") as string,
-        biggest_learning: fd.get("biggest_learning") as string,
-        participant_impact: fd.get("participant_impact") as string,
+      await createDailyLog({
+        tour_id: tourId,
+        log_date: date,
+        activities_conducted: activities,
+        key_achievements: achievements,
+        challenges_faced: challenges,
+        biggest_learning: learning,
+        participant_impact: impact,
       });
-      setLogs(prev => [log, ...prev]);
+
+      toast.success("Daily log saved successfully");
       setShowForm(false);
-      (e.target as HTMLFormElement).reset();
+      setTourId("");
+      const freshLogs = await getMyDailyLogs();
+      setLogs(freshLogs as DailyLogRow[]);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to create daily log";
+      const message = err instanceof Error ? err.message : "Failed to save daily log";
       setError(message);
       toast.error(message);
     } finally {
@@ -94,62 +108,66 @@ export default function VolunteerDailyLogPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
+    <div className="min-h-screen p-4 sm:p-8 bg-background">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Volunteer Portal</p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Daily Log</h1>
-            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Field observations, activities and daily reflections</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Volunteer Portal</p>
+            <h1 className="text-2xl font-bold text-foreground m-0">Daily Log</h1>
+            <p className="text-sm text-muted-foreground mt-1">Field observations, activities and daily reflections</p>
           </div>
-          <button
+          <Button
             onClick={() => setShowForm(!showForm)}
-            style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+            className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
           >
             {showForm ? <X size={14} /> : <Plus size={14} />}
             {showForm ? "Cancel" : "New Entry"}
-          </button>
+          </Button>
         </div>
 
         {showForm && (
           <Card className="mb-6">
-<CardContent>
-<form onSubmit={handleSubmit}>
-            <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 20px" }}>New Daily Log Entry</h2>
-            {error && (
-              <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "var(--gs-danger)" }}>
-                {error}
-              </div>
-            )}
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                  <select name="tour_id" required style={inputStyle}>
-                    <option value="">Select tour...</option>
-                    {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                  </select>
+            <CardContent className="pt-6">
+              <form onSubmit={handleSubmit}>
+                <h2 className="text-base font-semibold text-foreground mb-5 m-0">New Daily Log Entry</h2>
+                {error && (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-muted-foreground">Tour <span className="text-destructive">*</span></Label>
+                      <Select value={tourId} onValueChange={(val) => setTourId(val ?? "")}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select tour..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-muted-foreground">Date <span className="text-destructive">*</span></Label>
+                      <Input name="log_date" type="date" required defaultValue={new Date().toISOString().split("T")[0]} />
+                    </div>
+                  </div>
+                  {QUESTIONS.map((q, i) => (
+                    <div key={q.key} className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-muted-foreground">
+                        {i + 1}. {q.label} <span className="text-destructive">*</span>
+                      </Label>
+                      <Textarea name={q.key} required rows={4} placeholder="Minimum 50 words..." className="min-h-[100px]" />
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Date <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-                  <input name="log_date" type="date" required defaultValue={new Date().toISOString().split("T")[0]} style={inputStyle} />
-                </div>
-              </div>
-              {QUESTIONS.map((q, i) => (
-                <div key={q.key}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>
-                    {i + 1}. {q.label} <span style={{ color: "var(--gs-danger)" }}>*</span>
-                  </label>
-                  <textarea name={q.key} required rows={4} placeholder="Minimum 50 words..." style={{ ...inputStyle, resize: "vertical" }} />
-                </div>
-              ))}
-            </div>
-            <button type="submit" disabled={saving} style={{ marginTop: 16, background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-              {saving ? "Saving..." : "Save Entry"}
-            </button>
-          </form>
-</CardContent>
-</Card>
+                <Button type="submit" disabled={saving} className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+                  {saving ? "Saving..." : "Save Entry"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         )}
 
         {loading ? (

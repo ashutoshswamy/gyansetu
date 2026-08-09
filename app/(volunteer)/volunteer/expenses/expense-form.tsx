@@ -9,6 +9,12 @@ import { uploadFileToStorage } from "@/actions/upload";
 import type { ExpenseInput } from "@/lib/validations";
 import type { Expense } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CATEGORIES: { value: ExpenseInput["category"]; label: string; hint: string }[] = [
   { value: "travel", label: "Travel & Transportation", hint: "Train, Bus, Flight, Taxi, Auto, Local Transport, Fuel" },
@@ -24,65 +30,61 @@ const SUBCATEGORY_OPTIONS: Partial<Record<ExpenseInput["category"], readonly str
   food: ["Breakfast", "Lunch", "Dinner", "Snacks"],
 };
 
-const VOLUNTEER_COUNT_CATEGORIES: ExpenseInput["category"][] = ["accommodation", "food"];
-
-// Upload-only receipt field — no raw URL entry, so volunteers can't paste an arbitrary
-// (possibly dead or unrelated) link in place of an actual bill.
-function ReceiptUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
-  const fileRef = useRef<HTMLInputElement>(null);
+function ReceiptUpload({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     setUploadError(null);
-    const fd = new FormData();
-    fd.append("file", file);
     try {
-      const url = await uploadFileToStorage(fd, "media", "receipts");
+      const fd = new FormData();
+      fd.append("file", file);
+      const url = await uploadFileToStorage(fd, "expense-bills", "receipts");
       onChange(url);
-    } catch (err) {
-      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } catch (err: unknown) {
+      setUploadError(err instanceof Error ? err.message : "Failed to upload file");
     } finally {
       setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
     }
   }
 
-  const fileName = value ? decodeURIComponent(value.split("/").pop() ?? "Receipt") : "";
+  const fileName = value ? value.split("/").pop() ?? "Receipt" : "";
 
   return (
-    <div style={{ position: "relative" }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Receipt</label>
+    <div className="space-y-1.5">
+      <Label className="text-xs font-semibold text-muted-foreground">Receipt / Bill Image (optional)</Label>
       {value ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: 6, background: "var(--background)" }}>
-          <a href={value} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "var(--gs-accent)", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <div className="flex items-center gap-2.5 p-2.5 border border-border rounded-md bg-background">
+          <a href={value} target="_blank" rel="noopener noreferrer" className="text-xs text-accent flex-1 min-w-0 truncate">
             {fileName}
           </a>
-          <button type="button" onClick={() => onChange("")} style={{ fontSize: 12, color: "var(--gs-danger)", background: "transparent", border: "none", cursor: "pointer" }}>
+          <Button type="button" variant="ghost" size="sm" onClick={() => onChange("")} className="h-auto p-0 text-xs text-destructive hover:text-destructive">
             Remove
-          </button>
+          </Button>
         </div>
       ) : (
-        <button
+        <Button
           type="button"
+          variant="outline"
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
-          style={{ width: "100%", padding: "10px 12px", fontSize: 13, fontWeight: 600, textAlign: "left", color: uploading ? "var(--gs-muted)" : "var(--foreground)", background: uploading ? "#F0EEE6" : "var(--background)", border: "1.5px dashed var(--border)", borderRadius: 6, cursor: uploading ? "not-allowed" : "pointer" }}
+          className="w-full justify-start text-xs border-dashed text-muted-foreground font-normal"
         >
           {uploading ? "Uploading…" : "+ Upload receipt (image or PDF)"}
-        </button>
+        </Button>
       )}
       <input
         ref={fileRef}
         type="file"
         accept="image/*,application/pdf"
-        style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", border: 0 }}
+        className="hidden"
         onChange={handleFileChange}
       />
-      {uploadError && <p style={{ fontSize: 12, color: "var(--gs-danger)", marginTop: 5 }}>{uploadError}</p>}
+      {uploadError && <p className="text-xs text-destructive mt-1">{uploadError}</p>}
     </div>
   );
 }
@@ -93,54 +95,61 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
   const [category, setCategory] = useState<ExpenseInput["category"]>(editExpense?.category ?? "travel");
+  const [subcategory, setSubcategory] = useState<string>(editExpense?.subcategory ?? "");
+  const [selectedGroupId, setSelectedGroupId] = useState<string>(editExpense?.group_id ?? "");
   const [billUrl, setBillUrl] = useState(editExpense?.bill_url ?? "");
 
-  useEffect(() => {
-    if (groupId) return;
-    getGroupsForSelect().then(data => setGroups(data as unknown as typeof groups)).catch(() => setGroups([]));
-  }, [groupId]);
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
-
   const subOptions = SUBCATEGORY_OPTIONS[category];
-  const needsVolunteerCount = VOLUNTEER_COUNT_CATEGORIES.includes(category);
   const currentCategory = CATEGORIES.find(c => c.value === category)!;
+  const needsVolunteerCount = category === "food";
+
+  useEffect(() => {
+    if (!groupId) {
+      getGroupsForSelect().then(data => setGroups(data as unknown as typeof groups));
+    }
+  }, [groupId]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving(true);
     setError(null);
+
     const fd = new FormData(e.currentTarget);
-    const payload = {
-      group_id: groupId || (fd.get("group_id") as string),
+    const targetGroupId = groupId ?? selectedGroupId;
+    if (!targetGroupId) {
+      setError("Please select a group");
+      setSaving(false);
+      return;
+    }
+
+    const inputSubcategory = subOptions ? subcategory : (fd.get("subcategory") as string);
+    if (!inputSubcategory) {
+      setError("Please select or enter a type/subcategory");
+      setSaving(false);
+      return;
+    }
+
+    const payload: ExpenseInput = {
+      group_id: targetGroupId,
       category,
-      subcategory: (fd.get("subcategory") as string) || undefined,
-      volunteer_count: needsVolunteerCount ? Number(fd.get("volunteer_count")) : undefined,
-      vendor_name: (fd.get("vendor_name") as string) || undefined,
-      expense_date: fd.get("expense_date") as string,
+      subcategory: inputSubcategory,
       amount: Number(fd.get("amount")),
-      bill_url: (fd.get("bill_url") as string) || undefined,
+      expense_date: fd.get("expense_date") as string,
+      vendor_name: (fd.get("vendor_name") as string) || undefined,
+      bill_url: billUrl || undefined,
       description: (fd.get("description") as string) || undefined,
+      volunteer_count: needsVolunteerCount ? Number(fd.get("volunteer_count")) : undefined,
     };
+
     try {
-      const result = editExpense
-        ? await resubmitExpense(editExpense.id, payload)
-        : await submitExpense(payload);
-      if (!result.ok) {
-        setError(result.error);
-        toast.error(result.error);
-        return;
-      }
-      toast.success(editExpense ? "Expense resubmitted for approval" : "Expense submitted successfully");
       if (editExpense) {
+        await resubmitExpense(editExpense.id, payload);
+        toast.success("Expense resubmitted for approval");
         onDone?.();
       } else {
+        await submitExpense(payload);
+        toast.success("Expense submitted for approval");
         (e.target as HTMLFormElement).reset();
-        setCategory("travel");
         setBillUrl("");
       }
       router.refresh();
@@ -154,100 +163,115 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
   }
 
   return (
-    <Card className="mb-6">
-<CardContent>
-<form onSubmit={handleSubmit}>
-      <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>{editExpense ? "Resubmit Expense" : "Submit Expense"}</h2>
-      {error && (
-        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "var(--gs-danger)" }}>
-          {error}
-        </div>
-      )}
-      <div className="space-y-3">
-        {!groupId && (
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-            <select name="group_id" required style={inputStyle}>
-              <option value="">Select group...</option>
-              {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-            </select>
-          </div>
-        )}
+    <Card>
+      <CardContent className="pt-6">
+        <form onSubmit={handleSubmit}>
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <div className="space-y-4">
+            {!groupId && (
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Group <span className="text-destructive">*</span></Label>
+                <Select value={selectedGroupId} onValueChange={(val) => setSelectedGroupId(val ?? "")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select group..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groups.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-        <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Category <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-          <select name="category" required value={category} onChange={e => setCategory(e.target.value as ExpenseInput["category"])} style={inputStyle}>
-            {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-          </select>
-          <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4 }}>{currentCategory.hint}</p>
-        </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">Category <span className="text-destructive">*</span></Label>
+              <Select value={category} onValueChange={(val) => {
+                const cat = (val ?? "travel") as ExpenseInput["category"];
+                setCategory(cat);
+                setSubcategory("");
+              }}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select category..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground mt-1">{currentCategory.hint}</p>
+            </div>
 
-        {subOptions ? (
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Type <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-            <select name="subcategory" required defaultValue={editExpense?.subcategory ?? ""} style={inputStyle}>
-              <option value="" disabled>Select type...</option>
-              {subOptions.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-          </div>
-        ) : (
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>
-              {category === "materials" ? "Items Purchased" : "Purpose of Expense"} <span style={{ color: "var(--gs-danger)" }}>*</span>
-            </label>
-            <input
-              name="subcategory"
-              type="text"
-              required
-              defaultValue={editExpense?.subcategory ?? ""}
-              placeholder={category === "materials" ? "e.g. stationery, science materials, printing, teaching aids, banners..." : "Describe the purpose of this expense..."}
-              style={inputStyle}
-            />
-          </div>
-        )}
+            {subOptions ? (
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Type <span className="text-destructive">*</span></Label>
+                <Select value={subcategory} onValueChange={(val) => setSubcategory(val ?? "")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select type..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subOptions.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">
+                  {category === "materials" ? "Items Purchased" : "Purpose of Expense"} <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  name="subcategory"
+                  type="text"
+                  required
+                  defaultValue={editExpense?.subcategory ?? ""}
+                  placeholder={category === "materials" ? "e.g. stationery, science materials, printing, teaching aids, banners..." : "Describe the purpose of this expense..."}
+                />
+              </div>
+            )}
 
-        {needsVolunteerCount && (
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Number of Volunteers <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-            <input name="volunteer_count" type="number" min="1" step="1" required defaultValue={editExpense?.volunteer_count ?? ""} placeholder="How many volunteers?" style={inputStyle} />
-          </div>
-        )}
+            {needsVolunteerCount && (
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Number of Volunteers <span className="text-destructive">*</span></Label>
+                <Input name="volunteer_count" type="number" min="1" step="1" required defaultValue={editExpense?.volunteer_count ?? ""} placeholder="How many volunteers?" />
+              </div>
+            )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Amount (₹) <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-            <input name="amount" type="number" min="0" step="0.01" required defaultValue={editExpense?.amount ?? ""} placeholder="Enter amount" style={inputStyle} />
-          </div>
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Date <span style={{ color: "var(--gs-danger)" }}>*</span></label>
-            <input name="expense_date" type="date" required defaultValue={editExpense?.expense_date ?? new Date().toISOString().split("T")[0]} style={inputStyle} />
-          </div>
-        </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Amount (₹) <span className="text-destructive">*</span></Label>
+                <Input name="amount" type="number" min="0" step="0.01" required defaultValue={editExpense?.amount ?? ""} placeholder="Enter amount" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Date <span className="text-destructive">*</span></Label>
+                <Input name="expense_date" type="date" required defaultValue={editExpense?.expense_date ?? new Date().toISOString().split("T")[0]} />
+              </div>
+            </div>
 
-        <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Name of Person / Vendor</label>
-          <input name="vendor_name" type="text" defaultValue={editExpense?.vendor_name ?? ""} placeholder="Who was paid?" style={inputStyle} />
-        </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">Name of Person / Vendor</Label>
+              <Input name="vendor_name" type="text" defaultValue={editExpense?.vendor_name ?? ""} placeholder="Who was paid?" />
+            </div>
 
-        <input type="hidden" name="bill_url" value={billUrl} />
-        <ReceiptUpload value={billUrl} onChange={setBillUrl} />
-        <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Additional Notes</label>
-          <textarea name="description" rows={2} defaultValue={editExpense?.description ?? ""} placeholder="Anything else to add..." style={{ ...inputStyle, resize: "vertical" }} />
-        </div>
-      </div>
-      <div className="flex gap-3">
-        <button type="submit" disabled={saving} style={{ marginTop: 14, background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-          {saving ? "Saving..." : editExpense ? "Resubmit Expense" : "Submit Expense"}
-        </button>
-        {editExpense && (
-          <button type="button" onClick={onDone} style={{ marginTop: 14, background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
-            Cancel
-          </button>
-        )}
-      </div>
-    </form>
-</CardContent>
-</Card>
+            <ReceiptUpload value={billUrl} onChange={setBillUrl} />
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">Additional Notes</Label>
+              <Textarea name="description" rows={2} defaultValue={editExpense?.description ?? ""} placeholder="Anything else to add..." />
+            </div>
+          </div>
+          <div className="flex gap-3 mt-5">
+            <Button type="submit" disabled={saving} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+              {saving ? "Saving..." : editExpense ? "Resubmit Expense" : "Submit Expense"}
+            </Button>
+            {editExpense && (
+              <Button type="button" variant="outline" onClick={onDone}>
+                Cancel
+              </Button>
+            )}
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

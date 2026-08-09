@@ -6,6 +6,7 @@ import { Plane, CheckSquare, ArrowRight, Calendar, MapPin, ClipboardList, Clipbo
 import type { DynamicForm } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type AssignmentRow = {
   id: string;
@@ -164,9 +165,9 @@ export default async function VolunteerDashboard() {
                       </p>
                     </div>
                     <Link href={`/volunteer/forms/${form.id}`}>
-                      <button style={{ background: "transparent", color: "var(--gs-success)", fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 5, border: "1.5px solid rgba(var(--gs-success-rgb), 0.3)", cursor: "pointer", flexShrink: 0, marginLeft: 12 }}>
+                      <Button variant="outline" size="sm" className="text-emerald-600 border-emerald-600/30 hover:bg-emerald-600/10 font-semibold shrink-0 ml-3">
                         Fill Form
-                      </button>
+                      </Button>
                     </Link>
                   </div>
                 ))}

@@ -3,12 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { upsertKitAssignment, markKitDistributed } from "@/actions/kits";
-
-const inputStyle: React.CSSProperties = {
-  padding: "6px 10px", fontSize: 13,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export function KitAssignmentActions({
   groupId, schoolCount, packed, distributed,
@@ -55,38 +52,34 @@ export function KitAssignmentActions({
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <input
-        type="number" min={1} placeholder="Enter count" value={count}
+      <Input
+        type="number" min={1} placeholder="Count" value={count}
         onChange={e => setCount(Number(e.target.value))}
         onBlur={saveCount}
-        style={{ ...inputStyle, width: 64 }}
+        className="w-16 text-xs h-9"
         disabled={loading}
       />
-      <button
+      <Button
+        size="sm"
+        variant={packed ? "default" : "outline"}
         onClick={togglePacked}
         disabled={loading}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: packed ? "var(--gs-success)" : "transparent",
-          color: packed ? "white" : "var(--gs-text-secondary)",
-          border: packed ? "none" : "1.5px solid var(--border)",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
+        className={packed ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}
       >
         {packed ? "Packed" : "Mark Packed"}
-      </button>
+      </Button>
       {distributed ? (
-        <span style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "rgba(var(--gs-accent-rgb), 0.08)", color: "var(--gs-accent)" }}>
+        <Badge variant="secondary" className="h-9 px-3 text-xs font-semibold">
           Distributed
-        </span>
+        </Badge>
       ) : packed ? (
-        <button
+        <Button
+          size="sm"
           onClick={handleDistribute}
           disabled={loading}
-          style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "var(--gs-accent)", color: "white", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
         >
           Mark Distributed
-        </button>
+        </Button>
       ) : null}
     </div>
   );

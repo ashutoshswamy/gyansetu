@@ -193,23 +193,24 @@ export default function GroupDetailPage() {
                     <span style={{ fontSize: 12, color: "var(--gs-muted)", marginLeft: 8 }}>{m.users?.email}</span>
                     {m.role_in_group && <span style={{ fontSize: 12, color: "var(--gs-accent)", marginLeft: 8, padding: "1px 6px", background: "rgba(var(--gs-accent-rgb), 0.08)", borderRadius: 4 }}>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</span>}
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => handleToggleCoreMember(m.user_id, m.role_in_group)}
                       disabled={saving}
-                      className="flex items-center gap-1.5"
-                      style={{ background: "none", border: "none", cursor: saving ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 600, color: m.role_in_group === "group_core_member" ? "var(--gs-danger-alt)" : "var(--gs-success)" }}
+                      className={`flex items-center gap-1.5 h-auto py-1 px-2 text-xs font-semibold ${m.role_in_group === "group_core_member" ? "text-destructive hover:text-destructive" : "text-emerald-600 hover:text-emerald-700"}`}
                     >
                       <ShieldCheck size={13} />
                       {m.role_in_group === "group_core_member" ? "Remove Core Member" : "Make Core Member"}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleRemoveMember(m.user_id)}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gs-danger)", padding: 4 }}
+                      className="h-7 w-7 text-destructive hover:text-destructive"
                     >
                       <Trash2 size={14} />
-                    </button>
-                  </div>
+                    </Button>
                 </div>
               ))}
             </div>

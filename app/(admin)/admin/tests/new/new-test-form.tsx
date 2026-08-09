@@ -7,6 +7,11 @@ import { createTest, updateTest } from "@/actions/tests";
 import type { EligibilityTest } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Tour = { id: string; title: string };
 type QuestionType = "mcq" | "multi_select" | "subjective";
@@ -96,283 +101,295 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
     setDuration(selected.duration_minutes);
     setPassing(selected.passing_score);
     setStatus(selected.status);
-    setIsTemplate(false); // Default to saving as new linked test
+    setIsTemplate(false);
     setQuestions(selected.questions.map(q => ({
       id: uid(),
-      type: q.type,
+      type: q.type as QuestionType,
       question: q.question,
-      options: q.options ?? ["", ""],
+      options: q.options ? [...q.options] : ["", ""],
       correct_answer: q.correct_answer ?? "",
-      marks: q.marks,
+      marks: q.marks ?? 1,
     })));
+    toast.success(`Imported template: ${selected.title}`);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isTemplate && tourIds.length === 0) {
-      const msg = "Select at least one tour, or mark this as a Template.";
-      setError(msg);
-      toast.error(msg);
+    if (!title.trim()) {
+      setError("Title is required");
       return;
     }
-    if (status === "active" && !isTemplate) {
-      const ok = window.confirm(
-        "Status is set to Active — this test will be immediately visible and available to every enrollee already applied to the linked tour. Continue?"
-      );
-      if (!ok) return;
+    if (!isTemplate && tourIds.length === 0) {
+      setError("Please select at least one linked tour");
+      return;
     }
+    if (questions.length === 0) {
+      setError("Please add at least one question");
+      return;
+    }
+
     setSaving(true);
     setError("");
-    const payload = {
-      title,
-      description: description || undefined,
-      tour_id: isTemplate ? null : (tourIds[0] || null),
-      duration_minutes: duration,
-      passing_score: passing,
-      questions: questions.map(q => ({
-        ...q,
-        options: q.type === "subjective" ? undefined : q.options.filter(Boolean),
-        correct_answer: q.type === "subjective" ? undefined : q.correct_answer,
-      })),
-      status,
-      is_template: isTemplate,
-    };
+
     try {
-      const result = isEdit
-        ? await updateTest(initialData.id, payload)
-        : await createTest(payload, isTemplate ? undefined : tourIds);
-
-      if (!result.ok) {
-        setError(result.error);
-        toast.error(result.error);
-        setSaving(false);
-        return;
+      if (isEdit && initialData) {
+        await updateTest(initialData.id, {
+          title,
+          description,
+          tour_id: tourIds[0] ?? undefined,
+          duration_minutes: duration,
+          passing_score: passing,
+          status,
+          is_template: isTemplate,
+          questions,
+        });
+        toast.success("Test updated successfully");
+        router.push(`/admin/tests/${initialData.id}`);
+      } else {
+        await createTest(
+          {
+            title,
+            description,
+            duration_minutes: duration,
+            passing_score: passing,
+            status,
+            is_template: isTemplate,
+            questions,
+          },
+          isTemplate ? [] : tourIds
+        );
+        toast.success(isTemplate ? "Template created" : "Test(s) created successfully");
+        router.push("/admin/tests");
       }
-
-      toast.success(isEdit ? "Test updated successfully" : "Test created successfully");
-      router.push(isTemplate ? "/admin/tests/templates" : "/admin/tests");
       router.refresh();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to save test";
-      setError(message);
-      toast.error(message);
+      const msg = err instanceof Error ? err.message : "Failed to save test";
+      setError(msg);
+      toast.error(msg);
+    } finally {
       setSaving(false);
     }
   }
-
-  const inputStyle = { fontSize: 13, padding: "8px 12px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: "var(--foreground)", width: "100%", outline: "none" };
-  const labelStyle = { fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--gs-muted)", display: "block", marginBottom: 4 };
 
   return (
     <form onSubmit={handleSubmit}>
       {/* Template Importer */}
       {!isEdit && templates.length > 0 && (
-        <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1.5px dashed var(--gs-accent)", color: "var(--gs-accent)" }}>
-          <label style={{ ...labelStyle, color: "var(--gs-accent)" }}>Import from existing Template</label>
+        <div className="rounded-xl p-5 mb-4 bg-background border-1.5 border-dashed border-accent">
+          <Label className="text-xs font-semibold text-accent uppercase tracking-wider block mb-2">Import from existing Template</Label>
           <div className="flex gap-3 items-center mt-1">
-            <select
-              style={{ ...inputStyle, borderColor: "rgba(var(--gs-accent-rgb), 0.3)" }}
-              defaultValue=""
-              onChange={e => { if (e.target.value) importTemplate(e.target.value); }}
-            >
-              <option value="">Select a template to import...</option>
-              {templates.map(t => (
-                <option key={t.id} value={t.id}>
-                  {t.title} ({t.questions?.length ?? 0} questions)
-                </option>
-              ))}
-            </select>
+            <Select onValueChange={(val) => { if (typeof val === "string" && val) importTemplate(val); }}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a template to import..." />
+              </SelectTrigger>
+              <SelectContent>
+                {templates.map(t => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.title} ({t.questions?.length ?? 0} questions)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6, margin: "6px 0 0 0" }}>
+          <p className="text-[11px] text-muted-foreground mt-1.5 m-0">
             * Selecting a template will overwrite the details and questions in the builder below.
           </p>
         </div>
       )}
 
       {/* Meta */}
-      <Card>
-<CardContent>
-        <p style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-muted)", marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Test Details</p>
-        <div className="space-y-3">
-          <div>
-            <label style={labelStyle}>Title *</label>
-            <input required style={inputStyle} value={title} onChange={e => setTitle(e.target.value)} placeholder="Test title" />
+      <Card className="mb-4">
+        <CardContent className="pt-6">
+          <p className="text-xs font-semibold text-muted-foreground mb-3 tracking-wider uppercase">Test Details</p>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Title *</Label>
+              <Input required value={title} onChange={e => setTitle(e.target.value)} placeholder="Test title" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
+              <Textarea className="min-h-[60px]" value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional instructions for students" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Test Type *</Label>
+                <Select value={isTemplate ? "template" : "link"} onValueChange={(val) => {
+                  const isTemp = val === "template";
+                  setIsTemplate(isTemp);
+                  if (isTemp) setTourIds([]);
+                }}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select test type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="link">Standard Test</SelectItem>
+                    <SelectItem value="template">Template</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{isEdit ? "Linked Tour" : "Linked Tour(s)"} {isTemplate ? "" : "*"}</Label>
+                {isEdit ? (
+                  <Select disabled={isTemplate} value={tourIds[0] ?? ""} onValueChange={(val) => setTourIds(val ? [val] : [])}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={tours.length === 0 ? "No tours available" : "No tour"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className={`p-2 border border-input rounded-md max-h-35 overflow-y-auto flex flex-col gap-1 ${isTemplate ? "opacity-50 pointer-events-none" : ""}`}>
+                    {tours.length === 0 && (
+                      <span className="text-xs text-muted-foreground p-1.5">No tours available</span>
+                    )}
+                    {tours.map(t => {
+                      const checked = tourIds.includes(t.id);
+                      return (
+                        <Label
+                          key={t.id}
+                          className="flex items-center gap-2 p-1.5 rounded cursor-pointer text-xs hover:bg-accent/10"
+                        >
+                          <Checkbox
+                            checked={checked}
+                            onCheckedChange={(c) => setTourIds(c ? [...tourIds, t.id] : tourIds.filter(id => id !== t.id))}
+                          />
+                          {t.title}
+                        </Label>
+                      );
+                    })}
+                  </div>
+                )}
+                {!isTemplate && (
+                  <p className="text-[11px] text-muted-foreground mt-1 m-0">
+                    {isEdit
+                      ? "Assigning a tour makes this visible to every group in that tour."
+                      : "Check multiple tours to create one linked copy per tour, each visible to every group in that tour."}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Duration (minutes) *</Label>
+                <Input required type="number" min={1} placeholder="Enter duration (minutes)" value={duration} onChange={e => setDuration(Number(e.target.value))} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Passing Score (%) *</Label>
+                <Input required type="number" min={0} max={100} placeholder="Enter passing marks" value={passing} onChange={e => setPassing(Number(e.target.value))} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</Label>
+                <Select value={status} onValueChange={(val) => setStatus(val as "draft" | "active" | "closed")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="closed">Closed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
-          <div>
-            <label style={labelStyle}>Description</label>
-            <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 60 }} value={description} onChange={e => setDescription(e.target.value)} placeholder="Optional instructions for students" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label style={labelStyle}>Test Type *</label>
-              <select style={inputStyle} value={isTemplate ? "template" : "link"} onChange={e => {
-                const val = e.target.value === "template";
-                setIsTemplate(val);
-                if (val) setTourIds([]);
-              }}>
-                <option value="link">Standard Test</option>
-                <option value="template">Template</option>
-              </select>
-            </div>
-            <div>
-              <label style={labelStyle}>{isEdit ? "Linked Tour" : "Linked Tour(s)"} {isTemplate ? "" : "*"}</label>
-              {isEdit ? (
-                <select required={!isTemplate} disabled={isTemplate} style={{ ...inputStyle, opacity: isTemplate ? 0.5 : 1 }} value={tourIds[0] ?? ""} onChange={e => setTourIds(e.target.value ? [e.target.value] : [])}>
-                  <option value="">{tours.length === 0 ? "No tours available" : "No tour"}</option>
-                  {tours.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
-              ) : (
-                <div
-                  style={{
-                    ...inputStyle, padding: 6, opacity: isTemplate ? 0.5 : 1, pointerEvents: isTemplate ? "none" : "auto",
-                    maxHeight: 140, overflowY: "auto", display: "flex", flexDirection: "column", gap: 1,
-                  }}
-                >
-                  {tours.length === 0 && (
-                    <span style={{ fontSize: 12.5, color: "var(--gs-muted)", padding: "6px 6px" }}>No tours available</span>
-                  )}
-                  {tours.map(t => {
-                    const checked = tourIds.includes(t.id);
-                    return (
-                      <label
-                        key={t.id}
-                        style={{
-                          display: "flex", alignItems: "center", gap: 8, padding: "6px 6px", borderRadius: 4,
-                          fontSize: 13, color: "var(--foreground)", cursor: "pointer",
-                          background: checked ? "rgba(var(--gs-accent-rgb), 0.07)" : "transparent",
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => setTourIds(checked ? tourIds.filter(id => id !== t.id) : [...tourIds, t.id])}
-                        />
-                        {t.title}
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
-              {!isTemplate && (
-                <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4, margin: "4px 0 0 0" }}>
-                  {isEdit
-                    ? "Assigning a tour makes this visible to every group in that tour."
-                    : "Check multiple tours to create one linked copy per tour, each visible to every group in that tour."}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label style={labelStyle}>Duration (minutes) *</label>
-              <input required type="number" min={1} placeholder="Enter duration (minutes)" style={inputStyle} value={duration} onChange={e => setDuration(Number(e.target.value))} />
-            </div>
-            <div>
-              <label style={labelStyle}>Passing Score (%) *</label>
-              <input required type="number" min={0} max={100} placeholder="Enter passing marks" style={inputStyle} value={passing} onChange={e => setPassing(Number(e.target.value))} />
-            </div>
-            <div>
-              <label style={labelStyle}>Status</label>
-              <select style={inputStyle} value={status} onChange={e => setStatus(e.target.value as "draft" | "active" | "closed")}>
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="closed">Closed</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-</Card>
+        </CardContent>
+      </Card>
 
       {/* Questions */}
       <div className="space-y-3 mb-4">
         {questions.map((q, qIdx) => (
           <Card key={q.id}>
-<CardContent>
-            <div className="flex items-center justify-between mb-3">
-              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--gs-accent)", letterSpacing: "0.08em" }}>Q{qIdx + 1}</span>
-              {questions.length > 1 && (
-                <button type="button" onClick={() => removeQ(qIdx)} style={{ fontSize: 11, color: "var(--gs-danger-alt)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                  Remove
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="col-span-2">
-                  <label style={labelStyle}>Question * (min 5 characters)</label>
-                  <input required minLength={5} style={inputStyle} value={q.question} onChange={e => updateQ(qIdx, { question: e.target.value })} placeholder="Question text" />
-                </div>
-                <div>
-                  <label style={labelStyle}>Type</label>
-                  <select style={inputStyle} value={q.type} onChange={e => updateQ(qIdx, { type: e.target.value as QuestionType, correct_answer: "", options: ["", ""] })}>
-                    <option value="mcq">MCQ</option>
-                    <option value="multi_select">Multi Select</option>
-                    <option value="subjective">Subjective</option>
-                  </select>
-                </div>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-bold text-accent tracking-wider">Q{qIdx + 1}</span>
+                {questions.length > 1 && (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => removeQ(qIdx)} className="h-auto p-0 text-xs text-destructive hover:text-destructive">
+                    Remove
+                  </Button>
+                )}
               </div>
 
-              <div>
-                <label style={labelStyle}>Marks</label>
-                <input type="number" min={1} placeholder="Marks" style={{ ...inputStyle, width: 80 }} value={q.marks} onChange={e => updateQ(qIdx, { marks: Number(e.target.value) })} />
-              </div>
-
-              {q.type !== "subjective" && (
-                <div>
-                  <label style={labelStyle}>Options</label>
-                  <div className="space-y-2">
-                    {q.options.map((opt, oIdx) => (
-                      <div key={oIdx} className="flex gap-2 items-center">
-                        <input
-                          type={q.type === "multi_select" ? "checkbox" : "radio"}
-                          name={`correct-${q.id}`}
-                          checked={q.type === "multi_select"
-                            ? (Array.isArray(q.correct_answer) ? q.correct_answer : []).includes(opt) && opt !== ""
-                            : q.correct_answer === opt && opt !== ""}
-                          onChange={() => {
-                            if (q.type === "multi_select") {
-                              const curr = Array.isArray(q.correct_answer) ? q.correct_answer : [];
-                              const next = curr.includes(opt) ? curr.filter(a => a !== opt) : [...curr, opt];
-                              updateQ(qIdx, { correct_answer: next });
-                            } else {
-                              updateQ(qIdx, { correct_answer: opt });
-                            }
-                          }}
-                          style={{ flexShrink: 0 }}
-                        />
-                        <input
-                          style={{ ...inputStyle, flex: 1 }}
-                          value={opt}
-                          onChange={e => updateOption(qIdx, oIdx, e.target.value)}
-                          placeholder={`Option ${oIdx + 1}`}
-                        />
-                        {q.options.length > 2 && (
-                          <button type="button" onClick={() => removeOption(qIdx, oIdx)} style={{ fontSize: 11, color: "var(--gs-danger-alt)", background: "none", border: "none", cursor: "pointer", flexShrink: 0 }}>✕</button>
-                        )}
-                      </div>
-                    ))}
-                    <button type="button" onClick={() => addOption(qIdx)} style={{ fontSize: 12, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                      + Add option
-                    </button>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Question * (min 5 characters)</Label>
+                    <Input required minLength={5} value={q.question} onChange={e => updateQ(qIdx, { question: e.target.value })} placeholder="Question text" />
                   </div>
-                  <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 4 }}>
-                    {q.type === "multi_select" ? "Check all correct answers." : "Select correct answer."}
-                  </p>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Type</Label>
+                    <Select value={q.type} onValueChange={(val) => updateQ(qIdx, { type: val as QuestionType, correct_answer: "", options: ["", ""] })}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Question type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mcq">MCQ</SelectItem>
+                        <SelectItem value="multi_select">Multi Select</SelectItem>
+                        <SelectItem value="subjective">Subjective</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              )}
-            </div>
-          </CardContent>
-</Card>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Marks</Label>
+                  <Input type="number" min={1} placeholder="Marks" className="w-20" value={q.marks} onChange={e => updateQ(qIdx, { marks: Number(e.target.value) })} />
+                </div>
+
+                {q.type !== "subjective" && (
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Options</Label>
+                    <div className="space-y-2">
+                      {q.options.map((opt, oIdx) => (
+                        <div key={oIdx} className="flex gap-2 items-center">
+                          <input
+                            type={q.type === "multi_select" ? "checkbox" : "radio"}
+                            name={`correct-${q.id}`}
+                            checked={q.type === "multi_select"
+                              ? (Array.isArray(q.correct_answer) ? q.correct_answer : []).includes(opt) && opt !== ""
+                              : q.correct_answer === opt && opt !== ""}
+                            onChange={() => {
+                              if (q.type === "multi_select") {
+                                const curr = Array.isArray(q.correct_answer) ? q.correct_answer : [];
+                                const next = curr.includes(opt) ? curr.filter(a => a !== opt) : [...curr, opt];
+                                updateQ(qIdx, { correct_answer: next });
+                              } else {
+                                updateQ(qIdx, { correct_answer: opt });
+                              }
+                            }}
+                            className="shrink-0"
+                          />
+                          <Input
+                            className="flex-1"
+                            value={opt}
+                            onChange={e => updateOption(qIdx, oIdx, e.target.value)}
+                            placeholder={`Option ${oIdx + 1}`}
+                          />
+                          {q.options.length > 2 && (
+                            <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(qIdx, oIdx)} className="h-8 w-8 text-destructive hover:text-destructive shrink-0">✕</Button>
+                          )}
+                        </div>
+                      ))}
+                      <Button type="button" variant="link" size="sm" onClick={() => addOption(qIdx)} className="h-auto p-0 text-xs text-accent">
+                        + Add option
+                      </Button>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      {q.type === "multi_select" ? "Check all correct answers." : "Select correct answer."}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      <button type="button" onClick={addQ} style={{ fontSize: 13, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.07)", border: "1.5px dashed rgba(var(--gs-accent-rgb), 0.3)", borderRadius: 8, padding: "10px 20px", cursor: "pointer", width: "100%", marginBottom: 16 }}>
+      <Button type="button" variant="outline" onClick={addQ} className="w-full mb-4 border-dashed border-accent text-accent hover:bg-accent/5">
         + Add Question
-      </button>
+      </Button>
 
-      {error && <p style={{ fontSize: 13, color: "var(--gs-danger-alt)", marginBottom: 12 }}>{error}</p>}
+      {error && <p className="text-xs text-destructive mb-3">{error}</p>}
 
       <div className="flex gap-3 justify-end">
         <Button type="button" variant="outline" onClick={() => router.back()}>

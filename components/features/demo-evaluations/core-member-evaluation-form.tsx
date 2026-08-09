@@ -7,13 +7,12 @@ import { SCORE_FIELDS, StarRating } from "@/components/features/demo-evaluations
 import { createDemoEvaluationForVolunteer, updateDemoEvaluationForVolunteer } from "@/actions/core-member";
 import type { DemoEvaluation } from "@/types";
 
-type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
+type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
 
 // Same fields/rating UI as the admin EvaluationForm, but the volunteer is fixed (no
 // combobox — a core member is only ever evaluating one specific volunteer in their group)
@@ -24,37 +23,51 @@ export function CoreMemberEvaluationForm({
   groupId: string;
   volunteerId: string;
   tourId?: string | null;
-  evaluation?: DemoEvaluation;
+  evaluation?: DemoEvaluation | null;
   onDone: () => void;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [intent, setIntent] = useState<"submitted" | "draft">("submitted");
   const [scores, setScores] = useState<Record<ScoreKey, number>>(
     Object.fromEntries(SCORE_FIELDS.map(f => [f.key, evaluation?.scores?.[f.key] ?? 0])) as Record<ScoreKey, number>
   );
-  const [intent, setIntent] = useState<"draft" | "submitted">("submitted");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (intent === "submitted") {
+      const missing = SCORE_FIELDS.filter(f => !scores[f.key]);
+      if (missing.length > 0) {
+        const msg = `Rate all parameters before submitting (missing: ${missing.map(m => m.label).join(", ")})`;
+        setError(msg);
+        toast.error(msg);
+        return;
+      }
+    }
+
     setLoading(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
+    const remarks = (fd.get("remarks") as string) || undefined;
+    const payload = {
+      volunteer_id: volunteerId,
+      tour_id: tourId || undefined,
+      scores,
+      remarks,
+      status: intent,
+    };
+
     try {
-      const payload = {
-        volunteer_id: volunteerId,
-        tour_id: tourId ?? undefined,
-        scores,
-        remarks: (fd.get("remarks") as string) || undefined,
-        status: intent,
-      };
       if (evaluation) {
         await updateDemoEvaluationForVolunteer(groupId, evaluation.id, payload);
       } else {
         await createDemoEvaluationForVolunteer(groupId, payload);
       }
-      router.refresh();
+      toast.success(intent === "submitted" ? "Evaluation submitted" : "Draft saved");
       onDone();
+      router.refresh();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to save evaluation";
       setError(message);
@@ -65,44 +78,45 @@ export function CoreMemberEvaluationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 10, padding: 20, marginTop: 12 }}>
+    <form onSubmit={handleSubmit}>
       {error && (
-        <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "var(--gs-danger)" }}>
-          {error}
-        </div>
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
       <div className="space-y-3">
         {SCORE_FIELDS.map(f => (
           <div key={f.key} className="flex items-center justify-between gap-4">
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)" }}>{f.label}</label>
+            <Label className="text-xs font-semibold text-muted-foreground">{f.label}</Label>
             <StarRating value={scores[f.key]} onChange={v => setScores(s => ({ ...s, [f.key]: v }))} />
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 14 }}>
-        <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Remarks</label>
-        <textarea name="remarks" rows={3} defaultValue={evaluation?.remarks ?? ""} placeholder="Observations, feedback..." style={{ ...inputStyle, resize: "vertical" }} />
+      <div className="space-y-1.5 mt-4">
+        <Label className="text-xs font-semibold text-muted-foreground">Remarks</Label>
+        <Textarea name="remarks" rows={3} defaultValue={evaluation?.remarks ?? ""} placeholder="Observations, feedback..." />
       </div>
-      <div className="flex gap-3 mt-4">
-        <button
+      <div className="flex gap-3 mt-5">
+        <Button
           type="submit"
           disabled={loading}
           onClick={() => setIntent("submitted")}
-          style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
         >
           {loading && intent === "submitted" ? "Submitting..." : "Submit Evaluation"}
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={loading}
+          variant="outline"
           onClick={() => setIntent("draft")}
-          style={{ background: "white", color: "var(--gs-accent)", fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--gs-accent)", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+          className="border-emerald-600 text-emerald-600 hover:bg-emerald-600/10 font-semibold"
         >
           {loading && intent === "draft" ? "Saving..." : "Save Draft"}
-        </button>
-        <button type="button" onClick={onDone} style={{ background: "transparent", color: "var(--gs-text-secondary)", fontSize: 13, fontWeight: 500, padding: "9px 20px", borderRadius: 6, border: "1.5px solid var(--border)", cursor: "pointer" }}>
+        </Button>
+        <Button type="button" variant="outline" onClick={onDone}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

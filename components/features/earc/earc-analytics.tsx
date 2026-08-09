@@ -9,6 +9,7 @@ import {
   CHART_SPECTRUM, tooltipStyle, legendStyle, gridProps, axisTick, axisTickMono,
   fmt, count, sortBy, SectionEyebrow, ChartCard, SingleBar, PieCard, LedgerStat, Ledger, bandSelectStyle,
 } from "@/components/features/analytics/chart-kit";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const MODULE_ORDER = ["Teacher Training", "Facilitator"];
 
@@ -221,30 +222,60 @@ export function EarcAnalytics({
           </p>
 
           <div className="flex flex-wrap gap-2 items-center">
-            <select value={academicYear} onChange={e => setAcademicYear(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>Academic years</option>
-              {years.map(y => <option key={y} value={y} style={{ color: "var(--gs-text)" }}>{y}</option>)}
-            </select>
-            <select value={project} onChange={e => setProject(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>Projects</option>
-              {projects.map(p => <option key={p} value={p} style={{ color: "var(--gs-text)" }}>{p}</option>)}
-            </select>
-            <select value={moduleFilter} onChange={e => setModuleFilter(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>Modules</option>
-              {modules.map(m => <option key={m} value={m} style={{ color: "var(--gs-text)" }}>{m}</option>)}
-            </select>
-            <select value={state} onChange={e => onStateChange(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>States</option>
-              {states.map(s => <option key={s} value={s} style={{ color: "var(--gs-text)" }}>{s}</option>)}
-            </select>
-            <select value={district} onChange={e => onDistrictChange(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>Districts</option>
-              {districts.map(d => <option key={d} value={d} style={{ color: "var(--gs-text)" }}>{d}</option>)}
-            </select>
-            <select value={block} onChange={e => setBlock(e.target.value)} style={bandSelectStyle}>
-              <option value="" style={{ color: "var(--gs-text)" }}>Blocks</option>
-              {blocks.map(b => <option key={b} value={b} style={{ color: "var(--gs-text)" }}>{b}</option>)}
-            </select>
+            <Select value={academicYear} onValueChange={v => setAcademicYear(v ?? "")}>
+              <SelectTrigger className="w-auto min-w-[130px] h-8 text-xs bg-background/80">
+                <SelectValue placeholder="Academic years" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Academic years</SelectItem>
+                {years.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={project} onValueChange={v => setProject(v ?? "")}>
+              <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
+                <SelectValue placeholder="Projects" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Projects</SelectItem>
+                {projects.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={moduleFilter} onValueChange={v => setModuleFilter(v ?? "")}>
+              <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
+                <SelectValue placeholder="Modules" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Modules</SelectItem>
+                {modules.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={state} onValueChange={v => onStateChange(v ?? "")}>
+              <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
+                <SelectValue placeholder="States" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">States</SelectItem>
+                {states.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={district} onValueChange={v => onDistrictChange(v ?? "")}>
+              <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
+                <SelectValue placeholder="Districts" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Districts</SelectItem>
+                {districts.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={block} onValueChange={v => setBlock(v ?? "")}>
+              <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
+                <SelectValue placeholder="Blocks" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Blocks</SelectItem>
+                {blocks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>

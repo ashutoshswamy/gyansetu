@@ -6,6 +6,8 @@ import { Lock } from "lucide-react";
 import { createVolunteerObservation } from "@/actions/core-member";
 import type { VolunteerObservation } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 export function VolunteerObservations({
   volunteerId, groupId, observations,
@@ -37,30 +39,27 @@ export function VolunteerObservations({
 
   return (
     <div>
-      <div className="flex items-center gap-1.5 mb-2" style={{ fontSize: 11, color: "var(--gs-muted)" }}>
+      <div className="flex items-center gap-1.5 mb-2 text-xs text-muted-foreground">
         <Lock size={11} /> Private — visible only to admins and core members
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-2 flex-wrap mb-3">
-        <textarea
+        <Textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="Add an observation about this volunteer..."
           rows={2}
-          style={{ flex: 1, minWidth: 220, fontSize: 13, padding: "9px 12px", borderRadius: 6, border: "1px solid var(--border)", color: "var(--foreground)", resize: "vertical" }}
+          className="flex-1 min-w-[220px]"
         />
-        <button
+        <Button
           type="submit"
           disabled={loading || !note.trim()}
-          style={{
-            fontSize: 12, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", alignSelf: "flex-start",
-            background: loading || !note.trim() ? "#C8C4BC" : "var(--gs-accent)", color: "white", cursor: loading ? "not-allowed" : "pointer",
-          }}
+          className="self-start text-xs font-semibold"
         >
           {loading ? "Adding..." : "Add"}
-        </button>
+        </Button>
       </form>
-      {error && <p style={{ fontSize: 12, color: "var(--gs-danger)", marginBottom: 8 }}>{error}</p>}
+      {error && <p className="text-xs text-destructive mb-2">{error}</p>}
 
       {observations.length === 0 ? (
         <Card>

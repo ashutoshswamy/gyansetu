@@ -601,9 +601,9 @@ export function VolunteerProfileForm({ variant }: Props) {
           </div>
 
           {activeTab === "declaration" && (
-            <button type="submit" disabled={saving} style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+            <Button type="submit" disabled={saving} className="mt-5 font-semibold text-white bg-emerald-600 hover:bg-emerald-700">
               {saving ? "Saving..." : "Save Profile"}
-            </button>
+            </Button>
           )}
         </form>
 </CardContent>
@@ -625,15 +625,17 @@ function F({ label, hint, required, children }: { label: string; hint?: string; 
   );
 }
 
+import { Button } from "@/components/ui/button";
+
 function NextSectionButton({ accent, onClick }: { accent: string; onClick: () => void }) {
   return (
-    <button
+    <Button
       type="button"
       onClick={onClick}
-      style={{ marginTop: 20, background: accent, color: "white", fontSize: 13, fontWeight: 600, padding: "10px 24px", borderRadius: 6, border: "none", cursor: "pointer" }}
+      className="mt-5 font-semibold text-white bg-emerald-600 hover:bg-emerald-700"
     >
       Next Section
-    </button>
+    </Button>
   );
 }
 

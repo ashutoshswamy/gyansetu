@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Navigation, MapPin } from "lucide-react";
 import { startSharingLocation, stopSharingLocation, updateMyLocation, getMySharingStatus } from "@/actions/locations";
-import { MapPin, Navigation } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const MIN_UPDATE_INTERVAL_MS = 15_000;
 
@@ -137,20 +138,21 @@ export default function VolunteerLocationPage() {
           {loading ? (
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Loading...</p>
           ) : isSharing ? (
-            <button
+            <Button
+              variant="destructive"
               onClick={handleStop}
-              style={{ background: "var(--gs-danger)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 20px", borderRadius: 6, border: "none", cursor: "pointer" }}
+              className="font-semibold"
             >
               Stop Sharing
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               onClick={handleStart}
               disabled={starting}
-              style={{ background: "var(--gs-success)", color: "white", fontSize: 13, fontWeight: 600, padding: "10px 20px", borderRadius: 6, border: "none", cursor: starting ? "not-allowed" : "pointer", opacity: starting ? 0.7 : 1 }}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
             >
               {starting ? "Starting..." : "Start Sharing"}
-            </button>
+            </Button>
           )}
         </CardContent>
 </Card>

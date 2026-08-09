@@ -269,31 +269,34 @@ export function TestAttemptsViewer({
                     <span style={labelStyle}>Score</span>
                     {editingScore ? (
                       <div className="flex items-center gap-1.5 mt-1">
-                        <input
+                        <Input
                           type="number"
                           min={0}
                           max={100}
-                          placeholder="Enter score"
+                          placeholder="Score"
                           value={scoreDraft}
                           onChange={(e) => setScoreDraft(e.target.value)}
                           disabled={savingScore}
-                          style={{ width: 64, fontSize: 13, padding: "4px 6px", borderRadius: 4, border: "1px solid var(--border)" }}
+                          className="w-16 h-7 text-xs px-2"
                         />
                         <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>%</span>
-                        <button
+                        <Button
+                          size="sm"
                           onClick={handleSaveScore}
                           disabled={savingScore}
-                          style={{ fontSize: 11, fontWeight: 600, padding: "4px 8px", borderRadius: 4, border: "none", background: "var(--gs-accent)", color: "white", cursor: savingScore ? "not-allowed" : "pointer" }}
+                          className="h-7 text-xs px-2"
                         >
                           {savingScore ? "..." : "Save"}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => setEditingScore(false)}
                           disabled={savingScore}
-                          style={{ fontSize: 11, padding: "4px 8px", borderRadius: 4, border: "1px solid var(--border)", background: "white", color: "var(--gs-text-secondary)", cursor: "pointer" }}
+                          className="h-7 text-xs px-2"
                         >
                           Cancel
-                        </button>
+                        </Button>
                       </div>
                     ) : (
                       <p className="mt-1 flex items-center gap-2" style={{
@@ -302,12 +305,14 @@ export function TestAttemptsViewer({
                         margin: "4px 0 0 0"
                       }}>
                         {selectedAttempt.score !== undefined && selectedAttempt.score !== null ? selectedAttempt.score.toFixed(1) + "%" : "N/A"}
-                        <button
+                        <Button
+                          variant="link"
+                          size="sm"
                           onClick={() => setEditingScore(true)}
-                          style={{ fontSize: 11, fontWeight: 600, color: "var(--gs-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                          className="h-auto p-0 text-xs font-semibold text-accent hover:text-accent/90"
                         >
                           Edit
-                        </button>
+                        </Button>
                       </p>
                     )}
                   </div>
@@ -379,14 +384,14 @@ export function TestAttemptsViewer({
                               </span>
                             ) : (
                               <>
-                                <input
+                                <Input
                                   type="number"
                                   min={0}
                                   max={q.marks}
-                                  placeholder="Enter marks"
+                                  placeholder="Marks"
                                   value={marksDraft[q.id] ?? ""}
                                   onChange={(e) => setMarksDraft((prev) => ({ ...prev, [q.id]: e.target.value }))}
-                                  style={{ width: 60, fontSize: 13, padding: "4px 8px", borderRadius: 4, border: "1px solid var(--border)" }}
+                                  className="w-16 h-7 text-xs px-2 inline-block"
                                 />
                                 <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>/ {q.marks}</span>
                               </>
@@ -413,18 +418,15 @@ export function TestAttemptsViewer({
                 {questions.some((q) => q.type === "subjective") &&
                   selectedAttempt.status !== "approved" &&
                   selectedAttempt.status !== "rejected" && (
-                    <div className="flex justify-end pt-5 mt-5" style={{ borderTop: "1px solid var(--border)" }}>
-                      <button
+                    <div className="flex justify-end pt-5 mt-5 border-t border-border">
+                      <Button
                         onClick={handleSaveEvaluation}
                         disabled={savingEval}
-                        style={{
-                          fontSize: 12, fontWeight: 600, padding: "9px 16px", borderRadius: 6,
-                          background: savingEval ? "#C8C4BC" : "var(--gs-accent)", color: "white", border: "none",
-                          cursor: savingEval ? "not-allowed" : "pointer",
-                        }}
+                        size="sm"
+                        className="font-semibold"
                       >
                         {savingEval ? "Saving..." : "Save Evaluation"}
-                      </button>
+                      </Button>
                     </div>
                   )}
               </div>

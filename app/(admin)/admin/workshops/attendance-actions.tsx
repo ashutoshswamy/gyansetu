@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setWorkshopAttendance, decideMakeup } from "@/actions/workshops";
+import { Button } from "@/components/ui/button";
 
 export function MarkAttendanceButtons({ workshopId, volunteerId, pendingApproval }: { workshopId: string; volunteerId: string; pendingApproval?: boolean }) {
   const router = useRouter();
@@ -22,29 +23,23 @@ export function MarkAttendanceButtons({ workshopId, volunteerId, pendingApproval
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
+        size="sm"
         onClick={() => mark("present")}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: loading === "present" ? "#C8C4BC" : "var(--gs-success)",
-          color: "white", border: "none", cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
       >
         {loading === "present" ? "..." : pendingApproval ? "Approve" : "Present"}
-      </button>
-      <button
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
         onClick={() => mark("absent")}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent", color: "var(--gs-danger-alt)",
-          border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.3)",
-          cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        className="text-destructive border-destructive/30 hover:bg-destructive/10 font-semibold"
       >
         {loading === "absent" ? "..." : pendingApproval ? "Reject" : "Absent"}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -67,29 +62,23 @@ export function MakeupDecisionButtons({ workshopId, volunteerId }: { workshopId:
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
+        size="sm"
         onClick={() => decide("allowed")}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: loading === "allowed" ? "#C8C4BC" : "var(--gs-success)",
-          color: "white", border: "none", cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
       >
         {loading === "allowed" ? "..." : "Allow Makeup"}
-      </button>
-      <button
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
         onClick={() => decide("not_allowed")}
         disabled={loading !== null}
-        style={{
-          fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center",
-          background: "transparent", color: "var(--gs-danger-alt)",
-          border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.3)",
-          cursor: loading !== null ? "not-allowed" : "pointer",
-        }}
+        className="text-destructive border-destructive/30 hover:bg-destructive/10 font-semibold"
       >
         {loading === "not_allowed" ? "..." : "Deny Makeup"}
-      </button>
+      </Button>
     </div>
   );
 }

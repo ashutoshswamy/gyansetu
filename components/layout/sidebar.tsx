@@ -587,14 +587,15 @@ export function Sidebar({ role }: { role: SidebarRole }) {
                 </p>
                 <h2 style={{ fontSize: 17, fontWeight: 700, color: "#19140F", margin: "2px 0 0" }}>What each section does</h2>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setHelpOpen(false)}
                 aria-label="Close help"
-                className="flex items-center justify-center rounded flex-shrink-0"
-                style={{ width: 30, height: 30, background: "none", border: "1.5px solid #E4DFD1", cursor: "pointer" }}
+                className="w-7 h-7 flex-shrink-0 border border-[#E4DFD1] rounded"
               >
-                <X className="w-4 h-4" style={{ color: "#5A5247" }} />
-              </button>
+                <X className="w-4 h-4 text-[#5A5247]" />
+              </Button>
             </div>
 
             <div className="overflow-y-auto px-5 py-4 space-y-5">
