@@ -64,7 +64,9 @@ export function LocationUpdateForm({ groupId }: { groupId: string }) {
             <Label htmlFor="status_type" className="text-xs mb-1.5">Status Type</Label>
             <Select name="status_type">
               <SelectTrigger id="status_type">
-                <SelectValue placeholder="Select..." />
+                <SelectValue placeholder="Select...">
+                  {(value: string | null) => STATUS_OPTIONS.find(o => o.value === value)?.label ?? "Select..."}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {STATUS_OPTIONS.map(o => (
