@@ -3,11 +3,13 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { DynamicForm } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 function FormCard({ form, status }: { form: DynamicForm; status: "submitted" | "draft" }) {
   const isSubmitted = status === "submitted";
   return (
-    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+    <Card>
+<CardContent>
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{form.title}</h3>
@@ -30,7 +32,8 @@ function FormCard({ form, status }: { form: DynamicForm; status: "submitted" | "
           {isSubmitted ? "Open Form" : "Fill Form"}
         </Button>
       </Link>
-    </div>
+    </CardContent>
+</Card>
   );
 }
 

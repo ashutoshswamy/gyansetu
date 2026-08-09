@@ -2,6 +2,7 @@ import Link from "next/link";
 import { IdCard } from "lucide-react";
 import { getAllIdCards } from "@/actions/id-cards";
 import { DeleteIdCardButton } from "./delete-button";
+import { Badge } from "@/components/ui/badge";
 
 export default async function AdminIdCardsPage() {
   const cards = await getAllIdCards();
@@ -41,9 +42,9 @@ export default async function AdminIdCardsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{card.volunteer?.name ?? "Unknown"}</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#4A55BE", background: "rgba(74,85,190,0.08)" }}>
+                  <Badge style={{color: "#4A55BE", background: "rgba(74, 85, 190, 0.08)"}}>
                     {card.card_number}
-                  </span>
+                  </Badge>
                 </div>
                 <div style={{ fontSize: 12, color: "#9B9188" }}>
                   {card.volunteer?.email}

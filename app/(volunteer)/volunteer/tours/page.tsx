@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { Plane, MapPin, Calendar, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 type AssignmentRow = {
   id: string;
@@ -56,11 +57,13 @@ export default async function VolunteerToursPage() {
         </div>
 
         {(assignments ?? []).length === 0 ? (
-          <div className="py-20 text-center rounded-xl" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card>
+<CardContent>
             <Plane className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No tour assignments yet.</p>
             <p style={{ fontSize: 12, color: "#C8C4BC", marginTop: 4 }}>An admin will assign you to tours when available.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-8">
             {active.length > 0 && (
@@ -87,7 +90,8 @@ function Section({ title, assignments }: { title: string; assignments: Assignmen
         {assignments.map((a: AssignmentRow) => {
           const s = statusStyles[a.tours?.status ?? "draft"] ?? statusStyles.draft;
           return (
-            <div key={a.id} className="rounded-xl p-5" style={{ background: "white", border: "1px solid var(--border)" }}>
+            <Card key={a.id}>
+<CardContent>
               <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
                 <div className="min-w-0">
                   <p style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", marginBottom: 2 }}>{a.tours?.title}</p>
@@ -115,7 +119,8 @@ function Section({ title, assignments }: { title: string; assignments: Assignmen
               {a.tours?.description && (
                 <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginTop: 12, lineHeight: 1.6 }}>{a.tours.description}</p>
               )}
-            </div>
+            </CardContent>
+</Card>
           );
         })}
       </div>

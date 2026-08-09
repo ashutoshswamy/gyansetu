@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Home } from "lucide-react";
 import { getAllLocalHosts } from "@/actions/local-hosts";
 import { DeleteHostButton } from "./delete-button";
+import { Badge } from "@/components/ui/badge";
 
 export default async function AdminLocalHostsPage() {
   const hosts = await getAllLocalHosts();
@@ -35,14 +36,14 @@ export default async function AdminLocalHostsPage() {
                 <div className="flex items-center gap-2 mb-0.5">
                   <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{h.name}</span>
                   {h.group?.tours?.[0]?.title && (
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#9B6B1F", background: "rgba(155,107,31,0.08)" }}>
+                    <Badge style={{color: "#9B6B1F", background: "rgba(155, 107, 31, 0.08)"}}>
                       {h.group.tours[0].title}
-                    </span>
+                    </Badge>
                   )}
                   {h.group && (
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "#4A55BE", background: "rgba(74,85,190,0.08)" }}>
+                    <Badge style={{color: "#4A55BE", background: "rgba(74, 85, 190, 0.08)"}}>
                       {h.group.name}
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 <div style={{ fontSize: 12, color: "#9B9188" }}>

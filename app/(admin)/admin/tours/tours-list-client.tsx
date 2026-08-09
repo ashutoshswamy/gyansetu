@@ -6,6 +6,8 @@ import type { Tour } from "@/types";
 import { MapPin, Calendar, Users } from "lucide-react";
 import { DeleteTourButton } from "@/components/features/tours/delete-tour-button";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const statusStyles: Record<Tour["status"], { color: string; background: string }> = {
   draft:     { color: "var(--gs-muted)", background: "rgba(90,82,71,0.08)" },
@@ -50,21 +52,18 @@ export function ToursListClient({ tours }: { tours: Tour[] }) {
         {filtered.map((tour) => {
           const s = statusStyles[tour.status];
           return (
-            <div
-              key={tour.id}
-              className="flex items-center justify-between"
-              style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px" }}
-            >
+            <Card key={tour.id}>
+<CardContent>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1">
                   <h3 style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }} className="truncate">{tour.title}</h3>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.background, flexShrink: 0, textTransform: "capitalize" }}>
+                  <Badge style={{color: s.color, background: s.background, flexShrink: 0, textTransform: "capitalize"}}>
                     {tour.status}
-                  </span>
+                  </Badge>
                   {!tour.participant_visible && (
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-warning-alt)", background: "rgba(var(--gs-warning-alt-rgb), 0.08)", flexShrink: 0 }}>
+                    <Badge style={{color: "var(--gs-warning-alt)", background: "rgba(var(--gs-warning-alt-rgb), 0.08)", flexShrink: 0}}>
                       Admin only
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 <div className="flex gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
@@ -82,7 +81,8 @@ export function ToursListClient({ tours }: { tours: Tour[] }) {
                 </Link>
                 <DeleteTourButton tourId={tour.id} />
               </div>
-            </div>
+            </CardContent>
+</Card>
           );
         })}
       </div>

@@ -6,6 +6,7 @@ import { createDailyLog, getMyDailyLogs } from "@/actions/daily-logs";
 import { getMyToursForSelect } from "@/actions/tours";
 import { BookOpen, Plus, X, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 type DailyLogRow = DailyLog & { tours?: { id: string; title: string } | null };
 
@@ -150,15 +151,18 @@ export default function VolunteerDailyLogPage() {
         {loading ? (
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : logs.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <BookOpen className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No daily log entries yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Start logging your field activities during the visit.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-4">
             {logs.map((log: DailyLogRow) => (
-              <div key={log.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "18px 22px" }}>
+              <Card key={log.id}>
+<CardContent>
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-success)", margin: 0 }}>{new Date(log.log_date).toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
@@ -181,7 +185,8 @@ export default function VolunteerDailyLogPage() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </CardContent>
+</Card>
             ))}
           </div>
         )}

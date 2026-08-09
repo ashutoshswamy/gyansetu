@@ -2,6 +2,7 @@ import { getAllKitItems, getAllKitAssignments } from "@/actions/kits";
 import { KitMaterialsTable } from "@/components/features/kits/kit-materials-table";
 import { KitAssignmentActions } from "./kit-assignment-actions";
 import { NewAssignmentForm } from "./new-assignment-form";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function AdminKitsPage() {
   const [items, assignments] = await Promise.all([getAllKitItems(), getAllKitAssignments()]);
@@ -30,13 +31,15 @@ export default async function AdminKitsPage() {
               <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "24px 0" }}>No kit assignments yet.</p>
             )}
             {assignments.map((a: (typeof assignments)[number]) => (
-              <div key={a.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+              <Card key={a.id}>
+<CardContent>
                 <div className="flex-1 min-w-0">
                   <div style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }}>{a.group?.name ?? "Unknown group"}</div>
                   <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>{a.school_count} schools</div>
                 </div>
                 <KitAssignmentActions groupId={a.group_id} schoolCount={a.school_count} packed={a.packed} distributed={a.distributed} />
-              </div>
+              </CardContent>
+</Card>
             ))}
           </div>
         </div>

@@ -4,6 +4,7 @@ import { getAllSchoolReports } from "@/actions/school-reports";
 import { School, LayoutDashboard } from "lucide-react";
 import { type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
 import { SchoolReportsSearch } from "@/components/features/school-reports/school-reports-search";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface GroupMemberRow {
   user_id: string;
@@ -102,10 +103,12 @@ export default async function AdminSchoolReportsPage() {
         </div>
 
         {groups.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No groups yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <SchoolReportsSearch byTour={byTour} />
         )}

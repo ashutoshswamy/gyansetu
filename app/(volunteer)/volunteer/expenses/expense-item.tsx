@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExpenseForm } from "./expense-form";
 import type { Expense } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 const categoryLabels: Record<string, string> = {
   travel: "Travel & Transportation",
@@ -46,16 +47,17 @@ export function ExpenseItem({ expense }: { expense: Expense & { group?: { id: st
   }
 
   return (
-    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px" }}>
+    <Card>
+<CardContent>
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: cat.color, background: cat.bg }}>
+            <Badge style={{color: cat.color, background: cat.bg}}>
               {categoryLabels[expense.category] ?? expense.category}
-            </span>
-            <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: st.color, background: st.bg, textTransform: "capitalize" }}>
+            </Badge>
+            <Badge style={{color: st.color, background: st.bg, textTransform: "capitalize"}}>
               {statusLabels[expense.status] ?? expense.status}
-            </span>
+            </Badge>
           </div>
           <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 4px" }}>
             {expense.group?.name ?? "No group"} · {new Date(expense.expense_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
@@ -89,6 +91,7 @@ export function ExpenseItem({ expense }: { expense: Expense & { group?: { id: st
         </div>
         <p style={{ fontSize: 17, fontWeight: 700, color: "var(--foreground)", margin: 0, flexShrink: 0 }}>₹{Number(expense.amount).toLocaleString("en-IN")}</p>
       </div>
-    </div>
+    </CardContent>
+</Card>
   );
 }

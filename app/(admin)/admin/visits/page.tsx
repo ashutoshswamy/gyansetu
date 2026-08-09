@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { deleteVisit } from "@/actions/visits";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type Visit = {
   id: string;
@@ -175,18 +176,9 @@ export default async function AdminVisitsPage({
                     <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }} className="truncate">
                       {visit.title}
                     </h3>
-                    <span style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      padding: "2px 8px",
-                      borderRadius: 4,
-                      color: s.color,
-                      background: s.bg,
-                      textTransform: "capitalize",
-                      flexShrink: 0,
-                    }}>
+                    <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize", flexShrink: 0}}>
                       {visit.status}
-                    </span>
+                    </Badge>
                   </div>
                   <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--gs-muted)", flexWrap: "wrap" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 4 }}>

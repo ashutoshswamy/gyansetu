@@ -3,6 +3,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { getTravelTicketForMyGroup, getLocationUpdatesForGroup } from "@/actions/travel";
 import { Train, MapPin } from "lucide-react";
 import { LocationUpdateForm } from "./location-update-form";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   pending:   { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
@@ -48,11 +50,13 @@ export default async function VolunteerTravelPage() {
         </div>
 
         {!group ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <Train className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", marginBottom: 4 }}>Not assigned to any group yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>An admin will assign you to a tour group.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <>
             <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Travel Tickets</h2>
@@ -63,16 +67,17 @@ export default async function VolunteerTravelPage() {
               {tickets.map((t) => {
                 const s = statusColors[t.confirmation_status] ?? statusColors.pending;
                 return (
-                  <div key={t.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px" }}>
+                  <Card key={t.id}>
+<CardContent>
                     <div className="flex items-center gap-2 mb-1">
                       <Train size={15} style={{ color: "var(--gs-accent)" }} />
-                      <span style={{ fontSize: 13, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+                      <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                         {t.confirmation_status}
-                      </span>
+                      </Badge>
                       {t.itinerary_approved && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>
+                        <Badge style={{color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)"}}>
                           Itinerary Approved
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     <p style={{ fontSize: 14, color: "var(--foreground)", margin: "6px 0 2px" }}>
@@ -93,7 +98,8 @@ export default async function VolunteerTravelPage() {
                         View ticket file
                       </a>
                     )}
-                  </div>
+                  </CardContent>
+</Card>
                 );
               })}
             </div>
@@ -106,14 +112,15 @@ export default async function VolunteerTravelPage() {
                 <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No location updates posted yet.</p>
               )}
               {updates.map((u) => (
-                <div key={u.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "12px 16px", display: "flex", gap: 12 }}>
+                <Card key={u.id}>
+<CardContent>
                   <MapPin size={16} style={{ color: "var(--gs-accent)", flexShrink: 0, marginTop: 2 }} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       {u.status_type && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
+                        <Badge style={{color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)"}}>
                           {statusTypeLabels[u.status_type] ?? u.status_type}
-                        </span>
+                        </Badge>
                       )}
                       <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{new Date(u.created_at).toLocaleString()}</span>
                     </div>
@@ -123,7 +130,8 @@ export default async function VolunteerTravelPage() {
                     )}
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "2px 0 0" }}>Posted by {u.poster?.name ?? "Unknown"}</p>
                   </div>
-                </div>
+                </CardContent>
+</Card>
               ))}
             </div>
           </>

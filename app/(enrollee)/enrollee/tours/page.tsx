@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Tour } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default async function StudentToursPage() {
   const { userId } = await auth();
@@ -37,10 +39,11 @@ export default async function StudentToursPage() {
             </p>
           )}
           {(tours ?? [] as Tour[]).map((tour) => (
-            <div key={tour.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20 }}>
+            <Card key={tour.id}>
+<CardContent>
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
                 <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", margin: 0, lineHeight: 1.3 }} className="truncate pr-2">{tour.title}</h3>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)", flexShrink: 0 }}>Open</span>
+                <Badge style={{color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)", flexShrink: 0}}>Open</Badge>
               </div>
               <p style={{ fontSize: 13.5, color: "var(--gs-text-secondary)", marginBottom: 14, lineHeight: 1.5 }} className="line-clamp-2">{tour.description}</p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12, fontSize: 12, color: "var(--gs-muted)", marginBottom: 14 }}>
@@ -65,7 +68,8 @@ export default async function StudentToursPage() {
                   </Button>
                 </Link>
               )}
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       </div>

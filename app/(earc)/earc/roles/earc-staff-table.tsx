@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { EarcRoleToggle } from "./earc-role-toggle";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface EarcCandidate {
   id: string;
@@ -36,9 +37,11 @@ export function EarcStaffTable({ users, currentUserId }: { users: EarcCandidate[
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <Card>
+<CardContent>
           <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No users match &ldquo;{query}&rdquo;.</p>
-        </div>
+        </CardContent>
+</Card>
       ) : (
         <Table className="rounded-xl overflow-hidden border border-border">
           <TableHeader>

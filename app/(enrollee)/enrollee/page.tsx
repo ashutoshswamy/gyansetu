@@ -4,6 +4,8 @@ import { StatCard } from "@/components/features/dashboard/stat-card";
 import Link from "next/link";
 import { Plane, ClipboardList, ArrowRight, CheckCircle, Clock } from "lucide-react";
 import type { TourApplication, Tour, EligibilityTest } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type ApplicationRow = TourApplication & {
   tours: Pick<Tour, "title" | "destination" | "start_date" | "end_date"> | null;
@@ -109,7 +111,8 @@ export default async function EnrollmentDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* My Applications */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>My Applications</h2>
               <Link href="/enrollee/tours">
@@ -156,10 +159,12 @@ export default async function EnrollmentDashboard() {
                 })}
               </div>
             )}
-          </div>
+          </CardContent>
+</Card>
 
           {/* Available Tests */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Eligibility Tests</h2>
               <Link href="/enrollee/tests">
@@ -194,21 +199,19 @@ export default async function EnrollmentDashboard() {
                       </p>
                     </div>
                     <Link href={`/enrollee/tests/${test.id}`}>
-                      <button
-                        style={{ background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer", flexShrink: 0, marginLeft: 12 }}
-                      >
-                        Take Test
-                      </button>
+                      <Button>Take Test</Button>
                     </Link>
                   </div>
                 ))}
               </div>
             )}
-          </div>
+          </CardContent>
+</Card>
         </div>
 
         {/* Open Tours */}
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+        <Card>
+<CardContent>
           <div className="flex items-center justify-between mb-5">
             <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Upcoming Open Tours</h2>
             <Link href="/enrollee/tours">
@@ -227,10 +230,8 @@ export default async function EnrollmentDashboard() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {unappliedTours.map((tour: OpenTourRow) => (
-                <div
-                  key={tour.id}
-                  style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: 16 }}
-                >
+                <Card key={tour.id}>
+<CardContent>
                   <p className="font-medium text-sm mb-1" style={{ color: "var(--foreground)" }}>{tour.title}</p>
                   <p className="text-xs mb-3" style={{ color: "var(--gs-muted)" }}>
                     {tour.destination} · {new Date(tour.start_date).toLocaleDateString()}
@@ -242,11 +243,13 @@ export default async function EnrollmentDashboard() {
                       Apply Now
                     </button>
                   </Link>
-                </div>
+                </CardContent>
+</Card>
               ))}
             </div>
           )}
-        </div>
+        </CardContent>
+</Card>
       </div>
     </div>
   );

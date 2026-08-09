@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { createVolunteerObservation } from "@/actions/core-member";
 import type { VolunteerObservation } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function VolunteerObservations({
   volunteerId, groupId, observations,
@@ -62,18 +63,22 @@ export function VolunteerObservations({
       {error && <p style={{ fontSize: 12, color: "var(--gs-danger)", marginBottom: 8 }}>{error}</p>}
 
       {observations.length === 0 ? (
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, textAlign: "center", padding: "20px" }}>
+        <Card>
+<CardContent>
           <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No observations yet.</p>
-        </div>
+        </CardContent>
+</Card>
       ) : (
         <div className="space-y-2">
           {observations.map((o) => (
-            <div key={o.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "12px 14px" }}>
+            <Card key={o.id}>
+<CardContent>
               <p style={{ fontSize: 13, color: "var(--foreground)", margin: "0 0 6px", whiteSpace: "pre-wrap" }}>{o.note}</p>
               <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
                 {o.author?.name ?? "Unknown"} · {new Date(o.created_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
               </p>
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       )}

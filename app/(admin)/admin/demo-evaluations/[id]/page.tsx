@@ -3,6 +3,7 @@ import { SCORE_FIELDS } from "@/components/features/demo-evaluations/evaluation-
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { DemoEvaluation } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 function scoreColor(total: number) {
   if (total >= 80) return "var(--gs-success)";
@@ -22,7 +23,8 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
           <ArrowLeft className="w-3.5 h-3.5" /> Demo Evaluations
         </Link>
 
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "22px 24px", marginBottom: 20 }}>
+        <Card>
+<CardContent>
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
           <div className="flex items-start justify-between flex-wrap gap-3">
             <div>
@@ -36,9 +38,11 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
               {evaluation.total_score} / 100
             </span>
           </div>
-        </div>
+        </CardContent>
+</Card>
 
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px", marginBottom: 20 }}>
+        <Card>
+<CardContent>
           <p style={{ fontSize: 12, fontWeight: 700, color: "var(--foreground)", margin: "0 0 12px" }}>Scores (0-10 each)</p>
           <div className="space-y-2">
             {SCORE_FIELDS.map((f) => {
@@ -51,13 +55,16 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
               );
             })}
           </div>
-        </div>
+        </CardContent>
+</Card>
 
         {evaluation.remarks && (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+          <Card>
+<CardContent>
             <p style={{ fontSize: 12, fontWeight: 700, color: "var(--foreground)", margin: "0 0 8px" }}>Remarks</p>
             <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: 0, whiteSpace: "pre-wrap" }}>{evaluation.remarks}</p>
-          </div>
+          </CardContent>
+</Card>
         )}
       </div>
     </div>

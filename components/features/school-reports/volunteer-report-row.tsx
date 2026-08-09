@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   draft:     { color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.10)" },
@@ -64,7 +66,8 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
   const [open, setOpen] = useState(false);
 
   return (
-    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
+    <Card>
+<CardContent>
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
@@ -79,9 +82,9 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
             {email && <div style={{ fontSize: 11, color: "var(--gs-muted)" }}>{email}</div>}
           </div>
         </div>
-        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: reports.length ? "var(--gs-success)" : "var(--gs-muted)", background: reports.length ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-muted-rgb), 0.1)" }}>
+        <Badge style={{color: reports.length ? "var(--gs-success)" : "var(--gs-muted)", background: reports.length ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-muted-rgb), 0.1)"}}>
           {reports.length === 0 ? "No reports" : `${reports.length} report${reports.length > 1 ? "s" : ""}`}
-        </span>
+        </Badge>
       </button>
 
       {open && reports.length > 0 && (
@@ -96,13 +99,13 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>{r.school_name}</span>
                       {r.school_type && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
+                        <Badge style={{color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)"}}>
                           {r.school_type}
-                        </span>
+                        </Badge>
                       )}
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+                      <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                         {r.status}
-                      </span>
+                      </Badge>
                     </div>
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                       {[r.village_town, r.taluka_tehsil, r.district, r.state].filter(Boolean).join(", ")}
@@ -179,6 +182,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
           })}
         </div>
       )}
-    </div>
+    </CardContent>
+</Card>
   );
 }

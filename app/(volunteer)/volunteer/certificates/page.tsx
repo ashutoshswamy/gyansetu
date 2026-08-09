@@ -2,6 +2,7 @@ import { getMyCertificates } from "@/actions/certificates";
 import { Award } from "lucide-react";
 import Link from "next/link";
 import type { CertificateType } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 type CertificateRow = {
   id: string;
@@ -32,11 +33,13 @@ export default async function VolunteerCertificatesPage() {
         </div>
 
         {certs.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <Award className="w-12 h-12 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", marginBottom: 4 }}>No certificates yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Certificates will appear here after tour completion and admin review.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {(certs as CertificateRow[]).map((cert) => {

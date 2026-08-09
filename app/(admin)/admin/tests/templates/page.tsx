@@ -4,6 +4,8 @@ import { DeleteTestButton } from "@/components/features/tests/delete-test-button
 import { ArrowLeft } from "lucide-react";
 import type { EligibilityTest } from "@/types";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default async function TestTemplatesPage() {
   const db = createServerClient();
@@ -42,27 +44,14 @@ export default async function TestTemplatesPage() {
             </p>
           )}
           {(templates ?? []).map((template: EligibilityTest) => (
-            <div
-              key={template.id}
-              className="flex items-center justify-between"
-              style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px" }}
-            >
+            <Card key={template.id}>
+<CardContent>
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h3 style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)", margin: 0 }}>{template.title}</h3>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      padding: "2px 8px",
-                      borderRadius: 4,
-                      color: template.status === "active" ? "var(--gs-success)" : "var(--gs-muted)",
-                      background: template.status === "active" ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(90,82,71,0.08)",
-                      textTransform: "capitalize",
-                    }}
-                  >
+                  <Badge style={{color: template.status === "active" ? "var(--gs-success)" : "var(--gs-muted)", background: template.status === "active" ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(90, 82, 71, 0.08)", textTransform: "capitalize"}}>
                     {template.status}
-                  </span>
+                  </Badge>
                 </div>
                 <div className="flex gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                   <span>{template.questions?.length ?? 0} questions</span>
@@ -76,7 +65,8 @@ export default async function TestTemplatesPage() {
                 </Link>
                 <DeleteTestButton testId={template.id} />
               </div>
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       </div>

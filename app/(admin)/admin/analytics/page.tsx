@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import { ClipboardList, CheckCircle, Pencil, FileText } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function AnalyticsPage() {
   const db = createServerClient();
@@ -52,7 +53,8 @@ export default async function AnalyticsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Application Status Breakdown */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>
               Application Status Breakdown
             </h3>
@@ -69,10 +71,12 @@ export default async function AnalyticsPage() {
                 </div>
               );
             })}
-          </div>
+          </CardContent>
+</Card>
 
           {/* Tours by Status */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 16px" }}>
               Tours by Status
             </h3>
@@ -90,7 +94,8 @@ export default async function AnalyticsPage() {
                 </div>
               );
             })}
-          </div>
+          </CardContent>
+</Card>
         </div>
       </div>
     </div>

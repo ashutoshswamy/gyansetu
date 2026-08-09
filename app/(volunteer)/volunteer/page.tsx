@@ -4,6 +4,8 @@ import { StatCard } from "@/components/features/dashboard/stat-card";
 import Link from "next/link";
 import { Plane, CheckSquare, ArrowRight, Calendar, MapPin, ClipboardList, ClipboardCheck } from "lucide-react";
 import type { DynamicForm } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type AssignmentRow = {
   id: string;
@@ -81,7 +83,8 @@ export default async function VolunteerDashboard() {
 
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* My Tours */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>My Tour Assignments</h2>
               <Link href="/volunteer/tours" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--gs-accent)", fontWeight: 500 }}>
@@ -120,19 +123,21 @@ export default async function VolunteerDashboard() {
                             <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 6 }}>Role: {a.role_description}</p>
                           )}
                         </div>
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize" }}>
+                        <Badge style={{color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize"}}>
                           {a.tours?.status ?? "-"}
-                        </span>
+                        </Badge>
                       </div>
                     </div>
                   );
                 })}
               </div>
             )}
-          </div>
+          </CardContent>
+</Card>
 
           {/* Tasks & Forms */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Tasks &amp; Forms</h2>
               <Link href="/volunteer/forms" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--gs-accent)", fontWeight: 500 }}>
@@ -167,7 +172,8 @@ export default async function VolunteerDashboard() {
                 ))}
               </div>
             )}
-          </div>
+          </CardContent>
+</Card>
         </div>
       </div>
     </div>

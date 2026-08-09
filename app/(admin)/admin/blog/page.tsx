@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { publishPost, deletePost } from "@/actions/blog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface BlogPost {
   id: string;
@@ -78,20 +79,9 @@ export default async function AdminBlogPage() {
                     <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {post.title}
                     </span>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        padding: "2px 8px",
-                        borderRadius: 4,
-                        color: s.color,
-                        background: s.background,
-                        flexShrink: 0,
-                        textTransform: "capitalize",
-                      }}
-                    >
+                    <Badge style={{color: s.color, background: s.background, flexShrink: 0, textTransform: "capitalize"}}>
                       {post.status}
-                    </span>
+                    </Badge>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--gs-muted)", display: "flex", gap: 16 }}>
                     <span>/{post.slug}</span>

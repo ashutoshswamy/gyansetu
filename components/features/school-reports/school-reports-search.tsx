@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, School } from "lucide-react";
 import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Member {
   id: string;
@@ -78,10 +79,12 @@ export function SchoolReportsSearch({ byTour }: { byTour: Record<string, Tour> }
       </div>
 
       {query.trim() && entries.length === 0 && (
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+        <Card>
+<CardContent>
           <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
           <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No reports match &quot;{query}&quot;.</p>
-        </div>
+        </CardContent>
+</Card>
       )}
 
       {entries.map(([tourId, tour]) => (

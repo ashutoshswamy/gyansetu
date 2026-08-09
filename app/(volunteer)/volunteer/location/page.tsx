@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { startSharingLocation, stopSharingLocation, updateMyLocation, getMySharingStatus } from "@/actions/locations";
 import { MapPin, Navigation } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const MIN_UPDATE_INTERVAL_MS = 15_000;
 
@@ -106,7 +107,8 @@ export default function VolunteerLocationPage() {
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Share your live location with tour admins during travel</p>
         </div>
 
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+        <Card>
+<CardContent>
           <div className="flex items-center gap-3 mb-4">
             <div
               className="flex items-center justify-center flex-shrink-0"
@@ -150,7 +152,8 @@ export default function VolunteerLocationPage() {
               {starting ? "Starting..." : "Start Sharing"}
             </button>
           )}
-        </div>
+        </CardContent>
+</Card>
       </div>
     </div>
   );

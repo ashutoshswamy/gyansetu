@@ -4,6 +4,7 @@ import Link from "next/link";
 import { TourManageClient } from "./tour-manage-client";
 import { VolunteerAssign } from "./volunteer-assign";
 import { MapPin, Calendar, Users, ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   draft:     { color: "var(--gs-muted)", bg: "rgba(90,82,71,0.08)" },
@@ -86,9 +87,11 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
 
         {/* Description */}
         {tour.description && (
-          <div className="rounded-xl p-4 mb-6" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card>
+<CardContent>
             <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", lineHeight: 1.6 }}>{tour.description}</p>
-          </div>
+          </CardContent>
+</Card>
         )}
 
         {/* Stats */}
@@ -103,7 +106,8 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
 
         {/* Linked Tests */}
         {(tests ?? []).length > 0 && (
-          <div className="mb-6 rounded-xl p-4" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card>
+<CardContent>
             <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 10 }}>Eligibility Tests</p>
             <div className="flex flex-wrap gap-2">
               {((tests ?? []) as TourTest[]).map((t) => (
@@ -112,7 +116,8 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
                 </span>
               ))}
             </div>
-          </div>
+          </CardContent>
+</Card>
         )}
 
         {/* Volunteers */}
@@ -128,13 +133,16 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
           </p>
           <div className="space-y-2">
             {(applications ?? []).length === 0 && (
-              <div className="py-12 text-center rounded-xl" style={{ background: "white", border: "1px solid var(--border)" }}>
+              <Card>
+<CardContent>
                 <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No applications yet.</p>
-              </div>
+              </CardContent>
+</Card>
             )}
             {((applications ?? []) as TourApplicationRow[]).map((app) => {
               return (
-                <div key={app.id} className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: "white", border: "1px solid var(--border)" }}>
+                <Card key={app.id}>
+<CardContent>
                   <div className="flex items-center gap-3">
                     <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(var(--gs-accent-rgb), 0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, color: "var(--gs-accent)", flexShrink: 0 }}>
                       {app.users?.name?.charAt(0) ?? "?"}
@@ -152,7 +160,8 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
                     )}
                     <ApplicationStatusSelect currentStatus={app.status} />
                   </div>
-                </div>
+                </CardContent>
+</Card>
               );
             })}
           </div>

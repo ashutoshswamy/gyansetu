@@ -3,6 +3,8 @@ import { GraduationCap, CalendarClock, CheckCircle2, XCircle } from "lucide-reac
 import { MissedSummaryForm } from "./missed-summary-form";
 import { AttendedButton } from "./attended-button";
 import { StatCard } from "@/components/features/dashboard/stat-card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const typeColors: Record<string, { color: string; bg: string; label: string }> = {
   science:              { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)", label: "Science" },
@@ -59,10 +61,12 @@ export default async function VolunteerWorkshopsPage() {
 
         <div className="space-y-3">
           {workshops.length === 0 && (
-            <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <Card>
+<CardContent>
               <GraduationCap className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No workshops scheduled yet.</p>
-            </div>
+            </CardContent>
+</Card>
           )}
           {workshops.map(w => {
             const t = typeColors[w.workshop_type] ?? typeColors.other;
@@ -73,7 +77,8 @@ export default async function VolunteerWorkshopsPage() {
             const workshopDateTime = new Date(w.workshop_time ? `${w.workshop_date}T${w.workshop_time}` : `${w.workshop_date}T23:59:59`);
             const isPast = workshopDateTime.getTime() < now;
             return (
-              <div key={w.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px" }}>
+              <Card key={w.id}>
+<CardContent>
                 <div className="flex items-start gap-4">
                   <div style={{ width: 36, height: 36, borderRadius: 8, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <GraduationCap size={18} style={{ color: t.color }} />
@@ -81,12 +86,12 @@ export default async function VolunteerWorkshopsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }}>{w.title}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: t.color, background: t.bg }}>{t.label}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: sc.color, background: sc.bg }}>{sc.label}</span>
+                      <Badge style={{color: t.color, background: t.bg}}>{t.label}</Badge>
+                      <Badge style={{color: sc.color, background: sc.bg}}>{sc.label}</Badge>
                       {a?.makeup_decision && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: makeupColors[a.makeup_decision]?.color, background: makeupColors[a.makeup_decision]?.bg }}>
+                        <Badge style={{color: makeupColors[a.makeup_decision]?.color, background: makeupColors[a.makeup_decision]?.bg}}>
                           {makeupColors[a.makeup_decision]?.label}
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
@@ -108,7 +113,8 @@ export default async function VolunteerWorkshopsPage() {
                     )}
                   </div>
                 </div>
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>

@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { DynamicForm } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function StudentFormsPage() {
   const { userId } = await auth();
@@ -42,7 +43,8 @@ export default async function StudentFormsPage() {
             <p style={{ fontSize: 14, color: "var(--gs-muted)", textAlign: "center", padding: "48px 0" }}>No active forms right now.</p>
           )}
           {(forms ?? []).map((form: DynamicForm) => (
-            <div key={form.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Card key={form.id}>
+<CardContent>
               <div>
                 <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 4px" }}>{form.title}</h3>
                 {form.description && <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{form.description}</p>}
@@ -53,7 +55,8 @@ export default async function StudentFormsPage() {
                   Fill Form
                 </Button>
               </Link>
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       </div>

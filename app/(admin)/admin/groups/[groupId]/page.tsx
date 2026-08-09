@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { addGroupMember, removeGroupMember, setGroupCoreMember } from "@/actions/groups";
 import { Users, MapPin, Trash2, ArrowLeft, ShieldCheck } from "lucide-react";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
+import { Card, CardContent } from "@/components/ui/card";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -145,7 +146,8 @@ export default function GroupDetailPage() {
         )}
 
         {/* Add member */}
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20, marginBottom: 20 }}>
+        <Card>
+<CardContent>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>Add Member</h2>
           <div className="flex gap-3">
             <div style={{ flex: 2 }}>
@@ -174,10 +176,12 @@ export default function GroupDetailPage() {
               Add
             </button>
           </div>
-        </div>
+        </CardContent>
+</Card>
 
         {/* Members list */}
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20 }}>
+        <Card>
+<CardContent>
           <div className="flex items-center gap-2 mb-14">
             <Users size={16} style={{ color: "var(--gs-muted)" }} />
             <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Members ({(group.tour_group_members ?? []).length})</h2>
@@ -214,7 +218,8 @@ export default function GroupDetailPage() {
               ))}
             </div>
           )}
-        </div>
+        </CardContent>
+</Card>
       </div>
     </div>
   );

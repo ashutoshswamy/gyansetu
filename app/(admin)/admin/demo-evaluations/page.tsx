@@ -2,6 +2,7 @@ import { getAllDemoEvaluations } from "@/actions/demo-evaluations";
 import Link from "next/link";
 import { ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 function scoreColor(total: number) {
   if (total >= 80) return "var(--gs-success)"; // 80%+
@@ -35,7 +36,8 @@ export default async function AdminDemoEvaluationsPage() {
             const isDraft = e.status === "draft";
             return (
               <Link key={e.id} href={isDraft ? `/admin/demo-evaluations/${e.id}/edit` : `/admin/demo-evaluations/${e.id}`}>
-                <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
+                <Card>
+<CardContent>
                   <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(var(--gs-accent-rgb), 0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <ClipboardCheck size={18} style={{ color: "var(--gs-accent)" }} />
                   </div>
@@ -60,7 +62,8 @@ export default async function AdminDemoEvaluationsPage() {
                       <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 6 }}>{e.remarks}</p>
                     )}
                   </div>
-                </div>
+                </CardContent>
+</Card>
               </Link>
             );
           })}

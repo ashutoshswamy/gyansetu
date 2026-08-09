@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { EligibilityTest } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function StudentTestsPage() {
   const { userId } = await auth();
@@ -48,7 +49,8 @@ export default async function StudentTestsPage() {
             const attempt = attemptMap.get(test.id);
             const passed = attempt?.score !== null && attempt?.score !== undefined && attempt.score >= test.passing_score;
             return (
-              <div key={test.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <Card key={test.id}>
+<CardContent>
                 <div style={{ minWidth: 0, flex: "1 1 200px" }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 6px" }}>{test.title}</h3>
                   <div style={{ display: "flex", gap: 14, fontSize: 12, color: "var(--gs-muted)" }}>
@@ -87,7 +89,8 @@ export default async function StudentTestsPage() {
                     </Link>
                   )}
                 </div>
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>

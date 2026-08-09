@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createTest, updateTest } from "@/actions/tests";
 import type { EligibilityTest } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Tour = { id: string; title: string };
 type QuestionType = "mcq" | "multi_select" | "subjective";
@@ -188,7 +189,8 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
       )}
 
       {/* Meta */}
-      <div className="rounded-xl p-5 mb-4" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <Card>
+<CardContent>
         <p style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-muted)", marginBottom: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>Test Details</p>
         <div className="space-y-3">
           <div>
@@ -278,12 +280,14 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
             </div>
           </div>
         </div>
-      </div>
+      </CardContent>
+</Card>
 
       {/* Questions */}
       <div className="space-y-3 mb-4">
         {questions.map((q, qIdx) => (
-          <div key={q.id} className="rounded-xl p-5" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card key={q.id}>
+<CardContent>
             <div className="flex items-center justify-between mb-3">
               <span style={{ fontSize: 11, fontWeight: 700, color: "var(--gs-accent)", letterSpacing: "0.08em" }}>Q{qIdx + 1}</span>
               {questions.length > 1 && (
@@ -358,7 +362,8 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
                 </div>
               )}
             </div>
-          </div>
+          </CardContent>
+</Card>
         ))}
       </div>
 

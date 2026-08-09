@@ -8,6 +8,8 @@ import { FileBarChart, Plus, X } from "lucide-react";
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { TourReport, TourReportHost, TourReportLogisticsScores } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type TourReportRow = TourReport & { tour?: { id: string; title: string } | null };
 
@@ -316,28 +318,32 @@ export default function VolunteerTourReportPage() {
         {loading ? (
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : reports.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <FileBarChart className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No tour reports yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-4">
             {reports.map((r) => {
               const s = statusColors[r.status] ?? statusColors.draft;
               return (
-                <div key={r.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "18px 22px" }}>
+                <Card key={r.id}>
+<CardContent>
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                     <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{r.location_name}</span>
                     <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{r.tour?.title ?? "Unknown tour"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+                    <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                       {r.status}
-                    </span>
+                    </Badge>
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 8px" }}>{new Date(r.created_at).toLocaleDateString()}</p>
                   {r.overall_recommendation && (
                     <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>Recommendation: <strong>{r.overall_recommendation}</strong></p>
                   )}
-                </div>
+                </CardContent>
+</Card>
               );
             })}
           </div>

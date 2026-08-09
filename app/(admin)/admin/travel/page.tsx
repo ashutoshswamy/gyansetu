@@ -3,6 +3,8 @@ import { Train } from "lucide-react";
 import { getAllTravelTickets } from "@/actions/travel";
 import { ConfirmButton, ApproveItineraryButton } from "./row-actions";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   pending:   { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
@@ -29,26 +31,29 @@ export default async function AdminTravelPage() {
 
         <div className="space-y-3">
           {tickets.length === 0 && (
-            <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <Card>
+<CardContent>
               <Train className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No travel tickets yet.</p>
-            </div>
+            </CardContent>
+</Card>
           )}
           {tickets.map((t) => {
             const s = statusColors[t.confirmation_status] ?? statusColors.pending;
             return (
-              <div key={t.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px" }}>
+              <Card key={t.id}>
+<CardContent>
                 <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{t.group?.name ?? "Unknown group"}</span>
-                      <span style={{ fontSize: 13, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+                      <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                         {t.confirmation_status}
-                      </span>
+                      </Badge>
                       {t.itinerary_approved && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>
+                        <Badge style={{color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)"}}>
                           Itinerary Approved
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     <p style={{ fontSize: 14, color: "var(--foreground)", margin: "6px 0 2px" }}>
@@ -75,7 +80,8 @@ export default async function AdminTravelPage() {
                     <ApproveItineraryButton id={t.id} approved={t.itinerary_approved} />
                   </div>
                 </div>
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>

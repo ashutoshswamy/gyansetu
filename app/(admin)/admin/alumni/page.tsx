@@ -2,6 +2,7 @@ import { getAllAlumniRegistrations } from "@/actions/alumni-registration";
 import { ExportButton } from "@/components/features/export-button";
 import { Inbox } from "lucide-react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Visit = { year?: string; month?: string; location?: string; role?: string };
 
@@ -40,7 +41,8 @@ export default async function AlumniAdminPage() {
           )}
         </div>
 
-        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <Card>
+<CardContent>
           {registrations.length === 0 ? (
             <div className="py-16 text-center">
               <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
@@ -80,7 +82,8 @@ export default async function AlumniAdminPage() {
               </TableBody>
             </Table>
           )}
-        </div>
+        </CardContent>
+</Card>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import { getAllDailyLogs } from "@/actions/daily-logs";
 import { BookOpen, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type DailyLogRow = DailyLog & {
   tours?: { id: string; title: string } | null;
@@ -37,20 +39,23 @@ export default async function AdminDailyLogsPage() {
 
         <div className="space-y-3">
           {logs.length === 0 && (
-            <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <Card>
+<CardContent>
               <BookOpen className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No daily log entries yet.</p>
-            </div>
+            </CardContent>
+</Card>
           )}
           {logs.map((log) => (
-            <div key={log.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px" }}>
+            <Card key={log.id}>
+<CardContent>
               <div className="flex items-start justify-between gap-4 mb-2 flex-wrap">
                 <div>
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{log.users?.name ?? "Unknown volunteer"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
+                    <Badge style={{color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)"}}>
                       {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
-                    </span>
+                    </Badge>
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                     {log.users?.email} {log.tours?.title && `· ${log.tours.title}`}
@@ -73,7 +78,8 @@ export default async function AdminDailyLogsPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       </div>

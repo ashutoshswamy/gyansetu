@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
 import { RoleSelect, DeleteUserButton, SyncDeletedUsersButton } from "./role-select";
 import type { UserRole } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 const ROLE_GROUPS: { key: UserRole; label: string }[] = [
   { key: "super_admin", label: "Super Admin" },
@@ -47,10 +48,12 @@ export default async function SuperAdminPage() {
         </div>
 
         {shownCount === 0 ? (
-          <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card>
+<CardContent>
             <Users className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No users yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-6">
             {grouped.map((g) => (
@@ -60,11 +63,14 @@ export default async function SuperAdminPage() {
                 </h2>
 
                 {g.users.length === 0 ? (
-                  <div className="rounded-xl py-6 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+                  <Card>
+<CardContent>
                     <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No users in this role.</p>
-                  </div>
+                  </CardContent>
+</Card>
                 ) : (
-                  <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
+                  <Card>
+<CardContent>
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
                         <thead>
@@ -100,7 +106,8 @@ export default async function SuperAdminPage() {
                         </tbody>
                       </table>
                     </div>
-                  </div>
+                  </CardContent>
+</Card>
                 )}
               </div>
             ))}

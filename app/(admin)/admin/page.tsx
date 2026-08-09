@@ -4,6 +4,7 @@ import { StatCard } from "@/components/features/dashboard/stat-card";
 import Link from "next/link";
 import type { DashboardStats, Tour } from "@/types";
 import { Plane, Users, UserCheck, ClipboardList, Clock, ArrowRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 async function getStats(): Promise<DashboardStats> {
   const cached = await getCached<DashboardStats>(CACHE_KEYS.dashboardStats);
@@ -145,7 +146,8 @@ export default async function AdminDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Active Tours */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Active Tours</h2>
               <Link href="/admin/tours">
@@ -186,10 +188,12 @@ export default async function AdminDashboard() {
                 ))}
               </div>
             )}
-          </div>
+          </CardContent>
+</Card>
 
           {/* Pending Applications */}
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Card>
+<CardContent>
             <div className="flex items-center justify-between mb-5">
               <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>Pending Applications</h2>
               <Link href="/admin/students">
@@ -239,7 +243,8 @@ export default async function AdminDashboard() {
                 ))}
               </div>
             )}
-          </div>
+          </CardContent>
+</Card>
         </div>
       </div>
     </div>

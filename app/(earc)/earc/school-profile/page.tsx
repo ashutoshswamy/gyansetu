@@ -4,6 +4,8 @@ import { School } from "lucide-react";
 import { SchoolProfileForm } from "@/components/features/earc/school-profile-form";
 import { ExportCsvButton } from "@/components/features/earc/export-csv-button";
 import { SchoolBulkUploadButton } from "@/components/features/earc/school-bulk-upload-button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface StrengthRow {
   standard: string;
@@ -59,29 +61,34 @@ export default async function SchoolProfilePage() {
           <SchoolProfileForm />
         </div>
 
-        <div className="mb-8" style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 16 }}>
+        <Card>
+<CardContent>
           <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", margin: "0 0 8px" }}>Bulk Upload</p>
           <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 10px" }}>
             Have data for many schools? Download the template, fill it in the same format as the form above, then upload it here.
             The <code>student_strength</code> column takes JSON, e.g. <code>{`[{"standard":"5th","boys":10,"girls":8}]`}</code>.
           </p>
           <SchoolBulkUploadButton />
-        </div>
+        </CardContent>
+</Card>
 
         <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Submitted Profiles</h2>
         {profiles.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No school profiles submitted yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-3">
             {profiles.map(p => (
-              <div key={p.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px" }}>
+              <Card key={p.id}>
+<CardContent>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{p.school_name}</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>{p.project}</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>{p.academic_year}</span>
+                  <Badge style={{color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)"}}>{p.project}</Badge>
+                  <Badge style={{color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)"}}>{p.academic_year}</Badge>
                 </div>
                 <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                   {[p.village_city, p.taluka_block, p.district, p.state].filter(Boolean).join(", ")}
@@ -98,7 +105,8 @@ export default async function SchoolProfilePage() {
                 <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6 }}>
                   Submitted by {p.submitter?.name ?? "Unknown"} · {new Date(p.created_at).toLocaleDateString()}
                 </p>
-              </div>
+              </CardContent>
+</Card>
             ))}
           </div>
         )}

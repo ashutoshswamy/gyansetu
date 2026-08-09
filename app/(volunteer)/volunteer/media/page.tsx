@@ -7,6 +7,7 @@ import { getMyToursForSelect } from "@/actions/tours";
 import { uploadFileToStorage } from "@/actions/upload";
 import { Image as ImageIcon, Upload } from "lucide-react";
 import type { MediaGalleryItem } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function VolunteerMediaPage() {
   const [tours, setTours] = useState<{ id: string; title: string }[]>([]);
@@ -96,7 +97,8 @@ export default function VolunteerMediaPage() {
         </div>
 
         {/* Tour selector + upload */}
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20, marginBottom: 24 }}>
+        <Card>
+<CardContent>
           {todayCount >= 2 && (
             <div style={{ background: "rgba(var(--gs-danger-alt-rgb), 0.06)", border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.2)", borderRadius: 8, padding: "12px 16px", color: "var(--gs-danger-alt)", fontSize: 13, marginBottom: 16 }}>
               Daily upload limit reached ({todayCount}/2 uploaded today). You can only upload up to 2 media files per day. Please try again tomorrow.
@@ -165,16 +167,19 @@ export default function VolunteerMediaPage() {
             </button>
           </form>
           {error && <p style={{ fontSize: 13, color: "var(--gs-danger)", marginTop: 8 }}>{error}</p>}
-        </div>
+        </CardContent>
+</Card>
 
         {loading ? (
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : media.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <ImageIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No media for this tour yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Upload photos from your visit to build the gallery.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {media.map((item) => (

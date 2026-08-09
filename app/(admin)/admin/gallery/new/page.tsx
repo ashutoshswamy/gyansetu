@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createCategory } from "@/actions/gallery";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function NewGalleryCategory() {
   const router = useRouter();
@@ -58,12 +59,8 @@ export default function NewGalleryCategory() {
         </div>
 
         {/* Form card */}
-        <div style={{
-          background: "white",
-          border: "1px solid var(--border)",
-          borderRadius: 12,
-          padding: 28,
-        }}>
+        <Card>
+<CardContent>
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
             <div>
@@ -177,7 +174,8 @@ export default function NewGalleryCategory() {
               </button>
             </div>
           </form>
-        </div>
+        </CardContent>
+</Card>
       </div>
     </div>
   );

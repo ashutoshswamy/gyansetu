@@ -8,6 +8,7 @@ import { createTour, updateTour } from "@/actions/tours";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Tour } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -80,7 +81,8 @@ export function TourForm({ initialData }: { initialData?: Tour }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="rounded-xl p-6" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <Card>
+<CardContent>
         <div className="space-y-5">
           <div>
             <label style={labelStyle}>Tour Title *</label>
@@ -163,7 +165,8 @@ export function TourForm({ initialData }: { initialData?: Tour }) {
             Cancel
           </button>
         </div>
-      </div>
+      </CardContent>
+</Card>
     </form>
   );
 }

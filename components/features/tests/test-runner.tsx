@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { submitTestAttempt } from "@/actions/tests";
 import type { TestQuestion } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 const inp = {
   width: "100%",
@@ -73,7 +74,8 @@ export function TestRunner({ test }: { test: Test }) {
   if (result) {
     const passed = result.passed;
     return (
-      <div className="rounded-xl p-10 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <Card>
+<CardContent>
         <div style={{ fontSize: 36, marginBottom: 12, color: passed ? "var(--gs-success)" : "var(--gs-danger-alt)" }}>
           {passed ? "✓" : "✗"}
         </div>
@@ -108,7 +110,8 @@ export function TestRunner({ test }: { test: Test }) {
             Back to Tests
           </button>
         </div>
-      </div>
+      </CardContent>
+</Card>
     );
   }
 
@@ -131,7 +134,8 @@ export function TestRunner({ test }: { test: Test }) {
       </div>
 
       {/* Question card */}
-      <div className="rounded-xl p-6 mb-5" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <Card>
+<CardContent>
         <p style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", marginBottom: 16 }}>{question.question}</p>
 
         {question.type === "mcq" && (
@@ -179,7 +183,8 @@ export function TestRunner({ test }: { test: Test }) {
             style={{ ...inp, display: "block" }}
           />
         )}
-      </div>
+      </CardContent>
+</Card>
 
       {/* Nav buttons */}
       <div className="flex items-center justify-between">

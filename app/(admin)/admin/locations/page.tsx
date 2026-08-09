@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Tour } from "@/types";
 import { MapPin, Calendar } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function AdminLocationsPage() {
   const db = createServerClient();
@@ -31,10 +32,8 @@ export default async function AdminLocationsPage() {
           )}
           {(tours ?? []).map((tour: Tour) => (
             <Link key={tour.id} href={`/admin/locations/${tour.id}`}>
-              <div
-                className="flex items-center justify-between"
-                style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px", cursor: "pointer" }}
-              >
+              <Card>
+<CardContent>
                 <div className="flex-1 min-w-0">
                   <h3 style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }} className="truncate">{tour.title}</h3>
                   <div className="flex gap-4 mt-1" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
@@ -42,7 +41,8 @@ export default async function AdminLocationsPage() {
                     <span className="flex items-center gap-1"><Calendar size={11} /> {tour.start_date} &rarr; {tour.end_date}</span>
                   </div>
                 </div>
-              </div>
+              </CardContent>
+</Card>
             </Link>
           ))}
         </div>

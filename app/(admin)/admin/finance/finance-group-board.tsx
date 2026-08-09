@@ -19,6 +19,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import type { GroupLedger, ExpenseRow, AdvanceRow } from "./page";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const ALL = "all";
 
@@ -58,7 +60,8 @@ function GroupSection({ g }: { g: GroupLedger }) {
 
   return (
     <section style={{ marginBottom: 36 }}>
-      <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px", marginBottom: 14 }}>
+      <Card>
+<CardContent>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--foreground)", margin: "0 0 14px" }}>{g.groupName}</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ marginBottom: g.advances.length > 0 ? 14 : 0 }}>
@@ -99,7 +102,8 @@ function GroupSection({ g }: { g: GroupLedger }) {
             : "Remaining with the group against approved expenses."}
           {g.pendingSpent > 0 && ` ₹${g.pendingSpent.toLocaleString("en-IN")} more is pending approval and not yet counted here.`}
         </p>
-      </div>
+      </CardContent>
+</Card>
 
       <div className="space-y-3">
         {g.expenses.length === 0 && (
@@ -109,17 +113,18 @@ function GroupSection({ g }: { g: GroupLedger }) {
           const cat = categoryColors[ex.category] ?? categoryColors.miscellaneous;
           const st = statusColors[ex.status] ?? statusColors.pending;
           return (
-            <div key={ex.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px" }}>
+            <Card key={ex.id}>
+<CardContent>
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>{ex.submitter?.name ?? "Unknown"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: cat.color, background: cat.bg }}>
+                    <Badge style={{color: cat.color, background: cat.bg}}>
                       {categoryLabels[ex.category] ?? ex.category}
-                    </span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: st.color, background: st.bg, textTransform: "capitalize" }}>
+                    </Badge>
+                    <Badge style={{color: st.color, background: st.bg, textTransform: "capitalize"}}>
                       {statusLabels[ex.status] ?? ex.status}
-                    </span>
+                    </Badge>
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 4px" }}>
                     {ex.submitter?.email} · {new Date(ex.expense_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
@@ -147,7 +152,8 @@ function GroupSection({ g }: { g: GroupLedger }) {
                   {ex.status === "pending" && <ExpenseActions id={ex.id} />}
                 </div>
               </div>
-            </div>
+            </CardContent>
+</Card>
           );
         })}
       </div>

@@ -2,6 +2,7 @@ import { requireCoreMemberUser } from "@/lib/clerk/action-auth";
 import { getMyCoreMemberAssignments } from "@/actions/groups";
 import { Users, MapPin, Calendar, UsersRound } from "lucide-react";
 import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -63,10 +64,12 @@ export default async function CoreMemberDashboardPage() {
         </div>
 
         {assignments.length === 0 ? (
-          <div className="py-20 text-center rounded-xl" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card>
+<CardContent>
             <UsersRound className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>Not assigned as core member of any group yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-10">
             {current.length > 0 ? (
@@ -77,9 +80,11 @@ export default async function CoreMemberDashboardPage() {
                 </div>
               </section>
             ) : (
-              <div className="py-10 text-center rounded-xl" style={{ background: "white", border: "1px solid var(--border)" }}>
+              <Card>
+<CardContent>
                 <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>You are not currently part of any tour.</p>
-              </div>
+              </CardContent>
+</Card>
             )}
 
             {history.length > 0 && (
@@ -104,7 +109,8 @@ function CurrentGroupCard({ assignment }: { assignment: Assignment }) {
   const s = statusStyles[tour?.status ?? "draft"] ?? statusStyles.draft;
 
   return (
-    <div className="rounded-xl p-5" style={{ background: "white", border: "1px solid var(--border)" }}>
+    <Card>
+<CardContent>
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
         <div className="min-w-0">
           <p style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", marginBottom: 2 }}>{group?.name}</p>
@@ -153,7 +159,8 @@ function CurrentGroupCard({ assignment }: { assignment: Assignment }) {
           </div>
         </div>
       )}
-    </div>
+    </CardContent>
+</Card>
   );
 }
 
@@ -163,7 +170,8 @@ function HistoryRow({ assignment }: { assignment: Assignment }) {
   const s = statusStyles[tour?.status ?? "completed"] ?? statusStyles.completed;
 
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl p-4 flex-wrap" style={{ background: "white", border: "1px solid var(--border)" }}>
+    <Card>
+<CardContent>
       <div className="min-w-0">
         <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", marginBottom: 2 }}>{group?.name}</p>
         <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>
@@ -172,6 +180,7 @@ function HistoryRow({ assignment }: { assignment: Assignment }) {
         </p>
       </div>
       <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: s.color, background: s.bg, flexShrink: 0 }}>{s.label}</span>
-    </div>
+    </CardContent>
+</Card>
   );
 }

@@ -3,6 +3,7 @@ import { getEarcCandidates } from "@/actions/users";
 import { requireAdminUser } from "@/lib/clerk/action-auth";
 import { redirect } from "next/navigation";
 import { EarcStaffTable } from "./earc-staff-table";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function EarcRolesPage() {
   let userId: string;
@@ -29,10 +30,12 @@ export default async function EarcRolesPage() {
         </div>
 
         {users.length === 0 ? (
-          <div className="rounded-xl py-16 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card>
+<CardContent>
             <ShieldCheck className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No users yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <EarcStaffTable users={users} currentUserId={userId} />
         )}

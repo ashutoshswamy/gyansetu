@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { CoreMemberEvaluationForm } from "@/components/features/demo-evaluations/core-member-evaluation-form";
 import type { DemoEvaluation } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   draft: { color: "var(--gs-warning-alt)", bg: "rgba(var(--gs-warning-alt-rgb), 0.08)" },
@@ -44,20 +46,23 @@ export function CoreMemberEvaluationSection({
         </button>
       </div>
       {evaluations.length === 0 ? (
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "24px", textAlign: "center" }}>
+        <Card>
+<CardContent>
           <Star className="w-7 h-7 mx-auto mb-2" style={{ color: "var(--border)" }} />
           <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No demo evaluations yet.</p>
-        </div>
+        </CardContent>
+</Card>
       ) : (
         <div className="space-y-2">
           {evaluations.map(ev => {
             const s = statusStyles[ev.status] ?? statusStyles.submitted;
             return (
-              <div key={ev.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <Card key={ev.id}>
+<CardContent>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>Score: {ev.total_score ?? 0}/100</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>{ev.status}</span>
+                    <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>{ev.status}</Badge>
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>{new Date(ev.evaluated_at).toLocaleDateString()}{ev.tour?.title ? ` · ${ev.tour.title}` : ""}</p>
                   {ev.remarks && <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 6 }}>{ev.remarks}</p>}
@@ -68,7 +73,8 @@ export function CoreMemberEvaluationSection({
                 >
                   Edit
                 </button>
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>

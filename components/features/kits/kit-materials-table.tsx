@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { createKitItem, updateKitItem, deleteKitItem } from "@/actions/kits";
+import { Card, CardContent } from "@/components/ui/card";
 
 type MaterialType = "reusable" | "consumable";
 
@@ -164,7 +165,8 @@ export function KitMaterialsTable({ items }: { items: KitItemRow[] }) {
         <p style={{ fontSize: 12, color: "var(--gs-muted)", marginBottom: 8 }}>Drives the Total Qty Required column below for consumable materials.</p>
       </div>
 
-      <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <Card>
+<CardContent>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left" style={{ fontSize: 13 }}>
             <thead>
@@ -187,7 +189,8 @@ export function KitMaterialsTable({ items }: { items: KitItemRow[] }) {
             </tbody>
           </table>
         </div>
-      </div>
+      </CardContent>
+</Card>
 
       <button
         onClick={handleAddRow}

@@ -4,6 +4,7 @@ import { Calendar, MapPin, Tag, Clock, CheckCircle2, XCircle, HelpCircle, Calend
 import type { Event } from "@/types";
 import { DeleteEventButton } from "@/components/features/events/delete-event-button";
 import { StatCard } from "@/components/features/dashboard/stat-card";
+import { Badge } from "@/components/ui/badge";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
@@ -109,12 +110,12 @@ function EventRow({ event }: { event: EventWithTour }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 mb-1">
           <h3 style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }} className="truncate">{event.title}</h3>
-          <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: t.color, background: t.bg, textTransform: "capitalize", flexShrink: 0 }}>
+          <Badge style={{color: t.color, background: t.bg, textTransform: "capitalize", flexShrink: 0}}>
             {event.event_type}
-          </span>
-          <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize", flexShrink: 0 }}>
+          </Badge>
+          <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize", flexShrink: 0}}>
             {event.status}
-          </span>
+          </Badge>
         </div>
         <div className="flex gap-4" style={{ fontSize: 12, color: "#9B9188" }}>
           <span className="flex items-center gap-1"><Calendar size={11} /> {event.event_date}</span>

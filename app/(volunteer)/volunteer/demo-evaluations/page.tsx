@@ -1,5 +1,6 @@
 import { getMyDemoEvaluations } from "@/actions/demo-evaluations";
 import { ClipboardCheck } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const SCORE_FIELDS = [
   { key: "hindi_english_communication", label: "Hindi / English Communication" },
@@ -33,18 +34,21 @@ export default async function VolunteerDemoEvaluationsPage() {
         </div>
 
         {evaluations.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <ClipboardCheck className="w-12 h-12 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", marginBottom: 4 }}>No demo evaluations yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Evaluations from observers will appear here.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-4">
             {evaluations.map((e) => {
               const scores = e.scores as Record<string, number>;
               const color = scoreColor(e.total_score);
               return (
-                <div key={e.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
+                <Card key={e.id}>
+<CardContent>
                   <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
                     <div>
                       <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{e.tour?.title ?? "General"}</h3>
@@ -65,7 +69,8 @@ export default async function VolunteerDemoEvaluationsPage() {
                   {e.remarks && (
                     <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", padding: "8px 12px", background: "var(--background)", borderRadius: 6 }}>{e.remarks}</p>
                   )}
-                </div>
+                </CardContent>
+</Card>
               );
             })}
           </div>

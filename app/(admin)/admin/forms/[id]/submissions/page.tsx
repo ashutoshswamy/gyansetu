@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { FormField, FormSubmission } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Submission = Pick<FormSubmission, "id" | "data" | "submitted_at"> & {
   users?: { name: string; email: string };
@@ -73,7 +74,8 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
         </div>
 
         {/* Submissions List */}
-        <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <Card>
+<CardContent>
           {(submissions ?? []).length === 0 ? (
             <div className="py-16 text-center">
               <Inbox className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
@@ -125,7 +127,8 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
               </Table>
             </div>
           )}
-        </div>
+        </CardContent>
+</Card>
       </div>
     </div>
   );

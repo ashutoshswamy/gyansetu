@@ -5,6 +5,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { StudentProfileForm } from "@/components/features/earc/student-profile-form";
 import { ExportCsvButton } from "@/components/features/earc/export-csv-button";
 import { BulkUploadButton } from "@/components/features/earc/bulk-upload-button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface StudentProfileRow {
   id: string;
@@ -45,20 +46,24 @@ export default async function StudentProfilePage() {
           <StudentProfileForm />
         </div>
 
-        <div className="mb-8" style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 16 }}>
+        <Card>
+<CardContent>
           <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", margin: "0 0 8px" }}>Bulk Upload</p>
           <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 10px" }}>
             Have data for many students? Download the template, fill it in the same format as the form above, then upload it here.
           </p>
           <BulkUploadButton />
-        </div>
+        </CardContent>
+</Card>
 
         <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Submitted Profiles</h2>
         {profiles.length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <GraduationCap className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No student profiles submitted yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <Table className="rounded-xl overflow-hidden border border-border">
             <TableHeader>

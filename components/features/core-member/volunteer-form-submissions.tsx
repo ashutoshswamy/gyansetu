@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { FormField, FormSubmission } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 function fieldValue(val: unknown): string {
   if (Array.isArray(val)) return val.join(", ");
@@ -22,7 +23,8 @@ export function VolunteerFormSubmissions({ submissions }: { submissions: Submiss
         const fields = form?.fields ?? [];
         const open = openId === s.id;
         return (
-          <div key={s.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
+          <Card key={s.id}>
+<CardContent>
             <button
               type="button"
               onClick={() => setOpenId(open ? null : s.id)}
@@ -47,7 +49,8 @@ export function VolunteerFormSubmissions({ submissions }: { submissions: Submiss
                 ))}
               </div>
             )}
-          </div>
+          </CardContent>
+</Card>
         );
       })}
     </div>

@@ -10,6 +10,7 @@ import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import type { EligibilityTest, TestQuestion } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 
 export interface Attempt {
   id: string;
@@ -149,10 +150,12 @@ export function TestAttemptsViewer({
       </div>
 
       {attempts.length === 0 ? (
-        <div className="rounded-xl p-8 text-center" style={{ background: "white", border: "1px solid var(--border)" }}>
+        <Card>
+<CardContent>
           <AlertCircle className="w-8 h-8 mx-auto mb-2 text-[var(--gs-muted)]" />
           <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No attempts recorded for this test yet.</p>
-        </div>
+        </CardContent>
+</Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Attempts List */}

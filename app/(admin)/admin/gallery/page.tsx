@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { deleteCategory } from "@/actions/gallery";
+import { Badge } from "@/components/ui/badge";
 
 interface CategoryRow {
   id: string;
@@ -92,17 +93,9 @@ export default async function AdminGalleryPage() {
                         {category.description}
                       </p>
                     )}
-                    <span style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      padding: "2px 8px",
-                      borderRadius: 4,
-                      color: "#4A55BE",
-                      background: "rgba(74,85,190,0.08)",
-                      flexShrink: 0,
-                    }}>
+                    <Badge style={{color: "#4A55BE", background: "rgba(74, 85, 190, 0.08)", flexShrink: 0}}>
                       {imageCount} {imageCount === 1 ? "image" : "images"}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
 

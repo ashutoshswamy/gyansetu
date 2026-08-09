@@ -4,6 +4,7 @@ import { getMyExpenses } from "@/actions/finance";
 import { Receipt } from "lucide-react";
 import { ExpenseForm } from "./expense-form";
 import { ExpenseItem } from "./expense-item";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function VolunteerExpensesPage() {
   const { userId } = await auth();
@@ -33,10 +34,12 @@ export default async function VolunteerExpensesPage() {
 
         <div className="space-y-3">
           {expenses.length === 0 && (
-            <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <Card>
+<CardContent>
               <Receipt className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No expenses submitted yet.</p>
-            </div>
+            </CardContent>
+</Card>
           )}
           {expenses.map((ex) => (
             <ExpenseItem key={ex.id} expense={ex} />

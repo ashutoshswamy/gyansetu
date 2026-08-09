@@ -8,6 +8,8 @@ import { submitSchoolReport, getGroupSchoolReports, getGroupMembersForSchoolRepo
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { SchoolReportSession } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type Group = { id: string; name: string; tours?: { title: string } | null };
 type Member = { id: string; name: string };
@@ -223,7 +225,8 @@ export default function SchoolReportsPage() {
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>School visit report — fill one for each school visit. Shared with your whole group.</p>
         </div>
 
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 12 }}>
+        <Card>
+<CardContent>
           <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></label>
           <select value={groupId} onChange={e => handleGroupChange(e.target.value)} style={inputStyle}>
             <option value="">Select group...</option>
@@ -232,7 +235,8 @@ export default function SchoolReportsPage() {
           <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6 }}>
             Every report submitted under this group is visible to all volunteers in the same group.
           </p>
-        </div>
+        </CardContent>
+</Card>
 
         {groupId && (
           <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 24 }}>
@@ -467,28 +471,32 @@ export default function SchoolReportsPage() {
           loadingGroup ? (
             <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
           ) : reports.length === 0 ? (
-            <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <Card>
+<CardContent>
               <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No school reports yet for this group.</p>
-            </div>
+            </CardContent>
+</Card>
           ) : (
             <div className="space-y-4">
               {reports.map(r => {
                 const s = statusColors[r.status] ?? statusColors.draft;
                 return (
-                  <div key={r.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "18px 22px" }}>
+                  <Card key={r.id}>
+<CardContent>
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{r.school_name}</span>
                       <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>by {r.submitter?.name ?? "Unknown"}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+                      <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                         {r.status}
-                      </span>
+                      </Badge>
                     </div>
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 8px" }}>{new Date(r.created_at).toLocaleDateString()}</p>
                     {r.overall_rating && (
                       <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>Rating: <strong>{r.overall_rating}</strong></p>
                     )}
-                  </div>
+                  </CardContent>
+</Card>
                 );
               })}
             </div>

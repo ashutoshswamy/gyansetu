@@ -4,6 +4,8 @@ import { Award } from "lucide-react";
 import type { Certificate } from "@/types";
 import { DeleteCertificateButton } from "./delete-button";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   participation: { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)" },
@@ -52,10 +54,12 @@ export default async function AdminCertificatesPage() {
           {Object.entries(counts).map(([type, count]) => {
             const c = typeColors[type];
             return (
-              <div key={type} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px" }}>
+              <Card key={type}>
+<CardContent>
                 <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)", marginBottom: 6 }}>{type}</p>
                 <p style={{ fontSize: 28, fontWeight: 700, color: c.color, margin: 0 }}>{count}</p>
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>
@@ -71,16 +75,17 @@ export default async function AdminCertificatesPage() {
           }) => {
             const c = typeColors[cert.certificate_type] ?? typeColors.participation;
             return (
-              <div key={cert.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
+              <Card key={cert.id}>
+<CardContent>
                 <div style={{ width: 36, height: 36, borderRadius: 8, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <Award size={18} style={{ color: c.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }}>{cert.users?.name ?? "Unknown"}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: c.color, background: c.bg, textTransform: "capitalize" }}>
+                    <Badge style={{color: c.color, background: c.bg, textTransform: "capitalize"}}>
                       {cert.certificate_type}
-                    </span>
+                    </Badge>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                     {cert.users?.email} · {cert.tours?.title ?? "General"} · Issued by {cert.issuer?.name} · {new Date(cert.issued_at).toLocaleDateString()}
@@ -90,7 +95,8 @@ export default async function AdminCertificatesPage() {
                   View
                 </Link>
                 <DeleteCertificateButton id={cert.id} />
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>

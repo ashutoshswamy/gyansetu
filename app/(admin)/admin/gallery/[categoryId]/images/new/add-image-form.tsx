@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { addImage } from "@/actions/gallery";
 import { FileUploadField } from "@/components/features/file-upload-field";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Props {
   categoryId: string;
@@ -40,12 +41,8 @@ export default function AddImageForm({ categoryId }: Props) {
   }
 
   return (
-    <div style={{
-      background: "white",
-      border: "1px solid var(--border)",
-      borderRadius: 12,
-      padding: 28,
-    }}>
+    <Card>
+<CardContent>
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
         <FileUploadField
@@ -139,6 +136,7 @@ export default function AddImageForm({ categoryId }: Props) {
           </button>
         </div>
       </form>
-    </div>
+    </CardContent>
+</Card>
   );
 }

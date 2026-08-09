@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { History, MapPin, Calendar } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 type AssignmentRow = {
   id: string;
@@ -39,10 +40,12 @@ export default async function EnrolleeHistoryPage() {
         </div>
 
         {past.length === 0 ? (
-          <div className="py-20 text-center rounded-xl" style={{ background: "white", border: "1px solid var(--border)" }}>
+          <Card>
+<CardContent>
             <History className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>No past tours yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-3">
             {past.map((a) => (

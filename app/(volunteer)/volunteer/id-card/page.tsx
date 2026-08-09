@@ -1,6 +1,7 @@
 import { IdCard as IdCardIcon } from "lucide-react";
 import { getMyIdCard } from "@/actions/id-cards";
 import { IdCardPanel } from "@/components/features/id-cards/id-card-panel";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function VolunteerIdCardPage() {
   const card = await getMyIdCard();
@@ -14,10 +15,12 @@ export default async function VolunteerIdCardPage() {
         </div>
 
         {!card ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <IdCardIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No ID card issued yet.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <IdCardPanel
             data={{

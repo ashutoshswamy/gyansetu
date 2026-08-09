@@ -9,6 +9,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Volunteer = { id: string; name: string; email: string };
 type Assignment = { id: string; role_description?: string; users?: { id: string; name: string; email: string } };
@@ -54,7 +55,8 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
   }
 
   return (
-    <div className="mb-6 rounded-xl p-4" style={{ background: "white", border: "1px solid var(--border)" }}>
+    <Card>
+<CardContent>
       <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 12 }}>
         Volunteers ({assignments.length})
       </p>
@@ -113,6 +115,7 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
           ))}
         </div>
       )}
-    </div>
+    </CardContent>
+</Card>
   );
 }

@@ -3,6 +3,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { getWorkshopAttendees } from "@/actions/workshops";
 import { ArrowLeft, GraduationCap } from "lucide-react";
 import { MarkAttendanceButtons, MakeupDecisionButtons } from "../attendance-actions";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const typeColors: Record<string, { color: string; bg: string; label: string }> = {
   science:            { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)", label: "Science" },
@@ -55,7 +57,8 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
           <ArrowLeft size={14} /> Back to Workshops
         </Link>
 
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 24 }}>
+        <Card>
+<CardContent>
           <div className="flex items-start gap-4">
             <div style={{ width: 44, height: 44, borderRadius: 10, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <GraduationCap size={22} style={{ color: t.color }} />
@@ -63,8 +66,8 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{workshop.title}</h1>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: t.color, background: t.bg }}>{t.label}</span>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-text-secondary)", background: "var(--background)", border: "1px solid var(--border)", textTransform: "capitalize" }}>{workshop.status}</span>
+                <Badge style={{color: t.color, background: t.bg}}>{t.label}</Badge>
+                <Badge style={{color: "var(--gs-text-secondary)", background: "var(--background)", border: "1px solid var(--border)", textTransform: "capitalize"}}>{workshop.status}</Badge>
               </div>
               <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "4px 0 0" }}>
                 {new Date(workshop.workshop_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
@@ -86,7 +89,8 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
               )}
             </div>
           </div>
-        </div>
+        </CardContent>
+</Card>
 
         <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Attendance</h2>
         <div className="space-y-3">
@@ -98,16 +102,17 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
             const status = a?.attendance_status ?? "pending";
             const sc = statusColors[status] ?? statusColors.pending;
             return (
-              <div key={v.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 18px" }}>
+              <Card key={v.id}>
+<CardContent>
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span style={{ fontSize: 14, fontWeight: 500, color: "var(--foreground)" }}>{v.name}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: sc.color, background: sc.bg }}>{sc.label}</span>
+                      <Badge style={{color: sc.color, background: sc.bg}}>{sc.label}</Badge>
                       {a?.makeup_decision && (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: makeupColors[a.makeup_decision]?.color, background: makeupColors[a.makeup_decision]?.bg }}>
+                        <Badge style={{color: makeupColors[a.makeup_decision]?.color, background: makeupColors[a.makeup_decision]?.bg}}>
                           Makeup: {makeupColors[a.makeup_decision]?.label}
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>{v.email}</p>
@@ -124,7 +129,8 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
                     )}
                   </div>
                 </div>
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>

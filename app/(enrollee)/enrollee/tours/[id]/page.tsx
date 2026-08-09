@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import { ApplyButton } from "@/components/features/tours/apply-button";
 import { MapPin, Calendar, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   open:      { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
@@ -56,7 +57,8 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-3xl mx-auto">
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
+        <Card>
+<CardContent>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
             <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{tour.title}</h1>
             <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 5, color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize" }}>
@@ -74,12 +76,15 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
               <Users size={13} /> {tour.capacity} seats
             </span>
           </div>
-        </div>
+        </CardContent>
+</Card>
 
-        <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
+        <Card>
+<CardContent>
           <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>About this Tour</h2>
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", lineHeight: 1.7, margin: 0 }}>{tour.description}</p>
-        </div>
+        </CardContent>
+</Card>
 
         {application ? (
           <div style={{ background: "rgba(var(--gs-accent-rgb), 0.06)", border: "1px solid rgba(var(--gs-accent-rgb), 0.2)", borderRadius: 10, padding: "16px 20px" }}>

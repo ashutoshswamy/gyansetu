@@ -4,6 +4,7 @@ import { Calendar, MapPin, Tag, CalendarClock, CheckCircle2, XCircle } from "luc
 import type { Event, EventAttendee } from "@/types";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import { RsvpButtons } from "./rsvp-buttons";
+import { Badge } from "@/components/ui/badge";
 
 type EventRow = Event & { tours?: { id: string; title: string } | null };
 
@@ -94,13 +95,13 @@ function EventCard({ event, muted, rsvp, showRsvp }: { event: EventRow; muted?: 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h3 style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }} className="truncate">{event.title}</h3>
-            <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: t.color, background: t.bg, textTransform: "capitalize", flexShrink: 0 }}>
+            <Badge style={{color: t.color, background: t.bg, textTransform: "capitalize", flexShrink: 0}}>
               {event.event_type}
-            </span>
+            </Badge>
             {rsvp && (
-              <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: rc.color, background: rc.bg, flexShrink: 0 }}>
+              <Badge style={{color: rc.color, background: rc.bg, flexShrink: 0}}>
                 {rc.label}
-              </span>
+              </Badge>
             )}
           </div>
           {event.description && <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "0 0 8px" }}>{event.description}</p>}

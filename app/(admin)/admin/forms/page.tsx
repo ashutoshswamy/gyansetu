@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { DeleteFormButton } from "@/components/features/forms/delete-form-button";
 import type { DynamicForm } from "@/types";
+import { Badge } from "@/components/ui/badge";
 
 export default async function AdminFormsPage() {
   const db = createServerClient();
@@ -54,19 +55,9 @@ export default async function AdminFormsPage() {
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h3 style={{ fontSize: 15, fontWeight: 500, color: "#19140F", margin: 0 }}>{form.title}</h3>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      padding: "2px 8px",
-                      borderRadius: 4,
-                      color: form.status === "active" ? "#2A5E3A" : "#9B9188",
-                      background: form.status === "active" ? "rgba(42,94,58,0.08)" : "rgba(90,82,71,0.08)",
-                      textTransform: "capitalize",
-                    }}
-                  >
+                  <Badge style={{color: form.status === "active" ? "#2A5E3A" : "#9B9188", background: form.status === "active" ? "rgba(42, 94, 58, 0.08)" : "rgba(90, 82, 71, 0.08)", textTransform: "capitalize"}}>
                     {form.status}
-                  </span>
+                  </Badge>
                 </div>
                 <div className="flex gap-4" style={{ fontSize: 12, color: "#9B9188" }}>
                   <span>{form.fields?.length ?? 0} fields</span>

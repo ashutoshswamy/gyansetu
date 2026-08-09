@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { publishNewsletter, deleteNewsletter } from "@/actions/newsletter";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface Newsletter {
   id: string;
@@ -93,20 +94,9 @@ export default async function AdminNewsletterPage() {
                     <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {item.title}
                     </span>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        padding: "2px 8px",
-                        borderRadius: 4,
-                        color: s.color,
-                        background: s.background,
-                        flexShrink: 0,
-                        textTransform: "capitalize",
-                      }}
-                    >
+                    <Badge style={{color: s.color, background: s.background, flexShrink: 0, textTransform: "capitalize"}}>
                       {item.status}
-                    </span>
+                    </Badge>
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                     {item.status === "published"

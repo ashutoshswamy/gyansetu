@@ -5,6 +5,8 @@ import type { TourGroupMember, TourGroup } from "@/types";
 import { getLocalHostForMyGroup } from "@/actions/local-hosts";
 import { getKitAssignmentForMyGroup, getKitChecklistForGroup } from "@/actions/kits";
 import { KitChecklist } from "@/components/features/kits/kit-checklist";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -26,7 +28,8 @@ async function GroupCard({ m }: { m: MembershipRow }) {
     : [null, null, []];
 
   return (
-    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 24px" }}>
+    <Card>
+<CardContent>
       <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
         <div>
           <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--foreground)", margin: "0 0 4px" }}>{g?.name}</h2>
@@ -85,12 +88,12 @@ async function GroupCard({ m }: { m: MembershipRow }) {
               </div>
               <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{kitAssignment.school_count} schools</p>
               <div className="flex gap-2">
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: kitAssignment.packed ? "var(--gs-success)" : "var(--gs-muted)", background: kitAssignment.packed ? "rgba(var(--gs-success-rgb), 0.08)" : "var(--gs-card)" }}>
+                <Badge style={{color: kitAssignment.packed ? "var(--gs-success)" : "var(--gs-muted)", background: kitAssignment.packed ? "rgba(var(--gs-success-rgb), 0.08)" : "var(--gs-card)"}}>
                   {kitAssignment.packed ? "Packed" : "Not Packed"}
-                </span>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: kitAssignment.distributed ? "var(--gs-accent)" : "var(--gs-muted)", background: kitAssignment.distributed ? "rgba(var(--gs-accent-rgb), 0.08)" : "var(--gs-card)" }}>
+                </Badge>
+                <Badge style={{color: kitAssignment.distributed ? "var(--gs-accent)" : "var(--gs-muted)", background: kitAssignment.distributed ? "rgba(var(--gs-accent-rgb), 0.08)" : "var(--gs-card)"}}>
                   {kitAssignment.distributed ? "Distributed" : "Not Distributed"}
-                </span>
+                </Badge>
               </div>
             </div>
           )}
@@ -102,7 +105,8 @@ async function GroupCard({ m }: { m: MembershipRow }) {
           <KitChecklist groupId={g.id} items={kitChecklist} />
         </div>
       )}
-    </div>
+    </CardContent>
+</Card>
   );
 }
 
@@ -127,11 +131,13 @@ export default async function VolunteerGroupsPage() {
         </div>
 
         {(myMembership ?? []).length === 0 ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+          <Card>
+<CardContent>
             <Users className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", marginBottom: 4 }}>Not assigned to any group yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>An admin will assign you to a tour group.</p>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           <div className="space-y-4">
             {(myMembership ?? []).map((m: MembershipRow) => (

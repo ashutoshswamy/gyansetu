@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import type { VolunteerLocation } from "./volunteer-map";
+import { Card, CardContent } from "@/components/ui/card";
 
 // OpenStreetMap Nominatim reverse geocoding — free, no API key, but its usage
 // policy caps public requests at ~1/sec, so lookups are queued and cached by
@@ -68,7 +69,8 @@ export function VolunteerLocationTable({ locations }: { locations: VolunteerLoca
   if (locations.length === 0) return null;
 
   return (
-    <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
+    <Card>
+<CardContent>
       <div className="overflow-x-auto">
         <table className="w-full" style={{ borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
@@ -106,6 +108,7 @@ export function VolunteerLocationTable({ locations }: { locations: VolunteerLoca
           </tbody>
         </table>
       </div>
-    </div>
+    </CardContent>
+</Card>
   );
 }

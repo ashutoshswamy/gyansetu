@@ -2,6 +2,7 @@ import { getMyRegistrationFee } from "@/actions/registration-fees";
 import { getMyCurrentTourGroup } from "@/actions/groups";
 import { Wallet, CheckCircle2 } from "lucide-react";
 import { RecordFeeForm } from "./submit-payment-form";
+import { Card, CardContent } from "@/components/ui/card";
 
 const statusColors: Record<string, { color: string; bg: string; border: string }> = {
   pending:   { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.05)", border: "rgba(var(--gs-warning-rgb), 0.2)" },
@@ -32,7 +33,8 @@ export default async function VolunteerRegistrationFeePage() {
         </div>
 
         {!fee ? (
-          <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "28px 26px" }}>
+          <Card>
+<CardContent>
             <div className="flex items-start gap-4">
               <div style={{ width: 44, height: 44, borderRadius: 10, background: "rgba(var(--gs-warning-rgb), 0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 <Wallet size={22} style={{ color: "var(--gs-warning)" }} />
@@ -43,7 +45,8 @@ export default async function VolunteerRegistrationFeePage() {
                 <RecordFeeForm tour={tourGroup?.tour ?? null} group={tourGroup?.group ?? null} />
               </div>
             </div>
-          </div>
+          </CardContent>
+</Card>
         ) : (
           (() => {
             const c = statusColors[fee.status] ?? statusColors.pending;

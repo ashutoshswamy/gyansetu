@@ -6,6 +6,7 @@ import type { DynamicForm, FormField } from "@/types";
 import { submitForm } from "@/actions/forms";
 import { uploadFileToStorage } from "@/actions/upload";
 import { useState, useEffect, useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -220,17 +221,20 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
 
   if (submitted) {
     return (
-      <div className="rounded-xl text-center py-14" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <Card>
+<CardContent>
         <div style={{ fontSize: 32, color: "var(--gs-success)", marginBottom: 10 }}>✓</div>
         <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--foreground)", marginBottom: 6 }}>Submitted</h3>
         <p style={{ fontSize: 14, color: "var(--gs-muted)" }}>Your response has been recorded.</p>
-      </div>
+      </CardContent>
+</Card>
     );
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="rounded-xl p-6" style={{ background: "white", border: "1px solid var(--border)" }}>
+      <Card>
+<CardContent>
         <div className="space-y-5">
           {form.fields.map((field) => (
             <div key={field.id}>
@@ -262,7 +266,8 @@ export function DynamicFormRenderer({ form }: { form: DynamicForm }) {
         >
           {saving ? "Submitting..." : "Submit"}
         </button>
-      </div>
+      </CardContent>
+</Card>
     </form>
   );
 }

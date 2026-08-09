@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Users, MapPin, Star } from "lucide-react";
 import { DeleteGroupButton } from "@/components/features/groups/delete-group-button";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface GroupMember {
   id: string;
@@ -65,7 +66,8 @@ export default async function AdminGroupsPage() {
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {tourGroups.map((group) => (
-                <div key={group.id} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px" }}>
+                <Card key={group.id}>
+<CardContent>
                   <div className="flex items-start justify-between mb-3 flex-wrap gap-4">
                     <div>
                       <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{group.name}</h3>
@@ -110,7 +112,8 @@ export default async function AdminGroupsPage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </CardContent>
+</Card>
               ))}
             </div>
           </div>

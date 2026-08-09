@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllWorkshops } from "@/actions/workshops";
 import { GraduationCap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const typeColors: Record<string, { color: string; bg: string; label: string }> = {
   science:            { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Science" },
@@ -54,12 +55,12 @@ export default async function AdminWorkshopsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{w.title}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: t.color, background: t.bg }}>
+                      <Badge style={{color: t.color, background: t.bg}}>
                         {t.label}
-                      </span>
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+                      </Badge>
+                      <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                         {w.status}
-                      </span>
+                      </Badge>
                       <span style={{ fontSize: 11, fontWeight: 600, color: w.kit_ready ? "#2A5E3A" : "#9B9188" }}>
                         {w.kit_ready ? "✓ Kit Ready" : "✗ Kit Not Ready"}
                       </span>

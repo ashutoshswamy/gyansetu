@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { getGroupsByTour } from "@/actions/groups";
 import Link from "next/link";
 import { ArrowLeft, Users, MapPin } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function AdminLocationsTourPage({ params }: { params: Promise<{ tourId: string }> }) {
   const { tourId } = await params;
@@ -36,7 +37,8 @@ export default async function AdminLocationsTourPage({ params }: { params: Promi
           )}
           {groups.map((group) => (
             <Link key={group.id} href={`/admin/locations/${tourId}/${group.id}`}>
-              <div style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px", cursor: "pointer" }}>
+              <Card>
+<CardContent>
                 <div className="flex items-center justify-between">
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{group.name}</h3>
                   {group.state_allocated && (
@@ -49,7 +51,8 @@ export default async function AdminLocationsTourPage({ params }: { params: Promi
                   <Users size={11} />
                   <span>{group.tour_group_members?.length ?? 0} members</span>
                 </div>
-              </div>
+              </CardContent>
+</Card>
             </Link>
           ))}
         </div>
