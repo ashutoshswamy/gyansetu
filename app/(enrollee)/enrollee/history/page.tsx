@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { History, MapPin, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type AssignmentRow = {
   id: string;
@@ -49,23 +50,26 @@ export default async function EnrolleeHistoryPage() {
         ) : (
           <div className="space-y-3">
             {past.map((a) => (
-              <Link
-                key={a.id}
-                href={`/enrollee/history/${a.tours!.id}`}
-                className="flex items-center justify-between gap-4 flex-wrap"
-                style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: "16px 20px", textDecoration: "none" }}
-              >
-                <div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", marginBottom: 4 }}>{a.tours?.title}</p>
-                  <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
-                    <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{a.tours?.destination}</span>
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{a.tours?.start_date} → {a.tours?.end_date}</span>
-                  </div>
-                </div>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
-                  Completed
-                </span>
-              </Link>
+              <Card key={a.id}>
+                <CardContent>
+                  <Link
+                    href={`/enrollee/history/${a.tours!.id}`}
+                    className="flex items-center justify-between gap-4 flex-wrap"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <div>
+                      <p style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", marginBottom: 4 }}>{a.tours?.title}</p>
+                      <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
+                        <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{a.tours?.destination}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{a.tours?.start_date} → {a.tours?.end_date}</span>
+                      </div>
+                    </div>
+                    <Badge style={{ color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>
+                      Completed
+                    </Badge>
+                  </Link>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}

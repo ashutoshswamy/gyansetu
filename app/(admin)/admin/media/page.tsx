@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { Image, FileText, Video } from "lucide-react";
 import { MediaThumb } from "@/components/features/media/media-thumb";
+import { Card } from "@/components/ui/card";
 
 const typeIcon: Record<string, React.ElementType> = {
   photo: Image,
@@ -57,27 +58,29 @@ export default async function AdminMediaPage() {
               {items.map((item) => {
                 const Icon = typeIcon[item.media_type] ?? Image;
                 return (
-                  <a
-                    key={item.id}
-                    href={item.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
-                  >
-                    {item.media_type === "photo" ? (
-                      <MediaThumb src={item.file_url} alt={item.caption ?? "photo"} />
-                    ) : (
-                      <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--gs-card)" }}>
-                        <Icon size={32} style={{ color: "var(--gs-muted)" }} />
+                  <Card key={item.id} className="p-0 gap-0">
+                    <a
+                      href={item.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                      style={{ textDecoration: "none" }}
+                    >
+                      {item.media_type === "photo" ? (
+                        <MediaThumb src={item.file_url} alt={item.caption ?? "photo"} />
+                      ) : (
+                        <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--gs-card)" }}>
+                          <Icon size={32} style={{ color: "var(--gs-muted)" }} />
+                        </div>
+                      )}
+                      <div style={{ padding: "10px 12px" }}>
+                        {item.caption && <p style={{ fontSize: 13, color: "var(--foreground)", margin: "0 0 2px", fontWeight: 500 }} className="truncate">{item.caption}</p>}
+                        <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
+                          {item.users?.name} · {new Date(item.created_at).toLocaleDateString()}
+                        </p>
                       </div>
-                    )}
-                    <div style={{ padding: "10px 12px" }}>
-                      {item.caption && <p style={{ fontSize: 13, color: "var(--foreground)", margin: "0 0 2px", fontWeight: 500 }} className="truncate">{item.caption}</p>}
-                      <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
-                        {item.users?.name} · {new Date(item.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </a>
+                    </a>
+                  </Card>
                 );
               })}
             </div>

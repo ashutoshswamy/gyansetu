@@ -333,16 +333,18 @@ export default async function CoreMemberVolunteerDetailPage({
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {detail.media.map((item) => (
-                  <a
-                    key={item.id}
-                    href={item.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden", textDecoration: "none", display: "block" }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.file_url} alt={item.caption ?? "media"} style={{ width: "100%", height: 130, objectFit: "cover", display: "block" }} />
-                  </a>
+                  <Card key={item.id} className="p-0 gap-0">
+                    <a
+                      href={item.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                      style={{ textDecoration: "none" }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={item.file_url} alt={item.caption ?? "media"} style={{ width: "100%", height: 130, objectFit: "cover", display: "block" }} />
+                    </a>
+                  </Card>
                 ))}
               </div>
             )}

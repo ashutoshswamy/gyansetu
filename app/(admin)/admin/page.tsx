@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { DashboardStats, Tour } from "@/types";
 import { Plane, Users, UserCheck, ClipboardList, Clock, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 async function getStats(): Promise<DashboardStats> {
   const cached = await getCached<DashboardStats>(CACHE_KEYS.dashboardStats);
@@ -178,12 +179,9 @@ export default async function AdminDashboard() {
                         {tour.destination} &middot; {new Date(tour.start_date).toLocaleDateString()}
                       </p>
                     </div>
-                    <span
-                      className="flex-shrink-0 ml-3"
-                      style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}
-                    >
+                    <Badge className="flex-shrink-0 ml-3" style={{ color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>
                       Open
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </div>
