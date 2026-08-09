@@ -16,7 +16,7 @@ export default async function VolunteerIdCardPage() {
 
         {!card ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <IdCardIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No ID card issued yet.</p>
           </CardContent>

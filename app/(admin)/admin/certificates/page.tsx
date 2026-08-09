@@ -76,7 +76,7 @@ export default async function AdminCertificatesPage() {
             const c = typeColors[cert.certificate_type] ?? typeColors.participation;
             return (
               <Card key={cert.id}>
-<CardContent>
+<CardContent className="flex items-center gap-4">
                 <div style={{ width: 36, height: 36, borderRadius: 8, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <Award size={18} style={{ color: c.color }} />
                 </div>

@@ -32,7 +32,7 @@ export default async function AdminKitsPage() {
             )}
             {assignments.map((a: (typeof assignments)[number]) => (
               <Card key={a.id}>
-<CardContent>
+<CardContent className="flex items-center gap-4 flex-wrap">
                 <div className="flex-1 min-w-0">
                   <div style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }}>{a.group?.name ?? "Unknown group"}</div>
                   <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>{a.school_count} schools</div>

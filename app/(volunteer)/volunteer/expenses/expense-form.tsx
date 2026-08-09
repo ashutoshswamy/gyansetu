@@ -154,7 +154,7 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
   }
 
   return (
-    <Card>
+    <Card className="mb-6">
 <CardContent>
 <form onSubmit={handleSubmit}>
       <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>{editExpense ? "Resubmit Expense" : "Submit Expense"}</h2>

@@ -52,7 +52,7 @@ export function AdvanceForm() {
   }
 
   return (
-    <Card>
+    <Card className="mb-5">
 <CardContent>
 <form onSubmit={handleSubmit}>
       {error && (

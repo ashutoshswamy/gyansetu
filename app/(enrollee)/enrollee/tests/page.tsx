@@ -51,7 +51,7 @@ export default async function StudentTestsPage() {
             const passed = attempt?.score !== null && attempt?.score !== undefined && attempt.score >= test.passing_score;
             return (
               <Card key={test.id}>
-<CardContent>
+<CardContent className="flex flex-wrap items-center justify-between gap-3">
                 <div style={{ minWidth: 0, flex: "1 1 200px" }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 6px" }}>{test.title}</h3>
                   <div style={{ display: "flex", gap: 14, fontSize: 12, color: "var(--gs-muted)" }}>

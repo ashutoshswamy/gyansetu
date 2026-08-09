@@ -174,7 +174,7 @@ export default function VolunteerMediaPage() {
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : media.length === 0 ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <ImageIcon className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No media for this tour yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Upload photos from your visit to build the gallery.</p>

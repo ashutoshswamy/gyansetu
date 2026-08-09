@@ -40,7 +40,7 @@ export default async function AdminDailyLogsPage() {
         <div className="space-y-3">
           {logs.length === 0 && (
             <Card>
-<CardContent>
+<CardContent className="text-center">
               <BookOpen className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No daily log entries yet.</p>
             </CardContent>

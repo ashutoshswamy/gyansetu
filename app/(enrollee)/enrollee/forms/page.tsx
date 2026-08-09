@@ -44,7 +44,7 @@ export default async function StudentFormsPage() {
           )}
           {(forms ?? []).map((form: DynamicForm) => (
             <Card key={form.id}>
-<CardContent>
+<CardContent className="flex items-center justify-between">
               <div>
                 <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 4px" }}>{form.title}</h3>
                 {form.description && <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{form.description}</p>}

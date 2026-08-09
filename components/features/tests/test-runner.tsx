@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { submitTestAttempt } from "@/actions/tests";
 import type { TestQuestion } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const inp = {
   width: "100%",
@@ -188,29 +189,22 @@ export function TestRunner({ test }: { test: Test }) {
 
       {/* Nav buttons */}
       <div className="flex items-center justify-between">
-        <button
-          onClick={() => setCurrent((c) => c - 1)}
-          disabled={current === 0}
-          style={{ fontSize: 13, fontWeight: 500, padding: "9px 18px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: current === 0 ? "#C8C4BC" : "var(--gs-text-secondary)", cursor: current === 0 ? "not-allowed" : "pointer" }}
-        >
+        <Button variant="outline" onClick={() => setCurrent((c) => c - 1)} disabled={current === 0}>
           Previous
-        </button>
+        </Button>
 
         {current < test.questions.length - 1 ? (
-          <button
-            onClick={() => setCurrent((c) => c + 1)}
-            style={{ fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", background: "var(--gs-accent)", color: "white", cursor: "pointer" }}
-          >
+          <Button onClick={() => setCurrent((c) => c + 1)}>
             Next
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
             onClick={handleSubmit}
             disabled={submitting}
-            style={{ fontSize: 13, fontWeight: 600, padding: "9px 20px", borderRadius: 6, border: "none", background: submitting ? "#C8C4BC" : "var(--gs-success)", color: "white", cursor: submitting ? "not-allowed" : "pointer" }}
+            className="bg-[var(--gs-success)]/10 text-[var(--gs-success)] hover:bg-[var(--gs-success)]/20"
           >
             {submitting ? "Submitting..." : "Submit Test"}
-          </button>
+          </Button>
         )}
       </div>
     </div>

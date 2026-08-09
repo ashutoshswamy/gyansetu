@@ -59,7 +59,7 @@ export default async function StudentProfilePage() {
         <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Submitted Profiles</h2>
         {profiles.length === 0 ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <GraduationCap className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No student profiles submitted yet.</p>
           </CardContent>

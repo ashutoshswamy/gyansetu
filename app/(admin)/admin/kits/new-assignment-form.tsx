@@ -56,7 +56,7 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
   if (availableGroups.length === 0) return null;
 
   return (
-    <Card>
+    <Card className="mb-4">
 <CardContent>
 <form onSubmit={handleSubmit}>
       {error && (

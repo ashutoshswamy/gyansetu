@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { deleteTour } from "@/actions/tours";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function DeleteTourButton({ tourId }: { tourId: string }) {
   const [confirming, setConfirming] = useState(false);
@@ -24,29 +25,19 @@ export function DeleteTourButton({ tourId }: { tourId: string }) {
   if (confirming) {
     return (
       <div className="flex gap-1">
-        <button
-          onClick={handleDelete}
-          disabled={deleting}
-          style={{ fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 5, border: "none", background: "var(--gs-danger-alt)", color: "white", cursor: deleting ? "not-allowed" : "pointer", opacity: deleting ? 0.7 : 1 }}
-        >
+        <Button size="sm" variant="destructive" onClick={handleDelete} disabled={deleting}>
           {deleting ? "Deleting..." : "Confirm"}
-        </button>
-        <button
-          onClick={() => setConfirming(false)}
-          style={{ fontSize: 12, padding: "6px 10px", borderRadius: 5, border: "1.5px solid var(--border)", background: "white", color: "var(--gs-text-secondary)", cursor: "pointer" }}
-        >
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setConfirming(false)}>
           Cancel
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
-    <button
-      onClick={() => setConfirming(true)}
-      style={{ background: "transparent", color: "var(--gs-danger-alt)", fontSize: 13, fontWeight: 500, padding: "6px 14px", borderRadius: 5, border: "1.5px solid rgba(var(--gs-danger-alt-rgb), 0.28)", cursor: "pointer" }}
-    >
+    <Button size="sm" variant="destructive" onClick={() => setConfirming(true)}>
       Delete
-    </button>
+    </Button>
   );
 }

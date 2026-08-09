@@ -112,7 +112,7 @@ export default function VolunteerDailyLogPage() {
         </div>
 
         {showForm && (
-          <Card>
+          <Card className="mb-6">
 <CardContent>
 <form onSubmit={handleSubmit}>
             <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 20px" }}>New Daily Log Entry</h2>
@@ -156,7 +156,7 @@ export default function VolunteerDailyLogPage() {
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : logs.length === 0 ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <BookOpen className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No daily log entries yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Start logging your field activities during the visit.</p>

@@ -35,7 +35,7 @@ export default async function VolunteerDemoEvaluationsPage() {
 
         {evaluations.length === 0 ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <ClipboardCheck className="w-12 h-12 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", marginBottom: 4 }}>No demo evaluations yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Evaluations from observers will appear here.</p>

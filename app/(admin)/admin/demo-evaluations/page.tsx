@@ -37,7 +37,7 @@ export default async function AdminDemoEvaluationsPage() {
             return (
               <Link key={e.id} href={isDraft ? `/admin/demo-evaluations/${e.id}/edit` : `/admin/demo-evaluations/${e.id}`}>
                 <Card>
-<CardContent>
+<CardContent className="flex items-center gap-4">
                   <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(var(--gs-accent-rgb), 0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <ClipboardCheck size={18} style={{ color: "var(--gs-accent)" }} />
                   </div>

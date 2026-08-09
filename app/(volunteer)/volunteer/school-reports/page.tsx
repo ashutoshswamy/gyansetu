@@ -239,7 +239,7 @@ export default function SchoolReportsPage() {
 </Card>
 
         {groupId && (
-          <Card>
+          <Card className="mb-6">
 <CardContent>
 <form onSubmit={handleSubmit}>
             {error && (
@@ -476,7 +476,7 @@ export default function SchoolReportsPage() {
             <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
           ) : reports.length === 0 ? (
             <Card>
-<CardContent>
+<CardContent className="text-center">
               <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No school reports yet for this group.</p>
             </CardContent>

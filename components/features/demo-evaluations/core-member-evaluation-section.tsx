@@ -47,7 +47,7 @@ export function CoreMemberEvaluationSection({
       </div>
       {evaluations.length === 0 ? (
         <Card>
-<CardContent>
+<CardContent className="text-center">
           <Star className="w-7 h-7 mx-auto mb-2" style={{ color: "var(--border)" }} />
           <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No demo evaluations yet.</p>
         </CardContent>
@@ -58,7 +58,7 @@ export function CoreMemberEvaluationSection({
             const s = statusStyles[ev.status] ?? statusStyles.submitted;
             return (
               <Card key={ev.id}>
-<CardContent>
+<CardContent className="flex items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>Score: {ev.total_score ?? 0}/100</span>

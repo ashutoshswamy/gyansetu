@@ -32,7 +32,7 @@ export default async function AdminTravelPage() {
         <div className="space-y-3">
           {tickets.length === 0 && (
             <Card>
-<CardContent>
+<CardContent className="text-center">
               <Train className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No travel tickets yet.</p>
             </CardContent>

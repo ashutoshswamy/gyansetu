@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Tour } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -150,20 +151,12 @@ export function TourForm({ initialData }: { initialData?: Tour }) {
         )}
 
         <div className="flex gap-3 mt-6">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: isSubmitting ? "#C8C4BC" : "var(--foreground)", color: "white", cursor: isSubmitting ? "not-allowed" : "pointer" }}
-          >
+          <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Saving..." : isEdit ? "Save Changes" : "Create Tour"}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: "var(--gs-text-secondary)", cursor: "pointer" }}
-          >
+          </Button>
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
-          </button>
+          </Button>
         </div>
       </CardContent>
 </Card>

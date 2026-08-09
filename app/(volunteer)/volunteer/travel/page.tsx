@@ -51,7 +51,7 @@ export default async function VolunteerTravelPage() {
 
         {!group ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <Train className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", marginBottom: 4 }}>Not assigned to any group yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>An admin will assign you to a tour group.</p>
@@ -113,7 +113,7 @@ export default async function VolunteerTravelPage() {
               )}
               {updates.map((u) => (
                 <Card key={u.id}>
-<CardContent>
+<CardContent className="flex gap-3">
                   <MapPin size={16} style={{ color: "var(--gs-accent)", flexShrink: 0, marginTop: 2 }} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">

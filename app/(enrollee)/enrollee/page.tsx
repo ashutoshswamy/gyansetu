@@ -76,9 +76,7 @@ export default async function EnrollmentDashboard() {
             </p>
           </div>
           <Link href="/enrollee/history">
-            <button style={{ background: "white", color: "var(--gs-accent)", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "1.5px solid rgba(var(--gs-accent-rgb), 0.28)", cursor: "pointer" }}>
-              Tour History
-            </button>
+            <Button variant="outline">Tour History</Button>
           </Link>
         </div>
 

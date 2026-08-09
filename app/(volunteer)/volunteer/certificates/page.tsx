@@ -34,7 +34,7 @@ export default async function VolunteerCertificatesPage() {
 
         {certs.length === 0 ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <Award className="w-12 h-12 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", marginBottom: 4 }}>No certificates yet.</p>
             <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>Certificates will appear here after tour completion and admin review.</p>

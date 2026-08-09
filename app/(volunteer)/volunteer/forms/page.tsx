@@ -9,7 +9,7 @@ function FormCard({ form, status }: { form: DynamicForm; status: "submitted" | "
   const isSubmitted = status === "submitted";
   return (
     <Card>
-<CardContent>
+<CardContent className="flex items-center justify-between gap-3">
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{form.title}</h3>

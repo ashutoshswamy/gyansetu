@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { createTest, updateTest } from "@/actions/tests";
 import type { EligibilityTest } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type Tour = { id: string; title: string };
 type QuestionType = "mcq" | "multi_select" | "subjective";
@@ -374,12 +375,12 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
       {error && <p style={{ fontSize: 13, color: "var(--gs-danger-alt)", marginBottom: 12 }}>{error}</p>}
 
       <div className="flex gap-3 justify-end">
-        <button type="button" onClick={() => router.back()} style={{ fontSize: 13, padding: "9px 18px", borderRadius: 6, border: "1.5px solid var(--border)", background: "white", color: "var(--gs-text-secondary)", cursor: "pointer" }}>
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
-        </button>
-        <button type="submit" disabled={saving || (!isTemplate && tours.length === 0)} style={{ fontSize: 13, fontWeight: 600, padding: "9px 22px", borderRadius: 6, border: "none", background: saving ? "#C8C4BC" : "var(--foreground)", color: "white", cursor: saving ? "not-allowed" : "pointer" }}>
+        </Button>
+        <Button type="submit" disabled={saving || (!isTemplate && tours.length === 0)}>
           {saving ? "Saving..." : isEdit ? "Save Changes" : "Create Test"}
-        </button>
+        </Button>
       </div>
     </form>
   );

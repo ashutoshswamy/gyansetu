@@ -178,7 +178,7 @@ export default function VolunteerTourReportPage() {
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Location report — fill one for each location visited</p>
         </div>
 
-        <Card>
+        <Card className="mb-6">
 <CardContent>
 <form onSubmit={handleSubmit}>
           {error && (
@@ -323,7 +323,7 @@ export default function VolunteerTourReportPage() {
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>
         ) : reports.length === 0 ? (
           <Card>
-<CardContent>
+<CardContent className="text-center">
             <FileBarChart className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
             <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No tour reports yet.</p>
           </CardContent>

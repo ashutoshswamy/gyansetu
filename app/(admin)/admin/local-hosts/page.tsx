@@ -4,59 +4,56 @@ import { getAllLocalHosts } from "@/actions/local-hosts";
 import { DeleteHostButton } from "./delete-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default async function AdminLocalHostsPage() {
   const hosts = await getAllLocalHosts();
 
   return (
-    <div className="min-h-screen p-4 sm:p-8" style={{ background: "#FBF7EC" }}>
+    <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
-            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "#9B9188", marginBottom: 4 }}>Admin Console</p>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#19140F", margin: 0 }}>Local Hosts</h1>
-            <p style={{ fontSize: 14, color: "#5A5247", marginTop: 4 }}>{hosts.length} local hosts on file</p>
+            <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Local Hosts</h1>
+            <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{hosts.length} local hosts on file</p>
           </div>
           <Link href="/admin/local-hosts/new">
-            <button style={{ background: "#4A55BE", color: "white", fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 5, border: "none", cursor: "pointer" }}>
-              + Add Local Host
-            </button>
+            <Button>+ Add Local Host</Button>
           </Link>
         </div>
 
         <div className="space-y-3">
           {hosts.length === 0 && (
-            <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No local hosts added yet.</p>
+            <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No local hosts added yet.</p>
           )}
           {hosts.map((h: (typeof hosts)[number]) => (
             <Card key={h.id}>
-<CardContent>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(74,85,190,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <Home size={18} style={{ color: "#4A55BE" }} />
+<CardContent className="flex items-center gap-4">
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(var(--gs-accent-rgb), 0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Home size={18} style={{ color: "var(--gs-accent)" }} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }}>{h.name}</span>
+                  <span style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }}>{h.name}</span>
                   {h.group?.tours?.[0]?.title && (
                     <Badge style={{color: "#9B6B1F", background: "rgba(155, 107, 31, 0.08)"}}>
                       {h.group.tours[0].title}
                     </Badge>
                   )}
                   {h.group && (
-                    <Badge style={{color: "#4A55BE", background: "rgba(74, 85, 190, 0.08)"}}>
+                    <Badge style={{color: "var(--gs-accent)", background: "rgba(74, 85, 190, 0.08)"}}>
                       {h.group.name}
                     </Badge>
                   )}
                 </div>
-                <div style={{ fontSize: 12, color: "#9B9188" }}>
+                <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                   {[h.phone, h.email, [h.district, h.state].filter(Boolean).join(", ")].filter(Boolean).join(" · ") || "No contact details"}
                 </div>
-                {h.notes && <div style={{ fontSize: 12, color: "#5A5247", marginTop: 4 }}>{h.notes}</div>}
+                {h.notes && <div style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 4 }}>{h.notes}</div>}
               </div>
               <Link href={`/admin/local-hosts/${h.id}/edit`}>
-                <button style={{ fontSize: 12, fontWeight: 600, padding: "9px 14px", minHeight: 38, borderRadius: 6, background: "transparent", color: "#4A55BE", border: "1.5px solid rgba(74,85,190,0.3)", cursor: "pointer" }}>
-                  Edit
-                </button>
+                <Button variant="outline" size="sm">Edit</Button>
               </Link>
               <DeleteHostButton id={h.id} />
             </CardContent>

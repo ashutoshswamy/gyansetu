@@ -80,7 +80,7 @@ export function SchoolReportsSearch({ byTour }: { byTour: Record<string, Tour> }
 
       {query.trim() && entries.length === 0 && (
         <Card>
-<CardContent>
+<CardContent className="text-center">
           <School className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
           <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No reports match &quot;{query}&quot;.</p>
         </CardContent>

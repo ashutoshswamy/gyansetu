@@ -62,7 +62,7 @@ export default async function VolunteerWorkshopsPage() {
         <div className="space-y-3">
           {workshops.length === 0 && (
             <Card>
-<CardContent>
+<CardContent className="text-center">
               <GraduationCap className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
               <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No workshops scheduled yet.</p>
             </CardContent>
