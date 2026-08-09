@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckSquare, Square } from "lucide-react";
 import { toggleKitChecklistItem } from "@/actions/kits";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface ChecklistItem {
   id: string;
@@ -42,11 +43,11 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
         {rows.map(item => {
           const badge = TYPE_BADGE[item.material_type];
           return (
-            <button
+            <Button
               key={item.id}
+              variant="outline"
               onClick={() => handleToggle(item.id, !item.checked)}
-              className="flex items-center justify-between gap-2 w-full text-left"
-              style={{ background: "white", border: "1px solid var(--border)", borderRadius: 6, padding: "8px 10px", cursor: "pointer" }}
+              className="flex items-center justify-between gap-2 w-full h-auto py-2 font-normal"
             >
               <div className="flex items-center gap-2 min-w-0">
                 {item.checked ? <CheckSquare size={16} style={{ color: "var(--gs-success)", flexShrink: 0 }} /> : <Square size={16} style={{ color: "var(--gs-muted)", flexShrink: 0 }} />}
@@ -54,7 +55,7 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
                 <Badge style={{color: badge.color, background: badge.bg, flexShrink: 0}}>{badge.label}</Badge>
               </div>
               <span style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", flexShrink: 0 }}>{item.total_qty}</span>
-            </button>
+            </Button>
           );
         })}
       </div>

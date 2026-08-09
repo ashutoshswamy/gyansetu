@@ -96,14 +96,16 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 mb-6 rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)", background: "white" }}>
-          {Object.entries(counts).map(([status, count], idx) => (
-            <div key={status} className="py-4 px-5" style={{ borderRight: idx < 3 ? "1px solid var(--border)" : undefined }}>
-              <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 4 }}>{status}</p>
-              <p style={{ fontSize: 22, fontWeight: 700, color: appStatusStyles[status]?.color ?? "var(--gs-accent)", fontFamily: "var(--font-geist-mono), monospace" }}>{count}</p>
-            </div>
-          ))}
-        </div>
+        <Card className="mb-6 p-0">
+          <CardContent className="grid grid-cols-2 sm:grid-cols-4 p-0">
+            {Object.entries(counts).map(([status, count], idx) => (
+              <div key={status} className="py-4 px-5" style={{ borderRight: idx < 3 ? "1px solid var(--border)" : undefined }}>
+                <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 4 }}>{status}</p>
+                <p style={{ fontSize: 22, fontWeight: 700, color: appStatusStyles[status]?.color ?? "var(--gs-accent)", fontFamily: "var(--font-geist-mono), monospace" }}>{count}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
         {/* Linked Tests */}
         {(tests ?? []).length > 0 && (

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import { bulkCreateSchoolProfiles } from "@/actions/earc";
 import type { EarcSchoolProfileInput } from "@/lib/validations";
+import { Button } from "@/components/ui/button";
 
 const TEMPLATE_COLUMNS = [
   "academic_year", "project", "school_name", "state", "district", "taluka_block", "village_city",
@@ -96,25 +97,24 @@ export function SchoolBulkUploadButton() {
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={downloadTemplate}
-        className="flex items-center gap-1.5"
-        style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-success)", background: "white", border: "1px solid var(--gs-success)", padding: "8px 16px", borderRadius: 6, cursor: "pointer" }}
+        className="border-[var(--gs-success)] text-[var(--gs-success)] hover:bg-[var(--gs-success)]/10"
       >
         <Download size={14} />
         Download Excel Template
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-        className="flex items-center gap-1.5"
-        style={{ fontSize: 13, fontWeight: 600, color: "white", background: "var(--gs-success)", padding: "8px 16px", borderRadius: 6, border: "none", cursor: uploading ? "not-allowed" : "pointer", opacity: uploading ? 0.7 : 1 }}
+        className="bg-[var(--gs-success)] hover:bg-[var(--gs-success)]/90"
       >
         <UploadCloud size={14} />
         {uploading ? "Uploading..." : "Bulk Upload Excel"}
-      </button>
+      </Button>
       <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" onChange={handleFile} style={{ display: "none" }} />
     </div>
   );

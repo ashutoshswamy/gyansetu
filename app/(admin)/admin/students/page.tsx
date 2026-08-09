@@ -96,25 +96,24 @@ export default async function AdminEnrollmentsPage() {
         </div>
 
         {/* Summary bar */}
-        <div
-          className="grid grid-cols-2 sm:grid-cols-4 mb-6 rounded-xl overflow-hidden"
-          style={{ border: "1px solid var(--border)", background: "white" }}
-        >
-          {summaryItems.map((item, idx) => (
-            <div
-              key={item.label}
-              className="py-4 px-5"
-              style={{ borderRight: idx < summaryItems.length - 1 ? "1px solid var(--border)" : undefined }}
-            >
-              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 4 }}>
-                {item.label}
-              </p>
-              <p style={{ fontSize: 24, fontWeight: 700, color: "var(--gs-accent)", fontFamily: "var(--font-geist-mono), monospace" }}>
-                {item.value}
-              </p>
-            </div>
-          ))}
-        </div>
+        <Card className="mb-6 p-0">
+          <CardContent className="grid grid-cols-2 sm:grid-cols-4 p-0">
+            {summaryItems.map((item, idx) => (
+              <div
+                key={item.label}
+                className="py-4 px-5"
+                style={{ borderRight: idx < summaryItems.length - 1 ? "1px solid var(--border)" : undefined }}
+              >
+                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 4 }}>
+                  {item.label}
+                </p>
+                <p style={{ fontSize: 24, fontWeight: 700, color: "var(--gs-accent)", fontFamily: "var(--font-geist-mono), monospace" }}>
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
         {/* User list */}
         <div className="space-y-3">
