@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAllWorkshops } from "@/actions/workshops";
 import { GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 const typeColors: Record<string, { color: string; bg: string; label: string }> = {
   science:            { color: "#4A55BE", bg: "rgba(74,85,190,0.08)", label: "Science" },
@@ -38,17 +39,20 @@ export default async function AdminWorkshopsPage() {
 
         <div className="space-y-3">
           {workshops.length === 0 && (
-            <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 12, padding: "48px 24px", textAlign: "center" }}>
+            <Card>
+<CardContent>
               <GraduationCap className="w-10 h-10 mx-auto mb-3" style={{ color: "#E4DFD1" }} />
               <p style={{ fontSize: 15, color: "#5A5247" }}>No workshops scheduled yet.</p>
-            </div>
+            </CardContent>
+</Card>
           )}
           {workshops.map((w: Awaited<ReturnType<typeof getAllWorkshops>>[number]) => {
             const t = typeColors[w.workshop_type] ?? typeColors.other;
             const s = statusColors[w.status] ?? statusColors.scheduled;
             return (
               <Link key={w.id} href={`/admin/workshops/${w.id}`} style={{ textDecoration: "none" }}>
-                <div style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer" }}>
+                <Card>
+<CardContent>
                   <div style={{ width: 36, height: 36, borderRadius: 8, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <GraduationCap size={18} style={{ color: t.color }} />
                   </div>
@@ -73,7 +77,8 @@ export default async function AdminWorkshopsPage() {
                       {w.groups?.length ? ` · Groups: ${w.groups.map((g: { name: string }) => g.name).join(", ")}` : ""}
                     </div>
                   </div>
-                </div>
+                </CardContent>
+</Card>
               </Link>
             );
           })}

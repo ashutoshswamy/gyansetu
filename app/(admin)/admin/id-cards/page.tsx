@@ -3,6 +3,7 @@ import { IdCard } from "lucide-react";
 import { getAllIdCards } from "@/actions/id-cards";
 import { DeleteIdCardButton } from "./delete-button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function AdminIdCardsPage() {
   const cards = await getAllIdCards();
@@ -35,7 +36,8 @@ export default async function AdminIdCardsPage() {
             <p style={{ color: "#9B9188", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No ID cards issued yet.</p>
           )}
           {cards.map((card: (typeof cards)[number]) => (
-            <div key={card.id} style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px", display: "flex", alignItems: "center", gap: 16 }}>
+            <Card key={card.id}>
+<CardContent>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(74,85,190,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 <IdCard size={18} style={{ color: "#4A55BE" }} />
               </div>
@@ -57,7 +59,8 @@ export default async function AdminIdCardsPage() {
                 View
               </Link>
               <DeleteIdCardButton id={card.id} />
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       </div>

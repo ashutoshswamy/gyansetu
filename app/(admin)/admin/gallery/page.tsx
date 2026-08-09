@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { deleteCategory } from "@/actions/gallery";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface CategoryRow {
   id: string;
@@ -70,19 +71,8 @@ export default async function AdminGalleryPage() {
           {cats.map((category) => {
             const imageCount = category.gallery_images?.length ?? 0;
             return (
-              <div
-                key={category.id}
-                style={{
-                  background: "white",
-                  border: "1px solid #E4DFD1",
-                  borderRadius: 10,
-                  padding: "14px 18px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 16,
-                }}
-              >
+              <Card key={category.id}>
+<CardContent>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#19140F", margin: 0 }}>
                     {category.name}
@@ -139,7 +129,8 @@ export default async function AdminGalleryPage() {
                     </button>
                   </form>
                 </div>
-              </div>
+              </CardContent>
+</Card>
             );
           })}
         </div>

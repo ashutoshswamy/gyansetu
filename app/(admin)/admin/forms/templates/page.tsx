@@ -4,6 +4,7 @@ import { DeleteFormButton } from "@/components/features/forms/delete-form-button
 import { ArrowLeft } from "lucide-react";
 import type { DynamicForm } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function FormTemplatesPage() {
   const db = createServerClient();
@@ -46,11 +47,8 @@ export default async function FormTemplatesPage() {
             </p>
           )}
           {(templates ?? []).map((template: DynamicForm) => (
-            <div
-              key={template.id}
-              className="flex items-center justify-between"
-              style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px" }}
-            >
+            <Card key={template.id}>
+<CardContent>
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h3 style={{ fontSize: 15, fontWeight: 500, color: "#19140F", margin: 0 }}>{template.title}</h3>
@@ -71,7 +69,8 @@ export default async function FormTemplatesPage() {
                 </Link>
                 <DeleteFormButton formId={template.id} />
               </div>
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       </div>

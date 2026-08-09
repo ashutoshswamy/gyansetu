@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DeleteFormButton } from "@/components/features/forms/delete-form-button";
 import type { DynamicForm } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function AdminFormsPage() {
   const db = createServerClient();
@@ -47,11 +48,8 @@ export default async function AdminFormsPage() {
             </p>
           )}
           {(forms ?? []).map((form: DynamicForm) => (
-            <div
-              key={form.id}
-              className="flex items-center justify-between"
-              style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px" }}
-            >
+            <Card key={form.id}>
+<CardContent>
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h3 style={{ fontSize: 15, fontWeight: 500, color: "#19140F", margin: 0 }}>{form.title}</h3>
@@ -77,7 +75,8 @@ export default async function AdminFormsPage() {
                 </Link>
                 <DeleteFormButton formId={form.id} />
               </div>
-            </div>
+            </CardContent>
+</Card>
           ))}
         </div>
       </div>

@@ -5,6 +5,7 @@ import type { Event } from "@/types";
 import { DeleteEventButton } from "@/components/features/events/delete-event-button";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
@@ -103,10 +104,8 @@ function EventRow({ event }: { event: EventWithTour }) {
   const t = typeColors[event.event_type] ?? typeColors.other;
   const s = statusColors[event.status] ?? statusColors.upcoming;
   return (
-    <div
-      className="flex items-center justify-between"
-      style={{ background: "white", border: "1px solid #E4DFD1", borderRadius: 10, padding: "14px 18px" }}
-    >
+    <Card>
+<CardContent>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 mb-1">
           <h3 style={{ fontSize: 15, fontWeight: 500, color: "#19140F" }} className="truncate">{event.title}</h3>
@@ -132,6 +131,7 @@ function EventRow({ event }: { event: EventWithTour }) {
         </Link>
         <DeleteEventButton eventId={event.id} />
       </div>
-    </div>
+    </CardContent>
+</Card>
   );
 }
