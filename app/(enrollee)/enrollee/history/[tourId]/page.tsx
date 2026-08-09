@@ -10,8 +10,7 @@ import { getMyCertificates } from "@/actions/certificates";
 import { IdCardPanel } from "@/components/features/id-cards/id-card-panel";
 import { CertificatePanel } from "@/components/features/certificates/certificate-panel";
 import type { FormField } from "@/types";
-
-const card: React.CSSProperties = { background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20 };
+import { Card, CardContent } from "@/components/ui/card";
 const sectionTitle: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 12 };
 
 export default async function EnrolleeTourHistoryDetailPage({ params }: { params: Promise<{ tourId: string }> }) {
@@ -97,10 +96,12 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
           <section>
             <p style={sectionTitle}>Forms ({submissions.length})</p>
             {submissions.length === 0 ? (
-              <div style={card} className="text-center">
+              <Card>
+<CardContent className="text-center">
                 <FileText className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
                 <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No forms submitted for this tour.</p>
-              </div>
+              </CardContent>
+</Card>
             ) : (
               <div className="space-y-3">
                 {submissions.map((s) => {
@@ -108,7 +109,8 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
                   const fieldLabels = new Map((form?.fields ?? []).map((f) => [f.id, f.label]));
                   const entries = Object.entries(s.data ?? {});
                   return (
-                    <div key={s.id} style={card}>
+                    <Card key={s.id}>
+<CardContent>
                       <div className="flex items-center justify-between mb-2">
                         <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>{form?.title ?? "Form"}</p>
                         <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
@@ -123,7 +125,8 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
                           ))}
                         </div>
                       )}
-                    </div>
+                    </CardContent>
+</Card>
                   );
                 })}
               </div>
@@ -133,20 +136,24 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
           <section>
             <p style={sectionTitle}>Reports ({logs.length})</p>
             {logs.length === 0 ? (
-              <div style={card} className="text-center">
+              <Card>
+<CardContent className="text-center">
                 <BookOpen className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
                 <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No daily reports for this tour.</p>
-              </div>
+              </CardContent>
+</Card>
             ) : (
               <div className="space-y-3">
                 {logs.map((log) => (
-                  <div key={log.id} style={card}>
+                  <Card key={log.id}>
+<CardContent>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 8 }}>
                       {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
                     </p>
                     <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginBottom: 4 }}><b>Activities:</b> {log.activities_conducted}</p>
                     <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}><b>Achievements:</b> {log.key_achievements}</p>
-                  </div>
+                  </CardContent>
+</Card>
                 ))}
               </div>
             )}
@@ -155,10 +162,12 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
           <section>
             <p style={sectionTitle}>Media ({myMedia.length})</p>
             {myMedia.length === 0 ? (
-              <div style={card} className="text-center">
+              <Card>
+<CardContent className="text-center">
                 <ImageIcon className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--border)" }} />
                 <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No media uploaded for this tour.</p>
-              </div>
+              </CardContent>
+</Card>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {myMedia.map((item) => (

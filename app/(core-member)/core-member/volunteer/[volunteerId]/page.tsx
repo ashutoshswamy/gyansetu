@@ -9,9 +9,7 @@ import { VolunteerFormSubmissions } from "@/components/features/core-member/volu
 import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
 import { TOUR_REPORT_OBSERVATION_FIELDS, TOUR_REPORT_LOGISTICS_LABELS } from "@/lib/report-field-labels";
 import type { DemoEvaluation, FormSubmission, FormField, TourReportHost, VolunteerObservation } from "@/types";
-
-const card: React.CSSProperties = { background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20 };
-const emptyCard: React.CSSProperties = { ...card, textAlign: "center", padding: "24px 20px" };
+import { Card, CardContent } from "@/components/ui/card";
 
 function SectionTitle({ icon: Icon, children, shared }: { icon: React.ElementType; children: React.ReactNode; shared?: boolean }) {
   return (
@@ -81,12 +79,16 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={Wallet}>Registration Fee</SectionTitle>
             {!detail.registrationFee ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No registration fee record.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No registration fee record.</p></CardContent>
+</Card>
             ) : (
-              <div style={card} className="flex items-center justify-between">
+              <Card>
+<CardContent className="flex items-center justify-between">
                 <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", textTransform: "capitalize" }}>{detail.registrationFee.status}</span>
                 <span style={{ fontSize: 14, fontFamily: "var(--font-geist-mono), monospace", color: "var(--gs-success)" }}>₹{detail.registrationFee.amount}</span>
-              </div>
+              </CardContent>
+</Card>
             )}
           </section>
 
@@ -94,17 +96,21 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={GraduationCap}>Workshops ({detail.workshopAttendance.length})</SectionTitle>
             {detail.workshopAttendance.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No workshop attendance recorded.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No workshop attendance recorded.</p></CardContent>
+</Card>
             ) : (
               <div className="space-y-2">
                 {detail.workshopAttendance.map((w) => (
-                  <div key={w.id} style={card} className="flex items-center justify-between">
+                  <Card key={w.id}>
+<CardContent className="flex items-center justify-between">
                     <div>
                       <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{w.workshop?.title}</p>
                       <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{w.workshop?.workshop_date ? new Date(w.workshop.workshop_date).toLocaleDateString() : ""}</p>
                     </div>
                     <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{w.attendance_status}</span>
-                  </div>
+                  </CardContent>
+</Card>
                 ))}
               </div>
             )}
@@ -114,7 +120,9 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={FileText}>Tasks &amp; Forms ({detail.formSubmissions.length})</SectionTitle>
             {detail.formSubmissions.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No forms submitted.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No forms submitted.</p></CardContent>
+</Card>
             ) : (
               <VolunteerFormSubmissions
                 submissions={detail.formSubmissions as unknown as (FormSubmission & { dynamic_forms: { title: string; fields?: FormField[] } | null })[]}
@@ -126,17 +134,21 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={CalendarDays}>Events ({detail.eventRsvps.length})</SectionTitle>
             {detail.eventRsvps.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No event RSVPs.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No event RSVPs.</p></CardContent>
+</Card>
             ) : (
               <div className="space-y-2">
                 {detail.eventRsvps.map((r) => (
-                  <div key={r.id} style={card} className="flex items-center justify-between">
+                  <Card key={r.id}>
+<CardContent className="flex items-center justify-between">
                     <div>
                       <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{r.event?.title}</p>
                       <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{r.event?.event_date ? new Date(r.event.event_date).toLocaleDateString() : ""}</p>
                     </div>
                     <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{r.rsvp_status}</span>
-                  </div>
+                  </CardContent>
+</Card>
                 ))}
               </div>
             )}
@@ -146,16 +158,20 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={BookOpen}>Daily Log ({detail.dailyLogs.length})</SectionTitle>
             {detail.dailyLogs.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No daily logs for this tour.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No daily logs for this tour.</p></CardContent>
+</Card>
             ) : (
               <div className="space-y-2">
                 {detail.dailyLogs.map((log) => (
-                  <div key={log.id} style={card}>
+                  <Card key={log.id}>
+<CardContent>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 6 }}>
                       {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
                     </p>
                     <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}><b>Activities:</b> {log.activities_conducted}</p>
-                  </div>
+                  </CardContent>
+</Card>
                 ))}
               </div>
             )}
@@ -175,14 +191,18 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={Plane} shared>Travel ({detail.travelTickets.length})</SectionTitle>
             {detail.travelTickets.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No travel tickets for this group.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No travel tickets for this group.</p></CardContent>
+</Card>
             ) : (
               <div className="space-y-2">
                 {detail.travelTickets.map((t) => (
-                  <div key={t.id} style={card}>
+                  <Card key={t.id}>
+<CardContent>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{t.train_name ?? t.train_number ?? "Travel ticket"}</p>
                     <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{t.departure_station} → {t.arrival_station}</p>
-                  </div>
+                  </CardContent>
+</Card>
                 ))}
               </div>
             )}
@@ -192,17 +212,21 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={Receipt}>Expenses ({detail.expenses.length})</SectionTitle>
             {detail.expenses.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No expenses submitted.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No expenses submitted.</p></CardContent>
+</Card>
             ) : (
               <div className="space-y-2">
                 {detail.expenses.map((e) => (
-                  <div key={e.id} style={card} className="flex items-center justify-between">
+                  <Card key={e.id}>
+<CardContent className="flex items-center justify-between">
                     <div>
                       <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{e.category}{e.subcategory ? ` · ${e.subcategory}` : ""}</p>
                       <p style={{ fontSize: 12, color: "var(--gs-muted)", textTransform: "capitalize" }}>{e.status}</p>
                     </div>
                     <span style={{ fontSize: 13, fontFamily: "var(--font-geist-mono), monospace", color: "var(--gs-success)" }}>₹{e.amount}</span>
-                  </div>
+                  </CardContent>
+</Card>
                 ))}
               </div>
             )}
@@ -212,7 +236,9 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={ClipboardList}>Tour Reports ({detail.tourReports.length})</SectionTitle>
             {detail.tourReports.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No tour reports submitted.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No tour reports submitted.</p></CardContent>
+</Card>
             ) : (
               <div className="space-y-2">
                 {detail.tourReports.map((r) => {
@@ -220,7 +246,8 @@ export default async function CoreMemberVolunteerDetailPage({
                   const scores = (r.logistics_scores ?? {}) as Record<string, number | undefined>;
                   const fields = r as unknown as Record<string, string | boolean | undefined>;
                   return (
-                    <div key={r.id} style={card}>
+                    <Card key={r.id}>
+<CardContent>
                       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                         <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{r.location_name ?? r.tour?.title ?? "Tour report"}</span>
                         <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{r.status}</span>
@@ -288,7 +315,8 @@ export default async function CoreMemberVolunteerDetailPage({
                           </a>
                         )}
                       </div>
-                    </div>
+                    </CardContent>
+</Card>
                   );
                 })}
               </div>
@@ -299,7 +327,9 @@ export default async function CoreMemberVolunteerDetailPage({
           <section>
             <SectionTitle icon={ImageIcon}>Media ({detail.media.length})</SectionTitle>
             {detail.media.length === 0 ? (
-              <div style={emptyCard}><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No media uploaded.</p></div>
+              <Card>
+<CardContent><p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No media uploaded.</p></CardContent>
+</Card>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {detail.media.map((item) => (
