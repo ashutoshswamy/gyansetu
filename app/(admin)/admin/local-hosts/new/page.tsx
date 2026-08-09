@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function NewLocalHostPage() {
   const router = useRouter();
@@ -86,7 +87,9 @@ export default function NewLocalHostPage() {
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Add Local Host</h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+        <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
           {error && (
             <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
@@ -159,6 +162,8 @@ export default function NewLocalHostPage() {
             </button>
           </div>
         </form>
+</CardContent>
+</Card>
       </div>
     </div>
   );

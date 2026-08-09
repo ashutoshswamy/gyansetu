@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 
 const CERT_TYPES: CertificateType[] = ["participation", "excellence", "leadership", "mentor"];
 
@@ -98,7 +99,9 @@ export default function BulkCertificatesPage() {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Bulk Issue Certificates</h1>
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Pick a tour, optionally narrow to one group, choose a category, select volunteers, and issue certificates to all of them at once.</p>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+        <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
           {error && (
             <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
@@ -172,6 +175,8 @@ export default function BulkCertificatesPage() {
             </Button>
           </div>
         </form>
+</CardContent>
+</Card>
       </div>
     </div>
   );

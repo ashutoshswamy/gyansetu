@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createEvent, updateEvent } from "@/actions/events";
 import type { EventType } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 const EVENT_TYPES = ["katta", "melawa", "training", "workshop", "meeting", "demo", "presentation", "celebration", "other"] as const;
 const EVENT_STATUSES = ["upcoming", "ongoing", "completed", "cancelled"] as const;
@@ -78,7 +79,9 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+    <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
       {error && (
         <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
           {error}
@@ -153,5 +156,7 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
         </button>
       </div>
     </form>
+</CardContent>
+</Card>
   );
 }

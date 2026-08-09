@@ -8,6 +8,7 @@ import { getGroupsForSelect } from "@/actions/groups";
 import { uploadFileToStorage } from "@/actions/upload";
 import type { ExpenseInput } from "@/lib/validations";
 import type { Expense } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 const CATEGORIES: { value: ExpenseInput["category"]; label: string; hint: string }[] = [
   { value: "travel", label: "Travel & Transportation", hint: "Train, Bus, Flight, Taxi, Auto, Local Transport, Fuel" },
@@ -153,7 +154,9 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20, marginBottom: 24 }}>
+    <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
       <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>{editExpense ? "Resubmit Expense" : "Submit Expense"}</h2>
       {error && (
         <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "var(--gs-danger)" }}>
@@ -244,5 +247,7 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
         )}
       </div>
     </form>
+</CardContent>
+</Card>
   );
 }

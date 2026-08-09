@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function NewTravelTicketPage() {
   const router = useRouter();
@@ -67,7 +68,9 @@ export default function NewTravelTicketPage() {
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>New Travel Ticket</h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+        <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
           {error && (
             <Alert variant="destructive" className="mb-5">
               <AlertDescription>{error}</AlertDescription>
@@ -158,6 +161,8 @@ export default function NewTravelTicketPage() {
             </Button>
           </div>
         </form>
+</CardContent>
+</Card>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import { createDemoEvaluation, updateDemoEvaluation } from "@/actions/demo-evalu
 import { getCurrentTourForVolunteer } from "@/actions/groups";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import type { DemoEvaluation } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const SCORE_FIELDS = [
   { key: "hindi_english_communication", label: "Hindi / English Communication" },
@@ -117,7 +118,9 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
             {evaluation ? "Edit Demo Evaluation" : "New Demo Evaluation"}
           </h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+        <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
           {error && (
             <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
@@ -175,6 +178,8 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
             </button>
           </div>
         </form>
+</CardContent>
+</Card>
       </div>
     </div>
   );

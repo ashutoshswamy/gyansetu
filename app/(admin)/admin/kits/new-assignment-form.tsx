@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { upsertKitAssignment } from "@/actions/kits";
 import { createClientClient } from "@/lib/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
@@ -55,7 +56,9 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
   if (availableGroups.length === 0) return null;
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 10, padding: 16, marginBottom: 16 }}>
+    <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
       {error && (
         <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "8px 12px", marginBottom: 12, fontSize: 12, color: "var(--gs-danger)" }}>
           {error}
@@ -78,5 +81,7 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
         {loading ? "Saving..." : "+ Assign Kit"}
       </button>
     </form>
+</CardContent>
+</Card>
   );
 }

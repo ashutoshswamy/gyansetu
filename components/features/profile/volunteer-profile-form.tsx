@@ -8,6 +8,7 @@ import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
 import { FileUploadField } from "@/components/features/file-upload-field";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { VolunteerProfile } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
@@ -291,7 +292,9 @@ export function VolunteerProfileForm({ variant }: Props) {
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} noValidate style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+        <Card>
+<CardContent>
+<form onSubmit={handleSubmit} noValidate>
           {error && (
             <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)", display: "flex", gap: 8, alignItems: "center" }}>
               <AlertCircle size={14} /> {error}
@@ -603,6 +606,8 @@ export function VolunteerProfileForm({ variant }: Props) {
             </button>
           )}
         </form>
+</CardContent>
+</Card>
       </div>
     </div>
   );

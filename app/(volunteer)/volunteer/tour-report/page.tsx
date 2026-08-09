@@ -178,7 +178,9 @@ export default function VolunteerTourReportPage() {
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>Location report — fill one for each location visited</p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 24 }}>
+        <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
           {error && (
             <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
@@ -314,6 +316,8 @@ export default function VolunteerTourReportPage() {
             {saving ? "Submitting..." : asFinal ? "Submit Final Report" : "Save Draft"}
           </button>
         </form>
+</CardContent>
+</Card>
 
         {loading ? (
           <p style={{ color: "var(--gs-muted)", fontSize: 14 }}>Loading...</p>

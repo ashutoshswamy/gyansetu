@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateGroup } from "@/actions/groups";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function EditGroupPage() {
   const params = useParams();
@@ -67,7 +68,9 @@ export default function EditGroupPage() {
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Edit Group</h1>
         </div>
-        <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 28 }}>
+        <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
           {error && (
             <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
               {error}
@@ -103,6 +106,8 @@ export default function EditGroupPage() {
             </button>
           </div>
         </form>
+</CardContent>
+</Card>
       </div>
     </div>
   );

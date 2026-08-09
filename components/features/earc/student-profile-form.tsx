@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { createStudentProfile } from "@/actions/earc";
 import type { EarcStudentProfileInput } from "@/lib/validations";
 import { BLOOD_GROUPS, STANDARDS } from "@/lib/constants/earc";
+import { Card, CardContent } from "@/components/ui/card";
 
 const GENDERS = ["Male", "Female", "Other"] as const;
 
@@ -80,7 +81,9 @@ export function StudentProfileForm({ onSaved }: { onSaved?: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+    <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
       {error && (
         <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
           {error}
@@ -155,5 +158,7 @@ export function StudentProfileForm({ onSaved }: { onSaved?: () => void }) {
         {saving ? "Saving..." : "Submit Student Profile"}
       </button>
     </form>
+</CardContent>
+</Card>
   );
 }

@@ -9,6 +9,7 @@ import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { EarcSchoolProfileInput } from "@/lib/validations";
 import { STANDARDS } from "@/lib/constants/earc";
+import { Card, CardContent } from "@/components/ui/card";
 
 const ACADEMIC_YEARS = ["2024-25", "2025-26", "2026-27", "2027-28", "2028-29", "2029-30"] as const;
 const PROJECTS = ["Chhote Scientists", "Vikas Mitra", "Pradnya Vikas", "Anubha Shala", "LearEng", "Padhai Se Dosti", "Others"] as const;
@@ -129,7 +130,9 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+    <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
       {error && (
         <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "var(--gs-danger)" }}>
           {error}
@@ -279,5 +282,7 @@ export function SchoolProfileForm({ onSaved }: { onSaved?: () => void }) {
         {saving ? "Saving..." : "Submit School Profile"}
       </button>
     </form>
+</CardContent>
+</Card>
   );
 }

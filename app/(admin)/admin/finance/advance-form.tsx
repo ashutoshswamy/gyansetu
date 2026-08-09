@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createExpenseAdvance } from "@/actions/finance";
 import { getAllGroups } from "@/actions/groups";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function AdvanceForm() {
   const router = useRouter();
@@ -51,7 +52,9 @@ export function AdvanceForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 20, marginBottom: 20 }}>
+    <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
       {error && (
         <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 14, fontSize: 13, color: "var(--gs-danger)" }}>
           {error}
@@ -78,5 +81,7 @@ export function AdvanceForm() {
         <input name="notes" type="text" placeholder="Enter notes" style={inputStyle} />
       </div>
     </form>
+</CardContent>
+</Card>
   );
 }

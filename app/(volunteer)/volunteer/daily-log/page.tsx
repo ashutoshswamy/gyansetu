@@ -112,7 +112,9 @@ export default function VolunteerDailyLogPage() {
         </div>
 
         {showForm && (
-          <form onSubmit={handleSubmit} style={{ background: "white", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 24 }}>
+          <Card>
+<CardContent>
+<form onSubmit={handleSubmit}>
             <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 20px" }}>New Daily Log Entry</h2>
             {error && (
               <div style={{ background: "rgba(var(--gs-danger-rgb), 0.07)", border: "1px solid rgba(var(--gs-danger-rgb), 0.2)", borderRadius: 6, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "var(--gs-danger)" }}>
@@ -146,6 +148,8 @@ export default function VolunteerDailyLogPage() {
               {saving ? "Saving..." : "Save Entry"}
             </button>
           </form>
+</CardContent>
+</Card>
         )}
 
         {loading ? (
