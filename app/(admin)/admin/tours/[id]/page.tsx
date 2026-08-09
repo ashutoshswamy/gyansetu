@@ -5,6 +5,7 @@ import { TourManageClient } from "./tour-manage-client";
 import { VolunteerAssign } from "./volunteer-assign";
 import { MapPin, Calendar, Users, ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   draft:     { color: "var(--gs-muted)", bg: "rgba(90,82,71,0.08)" },
@@ -72,9 +73,9 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{tour.title}</h1>
-              <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: s.color, background: s.bg, textTransform: "capitalize" }}>
+              <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                 {tour.status}
-              </span>
+              </Badge>
             </div>
             <div className="flex gap-4 mt-1" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
               <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {tour.destination}</span>
@@ -174,8 +175,8 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
 function ApplicationStatusSelect({ currentStatus }: { currentStatus: string }) {
   const as = appStatusStyles[currentStatus] ?? appStatusStyles.pending;
   return (
-    <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: as.color, background: as.bg, textTransform: "capitalize" }}>
+    <Badge style={{color: as.color, background: as.bg, textTransform: "capitalize"}}>
       {currentStatus}
-    </span>
+    </Badge>
   );
 }

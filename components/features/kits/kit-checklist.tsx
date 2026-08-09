@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckSquare, Square } from "lucide-react";
 import { toggleKitChecklistItem } from "@/actions/kits";
+import { Badge } from "@/components/ui/badge";
 
 interface ChecklistItem {
   id: string;
@@ -50,7 +51,7 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
               <div className="flex items-center gap-2 min-w-0">
                 {item.checked ? <CheckSquare size={16} style={{ color: "var(--gs-success)", flexShrink: 0 }} /> : <Square size={16} style={{ color: "var(--gs-muted)", flexShrink: 0 }} />}
                 <span style={{ fontSize: 13, color: item.checked ? "var(--gs-muted)" : "var(--foreground)", textDecoration: item.checked ? "line-through" : "none" }}>{item.name}</span>
-                <span style={{ fontSize: 10.5, fontWeight: 600, padding: "1px 6px", borderRadius: 4, color: badge.color, background: badge.bg, flexShrink: 0 }}>{badge.label}</span>
+                <Badge style={{color: badge.color, background: badge.bg, flexShrink: 0}}>{badge.label}</Badge>
               </div>
               <span style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-success)", flexShrink: 0 }}>{item.total_qty}</span>
             </button>

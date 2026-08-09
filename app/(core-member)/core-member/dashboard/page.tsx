@@ -3,6 +3,7 @@ import { getMyCoreMemberAssignments } from "@/actions/groups";
 import { Users, MapPin, Calendar, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -116,7 +117,7 @@ function CurrentGroupCard({ assignment }: { assignment: Assignment }) {
           <p style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", marginBottom: 2 }}>{group?.name}</p>
           {tour?.title && <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>{tour.title}</p>}
         </div>
-        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: s.color, background: s.bg, flexShrink: 0 }}>{s.label}</span>
+        <Badge style={{color: s.color, background: s.bg, flexShrink: 0}}>{s.label}</Badge>
       </div>
 
       <div className="flex flex-wrap gap-4 mb-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
@@ -179,7 +180,7 @@ function HistoryRow({ assignment }: { assignment: Assignment }) {
           {tour?.start_date && ` · ${new Date(tour.start_date).toLocaleDateString()}`}
         </p>
       </div>
-      <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: s.color, background: s.bg, flexShrink: 0 }}>{s.label}</span>
+      <Badge style={{color: s.color, background: s.bg, flexShrink: 0}}>{s.label}</Badge>
     </CardContent>
 </Card>
   );

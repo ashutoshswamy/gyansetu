@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { Plane, MapPin, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type AssignmentRow = {
   id: string;
@@ -99,9 +100,9 @@ function Section({ title, assignments }: { title: string; assignments: Assignmen
                     <p style={{ fontSize: 12, color: "var(--gs-text-secondary)" }}>Role: {a.role_description}</p>
                   )}
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize" }}>
+                <Badge style={{color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize"}}>
                   {s.label}
-                </span>
+                </Badge>
               </div>
 
               <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>

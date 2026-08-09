@@ -6,6 +6,7 @@ import { Plane, ClipboardList, ArrowRight, CheckCircle, Clock } from "lucide-rea
 import type { TourApplication, Tour, EligibilityTest } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type ApplicationRow = TourApplication & {
   tours: Pick<Tour, "title" | "destination" | "start_date" | "end_date"> | null;
@@ -149,11 +150,9 @@ export default async function EnrollmentDashboard() {
                           {app.test_score != null && ` · Score: ${app.test_score.toFixed(0)}%`}
                         </p>
                       </div>
-                      <span
-                        style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 4, color: s.color, background: s.bg, flexShrink: 0, marginLeft: 12 }}
-                      >
+                      <Badge style={{color: s.color, background: s.bg, flexShrink: 0, marginLeft: 12}}>
                         {s.label}
-                      </span>
+                      </Badge>
                     </div>
                   );
                 })}

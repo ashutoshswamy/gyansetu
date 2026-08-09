@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ApplyButton } from "@/components/features/tours/apply-button";
 import { MapPin, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   open:      { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
@@ -61,9 +62,9 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
 <CardContent>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
             <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{tour.title}</h1>
-            <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 5, color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize" }}>
+            <Badge style={{color: s.color, background: s.bg, flexShrink: 0, textTransform: "capitalize"}}>
               {tour.status}
-            </span>
+            </Badge>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16, fontSize: 13, color: "var(--gs-muted)" }}>
             <span style={{ display: "flex", alignItems: "center", gap: 5 }}>

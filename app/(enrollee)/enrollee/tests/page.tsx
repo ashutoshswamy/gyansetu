@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { EligibilityTest } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default async function StudentTestsPage() {
   const { userId } = await auth();
@@ -64,21 +65,21 @@ export default async function StudentTestsPage() {
                     <>
                       <span style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", fontFamily: "monospace" }}>{attempt.score?.toFixed(1)}%</span>
                       {attempt.status === "pending_approval" ? (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 4, color: "#B45309", background: "rgba(var(--gs-warning-rgb), 0.08)" }}>
+                        <Badge style={{color: "#B45309", background: "rgba(var(--gs-warning-rgb), 0.08)"}}>
                           Pending Approval
-                        </span>
+                        </Badge>
                       ) : attempt.status === "approved" ? (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 4, color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>
+                        <Badge style={{color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)"}}>
                           Approved
-                        </span>
+                        </Badge>
                       ) : attempt.status === "rejected" ? (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 4, color: "var(--gs-danger-alt)", background: "rgba(var(--gs-danger-alt-rgb), 0.08)" }}>
+                        <Badge style={{color: "var(--gs-danger-alt)", background: "rgba(var(--gs-danger-alt-rgb), 0.08)"}}>
                           Rejected
-                        </span>
+                        </Badge>
                       ) : (
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 8px", borderRadius: 4, color: passed ? "var(--gs-success)" : "var(--gs-danger-alt)", background: passed ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-danger-alt-rgb), 0.08)" }}>
+                        <Badge style={{color: passed ? "var(--gs-success)" : "var(--gs-danger-alt)", background: passed ? "rgba(var(--gs-success-rgb), 0.08)" : "rgba(var(--gs-danger-alt-rgb), 0.08)"}}>
                           {passed ? "Passed" : "Failed"}
-                        </span>
+                        </Badge>
                       )}
                     </>
                   ) : (

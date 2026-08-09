@@ -116,9 +116,9 @@ function EventCard({ event, muted, rsvp, showRsvp }: { event: EventRow; muted?: 
             </div>
           )}
         </div>
-        <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4, background: muted ? "rgba(90,82,71,0.1)" : "rgba(var(--gs-success-rgb), 0.08)", color: muted ? "var(--gs-muted)" : "var(--gs-success)", textTransform: "capitalize", flexShrink: 0 }}>
+        <Badge style={{background: muted ? "rgba(90, 82, 71, 0.1)" : "rgba(var(--gs-success-rgb), 0.08)", color: muted ? "var(--gs-muted)" : "var(--gs-success)", textTransform: "capitalize", flexShrink: 0}}>
           {event.status}
-        </span>
+        </Badge>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/
 import { TOUR_REPORT_OBSERVATION_FIELDS, TOUR_REPORT_LOGISTICS_LABELS } from "@/lib/report-field-labels";
 import type { DemoEvaluation, FormSubmission, FormField, TourReportHost, VolunteerObservation } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 function SectionTitle({ icon: Icon, children, shared }: { icon: React.ElementType; children: React.ReactNode; shared?: boolean }) {
   return (
@@ -17,9 +18,9 @@ function SectionTitle({ icon: Icon, children, shared }: { icon: React.ElementTyp
       <Icon className="w-4 h-4" style={{ color: "var(--gs-accent)" }} />
       <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.04em", color: "var(--foreground)", margin: 0 }}>{children}</p>
       {shared && (
-        <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 4, color: "var(--gs-warning-alt)", background: "rgba(var(--gs-warning-alt-rgb), 0.08)" }}>
+        <Badge style={{color: "var(--gs-warning-alt)", background: "rgba(var(--gs-warning-alt-rgb), 0.08)"}}>
           Shared with your group
-        </span>
+        </Badge>
       )}
     </div>
   );
