@@ -205,6 +205,7 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
             color: open ? "var(--gs-rust)" : "var(--gs-text)",
             lineHeight: 1.5,
             transition: "color .2s",
+            whiteSpace: "normal",
           }}
         >
           {q}
@@ -286,7 +287,7 @@ export default function FAQPage() {
             </Button>
             <div
               ref={tabsRef}
-              style={{ display: "flex", gap: 0, borderBottom: "none", overflowX: "auto", scrollBehavior: "smooth" }}
+              style={{ display: "flex", gap: 0, borderBottom: "none", overflowX: "auto", scrollBehavior: "smooth", flex: "1 1 0%", minWidth: 0 }}
             >
               {categories.map((cat) => (
                 <Button
