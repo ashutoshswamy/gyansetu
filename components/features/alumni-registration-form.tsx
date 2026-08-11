@@ -220,7 +220,7 @@ export function AlumniRegistrationForm() {
             </div>
             <h2 style={{ fontFamily: F_DISPLAY, fontSize: 22, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 10px" }}>Registration Received!</h2>
             <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "var(--gs-text-soft)", lineHeight: 1.65, margin: "0 0 20px" }}>
-              Welcome back to the Gyan Setu family. A confirmation email is on its way to your inbox.
+              Welcome back to the Gyan-Setu family. A confirmation email is on its way to your inbox.
             </p>
             <Link href="/" style={{ fontFamily: F_BODY, fontSize: 13, fontWeight: 700, color: "var(--gs-rust)", textDecoration: "none" }}>Back to Home</Link>
           </div>
@@ -239,7 +239,7 @@ export function AlumniRegistrationForm() {
             Alumni <span style={{ color: "var(--gs-rust)", fontStyle: "italic" }}>Registration</span>
           </h1>
           <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", marginTop: 10, lineHeight: 1.65, maxWidth: 560 }}>
-            Once a Jnana Prabodhini, always a Jnana Prabodhini — reconnect and stay part of the Gyan Setu family.
+            Once a Gyan-Setu volunteer always a Gyan-Setu volunteer — reconnect and stay part of the Gyan-Setu family.
           </p>
           <p style={{ fontFamily: F_MONO, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-text-mute)", marginTop: 14 }}>
             6 Sections · About 8–10 Minutes
@@ -314,7 +314,7 @@ export function AlumniRegistrationForm() {
           </div>
 
           <div className="space-y-3" data-tab="visits" style={{ display: activeTab === "visits" ? undefined : "none" }}>
-              <SectionHeader num="02" label="Gyan-Setu Visit History" hint="Add every Gyan Setu tour you've been part of." />
+              <SectionHeader num="02" label="Gyan-Setu Visit History" hint="Add every Gyan-Setu tour you've been part of." />
               <div className="space-y-3">
                 {visits.map((v, i) => (
                   <div key={i} style={{ position: "relative", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "16px 16px 14px", background: "var(--gs-paper-deep)" }}>

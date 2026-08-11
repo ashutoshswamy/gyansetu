@@ -279,7 +279,7 @@ export default function FAQPage() {
               size="icon"
               aria-label="Scroll tabs left"
               onClick={() => scrollByAmount(tabsRef, -1)}
-              className="size-7 shrink-0 rounded-full"
+              className="faq-scroll-btn size-7 shrink-0 rounded-full"
               style={{ border: "1px solid var(--gs-line)", background: "var(--gs-paper)", color: "var(--gs-text-soft)" }}
             >
               <ChevronLeft size={16} />
@@ -294,7 +294,7 @@ export default function FAQPage() {
                   type="button"
                   variant="ghost"
                   onClick={() => setActiveTab(cat.id)}
-                  className="h-auto shrink-0 rounded-none bg-transparent px-5 py-2.5 whitespace-nowrap hover:bg-transparent"
+                  className="faq-tab-btn h-auto shrink-0 rounded-none bg-transparent px-5 py-2.5 whitespace-nowrap hover:bg-transparent"
                   style={{
                     fontFamily: F_MONO,
                     fontSize: 11.5,
@@ -316,7 +316,7 @@ export default function FAQPage() {
               size="icon"
               aria-label="Scroll tabs right"
               onClick={() => scrollByAmount(tabsRef, 1)}
-              className="size-7 shrink-0 rounded-full"
+              className="faq-scroll-btn size-7 shrink-0 rounded-full"
               style={{ border: "1px solid var(--gs-line)", background: "var(--gs-paper)", color: "var(--gs-text-soft)" }}
             >
               <ChevronRight size={16} />
@@ -327,7 +327,7 @@ export default function FAQPage() {
 
       {/* Content */}
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "48px 24px 80px" }}>
-        <div style={{ background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "0 32px" }}>
+        <div className="faq-card" style={{ background: "var(--gs-paper-deep)", border: "1px dashed var(--gs-line)", borderRadius: 4, padding: "0 32px" }}>
           {active.items.map((item, i) => (
             <AccordionItem key={i} q={item.q} a={item.a} />
           ))}

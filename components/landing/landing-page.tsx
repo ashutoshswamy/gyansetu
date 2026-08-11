@@ -174,7 +174,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               {[
                 { val: "91,348", lbl: "Students Connected", d: 0.82 },
                 { val: "1,688",  lbl: "Schools Reached",     d: 0.9  },
-                { val: "14",     lbl: "States & UT",         d: 0.98 },
+                { val: "13",     lbl: "States & UT",         d: 0.98 },
                 { val: "1,050",  lbl: "Volunteers Engaged",  d: 1.06 },
               ].map((s) => (
                 <AnimatedStat key={s.lbl} value={s.val} label={s.lbl} delay={s.d} tone="ink" />
@@ -298,10 +298,10 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             </motion.h2>
 
             <div style={{ fontFamily: F_MONO, fontSize: 10.5, fontWeight: 600, color: "var(--gs-text-mute)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
-              Where We&apos;ve Worked — 11 States &amp; UTs
+              Where We&apos;ve Worked — 13 States &amp; UTs
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
-              {["Arunachal Pradesh", "Assam", "Chhattisgarh", "Jammu & Kashmir", "Jharkhand", "Ladakh", "Madhya Pradesh", "Manipur", "Meghalaya", "Nagaland", "Odisha"].map((state, i) => (
+              {["Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Jammu & Kashmir", "Jharkhand", "Ladakh", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Nagaland", "Odisha"].map((state, i) => (
                 <motion.span
                   key={state}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -325,7 +325,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
 
             {[
               "At Gyan-Setu, our journey began in 2013 with a visionary idea: to promote national integration through activity-based learning. We set out to bridge through education in India’s remote, tribal, and underserved regions, using science, mathematics and exhibition as a tool to connect, empower, and inspire.",
-              "As an initiative of Jnana Prabodhini’s Educational Activity Research Centre (EARC), we have conducted hands-on science and mathematics workshops in schools located in some of the country’s most underserved, aspirational and culturally diverse regions. From the tranquil hills of Arunachal Pradesh and Meghalaya to the vibrant cultures of Assam, Manipur, and Nagaland, and from the rugged terrains of Chhattisgarh, Odisha, Jharkhand, Madhya Pradesh, to the remote schools of Ladakh and Jammu & Kashmir, our efforts span diverse landscapes and communities.",
+              "As an initiative of Jnana Prabodhini’s Educational Activity Research Centre (EARC), we have conducted hands-on science and mathematics workshops in schools across remote, aspirational and culturally diverse regions of the country, reaching communities with limited access to enriching educational opportunities. From Maharashtra, where Gyan-Setu began, to the tranquil hills of Arunachal Pradesh and Meghalaya, the vibrant cultures of Assam, Manipur, and Nagaland, and the diverse landscapes of Bihar, Chhattisgarh, Odisha, Jharkhand, and Madhya Pradesh, our efforts continue to reach communities across the country. From the remote schools of Ladakh and Jammu & Kashmir to the farthest corners of the Northeast, Gyan-Setu connects diverse regions, cultures, and communities through the shared pursuit of learning, national integration, and meaningful engagement.",
             ].map((para, i) => (
               <motion.p
                 key={i}
@@ -399,8 +399,8 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               { num: "02", title: "Orientation & Training", desc: "Attend the mandatory orientation, training sessions, and demo workshops to understand Gyan-Setu's mission, educational activities, and volunteer responsibilities" },
               { num: "03", title: "Selection & Team Formation", desc: "Complete the interview and selection process. Selected volunteers are grouped into teams and assigned a state based on programme requirements" },
               { num: "04", title: "Preparation & State Study", desc: "Prepare with your team by planning activities, coordinating logistics, and studying the history, culture, geography, language, and local context of your allotted state" },
-              { num: "05", title: "School & Community Visit", desc: "Travel to the assigned region to conduct science and mathematics workshops, career guidance sessions, the “Know Our Country” Exhibition, and participate in meaningful cultural understanding with schools and local communities" },
-              { num: "06", title: "Reflection & Continued Engagement", desc: "Submit reports and post test feedback, receive your volunteer certificate, participate in annual Gyan-Setu events (15 August Melawa and 26 January Katta), and continue as an active member of the Gyan-Setu volunteer network" },
+              { num: "05", title: "School & Community Visit", desc: "Travel to the assigned region to conduct science and mathematics workshops, career guidance sessions, the “Know Our Country” Exhibition, and engage in cultural understanding with schools and local communities" },
+              { num: "06", title: "Reflection & Continued Engagement", desc: "Submit reports and post-test feedback, receive your certificate of participation at Gyan-Setu events (15 August Melawa and 26 January Katta), and continue as an active member of the Gyan-Setu volunteer network" },
             ].map((step, i, arr) => (
               <motion.div
                 key={i}
@@ -466,7 +466,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: 0.18 }}
               >
-                Thousands of students have travelled across India with Gyan Setu. Here are their stories.
+                Thousands of volunteers have travelled across India with Gyan-Setu. Here are their stories.
               </motion.p>
             </div>
             <motion.div
@@ -561,7 +561,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
             <div style={{ position: "absolute", top: -30, right: -20, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle,rgba(232,163,61,.12) 0%,transparent 70%)", pointerEvents: "none" }} />
             <div style={{ fontFamily: F_DISPLAY, fontSize: 64, lineHeight: 0.6, color: "var(--gs-marigold)", marginBottom: 18 }}>&ldquo;</div>
             <p style={{ fontFamily: F_DISPLAY, fontSize: 26, fontStyle: "italic", fontWeight: 500, color: "var(--gs-paper)", lineHeight: 1.35, margin: "0 0 24px" }}>
-              once a Gyan-Setu Volunteer, always one.
+              Once a Gyan-Setu Volunteer, Always One
             </p>
             <p style={{ fontFamily: F_MONO, fontSize: 12, color: "rgba(251,247,236,.5)", margin: 0, letterSpacing: "0.02em" }}>
               Reconnect. Share your story. Guide the next generation.
@@ -627,7 +627,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               <span style={{ color: "var(--gs-rust)", fontStyle: "italic" }}>Shape Young India</span>
             </h2>
             <p style={{ fontFamily: F_BODY, fontSize: 15.5, color: "var(--gs-text-soft)", lineHeight: 1.75, marginBottom: 28 }}>
-              Your sponsorship powers activity-based learning workshops in remote schools, supports volunteer travel, and helps bridge knowledge gaps across India. Partner with Gyan Setu and invest in a generation of curious, connected young minds.
+              Your sponsorship powers activity-based learning workshops in remote schools, supports volunteer travel, and helps bridge knowledge gaps across India. Partner with Gyan-Setu and invest in a generation of curious, connected young minds.
             </p>
             <Link href="/sponsor" style={btnMarigold}>
               Become a Sponsor <ChevronRight size={15} />
@@ -643,7 +643,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
           >
             {[
               { num: "1,688", label: "Schools Reached" },
-              { num: "14",    label: "States & UT" },
+              { num: "13",    label: "States & UT" },
             ].map((stat, i) => (
               <div key={i} style={{ background: "var(--gs-paper-deep)", border: "1px solid var(--gs-line)", borderRadius: 3, padding: "26px 28px", display: "flex", gap: 22, alignItems: "center" }}>
                 <div style={{ fontFamily: F_MONO, fontSize: 36, fontWeight: 600, color: "var(--gs-rust)", lineHeight: 1, flexShrink: 0 }}>{stat.num}</div>
@@ -711,7 +711,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "64px 24px 48px", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48 }} className="footer-grid">
           {/* Brand column */}
           <div>
-            <Image src="/logo_wide.png" alt="Gyan Setu" width={120} height={36} style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 18 }} />
+            <Image src="/logo_wide.png" alt="Gyan-Setu" width={120} height={36} style={{ height: 36, width: "auto", objectFit: "contain", marginBottom: 18 }} />
             <p style={{ fontFamily: F_BODY, fontSize: 13.5, color: "rgba(251,247,236,.45)", lineHeight: 1.75, maxWidth: 300, marginBottom: 24 }}>
               Jnana Prabodhini Educational Activity Research Centre. Building bridges of knowledge across India since 2013.
             </p>
@@ -719,7 +719,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               {[
                 { href: "https://www.facebook.com/share/19gufTtRBK/?mibextid=wwXIfr", label: "Facebook", hoverBg: "#1877F2", hoverColor: "white", path: "M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" },
                 { href: "https://www.instagram.com/gyan_setu_?igsh=MTNzbHBxbmo3OXZiYQ==", label: "Instagram", hoverBg: "#E1306C", hoverColor: "white", path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" },
-                { href: "https://www.linkedin.com/company/gyan-setu/", label: "LinkedIn", hoverBg: "#0A66C2", hoverColor: "white", path: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" },
+                { href: "https://www.linkedin.com/in/gyan-setu-792023211", label: "LinkedIn", hoverBg: "#0A66C2", hoverColor: "white", path: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" },
                 { href: "https://youtube.com/@gyansetuyoutubechannel?si=Fc1wprxTfw55Rmnn", label: "YouTube", hoverBg: "#FF0000", hoverColor: "white", path: "M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" },
               ].map(({ href, label, hoverBg, hoverColor, path }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
@@ -790,8 +790,7 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
               <div>
                 <div style={{ fontFamily: F_MONO, fontSize: 10.5, color: "rgba(251,247,236,.3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>Phone</div>
                 <div style={{ fontFamily: F_BODY, fontSize: 13, color: "rgba(251,247,236,.5)", lineHeight: 1.65 }}>
-                  9325585695<br />
-                  020-24207209
+                  020-24207139
                 </div>
               </div>
               <div>
@@ -827,8 +826,8 @@ export function LandingPage({ testimonials = [] }: LandingPageProps) {
         {/* Bottom bar */}
         <div style={{ borderTop: "1px solid var(--gs-line-ink)", padding: "20px 24px" }}>
           <div style={{ maxWidth: 1120, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-            <p suppressHydrationWarning style={{ fontFamily: F_MONO, fontSize: 11.5, color: "rgba(251,247,236,.28)", margin: 0 }}>
-              © {new Date().getFullYear()} Jnana Prabodhini Educational Resource Centre. All rights reserved.
+            <p style={{ fontFamily: F_MONO, fontSize: 11.5, color: "rgba(251,247,236,.28)", margin: 0 }}>
+              © 2026 Jnana Prabodhini Educational Activity Research Centre. All rights reserved.
             </p>
             <p style={{ fontFamily: F_MONO, fontSize: 11.5, color: "rgba(251,247,236,.28)", margin: 0 }}>
               Made by{" "}

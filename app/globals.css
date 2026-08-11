@@ -198,6 +198,15 @@
   .footer-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
 }
 
+@media (max-width: 640px) {
+  .faq-card { padding: 0 16px !important; }
+  .faq-tab-btn { padding-left: 14px !important; padding-right: 14px !important; font-size: 10.5px !important; }
+}
+@media (max-width: 420px) {
+  .faq-card { padding: 0 12px !important; }
+  .faq-scroll-btn { display: none !important; }
+}
+
 /* ── Global micro-interactions for raw <button>/<input> elements ──
    Most of the app renders plain <button>/<input> with inline `style={{}}`,
    which can't express :hover/:active/:focus. These rules add that feedback

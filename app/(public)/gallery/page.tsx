@@ -39,7 +39,7 @@ export default async function GalleryPage() {
         {/* Page header */}
         <div style={{ marginBottom: 56, textAlign: "center" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Eyebrow>Jnana Pravas Memories</Eyebrow>
+            <Eyebrow>Gyan-Setu Memories</Eyebrow>
           </div>
           <h1 style={{
             fontFamily: F_DISPLAY,
@@ -52,7 +52,7 @@ export default async function GalleryPage() {
             Gallery
           </h1>
           <p style={{ fontFamily: F_BODY, fontSize: 15, color: "var(--gs-text-soft)", marginTop: 14, maxWidth: 480, marginLeft: "auto", marginRight: "auto" }}>
-            A collection of moments from our student exchange journeys.
+            A collection of moment from our journeys.
           </p>
         </div>
 

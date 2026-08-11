@@ -61,7 +61,7 @@ export default function SponsorPage() {
           </div>
           <h2 style={{ fontFamily: F_DISPLAY, fontSize: 24, fontWeight: 700, margin: "0 0 12px" }}>Inquiry Submitted!</h2>
           <p style={{ fontSize: 14, color: "var(--gs-ink-light)", lineHeight: 1.6, margin: "0 0 28px" }}>
-            Thank you for your interest in sponsoring Gyan Setu. Our team will review your details and reach out shortly.
+            Thank you for your interest in sponsoring Gyan-Setu. Our team will review your details and reach out shortly.
           </p>
           <Link href="/" style={{ textDecoration: "none" }}>
             <Button className="w-full font-bold bg-[#D97706] hover:bg-[#B45309] text-white">
@@ -82,10 +82,10 @@ export default function SponsorPage() {
           </Link>
           <Eyebrow>Partner With Us</Eyebrow>
           <h1 style={{ fontFamily: F_DISPLAY, fontSize: 32, fontWeight: 700, color: "var(--gs-ink)", margin: "8px 0 12px" }}>
-            Sponsor Gyan Setu
+            Sponsor Gyan-Setu
           </h1>
           <p style={{ fontSize: 15, color: "var(--gs-ink-light)", lineHeight: 1.6, margin: 0 }}>
-            Help us bring hands-on science and education to underserved schools. Fill out the form below and our partnerships team will get in touch.
+            Help us bring hands-on science and education to remote, tribal and aspirational regions of India. Fill out the form below and our partnerships team will get in touch.
           </p>
         </div>
 

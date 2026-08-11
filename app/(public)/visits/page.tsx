@@ -201,7 +201,7 @@ export default async function VisitsPage() {
       }}>
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", backgroundImage: "linear-gradient(var(--gs-line-ink) 1px,transparent 1px),linear-gradient(90deg,var(--gs-line-ink) 1px,transparent 1px)", backgroundSize: "48px 48px" }} />
         <div style={{ maxWidth: 1080, margin: "0 auto", position: "relative", zIndex: 1 }}>
-          <Eyebrow>Jnana Pravas Schedule</Eyebrow>
+          <Eyebrow>Gyan-Setu Visit</Eyebrow>
           <h1 style={{
             fontFamily: F_DISPLAY,
             fontSize: "clamp(36px, 5vw, 56px)",
@@ -214,7 +214,7 @@ export default async function VisitsPage() {
             Visits
           </h1>
           <p style={{ fontFamily: F_BODY, fontSize: 15.5, color: "rgba(251,247,236,.62)", margin: 0, lineHeight: 1.65, maxWidth: 620 }}>
-            Jnana Prabodhini volunteer visits to remote parts of India &mdash; science workshops, cultural exchanges, and knowledge bridges.
+            Volunteer visits to remote parts of India - conducting science workshops, facilitating cultural exchanges, and building bridges through knowledge.
           </p>
         </div>
       </div>
@@ -245,7 +245,7 @@ export default async function VisitsPage() {
               </svg>
             </div>
             <p style={{ fontFamily: F_DISPLAY, fontSize: 19, fontWeight: 600, color: "var(--gs-text)", margin: "0 0 6px" }}>No visits scheduled</p>
-            <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-mute)", margin: 0 }}>Check back soon for upcoming Jnana Pravas visits.</p>
+            <p style={{ fontFamily: F_BODY, fontSize: 14, color: "var(--gs-text-mute)", margin: 0 }}>Check back soon for upcoming Gyan-Setu visits.</p>
           </div>
         ) : (
           <>
