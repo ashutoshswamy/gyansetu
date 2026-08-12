@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { createServerClient } from "@/lib/supabase/server";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
+
+export const metadata: Metadata = {
+  title: "Tour Showcase",
+  description: "Explore Gyan-Setu's past and upcoming educational tours and student visits across India.",
+  alternates: { canonical: "/visits" },
+};
 
 type Visit = {
   id: string;

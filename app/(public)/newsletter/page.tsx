@@ -5,8 +5,9 @@ import {
 } from "@/components/landing/theme";
 
 export const metadata = {
-  title: "Newsletter — Gyan Setu",
-  description: "Stay updated with Gyan Setu newsletters.",
+  title: "Newsletter",
+  description: "Read and download Gyan-Setu's newsletters covering tour updates, volunteer stories, and programme news.",
+  alternates: { canonical: "/newsletter" },
 };
 
 interface Newsletter {

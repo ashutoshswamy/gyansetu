@@ -24,16 +24,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const db = createServerClient();
   const { data: post } = await db
     .from("blog_posts")
-    .select("title, excerpt")
+    .select("title, excerpt, cover_image_url, published_at")
     .eq("slug", slug)
     .eq("status", "published")
     .single();
 
-  if (!post) return { title: "Post Not Found — Gyan Setu" };
+  if (!post) return { title: "Post Not Found" };
 
   return {
-    title: `${post.title} — Gyan Setu Blog`,
+    title: post.title,
     description: post.excerpt ?? undefined,
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      publishedTime: post.published_at ?? undefined,
+      images: post.cover_image_url ? [{ url: post.cover_image_url }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      images: post.cover_image_url ? [post.cover_image_url] : undefined,
+    },
   };
 }
 
@@ -78,6 +92,20 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <div className={fontVars} style={{ ...pageVars, fontFamily: F_BODY, minHeight: "100vh", background: "var(--gs-paper)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: typedPost.title,
+            description: typedPost.excerpt ?? undefined,
+            image: typedPost.cover_image_url ?? undefined,
+            datePublished: typedPost.published_at ?? undefined,
+            publisher: { "@type": "Organization", name: "Gyan Setu" },
+          }),
+        }}
+      />
       <style>{`
         .gs-back-link { transition: color .18s ease; }
         .gs-back-link:hover { color: var(--gs-rust); }

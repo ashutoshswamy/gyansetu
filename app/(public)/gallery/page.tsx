@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { createServerClient } from "@/lib/supabase/server";
 import {
   fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow,
 } from "@/components/landing/theme";
+
+export const metadata: Metadata = {
+  title: "Photo Gallery",
+  description: "Browse photos from Gyan-Setu's educational tours and volunteer activities across India, organized by category.",
+  alternates: { canonical: "/gallery" },
+};
 
 interface GalleryImage {
   id: string;

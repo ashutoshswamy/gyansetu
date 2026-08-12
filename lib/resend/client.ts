@@ -16,4 +16,4 @@ export const resend = {
   },
 };
 
-export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@gyansetu.jnanaprabhodhini.org";
+export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@gyansetu.jnanaprabodhini.org";

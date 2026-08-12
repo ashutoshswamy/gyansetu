@@ -107,7 +107,7 @@ export async function sendEmail({
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const { data, error } = await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL || "noreply@gyansetu.in",
+    from: process.env.RESEND_FROM_EMAIL || "noreply@gyansetu.jnanaprabodhini.org",
     to,
     subject,
     html,

@@ -4,8 +4,9 @@ import { FileText, Newspaper, ArrowRight } from "lucide-react";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
 
 export const metadata = {
-  title: "Blog — Gyan Setu",
-  description: "Stories and updates from the field.",
+  title: "Blog",
+  description: "Stories and updates from Gyan-Setu's educational tours and volunteer activities in the field.",
+  alternates: { canonical: "/blog" },
 };
 
 interface BlogPost {

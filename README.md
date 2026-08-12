@@ -100,7 +100,7 @@ UPSTASH_REDIS_REST_TOKEN=AX...
 
 # Resend (Transactional Email)
 RESEND_API_KEY=re_...
-RESEND_FROM_EMAIL=Gyan Setu <noreply@yourdomain.com>
+RESEND_FROM_EMAIL=Gyan Setu <noreply@gyansetu.jnanaprabodhini.org>
 
 # Public app URL (used for sitemap.xml / robots.txt absolute URLs)
 NEXT_PUBLIC_APP_URL=https://yourdomain.com
