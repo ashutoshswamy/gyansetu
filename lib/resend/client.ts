@@ -1,7 +1,6 @@
 import { Resend } from "resend";
 
-// ponytail: email sending disabled app-wide; flip to true (or remove this guard) to re-enable
-const EMAIL_ENABLED = false;
+const EMAIL_ENABLED = true;
 
 type SendArgs = Parameters<Resend["emails"]["send"]>;
 
@@ -17,4 +16,4 @@ export const resend = {
   },
 };
 
-export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@gyansetu.in";
+export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@gyansetu.jnanaprabhodhini.org";
