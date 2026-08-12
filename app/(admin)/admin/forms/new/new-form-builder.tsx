@@ -173,7 +173,11 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             Import from existing Template
           </Label>
           <div className="flex gap-3 items-center mt-1">
-            <Select value="" onValueChange={(v: string | null) => applyTemplate(v ?? "")}>
+            <Select
+              value=""
+              onValueChange={(v: string | null) => applyTemplate(v ?? "")}
+              items={templates.map(t => ({ value: t.id, label: `${t.title} (${t.fields?.length ?? 0} fields)` }))}
+            >
               <SelectTrigger className="w-full border-[var(--gs-accent)]/30">
                 <SelectValue placeholder="Select a template to import..." />
               </SelectTrigger>
@@ -216,6 +220,10 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                     setTourIds([]);
                   }
                 }}
+                items={[
+                  { value: "link", label: "Standard Form" },
+                  { value: "template", label: "Template" },
+                ]}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -235,6 +243,7 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                   disabled={isTemplate}
                   value={tourIds[0] ?? ""}
                   onValueChange={(v: string | null) => setTourIds(v ? [v] : [])}
+                  items={tours.map(t => ({ value: t.id, label: t.title }))}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="No tour" />
@@ -278,7 +287,15 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             </div>
             <div>
               <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Target Role *</Label>
-              <Select value={targetRole} onValueChange={(v: string | null) => setTargetRole((v ?? "enrollee") as "enrollee" | "volunteer" | "all")}>
+              <Select
+                value={targetRole}
+                onValueChange={(v: string | null) => setTargetRole((v ?? "enrollee") as "enrollee" | "volunteer" | "all")}
+                items={[
+                  { value: "enrollee", label: "Enrollees" },
+                  { value: "volunteer", label: "Volunteers" },
+                  { value: "all", label: "All" },
+                ]}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -291,7 +308,15 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             </div>
             <div>
               <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Status</Label>
-              <Select value={status} onValueChange={(v: string | null) => setStatus((v ?? "draft") as "draft" | "active" | "closed")}>
+              <Select
+                value={status}
+                onValueChange={(v: string | null) => setStatus((v ?? "draft") as "draft" | "active" | "closed")}
+                items={[
+                  { value: "draft", label: "Draft" },
+                  { value: "active", label: "Active" },
+                  { value: "closed", label: "Closed" },
+                ]}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -304,7 +329,16 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
             </div>
             <div>
               <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Category</Label>
-              <Select value={category} onValueChange={(v: string | null) => setCategory((v ?? "general") as "general" | "task" | "survey" | "cultural_activity")}>
+              <Select
+                value={category}
+                onValueChange={(v: string | null) => setCategory((v ?? "general") as "general" | "task" | "survey" | "cultural_activity")}
+                items={[
+                  { value: "general", label: "General" },
+                  { value: "task", label: "Task Assignment / PPT Submission" },
+                  { value: "survey", label: "Survey / Interesting Facts" },
+                  { value: "cultural_activity", label: "Cultural Activity" },
+                ]}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -346,7 +380,11 @@ export function NewFormBuilder({ tours, templates = [], initialData }: { tours: 
                 </div>
                 <div>
                   <Label className="mb-1 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gs-muted)]">Type</Label>
-                  <Select value={f.type} onValueChange={(v: string | null) => updateField(fIdx, { type: (v ?? "text") as FieldType, options: [] })}>
+                  <Select
+                    value={f.type}
+                    onValueChange={(v: string | null) => updateField(fIdx, { type: (v ?? "text") as FieldType, options: [] })}
+                    items={FIELD_TYPES}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>

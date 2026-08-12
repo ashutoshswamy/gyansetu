@@ -94,7 +94,11 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Event Type" required>
-            <Select name="event_type" defaultValue={initialData?.event_type ?? "katta"}>
+            <Select
+              name="event_type"
+              defaultValue={initialData?.event_type ?? "katta"}
+              items={EVENT_TYPES.map(t => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select event type..." />
               </SelectTrigger>
@@ -107,7 +111,11 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
           </Field>
 
           <Field label="Status" required>
-            <Select name="status" defaultValue={initialData?.status ?? "upcoming"}>
+            <Select
+              name="status"
+              defaultValue={initialData?.status ?? "upcoming"}
+              items={EVENT_STATUSES.map(s => ({ value: s, label: s.charAt(0).toUpperCase() + s.slice(1) }))}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select status..." />
               </SelectTrigger>
@@ -136,7 +144,11 @@ export function EventForm({ tours, initialData }: { tours: Tour[]; initialData?:
           </Field>
 
           <Field label="Linked Tour">
-            <Select name="tour_id" defaultValue={initialData?.tour_id ?? undefined}>
+            <Select
+              name="tour_id"
+              defaultValue={initialData?.tour_id ?? undefined}
+              items={tours.map(t => ({ value: t.id, label: t.title }))}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="No tour" />
               </SelectTrigger>

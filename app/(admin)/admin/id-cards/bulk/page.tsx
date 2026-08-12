@@ -114,7 +114,7 @@ export default function BulkIdCardsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="mb-1.5">Tour <span className="text-destructive">*</span></Label>
-                <Select value={tourId} onValueChange={v => handleTourChange(v ?? "")} required>
+                <Select value={tourId} onValueChange={v => handleTourChange(v ?? "")} required items={tours.map(t => ({ value: t.id, label: t.title }))}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select tour..." />
                   </SelectTrigger>
@@ -125,7 +125,7 @@ export default function BulkIdCardsPage() {
               </div>
               <div>
                 <Label className="mb-1.5">Group</Label>
-                <Select value={groupId} onValueChange={v => { setGroupId(v ?? ""); setSelected(new Set()); }} disabled={!tourId}>
+                <Select value={groupId} onValueChange={v => { setGroupId(v ?? ""); setSelected(new Set()); }} disabled={!tourId} items={groups.map(g => ({ value: g.id, label: g.name }))}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="All applied volunteers" />
                   </SelectTrigger>

@@ -125,7 +125,7 @@ export default function NewIdCardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="mb-1.5">Tour <span className="text-destructive">*</span></Label>
-                <Select name="tour_id" required value={tourId} onValueChange={v => handleTourChange(v ?? "")}>
+                <Select name="tour_id" required value={tourId} onValueChange={v => handleTourChange(v ?? "")} items={tours.map(t => ({ value: t.id, label: t.title }))}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select tour..." />
                   </SelectTrigger>
@@ -136,7 +136,7 @@ export default function NewIdCardPage() {
               </div>
               <div>
                 <Label className="mb-1.5">Group</Label>
-                <Select name="group_id" value={groupId} onValueChange={v => setGroupId(v ?? "")} disabled={!tourId}>
+                <Select name="group_id" value={groupId} onValueChange={v => setGroupId(v ?? "")} disabled={!tourId} items={groups.map(g => ({ value: g.id, label: g.name }))}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="No group / General" />
                   </SelectTrigger>

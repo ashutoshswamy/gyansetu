@@ -72,7 +72,14 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
             <div className="sm:col-span-2 space-y-1.5">
               <Label className="text-xs font-semibold text-muted-foreground">Group *</Label>
-              <Select value={groupId} onValueChange={(val) => setGroupId(val ?? "")}>
+              <Select
+                value={groupId}
+                onValueChange={(val) => setGroupId(val ?? "")}
+                items={availableGroups.map(g => ({
+                  value: g.id,
+                  label: `${g.name}${g.tours?.[0]?.title ? ` — ${g.tours[0].title}` : ""}`,
+                }))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select group..." />
                 </SelectTrigger>

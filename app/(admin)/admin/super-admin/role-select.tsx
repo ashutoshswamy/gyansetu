@@ -43,6 +43,7 @@ export function RoleSelect({ clerkId, role }: { clerkId: string; role: UserRole 
         value={role ?? "enrollee"}
         disabled={loading}
         onValueChange={(v) => handleChange(v ?? "enrollee")}
+        items={ROLE_OPTIONS}
       >
         <SelectTrigger size="sm">
           <SelectValue />

@@ -32,14 +32,14 @@ export default async function VolunteerExpensesPage() {
 
         <ExpenseForm groupId={group?.id ?? null} />
 
-        <div className="space-y-3">
+        <div className="space-y-3 mt-8">
           {expenses.length === 0 && (
             <Card>
-<CardContent className="text-center">
-              <Receipt className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
-              <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No expenses submitted yet.</p>
-            </CardContent>
-</Card>
+              <CardContent className="text-center">
+                <Receipt className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+                <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No expenses submitted yet.</p>
+              </CardContent>
+            </Card>
           )}
           {expenses.map((ex) => (
             <ExpenseItem key={ex.id} expense={ex} />

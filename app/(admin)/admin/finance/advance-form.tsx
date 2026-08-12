@@ -61,7 +61,7 @@ export function AdvanceForm() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
         <div>
           <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Group <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
-          <Select name="group_id">
+          <Select name="group_id" items={groups.map(g => ({ value: g.id, label: g.name }))}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select group..." />
             </SelectTrigger>

@@ -175,7 +175,7 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
             {!groupId && (
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-muted-foreground">Group <span className="text-destructive">*</span></Label>
-                <Select value={selectedGroupId} onValueChange={(val) => setSelectedGroupId(val ?? "")}>
+                <Select value={selectedGroupId} onValueChange={(val) => setSelectedGroupId(val ?? "")} items={groups.map(g => ({ value: g.id, label: g.name }))}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select group..." />
                   </SelectTrigger>
@@ -192,7 +192,7 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
                 const cat = (val ?? "travel") as ExpenseInput["category"];
                 setCategory(cat);
                 setSubcategory("");
-              }}>
+              }} items={CATEGORIES.map(c => ({ value: c.value, label: c.label }))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select category..." />
                 </SelectTrigger>

@@ -131,7 +131,11 @@ export default function NewCertificatePage() {
             </div>
             <div>
               <Label className="mb-1.5">Certificate Type <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
-              <Select name="certificate_type" defaultValue={CERT_TYPES[0]}>
+              <Select
+                name="certificate_type"
+                defaultValue={CERT_TYPES[0]}
+                items={CERT_TYPES.map(t => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
@@ -142,7 +146,12 @@ export default function NewCertificatePage() {
             </div>
             <div>
               <Label className="mb-1.5">Tour (optional)</Label>
-              <Select name="tour_id" value={tourId || NO_TOUR} onValueChange={(v) => setTourId(v === NO_TOUR ? "" : (v ?? ""))}>
+              <Select
+                name="tour_id"
+                value={tourId || NO_TOUR}
+                onValueChange={(v) => setTourId(v === NO_TOUR ? "" : (v ?? ""))}
+                items={[{ value: NO_TOUR, label: "General (no specific tour)" }, ...tours.map(t => ({ value: t.id, label: t.title }))]}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="General (no specific tour)" />
                 </SelectTrigger>

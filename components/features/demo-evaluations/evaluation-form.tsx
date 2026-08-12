@@ -138,7 +138,11 @@ export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) 
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold text-muted-foreground">Tour (optional)</Label>
-                  <Select value={tourId} onValueChange={(val) => setTourId(val ?? "")}>
+                  <Select
+                    value={tourId}
+                    onValueChange={(val) => setTourId(val ?? "")}
+                    items={[{ value: "", label: "General (no specific tour)" }, ...tours.map(t => ({ value: t.id, label: t.title }))]}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="General (no specific tour)" />
                     </SelectTrigger>

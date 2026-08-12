@@ -61,7 +61,7 @@ export default function NewGroupPage() {
           <div className="space-y-5">
             <div>
               <Label className="mb-1.5">Tour <span className="text-destructive">*</span></Label>
-              <Select name="tour_id" required>
+              <Select name="tour_id" required items={tours.map(t => ({ value: t.id, label: t.title }))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select tour..." />
                 </SelectTrigger>

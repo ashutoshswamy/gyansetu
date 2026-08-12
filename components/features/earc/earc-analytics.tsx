@@ -222,7 +222,11 @@ export function EarcAnalytics({
           </p>
 
           <div className="flex flex-wrap gap-2 items-center">
-            <Select value={academicYear} onValueChange={v => setAcademicYear(v ?? "")}>
+            <Select
+              value={academicYear}
+              onValueChange={v => setAcademicYear(v ?? "")}
+              items={[{ value: "all", label: "Academic years" }, ...years.map(y => ({ value: y, label: y }))]}
+            >
               <SelectTrigger className="w-auto min-w-[130px] h-8 text-xs bg-background/80">
                 <SelectValue placeholder="Academic years" />
               </SelectTrigger>
@@ -231,7 +235,11 @@ export function EarcAnalytics({
                 {years.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={project} onValueChange={v => setProject(v ?? "")}>
+            <Select
+              value={project}
+              onValueChange={v => setProject(v ?? "")}
+              items={[{ value: "all", label: "Projects" }, ...projects.map(p => ({ value: p, label: p }))]}
+            >
               <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
                 <SelectValue placeholder="Projects" />
               </SelectTrigger>
@@ -240,7 +248,11 @@ export function EarcAnalytics({
                 {projects.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={moduleFilter} onValueChange={v => setModuleFilter(v ?? "")}>
+            <Select
+              value={moduleFilter}
+              onValueChange={v => setModuleFilter(v ?? "")}
+              items={[{ value: "all", label: "Modules" }, ...modules.map(m => ({ value: m, label: m }))]}
+            >
               <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
                 <SelectValue placeholder="Modules" />
               </SelectTrigger>
@@ -249,7 +261,11 @@ export function EarcAnalytics({
                 {modules.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={state} onValueChange={v => onStateChange(v ?? "")}>
+            <Select
+              value={state}
+              onValueChange={v => onStateChange(v ?? "")}
+              items={[{ value: "all", label: "States" }, ...states.map(s => ({ value: s, label: s }))]}
+            >
               <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
                 <SelectValue placeholder="States" />
               </SelectTrigger>
@@ -258,7 +274,11 @@ export function EarcAnalytics({
                 {states.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={district} onValueChange={v => onDistrictChange(v ?? "")}>
+            <Select
+              value={district}
+              onValueChange={v => onDistrictChange(v ?? "")}
+              items={[{ value: "all", label: "Districts" }, ...districts.map(d => ({ value: d, label: d }))]}
+            >
               <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
                 <SelectValue placeholder="Districts" />
               </SelectTrigger>
@@ -267,7 +287,11 @@ export function EarcAnalytics({
                 {districts.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={block} onValueChange={v => setBlock(v ?? "")}>
+            <Select
+              value={block}
+              onValueChange={v => setBlock(v ?? "")}
+              items={[{ value: "all", label: "Blocks" }, ...blocks.map(b => ({ value: b, label: b }))]}
+            >
               <SelectTrigger className="w-auto min-w-[120px] h-8 text-xs bg-background/80">
                 <SelectValue placeholder="Blocks" />
               </SelectTrigger>

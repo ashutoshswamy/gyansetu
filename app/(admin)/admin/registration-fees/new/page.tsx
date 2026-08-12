@@ -75,7 +75,12 @@ export default function NewRegistrationFeePage() {
             </div>
             <div>
               <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Status <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
-              <Select name="status" required defaultValue="pending">
+              <Select
+                name="status"
+                required
+                defaultValue="pending"
+                items={STATUSES.map(s => ({ value: s, label: s.charAt(0).toUpperCase() + s.slice(1) }))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>

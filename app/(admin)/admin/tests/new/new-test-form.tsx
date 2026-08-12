@@ -178,7 +178,10 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
         <div className="rounded-xl p-5 mb-4 bg-background border-1.5 border-dashed border-accent">
           <Label className="text-xs font-semibold text-accent uppercase tracking-wider block mb-2">Import from existing Template</Label>
           <div className="flex gap-3 items-center mt-1">
-            <Select onValueChange={(val) => { if (typeof val === "string" && val) importTemplate(val); }}>
+            <Select
+              onValueChange={(val) => { if (typeof val === "string" && val) importTemplate(val); }}
+              items={templates.map(t => ({ value: t.id, label: `${t.title} (${t.questions?.length ?? 0} questions)` }))}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a template to import..." />
               </SelectTrigger>
@@ -213,11 +216,18 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Test Type *</Label>
-                <Select value={isTemplate ? "template" : "link"} onValueChange={(val) => {
-                  const isTemp = val === "template";
-                  setIsTemplate(isTemp);
-                  if (isTemp) setTourIds([]);
-                }}>
+                <Select
+                  value={isTemplate ? "template" : "link"}
+                  onValueChange={(val) => {
+                    const isTemp = val === "template";
+                    setIsTemplate(isTemp);
+                    if (isTemp) setTourIds([]);
+                  }}
+                  items={[
+                    { value: "link", label: "Standard Test" },
+                    { value: "template", label: "Template" },
+                  ]}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select test type" />
                   </SelectTrigger>
@@ -230,7 +240,12 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{isEdit ? "Linked Tour" : "Linked Tour(s)"} {isTemplate ? "" : "*"}</Label>
                 {isEdit ? (
-                  <Select disabled={isTemplate} value={tourIds[0] ?? ""} onValueChange={(val) => setTourIds(val ? [val] : [])}>
+                  <Select
+                    disabled={isTemplate}
+                    value={tourIds[0] ?? ""}
+                    onValueChange={(val) => setTourIds(val ? [val] : [])}
+                    items={tours.map(t => ({ value: t.id, label: t.title }))}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder={tours.length === 0 ? "No tours available" : "No tour"} />
                     </SelectTrigger>
@@ -280,7 +295,15 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</Label>
-                <Select value={status} onValueChange={(val) => setStatus(val as "draft" | "active" | "closed")}>
+                <Select
+                  value={status}
+                  onValueChange={(val) => setStatus(val as "draft" | "active" | "closed")}
+                  items={[
+                    { value: "draft", label: "Draft" },
+                    { value: "active", label: "Active" },
+                    { value: "closed", label: "Closed" },
+                  ]}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
@@ -318,7 +341,15 @@ export function NewTestForm({ tours, templates = [], initialData }: { tours: Tou
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Type</Label>
-                    <Select value={q.type} onValueChange={(val) => updateQ(qIdx, { type: val as QuestionType, correct_answer: "", options: ["", ""] })}>
+                    <Select
+                      value={q.type}
+                      onValueChange={(val) => updateQ(qIdx, { type: val as QuestionType, correct_answer: "", options: ["", ""] })}
+                      items={[
+                        { value: "mcq", label: "MCQ" },
+                        { value: "multi_select", label: "Multi Select" },
+                        { value: "subjective", label: "Subjective" },
+                      ]}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Question type" />
                       </SelectTrigger>

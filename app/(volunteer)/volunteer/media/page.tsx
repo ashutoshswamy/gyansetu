@@ -118,7 +118,12 @@ export default function VolunteerMediaPage() {
             )}
 
             <div className="flex gap-3 mb-4">
-              <Select value={selectedTour} disabled={todayCount >= 2} onValueChange={(val) => setSelectedTour(val ?? "")}>
+              <Select
+                value={selectedTour}
+                disabled={todayCount >= 2}
+                onValueChange={(val) => setSelectedTour(val ?? "")}
+                items={tours.map(t => ({ value: t.id, label: t.title }))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select tour..." />
                 </SelectTrigger>

@@ -235,7 +235,7 @@ export default function SchoolReportsPage() {
         <Card className="mb-6">
           <CardContent className="pt-6 space-y-2">
             <Label className="text-xs font-semibold text-muted-foreground">Group <span className="text-destructive">*</span></Label>
-            <Select value={groupId} onValueChange={(val) => { if (val) handleGroupChange(val); }}>
+            <Select value={groupId} onValueChange={(val) => { if (val) handleGroupChange(val); }} items={groups.map(g => ({ value: g.id, label: `${g.name}${g.tours?.title ? ` — ${g.tours.title}` : ""}` }))}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select group..." />
               </SelectTrigger>

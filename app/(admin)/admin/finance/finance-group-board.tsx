@@ -204,7 +204,11 @@ export function FinanceGroupBoard({ ledgers }: { ledgers: GroupLedger[] }) {
     <div>
       <div className="mb-5">
         <Label className="mb-1.5 text-[var(--gs-text-secondary)]">Group</Label>
-        <Select value={selected} onValueChange={(v) => setSelected(v ?? ALL)}>
+        <Select
+          value={selected}
+          onValueChange={(v) => setSelected(v ?? ALL)}
+          items={[{ value: ALL, label: "All Groups" }, ...ledgers.map((g) => ({ value: g.groupId, label: g.groupName }))]}
+        >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>

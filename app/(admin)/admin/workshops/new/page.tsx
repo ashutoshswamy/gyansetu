@@ -110,7 +110,15 @@ export default function NewWorkshopPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs font-semibold text-muted-foreground">Status <span className="text-destructive">*</span></Label>
-                    <Select value={status} onValueChange={(v) => setStatus(v as "scheduled" | "completed" | "cancelled")}>
+                    <Select
+                      value={status}
+                      onValueChange={(v) => setStatus(v as "scheduled" | "completed" | "cancelled")}
+                      items={[
+                        { value: "scheduled", label: "Scheduled" },
+                        { value: "completed", label: "Completed" },
+                        { value: "cancelled", label: "Cancelled" },
+                      ]}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
@@ -138,7 +146,14 @@ export default function NewWorkshopPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold text-muted-foreground">Trainer</Label>
-                  <Select value={trainerChoice} onValueChange={(v) => setTrainerChoice(v as "none" | "gs_team_other")}>
+                  <Select
+                    value={trainerChoice}
+                    onValueChange={(v) => setTrainerChoice(v as "none" | "gs_team_other")}
+                    items={[
+                      { value: "none", label: "No trainer assigned" },
+                      { value: "gs_team_other", label: "GS Team / Other" },
+                    ]}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select trainer choice" />
                     </SelectTrigger>

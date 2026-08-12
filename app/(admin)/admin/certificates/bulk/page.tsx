@@ -111,7 +111,11 @@ export default function BulkCertificatesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="mb-1.5">Tour <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
-                <Select value={tourId || null} onValueChange={(v) => handleTourChange(v ?? "")}>
+                <Select
+                  value={tourId || null}
+                  onValueChange={(v) => handleTourChange(v ?? "")}
+                  items={tours.map(t => ({ value: t.id, label: t.title }))}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select tour..." />
                   </SelectTrigger>
@@ -122,7 +126,11 @@ export default function BulkCertificatesPage() {
               </div>
               <div>
                 <Label className="mb-1.5">Certificate Category <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
-                <Select value={certificateType || null} onValueChange={(v) => setCertificateType((v as CertificateType) ?? "")}>
+                <Select
+                  value={certificateType || null}
+                  onValueChange={(v) => setCertificateType((v as CertificateType) ?? "")}
+                  items={CERT_TYPES.map(t => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select category..." />
                   </SelectTrigger>
@@ -138,6 +146,7 @@ export default function BulkCertificatesPage() {
                 value={groupId || NO_GROUP}
                 onValueChange={(v) => { setGroupId(v === NO_GROUP ? "" : (v ?? "")); setSelected(new Set()); }}
                 disabled={!tourId}
+                items={[{ value: NO_GROUP, label: "All applied volunteers" }, ...groups.map(g => ({ value: g.id, label: g.name }))]}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="All applied volunteers" />

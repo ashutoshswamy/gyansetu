@@ -125,7 +125,7 @@ export default function EditLocalHostPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Linked Tour (optional)</Label>
-                <Select value={tourId || undefined} onValueChange={v => { setTourId(v ?? ""); setGroupId(""); }}>
+                <Select value={tourId || undefined} onValueChange={v => { setTourId(v ?? ""); setGroupId(""); }} items={tours.map(t => ({ value: t.id, label: t.title }))}>
                   <SelectTrigger className="w-full"><SelectValue placeholder="None" /></SelectTrigger>
                   <SelectContent>
                     {tours.map(t => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
@@ -134,7 +134,7 @@ export default function EditLocalHostPage() {
               </div>
               <div>
                 <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>Linked Group (optional)</Label>
-                <Select value={groupId || undefined} onValueChange={v => setGroupId(v ?? "")}>
+                <Select value={groupId || undefined} onValueChange={v => setGroupId(v ?? "")} items={groupsForTour.map(g => ({ value: g.id, label: g.name }))}>
                   <SelectTrigger className="w-full"><SelectValue placeholder="None" /></SelectTrigger>
                   <SelectContent>
                     {groupsForTour.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}

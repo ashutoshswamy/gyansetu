@@ -79,7 +79,11 @@ export default function NewTravelTicketPage() {
           <div className="space-y-5">
             <div>
               <Label className="mb-1.5">Group <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
-              <Select name="group_id" required>
+              <Select
+                name="group_id"
+                required
+                items={groups.map(g => ({ value: g.id, label: `${g.name}${g.tours?.title ? ` — ${g.tours.title}` : ""}` }))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select group..." />
                 </SelectTrigger>
@@ -128,7 +132,15 @@ export default function NewTravelTicketPage() {
             </div>
             <div>
               <Label className="mb-1.5">Current Status</Label>
-              <Select name="confirmation_status" defaultValue="pending">
+              <Select
+                name="confirmation_status"
+                defaultValue="pending"
+                items={[
+                  { value: "pending", label: "Pending" },
+                  { value: "confirmed", label: "Confirmed" },
+                  { value: "cancelled", label: "Cancelled" },
+                ]}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>

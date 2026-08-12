@@ -78,7 +78,11 @@ export default function EditGroupPage() {
           <div className="space-y-5">
             <div>
               <Label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Tour <span style={{ color: "var(--gs-danger)" }}>*</span></Label>
-              <Select value={form.tour_id} onValueChange={(v) => setForm(f => ({ ...f, tour_id: v ?? "" }))}>
+              <Select
+                value={form.tour_id}
+                onValueChange={(v) => setForm(f => ({ ...f, tour_id: v ?? "" }))}
+                items={tours.map(t => ({ value: t.id, label: t.title }))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select tour..." />
                 </SelectTrigger>

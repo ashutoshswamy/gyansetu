@@ -191,7 +191,7 @@ export default function VolunteerTourReportPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold text-muted-foreground">Tour <span className="text-destructive">*</span></Label>
-                  <Select value={tourId} onValueChange={(val) => setTourId(val ?? "")}>
+                  <Select value={tourId} onValueChange={(val) => setTourId(val ?? "")} items={tours.map(t => ({ value: t.id, label: t.title }))}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select tour..." />
                     </SelectTrigger>

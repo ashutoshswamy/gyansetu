@@ -81,6 +81,7 @@ export function TourManageClient({ tourId, currentStatus }: { tourId: string; cu
         value={currentStatus}
         disabled={loading}
         onValueChange={(value) => run(() => updateTour(tourId, { status: value as "draft" | "open" | "closed" }))}
+        items={STATUSES.map((s) => ({ value: s, label: s.charAt(0).toUpperCase() + s.slice(1) }))}
       >
         <SelectTrigger size="sm">
           <SelectValue />
