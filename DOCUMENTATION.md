@@ -12,7 +12,8 @@
 8. [Storage Buckets & Media Management](#storage-buckets--media-management)
 9. [Caching & Rate Limiting Strategy](#caching--rate-limiting-strategy)
 10. [Email & Notification Infrastructure](#email--notification-infrastructure)
-11. [Database Maintenance, Setup & Migrations](#database-maintenance-setup--migrations)
+11. [API Route Handlers](#api-route-handlers)
+12. [Database Maintenance, Setup & Migrations](#database-maintenance-setup--migrations)
 
 ---
 
@@ -371,14 +372,30 @@ A `documents` storage bucket is created by `schema.sql` (`insert into storage.bu
 
 - **Edge Global Rate Limiting**: Managed via `@upstash/ratelimit` in `proxy.ts` using sliding windows (200 requests/min per IP).
 - **Test Submission Rate Limiting**: Per-user rate limiting on eligibility test submissions to prevent brute-force automated test attempts.
+- **Query Result Caching**: [`lib/redis/client.ts`](./lib/redis/client.ts) exposes `getCached()`/`setCached()`/`invalidateCache()` over Upstash Redis with named `CACHE_KEYS` (`dashboardStats`, `activeTours`, `activeForms`, `rankings(tourId)`) and tiered `CACHE_TTL` (60/300/3600s). Used by `GET /api/tours` and the admin dashboard page to avoid refetching on every request.
 - **Server Cache Invalidation**: Server Actions invoke `revalidatePath()` upon mutating data to refresh cached Next.js route components instantly.
 
 ---
 
 ## Email & Notification Infrastructure
 
-- **Transactional Email**: Handled via the [Resend](https://resend.com/) API using `sendEmail()` in [`actions/notifications.ts`](./actions/notifications.ts). Triggered on tour application status changes and role updates.
+- **Transactional Email**: Handled via the [Resend](https://resend.com/) API. Most callers use `sendEmail()` in [`actions/notifications.ts`](./actions/notifications.ts), which rate-limits per-user and per-IP before sending. [`actions/alumni-registration.ts`](./actions/alumni-registration.ts) instead uses the [`lib/resend/client.ts`](./lib/resend/client.ts) wrapper, which gates all sends behind an in-file `EMAIL_ENABLED` flag and supplies a default `FROM_EMAIL`. Triggered on tour application status changes, role updates, and alumni registration confirmations.
 - **In-App Notification Feed**: Stored in the `notifications` table and rendered via `/api/notifications`.
+
+---
+
+## API Route Handlers
+
+In addition to Server Actions, a small set of `GET`-only REST endpoints under `app/api/` serve data to client components that need imperative fetching (e.g. map widgets, select-option loaders):
+
+| Route | Description | Auth |
+| --- | --- | --- |
+| `GET /api/tours` | List tours, optionally filtered by `status`; Redis-cached for the public "open" view | Authenticated (non-open statuses require volunteer/admin/super_admin) |
+| `GET /api/tours/[id]` | Single tour summary fields | Authenticated |
+| `GET /api/volunteers` | Volunteer directory for select inputs, optionally filtered by `tourId` and `includeEnrollees` | Admin / Super Admin |
+| `GET /api/groups/[groupId]` | Tour group detail with members, mentor, and parent tour | Authenticated |
+| `GET /api/notifications` | Caller's latest 20 notifications | Authenticated |
+| `/api/webhooks/clerk` | Clerk user lifecycle webhook (create/update/delete sync to `users` table), Svix-verified | Public (signature-verified) |
 
 ---
 
