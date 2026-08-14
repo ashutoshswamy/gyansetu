@@ -27,15 +27,15 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gyansetu.jnanaprabodhini.org";
-const siteTitle = "Gyan Setu | Jnana Prabodhini Educational Tours";
-const siteDescription = "Portal for Jnana Prabodhini's Jnana Pravas programme: educational tours across India for students to meet government officials, explore regional cultures, and build connections.";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gyansetu.earc.jnanaprabodhini.org";
+const siteTitle = "Gyan Setu | Jnana Prabodhini";
+const siteDescription = "Gyan-Setu is a year-long volunteer initiative by Jnana Prabodhini's Educational Activity Research Centre (EARC). Volunteers conduct joyful, hands-on science and mathematics workshops, along with career guidance sessions and the \"Know Our Country\" Exhibition, in remote, tribal, and aspirational regions across India. The programme fosters scientific curiosity, knowledge exchange, cultural understanding, and national integration.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: siteTitle, template: "%s | Gyan Setu" },
   description: siteDescription,
-  keywords: ["Gyan Setu", "Jnana Prabodhini", "Jnana Pravas", "student exchange tours", "educational tours India", "volunteer programme"],
+  keywords: ["Gyan Setu", "Jnana Prabodhini", "EARC", "Educational Activity Research Centre", "science workshops", "career guidance", "Know Our Country Exhibition", "volunteer programme", "tribal education India", "national integration"],
   applicationName: "Gyan Setu",
   robots: { index: true, follow: true },
   alternates: { canonical: "/" },
