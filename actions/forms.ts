@@ -161,3 +161,29 @@ export async function getMyFormSubmissions(tourId?: string) {
   if (error) { console.error("[getMyFormSubmissions]", error); throw new Error("Failed to fetch submissions"); }
   return data ?? [];
 }
+
+// Feeds the volunteer sidebar's "forms completed" badge.
+export async function getMyFormProgress() {
+  const { db, user } = await getAuthenticatedUser();
+
+  const { data: activeForms, error: formsError } = await db
+    .from("dynamic_forms")
+    .select("id")
+    .in("target_role", ["volunteer", "all"])
+    .eq("status", "active")
+    .eq("is_template", false);
+  if (formsError) { console.error("[getMyFormProgress]", formsError); throw new Error("Failed to fetch progress"); }
+
+  if (!activeForms || activeForms.length === 0) return { completed: 0, total: 0 };
+
+  const formIds = activeForms.map((f) => f.id);
+  const { data: submissions, error: subsError } = await db
+    .from("form_submissions")
+    .select("form_id")
+    .eq("submitted_by", user.id)
+    .in("form_id", formIds);
+  if (subsError) { console.error("[getMyFormProgress]", subsError); throw new Error("Failed to fetch progress"); }
+
+  const completedIds = new Set(submissions?.map((s) => s.form_id) ?? []);
+  return { completed: completedIds.size, total: activeForms.length };
+}

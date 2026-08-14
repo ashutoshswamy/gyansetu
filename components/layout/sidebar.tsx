@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import type { UserRole } from "@/types";
 import { createClientClient } from "@/lib/supabase/client";
+import { getMyFormProgress } from "@/actions/forms";
 import { NotificationBell } from "@/components/features/notifications/notification-bell";
 import {
   LayoutDashboard,
@@ -363,42 +364,8 @@ export function Sidebar({ role }: { role: SidebarRole }) {
 
     async function fetchProgress() {
       try {
-        const { data: suUser } = await clientDb
-          .from("users")
-          .select("id")
-          .eq("clerk_id", user!.id)
-          .single();
-
-        if (!suUser || !isMounted) return;
-
-        const { data: activeForms } = await clientDb
-          .from("dynamic_forms")
-          .select("id")
-          .in("target_role", ["volunteer", "all"])
-          .eq("status", "active")
-          .eq("is_template", false);
-
-        if (!activeForms || !isMounted) return;
-
-        if (activeForms.length === 0) {
-          setProgress({ completed: 0, total: 0 });
-          return;
-        }
-
-        const formIds = activeForms.map((f) => f.id);
-        const { data: submissions } = await clientDb
-          .from("form_submissions")
-          .select("form_id")
-          .eq("submitted_by", suUser.id)
-          .in("form_id", formIds);
-
-        if (!isMounted) return;
-
-        const completedIds = new Set(submissions?.map((s) => s.form_id) ?? []);
-        setProgress({
-          completed: completedIds.size,
-          total: activeForms.length,
-        });
+        const result = await getMyFormProgress();
+        if (isMounted) setProgress(result);
       } catch (err) {
         console.error("Error fetching progress:", err);
       }
@@ -422,7 +389,6 @@ export function Sidebar({ role }: { role: SidebarRole }) {
       isMounted = false;
       clientDb.removeChannel(channel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- depend on user.id only; `user` gets a new reference every render
   }, [role, user?.id]);
 
   return (

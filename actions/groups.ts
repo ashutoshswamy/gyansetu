@@ -80,6 +80,18 @@ export async function getAllGroups() {
   return data ?? [];
 }
 
+// Feeds the local-host and kit-assignment admin forms' group pickers, which also
+// need each group's allocated state and linked tour.
+export async function getAllGroupsWithState() {
+  const { db } = await requireAdminUser();
+  const { data, error } = await db
+    .from("tour_groups")
+    .select("id, name, state_allocated, tour_id, tours(title)")
+    .order("created_at", { ascending: false });
+  if (error) { console.error("[getAllGroupsWithState]", error); throw new Error("Failed to fetch groups"); }
+  return data ?? [];
+}
+
 // Scoped to the current user's own group memberships — this feeds group-select
 // dropdowns in volunteer-facing forms (expenses, school reports), where showing
 // every group in the system would let a volunteer submit data against a group

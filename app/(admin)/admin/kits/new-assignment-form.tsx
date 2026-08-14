@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { upsertKitAssignment } from "@/actions/kits";
-import { createClientClient } from "@/lib/supabase/client";
+import { getAllGroups } from "@/actions/groups";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,11 +20,7 @@ export function NewAssignmentForm({ assignedGroupIds }: { assignedGroupIds: stri
   const [groupId, setGroupId] = useState("");
 
   useEffect(() => {
-    createClientClient()
-      .from("tour_groups")
-      .select("id, name, tours(title)")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setGroups(data ?? []));
+    getAllGroups().then(setGroups).catch(() => setGroups([]));
   }, []);
 
   const availableGroups = groups.filter(g => !assignedGroupIds.includes(g.id));

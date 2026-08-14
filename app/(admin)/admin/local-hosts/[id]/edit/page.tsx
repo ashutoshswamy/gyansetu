@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getLocalHost, updateLocalHost } from "@/actions/local-hosts";
-import { createClientClient } from "@/lib/supabase/client";
+import { getAllGroupsWithState } from "@/actions/groups";
 import { INDIAN_STATES } from "@/lib/locations";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,11 +30,7 @@ export default function EditLocalHostPage() {
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", notes: "" });
 
   useEffect(() => {
-    createClientClient()
-      .from("tour_groups")
-      .select("id, name, state_allocated, tour_id, tours(title)")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setGroups(data ?? []));
+    getAllGroupsWithState().then(setGroups).catch(() => setGroups([]));
     fetch("/api/tours").then(r => r.json()).then(d => setTours(Array.isArray(d) ? d : []));
     getLocalHost(id)
       .then(host => {
