@@ -151,6 +151,7 @@ Global request filtering and route security are enforced in [`proxy.ts`](./proxy
 | `/enrollee/tours`, `/enrollee/tours/[id]` | Open Tours listing & application page |
 | `/enrollee/tests`, `/enrollee/tests/[id]` | Timed Eligibility Tests portal |
 | `/enrollee/forms`, `/enrollee/forms/[id]` | Assigned Dynamic Forms & submission |
+| `/enrollee/history`, `/enrollee/history/[tourId]` | Past tour history & detail view |
 | `/enrollee/profile` | Personal Enrollee Profile |
 
 ### 4. Volunteer Panel (`(volunteer)/volunteer`)
