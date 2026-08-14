@@ -10,6 +10,7 @@ RUN npm ci
 # ---- build ----
 FROM base AS builder
 WORKDIR /app
+ENV DOCKER_BUILD=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
