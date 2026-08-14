@@ -57,7 +57,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto flex flex-col gap-4">
         <Card>
 <CardContent>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>

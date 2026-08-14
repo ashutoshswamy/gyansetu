@@ -31,7 +31,7 @@ export default async function AdminLocationsPage() {
             </p>
           )}
           {(tours ?? []).map((tour: Tour) => (
-            <Link key={tour.id} href={`/admin/locations/${tour.id}`}>
+            <Link key={tour.id} href={`/admin/locations/${tour.id}`} className="block">
               <Card>
 <CardContent>
                 <div className="flex-1 min-w-0">

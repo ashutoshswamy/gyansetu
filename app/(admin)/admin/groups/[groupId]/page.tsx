@@ -142,7 +142,7 @@ export default function GroupDetailPage() {
         )}
 
         {/* Add member */}
-        <Card>
+        <Card className="mb-4">
 <CardContent>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>Add Member</h2>
           <div className="flex gap-3">

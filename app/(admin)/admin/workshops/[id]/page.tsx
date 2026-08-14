@@ -92,7 +92,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
         </CardContent>
 </Card>
 
-        <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Attendance</h2>
+        <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "24px 0 12px" }}>Attendance</h2>
         <div className="space-y-3">
           {allVolunteers.length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "24px 0" }}>No volunteers found.</p>

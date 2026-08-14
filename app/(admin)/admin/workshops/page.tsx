@@ -49,7 +49,7 @@ export default async function AdminWorkshopsPage() {
             const t = typeColors[w.workshop_type] ?? typeColors.other;
             const s = statusColors[w.status] ?? statusColors.scheduled;
             return (
-              <Link key={w.id} href={`/admin/workshops/${w.id}`} style={{ textDecoration: "none" }}>
+              <Link key={w.id} href={`/admin/workshops/${w.id}`} style={{ textDecoration: "none", display: "block" }}>
                 <Card>
 <CardContent className="flex items-center gap-4">
                   <div style={{ width: 36, height: 36, borderRadius: 8, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>

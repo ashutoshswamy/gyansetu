@@ -105,7 +105,7 @@ function GroupSection({ g }: { g: GroupLedger }) {
       </CardContent>
 </Card>
 
-      <div className="space-y-3">
+      <div className="space-y-3 mt-4">
         {g.expenses.length === 0 && (
           <p style={{ fontSize: 13, color: "var(--gs-muted)", padding: "0 4px" }}>No receipts submitted for this group yet.</p>
         )}

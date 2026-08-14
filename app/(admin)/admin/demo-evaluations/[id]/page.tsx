@@ -23,6 +23,7 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
           <ArrowLeft className="w-3.5 h-3.5" /> Demo Evaluations
         </Link>
 
+        <div className="flex flex-col gap-4">
         <Card>
 <CardContent>
           <p style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, color: "var(--gs-muted)", marginBottom: 4 }}>Admin Console</p>
@@ -66,6 +67,7 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
           </CardContent>
 </Card>
         )}
+        </div>
       </div>
     </div>
   );
