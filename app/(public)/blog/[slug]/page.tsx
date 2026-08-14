@@ -40,13 +40,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.excerpt ?? undefined,
       publishedTime: post.published_at ?? undefined,
-      images: post.cover_image_url ? [{ url: post.cover_image_url }] : undefined,
+      images: [{ url: post.cover_image_url ?? "/og-image.png" }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt ?? undefined,
-      images: post.cover_image_url ? [post.cover_image_url] : undefined,
+      images: [post.cover_image_url ?? "/og-image.png"],
     },
   };
 }

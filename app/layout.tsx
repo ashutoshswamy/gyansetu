@@ -54,13 +54,13 @@ export const metadata: Metadata = {
     description: siteDescription,
     url: siteUrl,
     locale: "en_IN",
-    images: [{ url: "/logo_wide.png", width: 1200, height: 360, alt: "Gyan Setu" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Gyan Setu" }],
   },
   twitter: {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: ["/logo_wide.png"],
+    images: ["/og-image.png"],
   },
 };
 
