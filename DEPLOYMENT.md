@@ -7,7 +7,7 @@ Setup guide for services this project need. Do these before deploy to prod.
 1. Go [supabase.com](https://supabase.com), sign up, click "New Project".
 2. Pick org, name project, set strong DB password (save it), pick region close to users, click "Create new project".
 3. Wait ~2 min for provision.
-4. Run existing migrations/schema against this project (check `supabase/` folder in repo if present, or ask prior dev for schema SQL / migration files).
+4. Run `lib/supabase/schema.sql` (repo root) in the Supabase SQL Editor — idempotent, safe to re-run.
 5. Go to **Project Settings → API**. Copy:
    - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
    - `anon public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -74,6 +74,8 @@ RESEND_API_KEY=
 RESEND_FROM_EMAIL=
 NEXT_PUBLIC_APP_URL=
 ```
+
+Optional, Docker builds only: `DOCKER_BUILD=1` (makes `next.config.ts` emit a `standalone` build for the Dockerfile; leave unset for Vercel).
 
 ## Deploy (Vercel, typical for Next.js)
 

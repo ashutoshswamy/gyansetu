@@ -139,10 +139,18 @@ NEXT_PUBLIC_APP_URL=https://yourdomain.com
 | `npm run seed:enrollees` | Seeds mock enrollee candidates into the database. |
 | `npm run seed:tours` | Seeds mock tour records. |
 | `npm run seed:groups` | Seeds mock tour groups. |
+| `npm run seed:admins` | Seeds mock admin users into the database. |
+| `npm run seed:operations` | Seeds mock operational records (logistics, finance, etc.). |
+| `npm run seed:public-content` | Seeds mock public site content (blog, gallery, etc.). |
+| `npm run seed:all` | Runs all seed scripts in sequence. |
 | `npm run unseed:volunteers` | Cleans up seeded volunteer records. |
 | `npm run unseed:enrollees` | Cleans up seeded enrollee records. |
 | `npm run unseed:tours` | Cleans up seeded tour records. |
 | `npm run unseed:groups` | Cleans up seeded group records. |
+| `npm run unseed:admins` | Cleans up seeded admin records. |
+| `npm run unseed:operations` | Cleans up seeded operational records. |
+| `npm run unseed:public-content` | Cleans up seeded public site content. |
+| `npm run unseed:all` | Runs all unseed scripts in sequence. |
 | `npm run delete:clerk-users` | Utility script to clear development users from Clerk. |
 
 ---

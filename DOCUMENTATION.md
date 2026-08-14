@@ -265,6 +265,7 @@ All tables reside in the Supabase PostgreSQL `public` schema ([`lib/supabase/sch
 - **`school_reports`**: Detailed reports per school visit (`group_id`, `school_name`, `school_type`, `location_category`, `medium_of_instruction`, `village_town`/`taluka_tehsil`/`district`/`state`/`pincode`, `principal_name`/`principal_mobile`, `coordinator_name`/`coordinator_mobile`, `sessions` [JSONB], reflection fields — `student_response`, `what_went_well`, `challenges_faced`, `solutions_adopted`, `suggestions_improvement`, `memorable_moment`, `overall_feedback` — `overall_rating`, `status`).
 - **`tour_reports`**: End-of-tour summary reports (`tour_id`, `group_id`, `location_name`, `hosts` [JSONB], `logistics_scores` [JSONB], `unique_features`, `best_practices`, `overall_recommendation`, `status`).
 - **`demo_evaluations`**: Evaluation scores for pre-tour demos (`volunteer_id`, `tour_id`, `scores` [JSONB 10-criteria scale], `remarks`, `status`).
+- **`volunteer_observations`**: Free-text notes on a volunteer left by admins or their group's core member (`volunteer_id`, `group_id`, `author_id`, `note`). No volunteer-facing read access by design.
 
 ### Events & Workshop System
 
@@ -364,7 +365,7 @@ Supabase Storage is partitioned into 4 dedicated public buckets, all routed thro
 | `gallery-images` | Admin only | High-resolution photographs for public photo gallery |
 | `newsletter-files` | Admin only | Published PDF newsletters |
 
-A `documents` storage bucket is created by `schema.sql` (`insert into storage.buckets ... values ('documents', ...)`) but is dead — no allow-listed helper writes to it. There is no dedicated `earc-files` bucket, and the `earc_files` table exists in the schema but is unused legacy. Expense receipts (`bill_url`), travel tickets (`ticket_file_url`), and ID card files (`card_file_url`) are not uploaded to Supabase Storage at all — they're plain external-URL text fields (or, for ID cards, generated client-side and downloaded directly); profile photos are the one exception, uploaded through the `media` bucket.
+`documents` and `earc-files` storage buckets are created by `schema.sql` (`insert into storage.buckets ...`) but are dead — no allow-listed helper writes to either. The `earc_files` table exists in the schema but is unused legacy. Expense receipts (`bill_url`), travel tickets (`ticket_file_url`), and ID card files (`card_file_url`) are not uploaded to Supabase Storage at all — they're plain external-URL text fields (or, for ID cards, generated client-side and downloaded directly); profile photos are the one exception, uploaded through the `media` bucket.
 
 ---
 
