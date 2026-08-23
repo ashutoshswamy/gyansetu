@@ -11,7 +11,7 @@ import { IdCardPanel } from "@/components/features/id-cards/id-card-panel";
 import { CertificatePanel } from "@/components/features/certificates/certificate-panel";
 import type { FormField } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate } from "@/lib/format-date";
+import { formatDate, formatDateRange } from "@/lib/format-date";
 const sectionTitle: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 12 };
 
 export default async function EnrolleeTourHistoryDetailPage({ params }: { params: Promise<{ tourId: string }> }) {
@@ -51,7 +51,7 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{tour.title}</h1>
           <div className="flex flex-wrap gap-4 mt-2" style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>
             <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" />{tour.destination}</span>
-            <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{tour.start_date} → {tour.end_date}</span>
+            <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{formatDateRange(tour.start_date, tour.end_date)}</span>
           </div>
         </div>
 

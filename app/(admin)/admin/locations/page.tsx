@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Tour } from "@/types";
 import { MapPin, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDateRange } from "@/lib/format-date";
 
 export default async function AdminLocationsPage() {
   const db = createServerClient();
@@ -38,7 +39,7 @@ export default async function AdminLocationsPage() {
                   <h3 style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }} className="truncate">{tour.title}</h3>
                   <div className="flex gap-4 mt-1" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                     <span className="flex items-center gap-1"><MapPin size={11} /> {tour.destination}</span>
-                    <span className="flex items-center gap-1"><Calendar size={11} /> {tour.start_date} &rarr; {tour.end_date}</span>
+                    <span className="flex items-center gap-1"><Calendar size={11} /> {formatDateRange(tour.start_date, tour.end_date)}</span>
                   </div>
                 </div>
               </CardContent>

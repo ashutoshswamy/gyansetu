@@ -9,6 +9,7 @@ import { VolunteerObservations } from "@/components/features/core-member/volunte
 import { AadhaarToggleButton } from "@/app/(admin)/admin/profiles/aadhaar-toggle-button";
 import type { VolunteerObservation } from "@/types";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date";
 
 interface VolunteerAssignment {
   id: string;
@@ -72,7 +73,7 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
             ) : (
               <div className="space-y-3">
                 {profile.phone && <Row label="Phone">{profile.phone}</Row>}
-                {profile.date_of_birth && <Row label="Date of Birth">{profile.date_of_birth}</Row>}
+                {profile.date_of_birth && <Row label="Date of Birth">{formatDate(profile.date_of_birth)}</Row>}
                 {profile.aadhaar_number && (
                   <Row label="Aadhaar Number">
                     <div className="flex items-center gap-2 flex-wrap">

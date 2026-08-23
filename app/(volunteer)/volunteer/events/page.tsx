@@ -5,6 +5,7 @@ import type { Event, EventAttendee } from "@/types";
 import { StatCard } from "@/components/features/dashboard/stat-card";
 import { RsvpButtons } from "./rsvp-buttons";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 type EventRow = Event & { tours?: { id: string; title: string } | null };
 
@@ -106,7 +107,7 @@ function EventCard({ event, muted, rsvp, showRsvp }: { event: EventRow; muted?: 
           </div>
           {event.description && <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "0 0 8px" }}>{event.description}</p>}
           <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
-            <span className="flex items-center gap-1"><Calendar size={11} /> {event.event_date}</span>
+            <span className="flex items-center gap-1"><Calendar size={11} /> {formatDate(event.event_date)}</span>
             {event.location && <span className="flex items-center gap-1"><MapPin size={11} /> {event.location}</span>}
             {event.tours?.title && <span className="flex items-center gap-1"><Tag size={11} /> {event.tours.title}</span>}
           </div>

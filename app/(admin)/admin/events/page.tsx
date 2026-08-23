@@ -7,6 +7,7 @@ import { StatCard } from "@/components/features/dashboard/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   katta:        { color: "#6B21A8", bg: "rgba(107,33,168,0.08)" },
@@ -116,7 +117,7 @@ function EventRow({ event }: { event: EventWithTour }) {
           </Badge>
         </div>
         <div className="flex gap-4" style={{ fontSize: 12, color: "#9B9188" }}>
-          <span className="flex items-center gap-1"><Calendar size={11} /> {event.event_date}</span>
+          <span className="flex items-center gap-1"><Calendar size={11} /> {formatDate(event.event_date)}</span>
           {event.event_time && <span className="flex items-center gap-1"><Clock size={11} /> {event.event_time}</span>}
           {event.location && <span className="flex items-center gap-1"><MapPin size={11} /> {event.location}</span>}
           {event.tours?.title && <span className="flex items-center gap-1"><Tag size={11} /> {event.tours.title}</span>}
