@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
+import { formatDate } from "@/lib/format-date";
 
 interface InstitutionInquiry {
   id: string;
@@ -14,10 +15,6 @@ interface InstitutionInquiry {
   student_count: string | null;
   message: string | null;
   created_at: string;
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
 export default async function AdminInstitutionsPage() {

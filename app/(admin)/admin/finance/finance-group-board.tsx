@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatDate } from "@/lib/format-date";
 import { ExpenseActions } from "./expense-actions";
 import { ReceiptButton } from "@/components/features/expenses/receipt-button";
 import { Label } from "@/components/ui/label";
@@ -90,7 +91,7 @@ function GroupSection({ g }: { g: GroupLedger }) {
                   <span style={{ fontWeight: 700, color: "var(--foreground)" }}>₹{Number(a.amount).toLocaleString("en-IN")}</span>
                   {a.notes && <span> · {a.notes}</span>}
                 </span>
-                <span style={{ color: "var(--gs-muted)", flexShrink: 0 }}>{new Date(a.given_at).toLocaleDateString("en-IN")}</span>
+                <span style={{ color: "var(--gs-muted)", flexShrink: 0 }}>{formatDate(a.given_at)}</span>
               </div>
             ))}
           </div>
@@ -127,7 +128,7 @@ function GroupSection({ g }: { g: GroupLedger }) {
                     </Badge>
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 4px" }}>
-                    {ex.submitter?.email} · {new Date(ex.expense_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
+                    {ex.submitter?.email} · {formatDate(ex.expense_date)}
                     {ex.subcategory ? ` · ${ex.subcategory}` : ""}
                     {ex.volunteer_count ? ` · ${ex.volunteer_count} volunteer${ex.volunteer_count !== 1 ? "s" : ""}` : ""}
                     {ex.vendor_name ? ` · ${ex.vendor_name}` : ""}
@@ -175,7 +176,7 @@ function GroupSection({ g }: { g: GroupLedger }) {
               </div>
               <div>
                 <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-muted)", margin: "0 0 4px" }}>Date</p>
-                <p style={{ fontSize: 14, color: "var(--foreground)", margin: 0 }}>{new Date(selectedAdvance.given_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
+                <p style={{ fontSize: 14, color: "var(--foreground)", margin: 0 }}>{formatDate(selectedAdvance.given_at)}</p>
               </div>
               {selectedAdvance.notes && (
                 <div>

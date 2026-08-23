@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -360,7 +361,7 @@ export default function VolunteerTourReportPage() {
                       {r.status}
                     </Badge>
                   </div>
-                  <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 8px" }}>{new Date(r.created_at).toLocaleDateString()}</p>
+                  <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 8px" }}>{formatDate(r.created_at)}</p>
                   {r.overall_recommendation && (
                     <p style={{ fontSize: 13, color: "var(--foreground)", margin: 0 }}>Recommendation: <strong>{r.overall_recommendation}</strong></p>
                   )}

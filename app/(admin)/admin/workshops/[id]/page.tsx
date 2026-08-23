@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { getWorkshopAttendees } from "@/actions/workshops";
+import { formatDate } from "@/lib/format-date";
 import { ArrowLeft, GraduationCap } from "lucide-react";
 import { MarkAttendanceButtons, MakeupDecisionButtons } from "../attendance-actions";
 import { Card, CardContent } from "@/components/ui/card";
@@ -70,7 +71,7 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
                 <Badge style={{color: "var(--gs-text-secondary)", background: "var(--background)", border: "1px solid var(--border)", textTransform: "capitalize"}}>{workshop.status}</Badge>
               </div>
               <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "4px 0 0" }}>
-                {new Date(workshop.workshop_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                {formatDate(workshop.workshop_date)}
                 {workshop.workshop_time ? ` · ${workshop.workshop_time}` : ""}
                 {workshop.hall_location ? ` · ${workshop.hall_location}` : ""}
               </p>

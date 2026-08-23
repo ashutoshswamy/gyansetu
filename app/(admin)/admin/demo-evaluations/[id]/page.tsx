@@ -1,4 +1,5 @@
 import { getDemoEvaluationById } from "@/actions/demo-evaluations";
+import { formatDate } from "@/lib/format-date";
 import { SCORE_FIELDS } from "@/components/features/demo-evaluations/evaluation-form";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -32,7 +33,7 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
               <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{evaluation.volunteer?.name ?? "Unknown"}</h1>
               <p style={{ fontSize: 13, color: "var(--gs-muted)", margin: "4px 0 0" }}>{evaluation.volunteer?.email}</p>
               <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "6px 0 0" }}>
-                {evaluation.tour?.title ?? "General"} · Observed by {evaluation.observer?.name ?? "-"} · {new Date(evaluation.evaluated_at).toLocaleDateString()}
+                {evaluation.tour?.title ?? "General"} · Observed by {evaluation.observer?.name ?? "-"} · {formatDate(evaluation.evaluated_at)}
               </p>
             </div>
             <span style={{ fontSize: 15, fontWeight: 700, padding: "4px 12px", borderRadius: 6, color, background: "rgba(0,0,0,0.03)" }}>

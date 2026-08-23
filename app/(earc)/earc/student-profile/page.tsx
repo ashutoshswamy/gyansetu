@@ -1,4 +1,5 @@
 import { requireEarcUser } from "@/lib/clerk/action-auth";
+import { formatDate } from "@/lib/format-date";
 import { getStudentProfiles, exportStudentProfilesCsv } from "@/actions/earc";
 import { GraduationCap } from "lucide-react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -83,7 +84,7 @@ export default async function StudentProfilePage() {
                   <TableCell>{[s.first_name, s.middle_name, s.last_name].filter(Boolean).join(" ")}</TableCell>
                   <TableCell>{s.gender}</TableCell>
                   <TableCell>{s.standard}</TableCell>
-                  <TableCell>{s.date_of_birth ? new Date(s.date_of_birth).toLocaleDateString() : "-"}</TableCell>
+                  <TableCell>{s.date_of_birth ? formatDate(s.date_of_birth) : "-"}</TableCell>
                   <TableCell>{s.mobile_number ?? "-"}</TableCell>
                   <TableCell>{s.blood_group ?? "-"}</TableCell>
                   <TableCell className="text-muted-foreground">{s.submitter?.name ?? "Unknown"}</TableCell>

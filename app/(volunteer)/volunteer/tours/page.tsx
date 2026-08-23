@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { Plane, MapPin, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 type AssignmentRow = {
   id: string;
@@ -110,7 +111,7 @@ function Section({ title, assignments }: { title: string; assignments: Assignmen
                   <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" />{a.tours.destination}</span>
                 )}
                 {a.tours?.start_date && (
-                  <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{new Date(a.tours.start_date).toLocaleDateString()} → {a.tours.end_date ? new Date(a.tours.end_date).toLocaleDateString() : "TBD"}</span>
+                  <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{formatDate(a.tours.start_date)} → {a.tours.end_date ? formatDate(a.tours.end_date) : "TBD"}</span>
                 )}
                 {a.tours?.capacity && (
                   <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />{a.tours.capacity} seats</span>

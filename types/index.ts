@@ -312,12 +312,13 @@ export interface RegistrationFee {
   id: string;
   volunteer_id: string;
   amount: number;
-  status: "pending" | "submitted" | "paid" | "waived" | "refunded";
+  status: "pending" | "submitted" | "paid" | "waived" | "refunded" | "rejected";
   payment_reference?: string;
   paid_at?: string;
   submitted_at?: string;
   verified_by?: string;
   notes?: string;
+  rejection_reason?: string;
   tour_id?: string;
   group_id?: string;
   created_at: string;
@@ -325,6 +326,18 @@ export interface RegistrationFee {
   volunteer?: UserProfile;
   tour?: Pick<Tour, "id" | "title">;
   group?: { id: string; name: string };
+}
+
+export interface PaymentSettings {
+  id: string;
+  upi_id?: string;
+  account_holder_name?: string;
+  bank_name?: string;
+  account_number?: string;
+  ifsc_code?: string;
+  qr_code_url?: string;
+  updated_by?: string;
+  updated_at: string;
 }
 
 export interface VolunteerObservation {

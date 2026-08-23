@@ -3,6 +3,7 @@ import { Mail } from "lucide-react";
 import {
   fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, btnInk, Eyebrow,
 } from "@/components/landing/theme";
+import { formatDate } from "@/lib/format-date";
 
 export const metadata = {
   title: "Newsletter",
@@ -18,15 +19,6 @@ interface Newsletter {
   issue_number: number | null;
   published_at: string | null;
   created_at: string;
-}
-
-function formatDate(dateStr: string | null) {
-  if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 }
 
 export const revalidate = 60;
@@ -127,7 +119,7 @@ export default async function NewsletterPage() {
                 {/* Date */}
                 {item.published_at && (
                   <p style={{ fontFamily: F_MONO, fontSize: 11, color: "var(--gs-text-mute)", letterSpacing: "0.04em", marginBottom: 16 }}>
-                    {formatDate(item.published_at)}
+                    {item.published_at ? formatDate(item.published_at) : ""}
                   </p>
                 )}
 

@@ -8,6 +8,7 @@ import { saveSubjectiveEvaluation, editTestResult } from "@/actions/tests";
 import { useRouter } from "next/navigation";
 import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import type { EligibilityTest, TestQuestion } from "@/types";
+import { formatDate } from "@/lib/format-date";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -215,7 +216,7 @@ export function TestAttemptsViewer({
                   <div className="flex items-center justify-between mt-3 pt-2.5" style={{ borderTop: "1px solid var(--gs-card)" }}>
                     <span style={{ fontSize: 11, color: "var(--gs-text-secondary)", display: "flex", alignItems: "center", gap: 1 }}>
                       <Clock className="w-3.5 h-3.5" />
-                      {attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleDateString() : "In progress"}
+                      {attempt.submitted_at ? formatDate(attempt.submitted_at) : "In progress"}
                     </span>
                     <span
                       style={{

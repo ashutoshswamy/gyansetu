@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { FileText, Newspaper, ArrowRight } from "lucide-react";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
+import { formatDate } from "@/lib/format-date";
 
 export const metadata = {
   title: "Blog",
@@ -17,15 +18,6 @@ interface BlogPost {
   cover_image_url: string | null;
   published_at: string | null;
   created_at: string;
-}
-
-function formatDate(dateStr: string | null) {
-  if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 }
 
 export const revalidate = 60;
@@ -127,7 +119,7 @@ export default async function BlogPage() {
                 <div style={{ padding: "22px 22px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
                   {post.published_at && (
                     <p style={{ fontFamily: F_MONO, fontSize: 11, fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-text-mute)", margin: "0 0 10px" }}>
-                      {formatDate(post.published_at)}
+                      {post.published_at ? formatDate(post.published_at) : ""}
                     </p>
                   )}
                   <h2 style={{ fontFamily: F_DISPLAY, fontSize: 19, fontWeight: 600, letterSpacing: "-0.01em", color: "var(--gs-text)", margin: "0 0 10px", lineHeight: 1.32 }}>

@@ -4,6 +4,7 @@ import { Users, MapPin, Calendar, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -125,7 +126,7 @@ function CurrentGroupCard({ assignment }: { assignment: Assignment }) {
           <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" />{group?.state_allocated || tour?.destination}</span>
         )}
         {tour?.start_date && (
-          <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{new Date(tour.start_date).toLocaleDateString()} → {tour.end_date ? new Date(tour.end_date).toLocaleDateString() : "TBD"}</span>
+          <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{formatDate(tour.start_date)} → {tour.end_date ? formatDate(tour.end_date) : "TBD"}</span>
         )}
         <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />{members.length} {members.length === 1 ? "volunteer" : "volunteers"}</span>
       </div>
@@ -177,7 +178,7 @@ function HistoryRow({ assignment }: { assignment: Assignment }) {
         <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", marginBottom: 2 }}>{group?.name}</p>
         <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>
           {tour?.title}{group?.state_allocated ? ` · ${group.state_allocated}` : ""}
-          {tour?.start_date && ` · ${new Date(tour.start_date).toLocaleDateString()}`}
+          {tour?.start_date && ` · ${formatDate(tour.start_date)}`}
         </p>
       </div>
       <Badge style={{color: s.color, background: s.bg, flexShrink: 0}}>{s.label}</Badge>

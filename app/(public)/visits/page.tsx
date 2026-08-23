@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createServerClient } from "@/lib/supabase/server";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO, Eyebrow } from "@/components/landing/theme";
+import { formatDateRange } from "@/lib/format-date";
 
 export const metadata: Metadata = {
   title: "Tour Showcase",
@@ -21,11 +22,6 @@ type Visit = {
   capacity: number | null;
   created_at: string;
 };
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-}
 
 const STATUS_CONFIG = {
   upcoming: { label: "Upcoming", color: "var(--gs-marigold)", bg: "rgba(232,163,61,.12)", border: "rgba(232,163,61,.4)" },
@@ -99,9 +95,7 @@ function VisitCard({ visit }: { visit: Visit }) {
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
         </svg>
-        <span>{formatDate(visit.start_date)}</span>
-        <span style={{ color: "var(--gs-line)" }}>&rarr;</span>
-        <span>{formatDate(visit.end_date)}</span>
+        <span>{formatDateRange(visit.start_date, visit.end_date)}</span>
         {visit.capacity != null && (
           <>
             <span style={{ color: "var(--gs-line)", marginLeft: 8 }}>&middot;</span>

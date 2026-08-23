@@ -1,4 +1,5 @@
 import { getAllDailyLogs } from "@/actions/daily-logs";
+import { formatDate } from "@/lib/format-date";
 import { BookOpen, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
@@ -54,7 +55,7 @@ export default async function AdminDailyLogsPage() {
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{log.users?.name ?? "Unknown volunteer"}</span>
                     <Badge style={{color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)"}}>
-                      {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
+                      {formatDate(log.log_date)}
                     </Badge>
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
@@ -66,7 +67,7 @@ export default async function AdminDailyLogsPage() {
                 <div className="flex items-center gap-2" style={{ background: "rgba(var(--gs-warning-rgb), 0.08)", border: "1px solid rgba(var(--gs-warning-rgb), 0.25)", borderRadius: 6, padding: "8px 12px", margin: "10px 0" }}>
                   <AlertTriangle size={14} style={{ color: "var(--gs-warning)", flexShrink: 0 }} />
                   <p style={{ fontSize: 12, color: "var(--gs-warning-alt)", margin: 0 }}>
-                    Delayed entry — submitted on {new Date(log.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}, not the same day as the log date.
+                    Delayed entry — submitted on {formatDate(log.created_at)}, not the same day as the log date.
                   </p>
                 </div>
               )}

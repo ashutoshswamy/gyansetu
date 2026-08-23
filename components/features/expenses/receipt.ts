@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import type { Expense } from "@/types";
+import { formatDate } from "@/lib/format-date";
 
 type RGB = [number, number, number];
 
@@ -117,7 +118,7 @@ export function downloadExpenseReceipt(ex: ReceiptExpense) {
   };
 
   row("Receipt No.", ex.id.slice(0, 8).toUpperCase());
-  row("Date", new Date(ex.expense_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" }));
+  row("Date", formatDate(ex.expense_date));
   row("Group", ex.group?.name ?? "-");
   row("Submitted By", ex.submitter?.name ?? "-");
   row(meta.subLabel, ex.subcategory ?? "-");

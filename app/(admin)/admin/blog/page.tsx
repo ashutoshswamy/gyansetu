@@ -3,6 +3,7 @@ import Link from "next/link";
 import { publishPost, deletePost } from "@/actions/blog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 interface BlogPost {
   id: string;
@@ -18,10 +19,6 @@ const statusStyle: Record<string, { color: string; background: string }> = {
   published: { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" },
 };
 
-function formatDate(dateStr: string | null) {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-}
 
 export default async function AdminBlogPage() {
   const db = createServerClient();
@@ -85,7 +82,7 @@ export default async function AdminBlogPage() {
                   </div>
                   <div style={{ fontSize: 12, color: "var(--gs-muted)", display: "flex", gap: 16 }}>
                     <span>/{post.slug}</span>
-                    <span>{post.status === "published" ? `Published ${formatDate(post.published_at)}` : `Created ${formatDate(post.created_at)}`}</span>
+                    <span>{post.status === "published" ? `Published ${formatDate(post.published_at!)}` : `Created ${formatDate(post.created_at)}`}</span>
                   </div>
                 </div>
 

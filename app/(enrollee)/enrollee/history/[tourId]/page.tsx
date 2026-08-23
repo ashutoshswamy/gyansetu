@@ -11,6 +11,7 @@ import { IdCardPanel } from "@/components/features/id-cards/id-card-panel";
 import { CertificatePanel } from "@/components/features/certificates/certificate-panel";
 import type { FormField } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDate } from "@/lib/format-date";
 const sectionTitle: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 12 };
 
 export default async function EnrolleeTourHistoryDetailPage({ params }: { params: Promise<{ tourId: string }> }) {
@@ -113,7 +114,7 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
 <CardContent>
                       <div className="flex items-center justify-between mb-2">
                         <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)" }}>{form?.title ?? "Form"}</p>
-                        <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
+                        <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{formatDate(s.submitted_at)}</span>
                       </div>
                       {entries.length > 0 && (
                         <div className="space-y-1.5 mt-3" style={{ borderTop: "1px solid var(--border)", paddingTop: 10 }}>
@@ -148,7 +149,7 @@ export default async function EnrolleeTourHistoryDetailPage({ params }: { params
                   <Card key={log.id}>
 <CardContent>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 8 }}>
-                      {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                      {formatDate(log.log_date)}
                     </p>
                     <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginBottom: 4 }}><b>Activities:</b> {log.activities_conducted}</p>
                     <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}><b>Achievements:</b> {log.key_achievements}</p>

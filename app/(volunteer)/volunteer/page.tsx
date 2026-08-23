@@ -7,6 +7,7 @@ import type { DynamicForm } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date";
 
 type AssignmentRow = {
   id: string;
@@ -117,7 +118,7 @@ export default async function VolunteerDashboard() {
                             </span>
                             <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                               <Calendar className="w-3 h-3" />
-                              {a.tours?.start_date ? new Date(a.tours.start_date).toLocaleDateString() : "-"}
+                              {a.tours?.start_date ? formatDate(a.tours.start_date) : "-"}
                             </span>
                           </div>
                           {a.role_description && (

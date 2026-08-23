@@ -1,8 +1,17 @@
 "use server";
 
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
-import { registrationFeeSchema, volunteerRegistrationFeeSchema, type RegistrationFeeInput } from "@/lib/validations";
+import { registrationFeeSchema, volunteerRegistrationFeeSchema, rejectRegistrationFeeSchema, type RegistrationFeeInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/actions/notifications";
+import { ZodError } from "zod";
+
+function describeZodError(err: ZodError): string {
+  const first = err.issues[0];
+  if (!first) return "Invalid input";
+  const path = first.path.join(".");
+  return path ? `${path}: ${first.message}` : first.message;
+}
 
 export async function createRegistrationFee(input: RegistrationFeeInput) {
   const { db } = await requireAdminUser();
@@ -45,6 +54,39 @@ export async function verifyRegistrationFee(id: string) {
   revalidatePath("/admin/registration-fees");
   revalidatePath("/volunteer/registration-fee");
   return fee;
+}
+
+// Admin rejects a volunteer-submitted payment with a reason; volunteer sees it and can resubmit.
+export async function rejectRegistrationFee(id: string, reason: string) {
+  const { db, user } = await requireAdminUser();
+  let parsedReason: string;
+  try {
+    parsedReason = rejectRegistrationFeeSchema.parse({ reason }).reason;
+  } catch (err) {
+    if (err instanceof ZodError) return { ok: false as const, error: describeZodError(err) };
+    throw err;
+  }
+
+  const { data: fee, error } = await db
+    .from("registration_fees")
+    .update({ status: "rejected", rejection_reason: parsedReason, verified_by: user.id, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .select("*, volunteer_id")
+    .single();
+  if (error) { console.error("[rejectRegistrationFee]", error); return { ok: false as const, error: "Failed to reject payment" }; }
+
+  if (fee.volunteer_id) {
+    await createNotification({
+      user_id: fee.volunteer_id,
+      title: "Registration fee payment rejected",
+      message: `Your registration fee payment was rejected: ${parsedReason}. Please resubmit.`,
+      type: "error",
+    }).catch(err => console.error("[rejectRegistrationFee notify]", err));
+  }
+
+  revalidatePath("/admin/registration-fees");
+  revalidatePath("/volunteer/registration-fee");
+  return { ok: true as const, fee };
 }
 
 export async function getAllRegistrationFees() {
@@ -93,7 +135,7 @@ export async function submitRegistrationFee(input: { amount: number; payment_ref
     .eq("volunteer_id", user.id)
     .maybeSingle();
   if (fetchError) { console.error("[submitRegistrationFee]", fetchError); throw new Error("Failed to record payment"); }
-  if (existing && existing.status !== "pending") throw new Error("Registration fee already recorded");
+  if (existing && existing.status !== "pending" && existing.status !== "rejected") throw new Error("Registration fee already recorded");
 
   const payload = {
     volunteer_id: user.id,
@@ -104,6 +146,7 @@ export async function submitRegistrationFee(input: { amount: number; payment_ref
     group_id: membership?.group_id ?? null,
     status: "submitted" as const,
     submitted_at: new Date().toISOString(),
+    rejection_reason: null,
   };
 
   const { data: fee, error } = existing

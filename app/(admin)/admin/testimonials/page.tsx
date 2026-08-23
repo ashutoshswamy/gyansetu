@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { approveTestimonial, declineTestimonial, deleteTestimonial } from "@/actions/public-forms";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date";
 
 type Status = "pending" | "approved" | "declined";
 
@@ -22,10 +23,6 @@ const statusStyles: Record<Status, { color: string; background: string; label: s
   approved: { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)", label: "Approved" },
   declined: { color: "#C0392B", background: "rgba(192,57,43,0.08)", label: "Declined" },
 };
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-}
 
 function truncate(text: string, max: number) {
   return text.length <= max ? text : text.slice(0, max) + "…";

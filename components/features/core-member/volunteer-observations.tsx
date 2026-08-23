@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import { createVolunteerObservation } from "@/actions/core-member";
 import type { VolunteerObservation } from "@/types";
+import { formatDate } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -74,7 +75,7 @@ export function VolunteerObservations({
 <CardContent>
               <p style={{ fontSize: 13, color: "var(--foreground)", margin: "0 0 6px", whiteSpace: "pre-wrap" }}>{o.note}</p>
               <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
-                {o.author?.name ?? "Unknown"} · {new Date(o.created_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                {o.author?.name ?? "Unknown"} · {formatDate(o.created_at)}
               </p>
             </CardContent>
 </Card>

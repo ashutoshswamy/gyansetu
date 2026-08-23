@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Download } from "lucide-react";
 import { toPng } from "html-to-image";
+import { formatDate } from "@/lib/format-date";
 
 export interface CertificatePanelData {
   name: string;
@@ -176,7 +177,7 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
               <p style={{ fontFamily: sans, fontSize: 12.5, fontWeight: 600, margin: 0, color: INK }}>Issued by Gyan-Setu EARC</p>
             </div>
             <p style={{ fontFamily: mono, fontSize: 9, letterSpacing: "0.05em", color: MUTED, margin: "14px 0 0" }}>
-              Issued {new Date(data.issued_at).toLocaleDateString("en-IN")}
+              Issued {formatDate(data.issued_at)}
               {data.volunteer_code ? ` · ${data.volunteer_code}` : ""}
             </p>
           </div>

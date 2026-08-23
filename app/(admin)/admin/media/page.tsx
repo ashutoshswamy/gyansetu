@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { formatDate } from "@/lib/format-date";
 import { Image, FileText, Video } from "lucide-react";
 import { MediaThumb } from "@/components/features/media/media-thumb";
 import { Card } from "@/components/ui/card";
@@ -76,7 +77,7 @@ export default async function AdminMediaPage() {
                       <div style={{ padding: "10px 12px" }}>
                         {item.caption && <p style={{ fontSize: 13, color: "var(--foreground)", margin: "0 0 2px", fontWeight: 500 }} className="truncate">{item.caption}</p>}
                         <p style={{ fontSize: 11, color: "var(--gs-muted)", margin: 0 }}>
-                          {item.users?.name} · {new Date(item.created_at).toLocaleDateString()}
+                          {item.users?.name} · {formatDate(item.created_at)}
                         </p>
                       </div>
                     </a>

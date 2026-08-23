@@ -304,12 +304,13 @@ export type VolunteerProfileInput = z.infer<typeof volunteerProfileSchema>;
 export const registrationFeeSchema = z.object({
   volunteer_id: z.string().uuid(),
   amount: z.number().positive(),
-  status: z.enum(["pending", "submitted", "paid", "waived", "refunded"]).default("pending"),
+  status: z.enum(["pending", "submitted", "paid", "waived", "refunded", "rejected"]).default("pending"),
   payment_reference: z.string().max(200).optional(),
   paid_at: z.string().optional(),
   submitted_at: z.string().optional(),
   verified_by: z.string().uuid().optional(),
   notes: z.string().max(1000).optional(),
+  rejection_reason: z.string().max(1000).optional(),
 });
 
 // Volunteer self-recording a registration fee — tour/group are auto-fetched
@@ -489,6 +490,21 @@ export const expenseSchema = z
 export const rejectExpenseSchema = z.object({
   reason: z.string().trim().min(1).max(1000),
 });
+
+export const rejectRegistrationFeeSchema = z.object({
+  reason: z.string().trim().min(1).max(1000),
+});
+
+export const paymentSettingsSchema = z.object({
+  upi_id: z.string().max(100).optional(),
+  account_holder_name: z.string().max(200).optional(),
+  bank_name: z.string().max(200).optional(),
+  account_number: z.string().max(50).optional(),
+  ifsc_code: z.string().max(20).optional(),
+  qr_code_url: z.string().max(500).optional(),
+});
+
+export type PaymentSettingsInput = z.infer<typeof paymentSettingsSchema>;
 
 const tourReportHostSchema = z.object({
   organisation: z.string().max(200).optional(),

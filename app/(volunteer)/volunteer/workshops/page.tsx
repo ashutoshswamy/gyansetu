@@ -1,4 +1,5 @@
 import { getUpcomingWorkshops, getMyWorkshopAttendance } from "@/actions/workshops";
+import { formatDate } from "@/lib/format-date";
 import { GraduationCap, CalendarClock, CheckCircle2, XCircle } from "lucide-react";
 import { MissedSummaryForm } from "./missed-summary-form";
 import { AttendedButton } from "./attended-button";
@@ -95,7 +96,7 @@ export default async function VolunteerWorkshopsPage() {
                       )}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
-                      {new Date(w.workshop_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                      {formatDate(w.workshop_date)}
                       {w.workshop_time ? ` · ${w.workshop_time}` : ""}
                       {w.hall_location ? ` · ${w.hall_location}` : ""}
                       {w.trainer?.name || w.trainer_name ? ` · Trainer: ${w.trainer?.name ?? w.trainer_name}` : ""}

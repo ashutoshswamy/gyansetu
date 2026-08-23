@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAllWorkshops } from "@/actions/workshops";
+import { formatDate } from "@/lib/format-date";
 import { GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -69,7 +70,7 @@ export default async function AdminWorkshopsPage() {
                       </span>
                     </div>
                     <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
-                      {new Date(w.workshop_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                      {formatDate(w.workshop_date)}
                       {w.workshop_time ? ` · ${w.workshop_time}` : ""}
                       {w.hall_location ? ` · ${w.hall_location}` : ""}
                       {w.trainer_name ? ` · Trainer: ${w.trainer_name}` : ""}

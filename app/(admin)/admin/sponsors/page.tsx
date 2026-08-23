@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
+import { formatDate } from "@/lib/format-date";
 
 interface SponsorInquiry {
   id: string;
@@ -14,9 +15,6 @@ interface SponsorInquiry {
   created_at: string;
 }
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-}
 
 export default async function AdminSponsorsPage() {
   const db = createServerClient();

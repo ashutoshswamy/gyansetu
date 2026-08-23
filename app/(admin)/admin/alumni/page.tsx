@@ -1,4 +1,5 @@
 import { getAllAlumniRegistrations } from "@/actions/alumni-registration";
+import { formatDate } from "@/lib/format-date";
 import { ExportButton } from "@/components/features/export-button";
 import { Inbox } from "lucide-react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -75,7 +76,7 @@ export default async function AlumniAdminPage() {
                       </TableCell>
                       <TableCell className="whitespace-normal">{r.company_name || r.institution || "-"}</TableCell>
                       <TableCell className="whitespace-normal">{r.willing_to_mentor_new || (r.willing_to_mentor ? "Yes" : "-")}</TableCell>
-                      <TableCell className="whitespace-normal">{new Date(r.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell className="whitespace-normal">{formatDate(r.created_at)}</TableCell>
                     </TableRow>
                   );
                 })}

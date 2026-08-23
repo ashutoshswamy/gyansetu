@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ExpenseForm } from "./expense-form";
 import type { Expense } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDate } from "@/lib/format-date";
 
 const categoryLabels: Record<string, string> = {
   travel: "Travel & Transportation",
@@ -60,7 +61,7 @@ export function ExpenseItem({ expense }: { expense: Expense & { group?: { id: st
             </Badge>
           </div>
           <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "0 0 4px" }}>
-            {expense.group?.name ?? "No group"} · {new Date(expense.expense_date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
+            {expense.group?.name ?? "No group"} · {formatDate(expense.expense_date)}
             {expense.subcategory ? ` · ${expense.subcategory}` : ""}
             {expense.volunteer_count ? ` · ${expense.volunteer_count} volunteer${expense.volunteer_count !== 1 ? "s" : ""}` : ""}
             {expense.vendor_name ? ` · ${expense.vendor_name}` : ""}

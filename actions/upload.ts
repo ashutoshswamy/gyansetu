@@ -3,7 +3,7 @@
 import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { createServerClient } from "@/lib/supabase/server";
 
-const ALLOWED_BUCKETS = ["blog-covers", "newsletter-files", "gallery-images", "media"] as const;
+const ALLOWED_BUCKETS = ["blog-covers", "newsletter-files", "gallery-images", "media", "payment-qr"] as const;
 
 // "media" is uploaded by any logged-in role (student/volunteer/admin); others are admin-only.
 const OPEN_BUCKETS = new Set(["media"]);
@@ -13,6 +13,7 @@ const ALLOWED_EXTENSIONS: Record<string, string[]> = {
   "gallery-images":   ["jpg", "jpeg", "png", "webp", "gif"],
   "newsletter-files": ["pdf", "doc", "docx", "jpg", "jpeg", "png", "webp"],
   "media":            ["jpg", "jpeg", "png", "webp", "gif", "pdf", "mp4", "webm", "mov", "ogg"],
+  "payment-qr":       ["jpg", "jpeg", "png", "webp"],
 };
 
 const ALLOWED_MIME_TYPES = new Set([

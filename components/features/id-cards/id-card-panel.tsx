@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Download } from "lucide-react";
 import { toPng } from "html-to-image";
+import { formatDate } from "@/lib/format-date";
 
 export interface IdCardPanelData {
   name: string;
@@ -63,7 +64,7 @@ function field(label: string, value?: string | null) {
 }
 
 function shortDate(d: string) {
-  return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "2-digit" });
+  return formatDate(d);
 }
 
 export function IdCardPanel({ data }: { data: IdCardPanelData }) {

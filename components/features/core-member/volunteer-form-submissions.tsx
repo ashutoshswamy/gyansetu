@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { FormField, FormSubmission } from "@/types";
+import { formatDate } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 
 function fieldValue(val: unknown): string {
@@ -36,7 +37,7 @@ export function VolunteerFormSubmissions({ submissions }: { submissions: Submiss
                 {fields.length > 0 ? (open ? <ChevronDown size={14} style={{ color: "var(--gs-muted)" }} /> : <ChevronRight size={14} style={{ color: "var(--gs-muted)" }} />) : <span style={{ width: 14 }} />}
                 <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{form?.title ?? "Form"}</span>
               </div>
-              <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{new Date(s.submitted_at).toLocaleDateString()}</span>
+              <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{formatDate(s.submitted_at)}</span>
             </button>
 
             {open && fields.length > 0 && (

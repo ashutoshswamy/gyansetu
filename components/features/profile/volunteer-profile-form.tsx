@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { upsertVolunteerProfile, getMyVolunteerProfile } from "@/actions/profiles";
+import { formatDate } from "@/lib/format-date";
 import { AlertCircle, CheckCircle, Info } from "lucide-react";
-import { STATE_CITIES, INDIAN_STATES } from "@/lib/locations";
+import { INDIAN_STATES } from "@/lib/locations";
 import { FileUploadField } from "@/components/features/file-upload-field";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { VolunteerProfile } from "@/types";
@@ -274,7 +275,7 @@ export function VolunteerProfileForm({ variant }: Props) {
         {variant === "volunteer" && profile?.consent_given && (
           <div style={{ background: "rgba(var(--gs-success-rgb), 0.07)", border: "1px solid rgba(var(--gs-success-rgb), 0.2)", borderRadius: 8, padding: "10px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--gs-success)" }}>
             <CheckCircle size={15} />
-            Consent given on {profile.consent_given_at ? new Date(profile.consent_given_at).toLocaleDateString() : "-"}
+            Consent given on {profile.consent_given_at ? formatDate(profile.consent_given_at) : "-"}
           </div>
         )}
 
@@ -352,14 +353,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                     </select>
                   </F>
                   <F label="Village / City" required>
-                    {selectedState && STATE_CITIES[selectedState]?.length > 0 ? (
-                      <select value={selectedCity} onChange={e => setSelectedCity(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
-                        <option value="">Select city</option>
-                        {STATE_CITIES[selectedState].map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    ) : (
-                      <input value={selectedCity} onChange={e => setSelectedCity(e.target.value)} placeholder="Your city/village" style={inputStyle} disabled={!selectedState} />
-                    )}
+                    <input value={selectedCity} onChange={e => setSelectedCity(e.target.value)} placeholder="Your city/village" style={inputStyle} disabled={!selectedState} />
                   </F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
@@ -394,14 +388,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                         </select>
                       </F>
                       <F label="Village / City" required>
-                        {permState && STATE_CITIES[permState]?.length > 0 ? (
-                          <select value={permCity} onChange={e => setPermCity(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
-                            <option value="">Select city</option>
-                            {STATE_CITIES[permState].map(c => <option key={c} value={c}>{c}</option>)}
-                          </select>
-                        ) : (
-                          <input value={permCity} onChange={e => setPermCity(e.target.value)} placeholder="Your city/village" style={inputStyle} disabled={!permState} />
-                        )}
+                        <input value={permCity} onChange={e => setPermCity(e.target.value)} placeholder="Your city/village" style={inputStyle} disabled={!permState} />
                       </F>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
@@ -455,14 +442,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </select>
                 </F>
                 <F label="College City" required>
-                  {collegeState && STATE_CITIES[collegeState]?.length > 0 ? (
-                    <select value={collegeCity} onChange={e => setCollegeCity(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
-                      <option value="">Select city</option>
-                      {STATE_CITIES[collegeState].map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                  ) : (
-                    <input value={collegeCity} onChange={e => setCollegeCity(e.target.value)} placeholder="Your city" style={inputStyle} disabled={!collegeState} />
-                  )}
+                  <input value={collegeCity} onChange={e => setCollegeCity(e.target.value)} placeholder="Your city" style={inputStyle} disabled={!collegeState} />
                 </F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -515,14 +495,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                       </select>
                     </F>
                     <F label="Work City" required>
-                      {workState && STATE_CITIES[workState]?.length > 0 ? (
-                        <select value={workCity} onChange={e => setWorkCity(e.target.value)} required={isCurrentlyWorking} style={{ ...inputStyle, appearance: "none" }}>
-                          <option value="">Select city</option>
-                          {STATE_CITIES[workState].map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-                      ) : (
-                        <input value={workCity} onChange={e => setWorkCity(e.target.value)} required={isCurrentlyWorking} placeholder="Your city" style={inputStyle} disabled={!workState} />
-                      )}
+                      <input value={workCity} onChange={e => setWorkCity(e.target.value)} required={isCurrentlyWorking} placeholder="Your city" style={inputStyle} disabled={!workState} />
                     </F>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
@@ -597,7 +570,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </span>
               </label>
               <F label="Digital Signature / Name" required><input name="signature_name" required placeholder="Type full name to sign" defaultValue={profile?.signature_name ?? ""} style={inputStyle} /></F>
-              <F label="Date"><input disabled value={profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : new Date().toLocaleDateString()} style={{ ...inputStyle, color: "var(--gs-muted)" }} /></F>
+              <F label="Date"><input disabled value={profile?.updated_at ? formatDate(profile.updated_at) : formatDate(new Date())} style={{ ...inputStyle, color: "var(--gs-muted)" }} /></F>
           </div>
 
           {activeTab === "declaration" && (

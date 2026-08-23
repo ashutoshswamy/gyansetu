@@ -1,4 +1,5 @@
 import { getAllVolunteerProfiles } from "@/actions/profiles";
+import { formatDate } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExportButton } from "@/components/features/export-button";
 import { Inbox, CheckCircle, AlertCircle } from "lucide-react";
@@ -98,7 +99,7 @@ export default async function ProfilesPage() {
                             <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>-</span>
                           )}
                         </td>
-                        <td className="p-4 text-[var(--gs-text-secondary)]">{new Date(p.created_at).toLocaleDateString()}</td>
+                        <td className="p-4 text-[var(--gs-text-secondary)]">{formatDate(p.created_at)}</td>
                         <td className="p-4">
                           {role === "volunteer" && (
                             <Link href={`/admin/volunteers/${p.user_id}`} style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-accent)", textDecoration: "none" }}>

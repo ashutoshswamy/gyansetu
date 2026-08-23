@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { fontVars, pageVars, F_DISPLAY, F_BODY, F_MONO } from "@/components/landing/theme";
+import { formatDate } from "@/lib/format-date";
 
 interface BlogPost {
   id: string;
@@ -49,15 +50,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [post.cover_image_url ?? "/og-image.png"],
     },
   };
-}
-
-function formatDate(dateStr: string | null) {
-  if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 }
 
 export const revalidate = 60;
@@ -136,7 +128,7 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Meta */}
         {typedPost.published_at && (
           <p style={{ fontFamily: F_MONO, fontSize: 11.5, fontWeight: 500, color: "var(--gs-text-mute)", letterSpacing: "0.08em", textTransform: "uppercase", margin: "0 0 14px" }}>
-            {formatDate(typedPost.published_at)}
+            {typedPost.published_at ? formatDate(typedPost.published_at) : ""}
           </p>
         )}
 

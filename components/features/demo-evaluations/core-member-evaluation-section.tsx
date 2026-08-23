@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { CoreMemberEvaluationForm } from "@/components/features/demo-evaluations/core-member-evaluation-form";
 import type { DemoEvaluation } from "@/types";
+import { formatDate } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -64,7 +65,7 @@ export function CoreMemberEvaluationSection({
                     <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>Score: {ev.total_score ?? 0}/100</span>
                     <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>{ev.status}</Badge>
                   </div>
-                  <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>{new Date(ev.evaluated_at).toLocaleDateString()}{ev.tour?.title ? ` · ${ev.tour.title}` : ""}</p>
+                  <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>{formatDate(ev.evaluated_at)}{ev.tour?.title ? ` · ${ev.tour.title}` : ""}</p>
                   {ev.remarks && <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 6 }}>{ev.remarks}</p>}
                 </div>
                 <button

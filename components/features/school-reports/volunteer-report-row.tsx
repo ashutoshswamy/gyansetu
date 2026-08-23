@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDate } from "@/lib/format-date";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -111,13 +112,13 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                       {[r.village_town, r.taluka_tehsil, r.district, r.state].filter(Boolean).join(", ")}
                       {r.pincode ? ` - ${r.pincode}` : ""}
-                      {" · "}{new Date(r.created_at).toLocaleDateString()}
+                      {" · "}{formatDate(r.created_at)}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4 mb-3" style={{ fontSize: 12, color: "var(--gs-text-secondary)" }}>
-                  {r.visit_date && <span>Visit Date: <strong>{new Date(r.visit_date).toLocaleDateString()}</strong></span>}
+                  {r.visit_date && <span>Visit Date: <strong>{formatDate(r.visit_date)}</strong></span>}
                   {r.location_category && <span>Location: <strong>{r.location_category}</strong></span>}
                   {r.medium_of_instruction && <span>Medium: <strong>{r.medium_of_instruction}</strong></span>}
                   {r.volunteers_present_count != null && <span>Volunteers Present: <strong>{r.volunteers_present_count}</strong></span>}

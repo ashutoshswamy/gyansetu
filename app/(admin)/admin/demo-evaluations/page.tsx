@@ -1,4 +1,5 @@
 import { getAllDemoEvaluations } from "@/actions/demo-evaluations";
+import { formatDate } from "@/lib/format-date";
 import Link from "next/link";
 import { ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,7 +56,7 @@ export default async function AdminDemoEvaluationsPage() {
                       )}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
-                      {e.tour?.title ?? "General"} · Observed by {e.observer?.name ?? "-"} · {new Date(e.evaluated_at).toLocaleDateString()}
+                      {e.tour?.title ?? "General"} · Observed by {e.observer?.name ?? "-"} · {formatDate(e.evaluated_at)}
                       {isDraft && " · Click to resume"}
                     </div>
                     {e.remarks && (

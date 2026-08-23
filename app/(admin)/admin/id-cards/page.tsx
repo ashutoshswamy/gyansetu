@@ -5,6 +5,7 @@ import { DeleteIdCardButton } from "./delete-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { formatDateRange } from "@/lib/format-date";
 
 export default async function AdminIdCardsPage() {
   const cards = await getAllIdCards();
@@ -49,7 +50,7 @@ export default async function AdminIdCardsPage() {
                   {card.volunteer?.email}
                   {card.tour?.title && ` · ${card.tour.title} (${card.tour.destination})`}
                   {card.group?.name && ` · ${card.group.name}`}
-                  {" · "}Valid {new Date(card.valid_from).toLocaleDateString()} – {new Date(card.valid_to).toLocaleDateString()}
+                  {" · "}Valid {formatDateRange(card.valid_from, card.valid_to)}
                 </div>
               </div>
               <Link href={`/admin/id-cards/${card.id}`} style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-accent)", flexShrink: 0 }}>

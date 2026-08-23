@@ -6,6 +6,7 @@ import { DeleteCertificateButton } from "./delete-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 const typeColors: Record<string, { color: string; bg: string }> = {
   participation: { color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)" },
@@ -88,7 +89,7 @@ export default async function AdminCertificatesPage() {
                     </Badge>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
-                    {cert.users?.email} · {cert.tours?.title ?? "General"} · Issued by {cert.issuer?.name} · {new Date(cert.issued_at).toLocaleDateString()}
+                    {cert.users?.email} · {cert.tours?.title ?? "General"} · Issued by {cert.issuer?.name} · {formatDate(cert.issued_at)}
                   </div>
                 </div>
                 <Link href={`/admin/certificates/${cert.id}`} style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-accent)", flexShrink: 0 }}>

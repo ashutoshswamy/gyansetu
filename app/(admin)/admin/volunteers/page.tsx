@@ -6,6 +6,7 @@ import { ExportButton } from "@/components/features/export-button";
 import { Users, MapPin, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date";
 
 const tourStatusStyles: Record<string, { color: string; bg: string }> = {
   open:      { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
@@ -143,7 +144,7 @@ export default async function AdminVolunteersPage() {
                                   <span className="flex items-center gap-1"><MapPin className="w-2.5 h-2.5" />{a.tours.destination}</span>
                                 )}
                                 {a.tours?.start_date && (
-                                  <span className="flex items-center gap-1"><Calendar className="w-2.5 h-2.5" />{new Date(a.tours.start_date).toLocaleDateString()}</span>
+                                  <span className="flex items-center gap-1"><Calendar className="w-2.5 h-2.5" />{formatDate(a.tours.start_date)}</span>
                                 )}
                                 {a.role_description && <span>· {a.role_description}</span>}
                               </div>

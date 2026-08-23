@@ -3,6 +3,7 @@ import { Award } from "lucide-react";
 import Link from "next/link";
 import type { CertificateType } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDate } from "@/lib/format-date";
 
 type CertificateRow = {
   id: string;
@@ -62,7 +63,7 @@ export default async function VolunteerCertificatesPage() {
                         <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{cert.tours.title} · {cert.tours.destination}</p>
                       )}
                       <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>
-                        Issued by {cert.issuer?.name ?? "Admin"} · {new Date(cert.issued_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                        Issued by {cert.issuer?.name ?? "Admin"} · {formatDate(cert.issued_at)}
                       </div>
                       {cert.notes && (
                         <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 8, padding: "6px 10px", background: c.bg, borderRadius: 5 }}>{cert.notes}</p>

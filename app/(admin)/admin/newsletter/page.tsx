@@ -3,6 +3,7 @@ import Link from "next/link";
 import { publishNewsletter, deleteNewsletter } from "@/actions/newsletter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 interface Newsletter {
   id: string;
@@ -18,10 +19,6 @@ const statusStyle: Record<string, { color: string; background: string }> = {
   published: { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" },
 };
 
-function formatDate(dateStr: string | null) {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-}
 
 export default async function AdminNewsletterPage() {
   const db = createServerClient();
@@ -100,7 +97,7 @@ export default async function AdminNewsletterPage() {
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                     {item.status === "published"
-                      ? `Published ${formatDate(item.published_at)}`
+                      ? `Published ${formatDate(item.published_at!)}`
                       : `Created ${formatDate(item.created_at)}`}
                   </p>
                 </div>

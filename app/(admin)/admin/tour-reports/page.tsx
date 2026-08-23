@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ApproveReportButton } from "./approve-button";
 import { TOUR_REPORT_OBSERVATION_FIELDS as OBSERVATION_FIELDS, TOUR_REPORT_LOGISTICS_LABELS as LOGISTICS_LABELS } from "@/lib/report-field-labels";
+import { formatDate } from "@/lib/format-date";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   draft:     { color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.10)" },
@@ -49,7 +50,7 @@ export default async function AdminTourReportsPage() {
                       </Badge>
                     </div>
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
-                      {r.group?.name ?? "No group"} · Submitted by {r.submitter?.name ?? "Unknown"} · {new Date(r.created_at).toLocaleDateString()}
+                      {r.group?.name ?? "No group"} · Submitted by {r.submitter?.name ?? "Unknown"} · {formatDate(r.created_at)}
                     </p>
                   </div>
                   {r.status === "submitted" && <ApproveReportButton id={r.id} />}

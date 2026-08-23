@@ -7,6 +7,7 @@ import type { TourApplication, Tour, EligibilityTest } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 type ApplicationRow = TourApplication & {
   tours: Pick<Tour, "title" | "destination" | "start_date" | "end_date"> | null;
@@ -231,7 +232,7 @@ export default async function EnrollmentDashboard() {
 <CardContent>
                   <p className="font-medium text-sm mb-1" style={{ color: "var(--foreground)" }}>{tour.title}</p>
                   <p className="text-xs mb-3" style={{ color: "var(--gs-muted)" }}>
-                    {tour.destination} · {new Date(tour.start_date).toLocaleDateString()}
+                    {tour.destination} · {formatDate(tour.start_date)}
                   </p>
                   <Link href={`/enrollee/tours/${tour.id}`} style={{ display: "block" }}>
                     <Button className="w-full">

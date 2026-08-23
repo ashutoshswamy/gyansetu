@@ -15,7 +15,6 @@ interface DistrictSelectProps {
   name?: string;
 }
 
-// ponytail: mirrors the STATE_CITIES select/custom-input pattern already used for city fields.
 // Callers should pass `key={state}` so this remounts (resetting custom-entry mode) when the state changes.
 export function DistrictSelect({ state, value, onChange, style, required, name }: DistrictSelectProps) {
   const districts = state ? STATE_DISTRICTS[state] ?? [] : [];

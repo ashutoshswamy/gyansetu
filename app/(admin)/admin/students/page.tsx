@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { formatDate } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
@@ -46,7 +47,7 @@ export default async function AdminEnrollmentsPage() {
       (max: number, a) => Math.max(max, a.test_score ?? 0),
       0
     ),
-    registered: new Date(u.created_at).toLocaleDateString(),
+    registered: formatDate(u.created_at),
   }));
 
   const summaryItems = [

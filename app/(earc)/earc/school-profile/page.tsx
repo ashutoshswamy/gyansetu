@@ -1,4 +1,5 @@
 import { requireEarcUser } from "@/lib/clerk/action-auth";
+import { formatDate } from "@/lib/format-date";
 import { getSchoolProfiles, exportSchoolProfilesCsv } from "@/actions/earc";
 import { School } from "lucide-react";
 import { SchoolProfileForm } from "@/components/features/earc/school-profile-form";
@@ -103,7 +104,7 @@ export default async function SchoolProfilePage() {
                   <span>Location: <strong>{p.location_type}</strong></span>
                 </div>
                 <p style={{ fontSize: 11, color: "var(--gs-muted)", marginTop: 6 }}>
-                  Submitted by {p.submitter?.name ?? "Unknown"} · {new Date(p.created_at).toLocaleDateString()}
+                  Submitted by {p.submitter?.name ?? "Unknown"} · {formatDate(p.created_at)}
                 </p>
               </CardContent>
 </Card>

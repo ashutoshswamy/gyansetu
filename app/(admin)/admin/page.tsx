@@ -7,6 +7,7 @@ import { Plane, Users, UserCheck, ClipboardList, Clock, ArrowRight } from "lucid
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date";
 
 async function getStats(): Promise<DashboardStats> {
   const cached = await getCached<DashboardStats>(CACHE_KEYS.dashboardStats);
@@ -174,7 +175,7 @@ export default async function AdminDashboard() {
                     <div className="min-w-0">
                       <p style={{ fontSize: 14, fontWeight: 500, color: "var(--foreground)" }} className="truncate">{tour.title}</p>
                       <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 2 }}>
-                        {tour.destination} &middot; {new Date(tour.start_date).toLocaleDateString()}
+                        {tour.destination} &middot; {formatDate(tour.start_date)}
                       </p>
                     </div>
                     <Badge className="flex-shrink-0 ml-3" style={{ color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" }}>

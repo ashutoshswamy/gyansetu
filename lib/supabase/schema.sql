@@ -1682,3 +1682,43 @@ create policy "core_members_manage_own_group_observations" on public.volunteer_o
 -- ============================================================
 alter table public.registration_fees add column if not exists tour_id uuid references public.tours(id) on delete set null;
 alter table public.registration_fees add column if not exists group_id uuid references public.tour_groups(id) on delete set null;
+
+-- ============================================================
+-- MIGRATION: admin can reject a submitted registration fee payment
+-- with a reason; volunteer sees it and can resubmit.
+-- ============================================================
+alter table public.registration_fees drop constraint if exists registration_fees_status_check;
+alter table public.registration_fees add constraint registration_fees_status_check
+  check (status in ('pending', 'submitted', 'paid', 'waived', 'refunded', 'rejected'));
+alter table public.registration_fees add column if not exists rejection_reason text;
+
+-- ============================================================
+-- MIGRATION: single admin-managed record of where volunteers should
+-- send the registration fee (UPI ID, bank details, QR code image).
+-- Singleton table — always at most one row.
+-- ============================================================
+create table if not exists public.payment_settings (
+  id                    uuid primary key default gen_random_uuid(),
+  upi_id                text,
+  account_holder_name   text,
+  bank_name             text,
+  account_number        text,
+  ifsc_code             text,
+  qr_code_url           text,
+  updated_by            uuid references public.users(id) on delete set null,
+  updated_at            timestamptz default now()
+);
+
+alter table public.payment_settings enable row level security;
+
+create policy "admins_manage_payment_settings" on public.payment_settings for all using (
+  public.is_admin()
+);
+create policy "authenticated_read_payment_settings" on public.payment_settings for select using (
+  auth.uid() is not null
+);
+
+-- Storage bucket for the admin-uploaded payment QR code image
+insert into storage.buckets (id, name, public)
+  values ('payment-qr', 'payment-qr', true)
+  on conflict (id) do nothing;

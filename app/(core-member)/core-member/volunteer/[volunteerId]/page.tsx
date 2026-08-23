@@ -11,6 +11,7 @@ import { TOUR_REPORT_OBSERVATION_FIELDS, TOUR_REPORT_LOGISTICS_LABELS } from "@/
 import type { DemoEvaluation, FormSubmission, FormField, TourReportHost, VolunteerObservation } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format-date";
 
 function SectionTitle({ icon: Icon, children, shared }: { icon: React.ElementType; children: React.ReactNode; shared?: boolean }) {
   return (
@@ -107,7 +108,7 @@ export default async function CoreMemberVolunteerDetailPage({
 <CardContent className="flex items-center justify-between">
                     <div>
                       <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{w.workshop?.title}</p>
-                      <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{w.workshop?.workshop_date ? new Date(w.workshop.workshop_date).toLocaleDateString() : ""}</p>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{w.workshop?.workshop_date ? formatDate(w.workshop.workshop_date) : ""}</p>
                     </div>
                     <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{w.attendance_status}</span>
                   </CardContent>
@@ -145,7 +146,7 @@ export default async function CoreMemberVolunteerDetailPage({
 <CardContent className="flex items-center justify-between">
                     <div>
                       <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{r.event?.title}</p>
-                      <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{r.event?.event_date ? new Date(r.event.event_date).toLocaleDateString() : ""}</p>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)" }}>{r.event?.event_date ? formatDate(r.event.event_date) : ""}</p>
                     </div>
                     <span style={{ fontSize: 11, fontWeight: 600, textTransform: "capitalize", color: "var(--gs-accent)" }}>{r.rsvp_status}</span>
                   </CardContent>
@@ -168,7 +169,7 @@ export default async function CoreMemberVolunteerDetailPage({
                   <Card key={log.id}>
 <CardContent>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 6 }}>
-                      {new Date(log.log_date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}
+                      {formatDate(log.log_date)}
                     </p>
                     <p style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}><b>Activities:</b> {log.activities_conducted}</p>
                   </CardContent>

@@ -1,4 +1,5 @@
 import { getMyDemoEvaluations } from "@/actions/demo-evaluations";
+import { formatDate } from "@/lib/format-date";
 import { ClipboardCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -52,7 +53,7 @@ export default async function VolunteerDemoEvaluationsPage() {
                   <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
                     <div>
                       <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{e.tour?.title ?? "General"}</h3>
-                      <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 4 }}>{new Date(e.evaluated_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 4 }}>{formatDate(e.evaluated_at)}</p>
                     </div>
                     <span style={{ fontSize: 18, fontWeight: 700, color, background: "rgba(0,0,0,0.03)", padding: "4px 12px", borderRadius: 6 }}>
                       {e.total_score} / 100

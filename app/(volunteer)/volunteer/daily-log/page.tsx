@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatDate } from "@/lib/format-date";
 
 type DailyLogRow = DailyLog & { tours?: { id: string; title: string } | null };
 
@@ -187,7 +188,7 @@ export default function DailyLogPage() {
 <CardContent>
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-success)", margin: 0 }}>{new Date(log.log_date).toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-success)", margin: 0 }}>{formatDate(log.log_date)}</p>
                     {log.tours?.title && <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "2px 0 0" }}>{log.tours.title}</p>}
                   </div>
                 </div>
@@ -195,7 +196,7 @@ export default function DailyLogPage() {
                   <div className="flex items-center gap-2" style={{ background: "rgba(var(--gs-warning-rgb), 0.08)", border: "1px solid rgba(var(--gs-warning-rgb), 0.25)", borderRadius: 6, padding: "8px 12px", marginBottom: 12 }}>
                     <AlertTriangle size={14} style={{ color: "var(--gs-warning)", flexShrink: 0 }} />
                     <p style={{ fontSize: 12, color: "var(--gs-warning-alt)", margin: 0 }}>
-                      Delayed entry — submitted on {new Date(log.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}, not the same day as the log date.
+                      Delayed entry — submitted on {formatDate(log.created_at)}, not the same day as the log date.
                     </p>
                   </div>
                 )}
