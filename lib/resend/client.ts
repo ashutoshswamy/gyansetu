@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const EMAIL_ENABLED = true;
+const EMAIL_ENABLED = false;
 
 type SendArgs = Parameters<Resend["emails"]["send"]>;
 
