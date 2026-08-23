@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import type { Tour } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDateRange } from "@/lib/format-date";
 
 export default async function StudentToursPage() {
   const { userId } = await auth();
@@ -49,7 +50,7 @@ export default async function StudentToursPage() {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12, fontSize: 12, color: "var(--gs-muted)", marginBottom: 14 }}>
                 <span>{tour.destination}</span>
                 <span>·</span>
-                <span>{tour.start_date} → {tour.end_date}</span>
+                <span>{formatDateRange(tour.start_date, tour.end_date)}</span>
                 <span>·</span>
                 <span>{tour.capacity} seats</span>
               </div>

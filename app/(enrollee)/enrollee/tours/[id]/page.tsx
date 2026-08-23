@@ -5,6 +5,7 @@ import { ApplyButton } from "@/components/features/tours/apply-button";
 import { MapPin, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDateRange } from "@/lib/format-date";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   open:      { color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
@@ -71,7 +72,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
               <MapPin size={13} /> {tour.destination}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-              <Calendar size={13} /> {tour.start_date} — {tour.end_date}
+              <Calendar size={13} /> {formatDateRange(tour.start_date, tour.end_date)}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
               <Users size={13} /> {tour.capacity} seats

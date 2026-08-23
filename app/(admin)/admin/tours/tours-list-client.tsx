@@ -8,6 +8,7 @@ import { DeleteTourButton } from "@/components/features/tours/delete-tour-button
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDateRange } from "@/lib/format-date";
 
 const statusStyles: Record<Tour["status"], { color: string; background: string }> = {
   draft:     { color: "var(--gs-muted)", background: "rgba(90,82,71,0.08)" },
@@ -68,7 +69,7 @@ export function ToursListClient({ tours }: { tours: Tour[] }) {
                 </div>
                 <div className="flex gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                   <span className="flex items-center gap-1"><MapPin size={11} /> {tour.destination}</span>
-                  <span className="flex items-center gap-1"><Calendar size={11} /> {tour.start_date} &rarr; {tour.end_date}</span>
+                  <span className="flex items-center gap-1"><Calendar size={11} /> {formatDateRange(tour.start_date, tour.end_date)}</span>
                   <span className="flex items-center gap-1"><Users size={11} /> {tour.capacity} seats</span>
                 </div>
               </div>

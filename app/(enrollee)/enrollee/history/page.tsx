@@ -4,6 +4,7 @@ import Link from "next/link";
 import { History, MapPin, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDateRange } from "@/lib/format-date";
 
 type AssignmentRow = {
   id: string;
@@ -61,7 +62,7 @@ export default async function EnrolleeHistoryPage() {
                       <p style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", marginBottom: 4 }}>{a.tours?.title}</p>
                       <div className="flex flex-wrap gap-4" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
                         <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{a.tours?.destination}</span>
-                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{a.tours?.start_date} → {a.tours?.end_date}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{formatDateRange(a.tours?.start_date ?? "", a.tours?.end_date)}</span>
                       </div>
                     </div>
                     <Badge style={{ color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>

@@ -6,6 +6,7 @@ import { VolunteerAssign } from "./volunteer-assign";
 import { MapPin, Calendar, Users, ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDateRange } from "@/lib/format-date";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   draft:     { color: "var(--gs-muted)", bg: "rgba(90,82,71,0.08)" },
@@ -79,13 +80,14 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
             </div>
             <div className="flex gap-4 mt-1" style={{ fontSize: 12, color: "var(--gs-muted)" }}>
               <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {tour.destination}</span>
-              <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {tour.start_date} → {tour.end_date}</span>
+              <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {formatDateRange(tour.start_date, tour.end_date)}</span>
               <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {tour.capacity} seats</span>
             </div>
           </div>
           <TourManageClient tourId={id} currentStatus={tour.status} />
         </div>
 
+        <div className="space-y-6">
         {/* Description */}
         {tour.description && (
           <Card>
@@ -96,7 +98,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
         )}
 
         {/* Stats */}
-        <Card className="mb-6 p-0">
+        <Card className="p-0">
           <CardContent className="grid grid-cols-2 sm:grid-cols-4 p-0">
             {Object.entries(counts).map(([status, count], idx) => (
               <div key={status} className="py-4 px-5" style={{ borderRight: idx < 3 ? "1px solid var(--border)" : undefined }}>
@@ -168,6 +170,7 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
               );
             })}
           </div>
+        </div>
         </div>
       </div>
     </div>
