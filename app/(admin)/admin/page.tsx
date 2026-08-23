@@ -17,7 +17,7 @@ async function getStats(): Promise<DashboardStats> {
 
   const [tours, enrollmentUsers, volunteers, applications, tests] = await Promise.all([
     db.from("tours").select("id, status"),
-    db.from("users").select("id").is("role", null),
+    db.from("users").select("id").eq("role", "enrollee"),
     db.from("users").select("id").eq("role", "volunteer"),
     db.from("tour_applications").select("id, status").eq("status", "pending"),
     db.from("test_attempts").select("id").eq("status", "pending_approval"),
