@@ -9,7 +9,6 @@ import { VolunteerObservations } from "@/components/features/core-member/volunte
 import { AadhaarToggleButton } from "@/app/(admin)/admin/profiles/aadhaar-toggle-button";
 import type { VolunteerObservation } from "@/types";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/format-date";
 
 interface VolunteerAssignment {
   id: string;
