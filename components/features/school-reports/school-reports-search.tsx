@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, School } from "lucide-react";
 import { VolunteerReportRow, type SchoolReportRow } from "@/components/features/school-reports/volunteer-report-row";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 interface Member {
   id: string;
@@ -60,21 +61,12 @@ export function SchoolReportsSearch({ byTour }: { byTour: Record<string, Tour> }
     <>
       <div className="relative mb-6">
         <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--gs-muted)" }} />
-        <input
+        <Input
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search by school, volunteer, location, tour, or group..."
-          style={{
-            width: "100%",
-            padding: "10px 12px 10px 36px",
-            fontSize: 13,
-            border: "1px solid var(--border)",
-            borderRadius: 8,
-            background: "white",
-            color: "var(--foreground)",
-            outline: "none",
-          }}
+          className="pl-9"
         />
       </div>
 

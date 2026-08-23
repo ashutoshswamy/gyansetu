@@ -2,6 +2,7 @@ import { getMyDemoEvaluations } from "@/actions/demo-evaluations";
 import { formatDate } from "@/lib/format-date";
 import { ClipboardCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const SCORE_FIELDS = [
   { key: "hindi_english_communication", label: "Hindi / English Communication" },
@@ -55,16 +56,18 @@ export default async function VolunteerDemoEvaluationsPage() {
                       <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--foreground)", margin: 0 }}>{e.tour?.title ?? "General"}</h3>
                       <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 4 }}>{formatDate(e.evaluated_at)}</p>
                     </div>
-                    <span style={{ fontSize: 18, fontWeight: 700, color, background: "rgba(0,0,0,0.03)", padding: "4px 12px", borderRadius: 6 }}>
+                    <Badge style={{ fontSize: 18, fontWeight: 700, color, background: "rgba(0,0,0,0.03)", padding: "4px 12px" }}>
                       {e.total_score} / 100
-                    </span>
+                    </Badge>
                   </div>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     {SCORE_FIELDS.map(f => (
-                      <div key={f.key} style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 6, padding: "8px 10px" }}>
-                        <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--gs-muted)", marginBottom: 2 }}>{f.label}</p>
-                        <p style={{ fontSize: 15, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{scores?.[f.key] ?? "-"}</p>
-                      </div>
+                      <Card key={f.key} size="sm">
+                        <CardContent className="p-3">
+                          <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--gs-muted)", marginBottom: 2 }}>{f.label}</p>
+                          <p style={{ fontSize: 15, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>{scores?.[f.key] ?? "-"}</p>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                   {e.remarks && (

@@ -5,6 +5,7 @@ import { CheckSquare, Square } from "lucide-react";
 import { toggleKitChecklistItem } from "@/actions/kits";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ChecklistItem {
   id: string;
@@ -34,7 +35,8 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
   const packedCount = rows.filter(r => r.checked).length;
 
   return (
-    <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 14px" }}>
+    <Card size="sm">
+    <CardContent>
       <div className="flex items-center justify-between mb-2">
         <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)" }}>Packing Checklist</span>
         <span style={{ fontSize: 11, color: "var(--gs-muted)" }}>{packedCount}/{rows.length} packed</span>
@@ -59,6 +61,7 @@ export function KitChecklist({ groupId, items }: { groupId: string; items: Check
           );
         })}
       </div>
-    </div>
+    </CardContent>
+    </Card>
   );
 }

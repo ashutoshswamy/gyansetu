@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Download } from "lucide-react";
 import { toPng } from "html-to-image";
 import { formatDate } from "@/lib/format-date";
+import { Button } from "@/components/ui/button";
 
 export interface CertificatePanelData {
   name: string;
@@ -185,20 +186,15 @@ export function CertificatePanel({ data }: { data: CertificatePanelData }) {
       </div>
 
       <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 20 }}>
-        <button
+        <Button
           onClick={handleDownload}
           disabled={downloading}
-          style={{
-            display: "flex", alignItems: "center", gap: 6,
-            background: INDIGO, color: "white", fontSize: 13, fontWeight: 600,
-            fontFamily: sans,
-            padding: "8px 16px", borderRadius: 6, border: "none",
-            cursor: downloading ? "not-allowed" : "pointer", opacity: downloading ? 0.7 : 1,
-          }}
+          style={{ fontFamily: sans, background: INDIGO }}
+          className="text-white hover:opacity-90"
         >
           <Download size={14} />
           {downloading ? "Preparing..." : "Download Certificate"}
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -95,7 +95,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
             const s = statusColors[r.status] ?? statusColors.draft;
             const sessions = r.sessions ?? [];
             return (
-              <div key={r.id} style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 10, padding: "14px 16px" }}>
+              <Card key={r.id} size="sm"><CardContent>
                 <div className="flex items-start justify-between gap-4 mb-2 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -179,7 +179,7 @@ export function VolunteerReportRow({ name, email, reports }: { name: string; ema
                     </div>
                   )}
                 </div>
-              </div>
+              </CardContent></Card>
             );
           })}
         </div>

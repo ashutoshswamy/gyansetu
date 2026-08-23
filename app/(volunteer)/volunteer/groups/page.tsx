@@ -68,34 +68,38 @@ async function GroupCard({ m }: { m: MembershipRow }) {
       {(localHost || kitAssignment) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
           {localHost && (
-            <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 14px" }}>
-              <div className="flex items-center gap-2 mb-2">
-                <Home size={13} style={{ color: "var(--gs-accent)" }} />
-                <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)" }}>Local Host</span>
-              </div>
-              <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 2px" }}>{localHost.name}</p>
-              <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: 0 }}>
-                {[localHost.phone, localHost.email].filter(Boolean).join(" · ")}
-              </p>
-              {localHost.address && <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "4px 0 0" }}>{localHost.address}</p>}
-            </div>
+            <Card size="sm">
+              <CardContent>
+                <div className="flex items-center gap-2 mb-2">
+                  <Home size={13} style={{ color: "var(--gs-accent)" }} />
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)" }}>Local Host</span>
+                </div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 2px" }}>{localHost.name}</p>
+                <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: 0 }}>
+                  {[localHost.phone, localHost.email].filter(Boolean).join(" · ")}
+                </p>
+                {localHost.address && <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "4px 0 0" }}>{localHost.address}</p>}
+              </CardContent>
+            </Card>
           )}
           {kitAssignment && (
-            <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 14px" }}>
-              <div className="flex items-center gap-2 mb-2">
-                <Package size={13} style={{ color: "var(--gs-accent)" }} />
-                <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)" }}>Kit Status</span>
-              </div>
-              <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{kitAssignment.school_count} schools</p>
-              <div className="flex gap-2">
-                <Badge style={{color: kitAssignment.packed ? "var(--gs-success)" : "var(--gs-muted)", background: kitAssignment.packed ? "rgba(var(--gs-success-rgb), 0.08)" : "var(--gs-card)"}}>
-                  {kitAssignment.packed ? "Packed" : "Not Packed"}
-                </Badge>
-                <Badge style={{color: kitAssignment.distributed ? "var(--gs-accent)" : "var(--gs-muted)", background: kitAssignment.distributed ? "rgba(var(--gs-accent-rgb), 0.08)" : "var(--gs-card)"}}>
-                  {kitAssignment.distributed ? "Distributed" : "Not Distributed"}
-                </Badge>
-              </div>
-            </div>
+            <Card size="sm">
+              <CardContent>
+                <div className="flex items-center gap-2 mb-2">
+                  <Package size={13} style={{ color: "var(--gs-accent)" }} />
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gs-muted)" }}>Kit Status</span>
+                </div>
+                <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>{kitAssignment.school_count} schools</p>
+                <div className="flex gap-2">
+                  <Badge style={{color: kitAssignment.packed ? "var(--gs-success)" : "var(--gs-muted)", background: kitAssignment.packed ? "rgba(var(--gs-success-rgb), 0.08)" : "var(--gs-card)"}}>
+                    {kitAssignment.packed ? "Packed" : "Not Packed"}
+                  </Badge>
+                  <Badge style={{color: kitAssignment.distributed ? "var(--gs-accent)" : "var(--gs-muted)", background: kitAssignment.distributed ? "rgba(var(--gs-accent-rgb), 0.08)" : "var(--gs-card)"}}>
+                    {kitAssignment.distributed ? "Distributed" : "Not Distributed"}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
       )}

@@ -80,12 +80,6 @@ export default function EditLocalHostPage() {
     }
   }
 
-  const districtStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
-
   if (loading) return <div className="p-8" style={{ color: "var(--gs-muted)" }}>Loading...</div>;
 
   return (
@@ -155,7 +149,7 @@ export default function EditLocalHostPage() {
               </div>
               <div>
                 <Label className="text-xs font-semibold mb-1.5" style={{ color: "var(--gs-text-secondary)" }}>District</Label>
-                <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} style={districtStyle} />
+                <DistrictSelect key={state} state={state} value={district} onChange={setDistrict} />
               </div>
             </div>
             <div>

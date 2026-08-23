@@ -2,6 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 
 type Volunteer = { id: string; name: string; email: string };
 
@@ -27,7 +28,7 @@ export function VolunteerChecklist({
   }
 
   return (
-    <div style={{ border: "1.5px solid var(--border)", borderRadius: 6, maxHeight: 320, overflowY: "auto", background: "var(--background)" }}>
+    <Card className="py-0 gap-0 max-h-80 overflow-y-auto">
       <Label style={{ padding: "8px 12px", borderBottom: "1px solid var(--border)", cursor: "pointer", fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)" }}>
         <Checkbox checked={allSelected} onCheckedChange={toggleAll} />
         Select all ({volunteers.length})
@@ -41,6 +42,6 @@ export function VolunteerChecklist({
           <span>{v.name} <span style={{ color: "var(--gs-muted)" }}>({v.email})</span></span>
         </Label>
       ))}
-    </div>
+    </Card>
   );
 }

@@ -58,18 +58,20 @@ function RatingScale({ value, onChange }: { value: number; onChange: (v: number)
   return (
     <div className="flex items-center gap-1 flex-wrap">
       {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-        <button
+        <Button
           key={n}
           type="button"
+          size="icon-sm"
           onClick={() => onChange(n)}
-          className={`w-6 h-6 rounded text-xs font-semibold border cursor-pointer ${
+          className={
             value === n
-              ? "bg-emerald-600 border-emerald-600 text-white"
-              : "bg-background border-border text-muted-foreground hover:border-foreground"
-          }`}
+              ? "rounded bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold"
+              : "rounded bg-background border-border text-muted-foreground hover:border-foreground text-xs font-semibold"
+          }
+          variant={value === n ? undefined : "outline"}
         >
           {n}
-        </button>
+        </Button>
       ))}
     </div>
   );

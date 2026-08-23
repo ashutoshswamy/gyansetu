@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type Volunteer = { id: string; name: string; email: string };
 type Assignment = { id: string; role_description?: string; users?: { id: string; name: string; email: string } };
@@ -100,7 +101,7 @@ export function VolunteerAssign({ tourId, assignments }: { tourId: string; assig
               <div>
                 <span style={{ fontSize: 13, fontWeight: 500, color: "var(--foreground)" }}>{a.users?.name}</span>
                 <span style={{ fontSize: 12, color: "var(--gs-muted)", marginLeft: 8 }}>{a.users?.email}</span>
-                {a.role_description && <span style={{ fontSize: 12, color: "var(--gs-accent)", marginLeft: 8, padding: "1px 6px", background: "rgba(var(--gs-accent-rgb), 0.08)", borderRadius: 4 }}>{a.role_description}</span>}
+                {a.role_description && <Badge className="ml-2" style={{ color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>{a.role_description}</Badge>}
               </div>
               <Button
                 onClick={() => a.users?.id && handleRemove(a.users.id)}

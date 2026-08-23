@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { createKitItem, updateKitItem, deleteKitItem } from "@/actions/kits";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type MaterialType = "reusable" | "consumable";
 
@@ -28,12 +31,6 @@ interface Row {
 const TYPE_BADGE: Record<MaterialType, { bg: string; color: string }> = {
   reusable: { bg: "rgba(var(--gs-accent-rgb), 0.1)", color: "var(--gs-accent)" },
   consumable: { bg: "rgba(var(--gs-warning-rgb), 0.12)", color: "#B8860B" },
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 10px", fontSize: 13.5,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
 };
 
 function toRow(item: KitItemRow): Row {
@@ -80,25 +77,28 @@ function EditableRow({
   return (
     <tr style={{ borderBottom: "1px solid var(--border)" }}>
       <td className="p-3">
-        <input
+        <Input
           value={row.name}
           onChange={e => onChange(row.key, { name: e.target.value })}
           placeholder="e.g. Bag"
-          style={inputStyle}
         />
       </td>
       <td className="p-3" style={{ minWidth: 130 }}>
-        <select
-          value={row.material_type}
-          onChange={e => onChange(row.key, { material_type: e.target.value as MaterialType })}
-          style={{ ...inputStyle, minWidth: 116, appearance: "none", fontWeight: 600, color: TYPE_BADGE[row.material_type].color, background: TYPE_BADGE[row.material_type].bg, border: "none" }}
-        >
-          <option value="reusable">Reusable</option>
-          <option value="consumable">Consumable</option>
-        </select>
+        <Select value={row.material_type} onValueChange={v => onChange(row.key, { material_type: v as MaterialType })}>
+          <SelectTrigger
+            className="w-full"
+            style={{ minWidth: 116, fontWeight: 600, color: TYPE_BADGE[row.material_type].color, background: TYPE_BADGE[row.material_type].bg, border: "none" }}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="reusable">Reusable</SelectItem>
+            <SelectItem value="consumable">Consumable</SelectItem>
+          </SelectContent>
+        </Select>
       </td>
       <td className="p-3">
-        <input
+        <Input
           type="number" min={1}
           value={Number.isNaN(row.quantity_per_school) ? "" : row.quantity_per_school}
           onChange={e => {
@@ -106,7 +106,6 @@ function EditableRow({
             onChange(row.key, { quantity_per_school: v === "" ? NaN : Math.max(1, Number(v) || 1) });
           }}
           onBlur={() => { if (Number.isNaN(row.quantity_per_school)) onChange(row.key, { quantity_per_school: 1 }); }}
-          style={inputStyle}
         />
       </td>
       <td className="p-3">
@@ -117,13 +116,15 @@ function EditableRow({
       <td className="p-3">
         <div className="flex items-center gap-2">
           {row.saving && <span style={{ fontSize: 11, color: "var(--gs-muted)" }}>Saving…</span>}
-          <button
+          <Button
             onClick={() => onDelete(row.key)}
             aria-label="Delete material"
-            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gs-danger)", padding: 4 }}
+            variant="ghost"
+            size="icon-sm"
+            style={{ color: "var(--gs-danger)" }}
           >
             <Trash2 size={15} />
-          </button>
+          </Button>
         </div>
       </td>
     </tr>
@@ -155,11 +156,11 @@ export function KitMaterialsTable({ items }: { items: KitItemRow[] }) {
       <div className="flex items-end gap-3 flex-wrap" style={{ marginBottom: 16 }}>
         <div>
           <label style={{ fontSize: 12, fontWeight: 600, color: "var(--gs-text-secondary)", display: "block", marginBottom: 6 }}>Expected Number of Schools</label>
-          <input
+          <Input
             type="number" min={1}
             value={expectedSchools}
             onChange={e => setExpectedSchools(Math.max(1, Number(e.target.value) || 1))}
-            style={{ ...inputStyle, width: 140 }}
+            style={{ width: 140 }}
           />
         </div>
         <p style={{ fontSize: 12, color: "var(--gs-muted)", marginBottom: 8 }}>Drives the Total Qty Required column below for consumable materials.</p>
@@ -192,12 +193,13 @@ export function KitMaterialsTable({ items }: { items: KitItemRow[] }) {
       </CardContent>
 </Card>
 
-      <button
+      <Button
         onClick={handleAddRow}
-        style={{ marginTop: 12, background: "var(--gs-accent)", color: "white", fontSize: 13, fontWeight: 600, padding: "9px 16px", borderRadius: 6, border: "none", cursor: "pointer" }}
+        style={{ marginTop: 12, background: "var(--gs-accent)" }}
+        className="text-white"
       >
         + Add Material
-      </button>
+      </Button>
     </div>
   );
 }

@@ -10,6 +10,10 @@ import { FileUploadField } from "@/components/features/file-upload-field";
 import { DistrictSelect } from "@/components/features/forms/district-select";
 import type { VolunteerProfile } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const inputStyle: React.CSSProperties = {
   width: "100%", padding: "8px 12px", fontSize: 14,
@@ -69,6 +73,11 @@ export function VolunteerProfileForm({ variant }: Props) {
   const [permCity, setPermCity] = useState("");
   const [district, setDistrict] = useState("");
   const [permDistrict, setPermDistrict] = useState("");
+  const [gender, setGender] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [qualification, setQualification] = useState("");
+  const [stream, setStream] = useState("");
+  const [emergencyRelation, setEmergencyRelation] = useState("");
 
   useEffect(() => {
     getMyVolunteerProfile().then(d => {
@@ -81,6 +90,11 @@ export function VolunteerProfileForm({ variant }: Props) {
       if (d) setSameAddress(d.permanent_address_same ?? true);
       setIsCurrentlyWorking(!!d?.company_name || d?.current_status === "working_professional" || d?.current_status === "both");
       if (d?.edu_course_status) setEduCourseStatus(d.edu_course_status);
+      if (d?.gender) setGender(d.gender);
+      if (d?.blood_group) setBloodGroup(d.blood_group);
+      if (d?.qualification) setQualification(d.qualification);
+      if (d?.stream) setStream(d.stream);
+      if (d?.emergency_contact_relation) setEmergencyRelation(d.emergency_contact_relation);
       setHasAllergies(d?.has_allergies ?? false);
       setHasMedicalConditions(d?.has_medical_conditions ?? false);
       setTakesMedicines(d?.takes_medicines ?? false);
@@ -158,9 +172,9 @@ export function VolunteerProfileForm({ variant }: Props) {
         first_name: str("first_name"),
         middle_name: str("middle_name"),
         last_name: str("last_name"),
-        gender: str("gender"),
+        gender: gender || undefined,
         date_of_birth: str("date_of_birth"),
-        blood_group: str("blood_group"),
+        blood_group: bloodGroup || undefined,
         aadhaar_number: str("aadhaar_number"),
         photo_url: photoUrl || undefined,
         phone: str("phone"),
@@ -178,9 +192,9 @@ export function VolunteerProfileForm({ variant }: Props) {
         current_status: isCurrentlyWorking ? "both" : "student",
         institution: str("institution"),
         student_location: collegeCity && collegeState ? `${collegeCity}, ${collegeState}` : undefined,
-        qualification: str("qualification"),
+        qualification: qualification || undefined,
         course_name: str("course_name"),
-        stream: str("stream"),
+        stream: stream || undefined,
         edu_course_status: eduCourseStatus as "pursuing" | "completed" | undefined,
         course_year: eduCourseStatus === "completed" ? undefined : str("course_year"),
         company_name: str("company_name"),
@@ -197,7 +211,7 @@ export function VolunteerProfileForm({ variant }: Props) {
 
         emergency_contact_name: str("emergency_contact_name"),
         emergency_contact_phone: str("emergency_contact_phone"),
-        emergency_contact_relation: str("emergency_contact_relation"),
+        emergency_contact_relation: emergencyRelation || undefined,
         emergency_contact_address: str("emergency_contact_address"),
         has_allergies: hasAllergies,
         allergies_detail: hasAllergies ? str("allergies_detail") : undefined,
@@ -282,14 +296,16 @@ export function VolunteerProfileForm({ variant }: Props) {
         {/* Tabs */}
         <div style={{ display: "flex", gap: 2, marginBottom: 20, background: "white", border: "1px solid var(--border)", borderRadius: 8, padding: 4, flexWrap: "wrap" }}>
           {tabs.map(t => (
-            <button
+            <Button
               key={t.id}
               type="button"
               onClick={() => setActiveTab(t.id)}
-              style={{ flex: 1, minWidth: 120, padding: "8px 0", fontSize: 13, fontWeight: 600, borderRadius: 6, border: "none", cursor: "pointer", background: activeTab === t.id ? accent : "transparent", color: activeTab === t.id ? "white" : "var(--gs-text-secondary)" }}
+              variant={activeTab === t.id ? undefined : "ghost"}
+              className="flex-1 min-w-[120px]"
+              style={{ background: activeTab === t.id ? accent : "transparent", color: activeTab === t.id ? "white" : "var(--gs-text-secondary)" }}
             >
               {t.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -309,58 +325,67 @@ export function VolunteerProfileForm({ variant }: Props) {
 
           <div className="space-y-5" data-tab="personal" style={{ display: activeTab === "personal" ? undefined : "none" }}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <F label="First Name" required><input name="first_name" required placeholder="Enter first name" onInput={sanitizeNameInput} defaultValue={(profile?.first_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
-                <F label="Middle Name"><input name="middle_name" placeholder="Enter middle name" onInput={sanitizeNameInput} defaultValue={(profile?.middle_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
-                <F label="Last Name" required><input name="last_name" required placeholder="Enter last name" onInput={sanitizeNameInput} defaultValue={(profile?.last_name ?? "").toUpperCase()} style={{ ...inputStyle, textTransform: "uppercase" }} /></F>
+                <F label="First Name" required><Input name="first_name" required placeholder="Enter first name" onInput={sanitizeNameInput} defaultValue={(profile?.first_name ?? "").toUpperCase()} style={{ textTransform: "uppercase" }} /></F>
+                <F label="Middle Name"><Input name="middle_name" placeholder="Enter middle name" onInput={sanitizeNameInput} defaultValue={(profile?.middle_name ?? "").toUpperCase()} style={{ textTransform: "uppercase" }} /></F>
+                <F label="Last Name" required><Input name="last_name" required placeholder="Enter last name" onInput={sanitizeNameInput} defaultValue={(profile?.last_name ?? "").toUpperCase()} style={{ textTransform: "uppercase" }} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Gender" required>
-                  <select name="gender" required defaultValue={profile?.gender ?? ""} style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select gender</option>
-                    <option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option>
-                  </select>
+                  <Select required value={gender || undefined} onValueChange={v => setGender(v ?? "")}>
+                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select gender" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                      <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </F>
                 <F label="Date of Birth" required>
-                  <input name="date_of_birth" type="date" required defaultValue={profile?.date_of_birth ?? ""} onChange={e => setDob(e.target.value)} style={inputStyle} />
+                  <Input name="date_of_birth" type="date" required defaultValue={profile?.date_of_birth ?? ""} onChange={e => setDob(e.target.value)} />
                 </F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Blood Group" required>
-                  <select name="blood_group" required defaultValue={profile?.blood_group ?? ""} style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select blood group</option>
-                    {BLOOD_GROUPS.map(b => <option key={b} value={b}>{b}</option>)}
-                  </select>
+                  <Select required value={bloodGroup || undefined} onValueChange={v => setBloodGroup(v ?? "")}>
+                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select blood group" /></SelectTrigger>
+                    <SelectContent>
+                      {BLOOD_GROUPS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </F>
-                <F label="Aadhaar Number" hint="12-digit, numbers only, optional"><input name="aadhaar_number" inputMode="numeric" pattern="[0-9]*" maxLength={12} placeholder="Enter Aadhaar number" onInput={sanitizeDigitsInput(12)} defaultValue={profile?.aadhaar_number ?? ""} style={inputStyle} /></F>
+                <F label="Aadhaar Number" hint="12-digit, numbers only, optional"><Input name="aadhaar_number" inputMode="numeric" pattern="[0-9]*" maxLength={12} placeholder="Enter Aadhaar number" onInput={sanitizeDigitsInput(12)} defaultValue={profile?.aadhaar_number ?? ""} /></F>
               </div>
               <FileUploadField label="Profile Photograph" value={photoUrl} onChange={setPhotoUrl} bucket="media" folder="profile-photos" accept="image/*" showImagePreview required hint="Passport-size, JPG/PNG, max 5 MB. Used on your volunteer ID card." />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <F label="Mobile Number (WhatsApp)" required hint="Exactly 10 digits"><input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.phone ?? ""} style={inputStyle} /></F>
-                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} style={inputStyle} /></F>
+                <F label="Mobile Number (WhatsApp)" required hint="Exactly 10 digits"><Input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.phone ?? ""} /></F>
+                <F label="Alternate Mobile Number" hint="Exactly 10 digits"><Input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} /></F>
               </div>
 
               <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Current Address</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <F label="House / Flat No." required><input name="house_no" required placeholder="Enter house / flat number" defaultValue={profile?.house_no ?? ""} style={inputStyle} /></F>
-                  <F label="Street / Area" required><input name="street" required placeholder="Enter street / area" defaultValue={profile?.street ?? ""} style={inputStyle} /></F>
+                  <F label="House / Flat No." required><Input name="house_no" required placeholder="Enter house / flat number" defaultValue={profile?.house_no ?? ""} /></F>
+                  <F label="Street / Area" required><Input name="street" required placeholder="Enter street / area" defaultValue={profile?.street ?? ""} /></F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="State" required>
-                    <select value={selectedState} onChange={e => { setSelectedState(e.target.value); setSelectedCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
-                      <option value="">Select state</option>
-                      {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
+                    <Select required value={selectedState || undefined} onValueChange={v => { setSelectedState(v ?? ""); setSelectedCity(""); }}>
+                      <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                      <SelectContent>
+                        {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </F>
                   <F label="Village / City" required>
-                    <input value={selectedCity} onChange={e => setSelectedCity(e.target.value)} placeholder="Your city/village" style={inputStyle} disabled={!selectedState} />
+                    <Input value={selectedCity} onChange={e => setSelectedCity(e.target.value)} placeholder="Your city/village" disabled={!selectedState} />
                   </F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="District" required><DistrictSelect key={selectedState} state={selectedState} value={district} onChange={setDistrict} required style={inputStyle} /></F>
-                  <F label="PIN Code" required hint="6 digits"><input name="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} defaultValue={profile?.pincode ?? ""} style={inputStyle} /></F>
+                  <F label="PIN Code" required hint="6 digits"><Input name="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} defaultValue={profile?.pincode ?? ""} /></F>
                 </div>
-                <F label="Additional Address Notes"><textarea name="address" rows={2} placeholder="Enter additional address notes" defaultValue={profile?.address ?? ""} style={{ ...inputStyle, resize: "vertical", marginTop: 16 }} /></F>
+                <F label="Additional Address Notes"><Textarea name="address" rows={2} placeholder="Enter additional address notes" defaultValue={profile?.address ?? ""} style={{ marginTop: 16 }} /></F>
               </div>
 
               <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
@@ -377,30 +402,32 @@ export function VolunteerProfileForm({ variant }: Props) {
                 {!sameAddress && (
                   <div style={{ marginTop: 4 }}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <F label="House / Flat No." required><input name="perm_house_no" required={!sameAddress} placeholder="Enter house / flat number" style={inputStyle} /></F>
-                      <F label="Street / Area" required><input name="perm_street" required={!sameAddress} placeholder="Enter street / area" style={inputStyle} /></F>
+                      <F label="House / Flat No." required><Input name="perm_house_no" required={!sameAddress} placeholder="Enter house / flat number" /></F>
+                      <F label="Street / Area" required><Input name="perm_street" required={!sameAddress} placeholder="Enter street / area" /></F>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                       <F label="State" required>
-                        <select value={permState} onChange={e => { setPermState(e.target.value); setPermCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
-                          <option value="">Select state</option>
-                          {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
+                        <Select required value={permState || undefined} onValueChange={v => { setPermState(v ?? ""); setPermCity(""); }}>
+                          <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                          <SelectContent>
+                            {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </F>
                       <F label="Village / City" required>
-                        <input value={permCity} onChange={e => setPermCity(e.target.value)} placeholder="Your city/village" style={inputStyle} disabled={!permState} />
+                        <Input value={permCity} onChange={e => setPermCity(e.target.value)} placeholder="Your city/village" disabled={!permState} />
                       </F>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                       <F label="District" required><DistrictSelect key={permState} state={permState} value={permDistrict} onChange={setPermDistrict} required={!sameAddress} style={inputStyle} /></F>
-                      <F label="PIN Code" required hint="6 digits"><input name="perm_pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required={!sameAddress} placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} style={inputStyle} /></F>
+                      <F label="PIN Code" required hint="6 digits"><Input name="perm_pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required={!sameAddress} placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} /></F>
                     </div>
                   </div>
                 )}
               </div>
 
-              <F label="Bio" required hint={`Brief introduction about yourself — maximum 100 words`}><textarea name="bio" required rows={5} placeholder="Write a short bio" defaultValue={profile?.bio ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
-              <F label="Skills" required hint="Comma-separated: Teaching, Photography, Music..."><input name="skills" required placeholder="Enter skills" defaultValue={(profile?.skills ?? []).join(", ")} style={inputStyle} /></F>
+              <F label="Bio" required hint={`Brief introduction about yourself — maximum 100 words`}><Textarea name="bio" required rows={5} placeholder="Write a short bio" defaultValue={profile?.bio ?? ""} /></F>
+              <F label="Skills" required hint="Comma-separated: Teaching, Photography, Music..."><Input name="skills" required placeholder="Enter skills" defaultValue={(profile?.skills ?? []).join(", ")} /></F>
               <F label="Languages Known">
                 <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
                   {KNOWN_LANGUAGES.map(l => (
@@ -413,7 +440,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </label>
                 </div>
                 {otherLangChecked && (
-                  <input name="languages_other" placeholder="Specify other language(s), comma-separated" value={otherLangValue} onChange={e => setOtherLangValue(e.target.value)} style={{ ...inputStyle, marginTop: 8 }} />
+                  <Input name="languages_other" placeholder="Specify other language(s), comma-separated" value={otherLangValue} onChange={e => setOtherLangValue(e.target.value)} style={{ marginTop: 8 }} />
                 )}
               </F>
               {variant === "volunteer" && (
@@ -428,50 +455,61 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </div>
                 </F>
               )}
-              <F label="Availability Notes" required><textarea name="availability_notes" required rows={2} placeholder="When are you typically available? Any constraints?" defaultValue={profile?.availability_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Availability Notes" required><Textarea name="availability_notes" required rows={2} placeholder="When are you typically available? Any constraints?" defaultValue={profile?.availability_notes ?? ""} /></F>
               <NextSectionButton accent={accent} onClick={() => setActiveTab("education")} />
           </div>
 
           <div className="space-y-5" data-tab="education" style={{ display: activeTab === "education" ? undefined : "none" }}>
-              <F label="College / Institution Name" required><input name="institution" required placeholder="Enter institution name" defaultValue={profile?.institution ?? ""} style={inputStyle} /></F>
+              <F label="College / Institution Name" required><Input name="institution" required placeholder="Enter institution name" defaultValue={profile?.institution ?? ""} /></F>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="College State" required>
-                  <select value={collegeState} onChange={e => { setCollegeState(e.target.value); setCollegeCity(""); }} style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select state</option>
-                    {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <Select required value={collegeState || undefined} onValueChange={v => { setCollegeState(v ?? ""); setCollegeCity(""); }}>
+                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                    <SelectContent>
+                      {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </F>
                 <F label="College City" required>
-                  <input value={collegeCity} onChange={e => setCollegeCity(e.target.value)} placeholder="Your city" style={inputStyle} disabled={!collegeState} />
+                  <Input value={collegeCity} onChange={e => setCollegeCity(e.target.value)} placeholder="Your city" disabled={!collegeState} />
                 </F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Qualification" required>
-                  <select name="qualification" required defaultValue={profile?.qualification ?? ""} style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select</option>
-                    <option>Diploma</option><option>UG</option><option>PG</option><option>PhD</option>
-                  </select>
+                  <Select required value={qualification || undefined} onValueChange={v => setQualification(v ?? "")}>
+                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Diploma">Diploma</SelectItem>
+                      <SelectItem value="UG">UG</SelectItem>
+                      <SelectItem value="PG">PG</SelectItem>
+                      <SelectItem value="PhD">PhD</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </F>
-                <F label="Course Name" required hint="Example: B.Tech, B.Com, MBA"><input name="course_name" required placeholder="Enter course name" defaultValue={profile?.course_name ?? ""} style={inputStyle} /></F>
+                <F label="Course Name" required hint="Example: B.Tech, B.Com, MBA"><Input name="course_name" required placeholder="Enter course name" defaultValue={profile?.course_name ?? ""} /></F>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Stream / Specialization" required>
-                  <select name="stream" required defaultValue={profile?.stream ?? ""} style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select</option>
-                    {STREAMS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <Select required value={stream || undefined} onValueChange={v => setStream(v ?? "")}>
+                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>
+                      {STREAMS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </F>
                 <F label="Course Status" required>
-                  <select name="edu_course_status" required value={eduCourseStatus} onChange={e => setEduCourseStatus(e.target.value)} style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select</option>
-                    <option value="pursuing">Pursuing</option>
-                    <option value="completed">Completed</option>
-                  </select>
+                  <Select required value={eduCourseStatus || undefined} onValueChange={v => setEduCourseStatus(v ?? "")}>
+                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pursuing">Pursuing</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </F>
               </div>
               {eduCourseStatus !== "completed" && (
                 <F label="Year / Semester" hint="e.g. 1st Year, Final Semester">
-                  <input name="course_year" placeholder="Enter year / semester" defaultValue={profile?.course_year ?? ""} style={inputStyle} />
+                  <Input name="course_year" placeholder="Enter year / semester" defaultValue={profile?.course_year ?? ""} />
                 </F>
               )}
               <NextSectionButton accent={accent} onClick={() => setActiveTab("work")} />
@@ -484,24 +522,26 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                   <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Professional Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <F label="Company / Organization Name" required><input name="company_name" required={isCurrentlyWorking} placeholder="Enter company name" defaultValue={profile?.company_name ?? ""} style={inputStyle} /></F>
-                    <F label="Designation" required><input name="designation" required={isCurrentlyWorking} placeholder="Enter designation" defaultValue={profile?.designation ?? ""} style={inputStyle} /></F>
+                    <F label="Company / Organization Name" required><Input name="company_name" required={isCurrentlyWorking} placeholder="Enter company name" defaultValue={profile?.company_name ?? ""} /></F>
+                    <F label="Designation" required><Input name="designation" required={isCurrentlyWorking} placeholder="Enter designation" defaultValue={profile?.designation ?? ""} /></F>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                     <F label="Work State" required>
-                      <select value={workState} onChange={e => { setWorkState(e.target.value); setWorkCity(""); }} required={isCurrentlyWorking} style={{ ...inputStyle, appearance: "none" }}>
-                        <option value="">Select state</option>
-                        {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
+                      <Select required={isCurrentlyWorking} value={workState || undefined} onValueChange={v => { setWorkState(v ?? ""); setWorkCity(""); }}>
+                        <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                        <SelectContent>
+                          {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
                     </F>
                     <F label="Work City" required>
-                      <input value={workCity} onChange={e => setWorkCity(e.target.value)} required={isCurrentlyWorking} placeholder="Your city" style={inputStyle} disabled={!workState} />
+                      <Input value={workCity} onChange={e => setWorkCity(e.target.value)} required={isCurrentlyWorking} placeholder="Your city" disabled={!workState} />
                     </F>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><input name="work_department" required={isCurrentlyWorking} placeholder="Enter department" defaultValue={profile?.work_department ?? ""} style={inputStyle} /></F>
+                    <F label="Work Area / Department" required hint="Example: HR, Finance, IT"><Input name="work_department" required={isCurrentlyWorking} placeholder="Enter department" defaultValue={profile?.work_department ?? ""} /></F>
                     <F label="Years of Experience">
-                      <input name="years_experience" type="number" min={0} placeholder="Enter years of experience" defaultValue={profile?.years_experience ?? ""} style={inputStyle} />
+                      <Input name="years_experience" type="number" min={0} placeholder="Enter years of experience" defaultValue={profile?.years_experience ?? ""} />
                     </F>
                   </div>
                 </div>
@@ -516,27 +556,29 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <F label="Emergency Contact Name" required><input name="emergency_contact_name" required placeholder="Enter contact name" defaultValue={profile?.emergency_contact_name ?? ""} style={inputStyle} /></F>
+                <F label="Emergency Contact Name" required><Input name="emergency_contact_name" required placeholder="Enter contact name" defaultValue={profile?.emergency_contact_name ?? ""} /></F>
                 <F label="Relationship" required>
-                  <select name="emergency_contact_relation" required defaultValue={profile?.emergency_contact_relation ?? ""} style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select</option>
-                    {RELATIONS.map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
+                  <Select required value={emergencyRelation || undefined} onValueChange={v => setEmergencyRelation(v ?? "")}>
+                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>
+                      {RELATIONS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </F>
               </div>
-              <F label="Emergency Contact Phone" required hint="Exactly 10 digits"><input name="emergency_contact_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter contact phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.emergency_contact_phone ?? ""} style={inputStyle} /></F>
-              <F label="Emergency Contact Address" required><textarea name="emergency_contact_address" rows={2} required placeholder="Enter contact address" defaultValue={profile?.emergency_contact_address ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>
+              <F label="Emergency Contact Phone" required hint="Exactly 10 digits"><Input name="emergency_contact_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter contact phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.emergency_contact_phone ?? ""} /></F>
+              <F label="Emergency Contact Address" required><Textarea name="emergency_contact_address" rows={2} required placeholder="Enter contact address" defaultValue={profile?.emergency_contact_address ?? ""} /></F>
 
               <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)", marginBottom: 10 }}>Medical Information</p>
                 <YesNo label="Do you have any allergies?" checked={hasAllergies} onChange={setHasAllergies} />
-                {hasAllergies && <F label="Specify allergies" required><textarea name="allergies_detail" rows={2} required placeholder="Describe allergies" defaultValue={profile?.allergies_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
+                {hasAllergies && <F label="Specify allergies" required><Textarea name="allergies_detail" rows={2} required placeholder="Describe allergies" defaultValue={profile?.allergies_detail ?? ""} /></F>}
 
                 <YesNo label="Do you have any existing medical conditions?" checked={hasMedicalConditions} onChange={setHasMedicalConditions} />
-                {hasMedicalConditions && <F label="Specify medical conditions" required><textarea name="medical_conditions_detail" rows={2} required placeholder="Describe medical conditions" defaultValue={profile?.medical_conditions_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
+                {hasMedicalConditions && <F label="Specify medical conditions" required><Textarea name="medical_conditions_detail" rows={2} required placeholder="Describe medical conditions" defaultValue={profile?.medical_conditions_detail ?? ""} /></F>}
 
                 <YesNo label="Are you taking any regular medicines?" checked={takesMedicines} onChange={setTakesMedicines} />
-                {takesMedicines && <F label="Mention medicines" required><textarea name="medicines_detail" rows={2} required placeholder="List medicines" defaultValue={profile?.medicines_detail ?? ""} style={{ ...inputStyle, resize: "vertical" }} /></F>}
+                {takesMedicines && <F label="Mention medicines" required><Textarea name="medicines_detail" rows={2} required placeholder="List medicines" defaultValue={profile?.medicines_detail ?? ""} /></F>}
 
                 <F label="Dietary Restrictions">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 mt-1">
@@ -550,7 +592,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </F>
 
                 <F label="Emergency Medical Notes" hint="Any additional information volunteers or medical staff should know">
-                  <textarea name="medical_notes" rows={3} placeholder="Enter medical notes" defaultValue={profile?.medical_notes ?? ""} style={{ ...inputStyle, resize: "vertical" }} />
+                  <Textarea name="medical_notes" rows={3} placeholder="Enter medical notes" defaultValue={profile?.medical_notes ?? ""} />
                 </F>
               </div>
               <NextSectionButton accent={accent} onClick={() => setActiveTab("declaration")} />
@@ -569,8 +611,8 @@ export function VolunteerProfileForm({ variant }: Props) {
                   I consent to Gyan Setu collecting and using my information for volunteer management, communication, event coordination, and emergency purposes in accordance with applicable privacy policies.
                 </span>
               </label>
-              <F label="Digital Signature / Name" required><input name="signature_name" required placeholder="Type full name to sign" defaultValue={profile?.signature_name ?? ""} style={inputStyle} /></F>
-              <F label="Date"><input disabled value={profile?.updated_at ? formatDate(profile.updated_at) : formatDate(new Date())} style={{ ...inputStyle, color: "var(--gs-muted)" }} /></F>
+              <F label="Digital Signature / Name" required><Input name="signature_name" required placeholder="Type full name to sign" defaultValue={profile?.signature_name ?? ""} /></F>
+              <F label="Date"><Input disabled value={profile?.updated_at ? formatDate(profile.updated_at) : formatDate(new Date())} /></F>
           </div>
 
           {activeTab === "declaration" && (
@@ -597,8 +639,6 @@ function F({ label, hint, required, children }: { label: string; hint?: string; 
     </div>
   );
 }
-
-import { Button } from "@/components/ui/button";
 
 function NextSectionButton({ accent, onClick }: { accent: string; onClick: () => void }) {
   return (

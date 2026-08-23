@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { DemoEvaluation } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 function scoreColor(total: number) {
   if (total >= 80) return "var(--gs-success)";
@@ -36,9 +37,9 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
                 {evaluation.tour?.title ?? "General"} · Observed by {evaluation.observer?.name ?? "-"} · {formatDate(evaluation.evaluated_at)}
               </p>
             </div>
-            <span style={{ fontSize: 15, fontWeight: 700, padding: "4px 12px", borderRadius: 6, color, background: "rgba(0,0,0,0.03)" }}>
+            <Badge style={{ fontSize: 15, fontWeight: 700, padding: "4px 12px", color, background: "rgba(0,0,0,0.03)" }}>
               {evaluation.total_score} / 100
-            </span>
+            </Badge>
           </div>
         </CardContent>
 </Card>

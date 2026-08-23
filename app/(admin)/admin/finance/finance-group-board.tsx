@@ -66,16 +66,20 @@ function GroupSection({ g }: { g: GroupLedger }) {
         <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--foreground)", margin: "0 0 14px" }}>{g.groupName}</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ marginBottom: g.advances.length > 0 ? 14 : 0 }}>
-          <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "10px 14px" }}>
-            <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-muted)", margin: "0 0 4px" }}>Advance Given</p>
-            <p style={{ fontSize: 19, fontWeight: 700, color: "var(--gs-accent)", margin: 0 }}>₹{g.advanceTotal.toLocaleString("en-IN")}</p>
-          </div>
-          <div style={{ background: over ? "rgba(var(--gs-danger-rgb), 0.06)" : "rgba(var(--gs-success-rgb), 0.06)", border: `1px solid ${over ? "rgba(var(--gs-danger-rgb), 0.2)" : "rgba(var(--gs-success-rgb), 0.2)"}`, borderRadius: 8, padding: "10px 14px" }}>
-            <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-muted)", margin: "0 0 4px" }}>Gyan Setu Balance</p>
-            <p style={{ fontSize: 19, fontWeight: 700, color: over ? "var(--gs-danger)" : "var(--gs-success)", margin: 0 }}>
-              {over ? "−" : "+"}₹{Math.abs(g.remaining).toLocaleString("en-IN")}
-            </p>
-          </div>
+          <Card size="sm">
+            <CardContent>
+              <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-muted)", margin: "0 0 4px" }}>Advance Given</p>
+              <p style={{ fontSize: 19, fontWeight: 700, color: "var(--gs-accent)", margin: 0 }}>₹{g.advanceTotal.toLocaleString("en-IN")}</p>
+            </CardContent>
+          </Card>
+          <Card size="sm" style={{ background: over ? "rgba(var(--gs-danger-rgb), 0.06)" : "rgba(var(--gs-success-rgb), 0.06)" }}>
+            <CardContent>
+              <p style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--gs-muted)", margin: "0 0 4px" }}>Gyan Setu Balance</p>
+              <p style={{ fontSize: 19, fontWeight: 700, color: over ? "var(--gs-danger)" : "var(--gs-success)", margin: 0 }}>
+                {over ? "−" : "+"}₹{Math.abs(g.remaining).toLocaleString("en-IN")}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         {g.advances.length > 0 && (

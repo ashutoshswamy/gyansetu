@@ -135,12 +135,6 @@ export default function SchoolReportsPage() {
     setLoadingGroup(!!id);
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "8px 12px", fontSize: 14,
-    border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-    background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-  };
-
   function updateSession(i: number, field: keyof SchoolReportSession, value: string | number | boolean) {
     setSessions(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: value } : s));
   }

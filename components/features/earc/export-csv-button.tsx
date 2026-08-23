@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export function ExportCsvButton({ exportAction, filename }: { exportAction: () => Promise<string>; filename: string }) {
   const [loading, setLoading] = useState(false);
@@ -26,14 +27,14 @@ export function ExportCsvButton({ exportAction, filename }: { exportAction: () =
   }
 
   return (
-    <button
+    <Button
       onClick={handleExport}
       disabled={loading}
-      className="flex items-center gap-1.5"
-      style={{ fontSize: 13, fontWeight: 600, color: "white", background: "var(--gs-success)", padding: "8px 16px", borderRadius: 6, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+      style={{ background: "var(--gs-success)" }}
+      className="text-white"
     >
       <Download size={14} />
       {loading ? "Exporting..." : "Export CSV"}
-    </button>
+    </Button>
   );
 }

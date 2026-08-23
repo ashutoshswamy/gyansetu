@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 function scoreColor(total: number) {
   if (total >= 80) return "var(--gs-success)"; // 80%+
@@ -46,13 +47,13 @@ export default async function AdminDemoEvaluationsPage() {
                     <div className="flex items-center gap-2 mb-0.5">
                       <span style={{ fontSize: 15, fontWeight: 500, color: "var(--foreground)" }}>{e.volunteer?.name ?? "Unknown"}</span>
                       {isDraft ? (
-                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4, color: "var(--gs-muted)", background: "rgba(0,0,0,0.03)" }}>
+                        <Badge style={{ fontWeight: 700, color: "var(--gs-muted)", background: "rgba(0,0,0,0.03)" }}>
                           DRAFT
-                        </span>
+                        </Badge>
                       ) : (
-                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4, color, background: "rgba(0,0,0,0.03)" }}>
+                        <Badge style={{ fontWeight: 700, color, background: "rgba(0,0,0,0.03)" }}>
                           {e.total_score} / 100
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>

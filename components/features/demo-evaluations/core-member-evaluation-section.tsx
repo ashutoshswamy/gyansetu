@@ -7,6 +7,7 @@ import type { DemoEvaluation } from "@/types";
 import { formatDate } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const statusStyles: Record<string, { color: string; bg: string }> = {
   draft: { color: "var(--gs-warning-alt)", bg: "rgba(var(--gs-warning-alt-rgb), 0.08)" },
@@ -39,12 +40,14 @@ export function CoreMemberEvaluationSection({
   return (
     <div>
       <div className="flex justify-end mb-3">
-        <button
+        <Button
           onClick={() => setMode("new")}
-          style={{ background: "var(--gs-accent)", color: "white", fontSize: 12, fontWeight: 600, padding: "7px 14px", borderRadius: 5, border: "none", cursor: "pointer" }}
+          size="sm"
+          style={{ background: "var(--gs-accent)" }}
+          className="text-white"
         >
           + New Evaluation
-        </button>
+        </Button>
       </div>
       {evaluations.length === 0 ? (
         <Card>
@@ -68,12 +71,15 @@ export function CoreMemberEvaluationSection({
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>{formatDate(ev.evaluated_at)}{ev.tour?.title ? ` · ${ev.tour.title}` : ""}</p>
                   {ev.remarks && <p style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 6 }}>{ev.remarks}</p>}
                 </div>
-                <button
+                <Button
                   onClick={() => setMode(ev.id)}
-                  style={{ background: "transparent", color: "var(--gs-accent)", fontSize: 12, fontWeight: 500, padding: "6px 12px", borderRadius: 5, border: "1.5px solid rgba(var(--gs-accent-rgb), 0.28)", cursor: "pointer", flexShrink: 0 }}
+                  variant="outline"
+                  size="sm"
+                  style={{ color: "var(--gs-accent)", borderColor: "rgba(var(--gs-accent-rgb), 0.28)" }}
+                  className="flex-shrink-0"
                 >
                   Edit
-                </button>
+                </Button>
               </CardContent>
 </Card>
             );

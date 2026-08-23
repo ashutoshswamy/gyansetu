@@ -5,6 +5,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import type { FormField, FormSubmission } from "@/types";
 import { formatDate } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 function fieldValue(val: unknown): string {
   if (Array.isArray(val)) return val.join(", ");
@@ -26,19 +27,19 @@ export function VolunteerFormSubmissions({ submissions }: { submissions: Submiss
         return (
           <Card key={s.id}>
 <CardContent>
-            <button
+            <Button
               type="button"
               onClick={() => setOpenId(open ? null : s.id)}
               disabled={fields.length === 0}
-              className="flex items-center justify-between w-full"
-              style={{ padding: "12px 16px", background: "none", border: "none", cursor: fields.length ? "pointer" : "default", textAlign: "left" }}
+              variant="ghost"
+              className="flex items-center justify-between w-full h-auto py-3 px-4 text-left"
             >
               <div className="flex items-center gap-2">
                 {fields.length > 0 ? (open ? <ChevronDown size={14} style={{ color: "var(--gs-muted)" }} /> : <ChevronRight size={14} style={{ color: "var(--gs-muted)" }} />) : <span style={{ width: 14 }} />}
                 <span style={{ fontSize: 13, fontWeight: 600, color: "var(--foreground)" }}>{form?.title ?? "Form"}</span>
               </div>
               <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{formatDate(s.submitted_at)}</span>
-            </button>
+            </Button>
 
             {open && fields.length > 0 && (
               <div className="space-y-2" style={{ padding: "0 16px 14px" }}>

@@ -114,9 +114,9 @@ export default async function TourManagePage({ params }: { params: Promise<{ id:
             <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 10 }}>Eligibility Tests</p>
             <div className="flex flex-wrap gap-2">
               {((tests ?? []) as TourTest[]).map((t) => (
-                <span key={t.id} style={{ fontSize: 12, padding: "4px 10px", borderRadius: 4, background: "rgba(var(--gs-accent-rgb), 0.07)", color: "var(--gs-accent)", fontWeight: 500 }}>
+                <Badge key={t.id} style={{ background: "rgba(var(--gs-accent-rgb), 0.07)", color: "var(--gs-accent)" }}>
                   {t.title} · {t.status}
-                </span>
+                </Badge>
               ))}
             </div>
           </CardContent>

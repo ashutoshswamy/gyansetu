@@ -39,13 +39,12 @@ export function VolunteerCombobox({
   return (
     <div ref={rootRef} style={{ position: "relative" }}>
       {name && <input type="hidden" name={name} value={value} />}
-      <input
+      <Input
         type="text"
         value={open ? query : selected ? `${selected.name} (${selected.email})` : ""}
         placeholder={placeholder}
         onFocus={() => { setOpen(true); setQuery(""); }}
         onChange={e => setQuery(e.target.value)}
-        style={{ width: "100%", height: 36, border: "1px solid var(--border)", borderRadius: 24, padding: "0 12px", fontSize: 14, fontFamily: "inherit", outline: "none" }}
       />
       {open && (
         <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 20, background: "white", border: "1px solid var(--border)", borderRadius: 6, maxHeight: 220, overflowY: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>

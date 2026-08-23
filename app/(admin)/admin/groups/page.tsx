@@ -4,6 +4,7 @@ import { Users, MapPin, Star } from "lucide-react";
 import { DeleteGroupButton } from "@/components/features/groups/delete-group-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface GroupMember {
   id: string;
@@ -103,9 +104,9 @@ export default async function AdminGroupsPage() {
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {(group.tour_group_members ?? []).slice(0, 5).map((m) => (
-                        <span key={m.id} style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, background: "rgba(var(--gs-accent-rgb), 0.07)", color: "var(--gs-accent)" }}>
+                        <Badge key={m.id} style={{ background: "rgba(var(--gs-accent-rgb), 0.07)", color: "var(--gs-accent)" }}>
                           {m.users?.name}
-                        </span>
+                        </Badge>
                       ))}
                       {(group.tour_group_members ?? []).length > 5 && (
                         <span style={{ fontSize: 11, color: "var(--gs-muted)" }}>+{(group.tour_group_members ?? []).length - 5} more</span>

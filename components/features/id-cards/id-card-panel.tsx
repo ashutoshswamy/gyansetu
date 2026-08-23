@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Download } from "lucide-react";
 import { toPng } from "html-to-image";
 import { formatDate } from "@/lib/format-date";
+import { Button } from "@/components/ui/button";
 
 export interface IdCardPanelData {
   name: string;
@@ -189,20 +190,15 @@ export function IdCardPanel({ data }: { data: IdCardPanelData }) {
       </div>
 
       <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 20 }}>
-        <button
+        <Button
           onClick={handleDownload}
           disabled={downloading}
-          style={{
-            display: "flex", alignItems: "center", gap: 6,
-            background: INDIGO, color: "white", fontSize: 13, fontWeight: 600,
-            fontFamily: sans,
-            padding: "8px 16px", borderRadius: 6, border: "none",
-            cursor: downloading ? "not-allowed" : "pointer", opacity: downloading ? 0.7 : 1,
-          }}
+          style={{ fontFamily: sans, background: INDIGO }}
+          className="text-white hover:opacity-90"
         >
           <Download size={14} />
           {downloading ? "Preparing..." : "Download Card (Front + Back)"}
-        </button>
+        </Button>
 
         {data.card_file_url && !looksLikeImage(data.card_file_url) && (
           <a href={data.card_file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: INDIGO }}>

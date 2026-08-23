@@ -35,30 +35,26 @@ export function StarRating({ value, onChange }: { value: number; onChange: (v: n
   return (
     <div className="flex items-center gap-1 flex-wrap">
       {Array.from({ length: 10 }, (_, i) => i + 1).map(star => (
-        <button
+        <Button
           key={star}
           type="button"
           aria-label={`${star} of 10`}
           onClick={() => onChange(star === value ? 0 : star)}
-          style={{ padding: 0, border: "none", background: "none", cursor: "pointer", lineHeight: 0 }}
+          variant="ghost"
+          size="icon-sm"
+          className="p-0 leading-none"
         >
           <Star
             size={18}
             color={star <= value ? "#F5A524" : "var(--border)"}
             fill={star <= value ? "#F5A524" : "var(--border)"}
           />
-        </button>
+        </Button>
       ))}
       <span style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginLeft: 6, minWidth: 24 }}>{value}</span>
     </div>
   );
 }
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
 
 export function EvaluationForm({ evaluation }: { evaluation?: DemoEvaluation }) {
   const router = useRouter();

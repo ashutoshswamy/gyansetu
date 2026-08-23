@@ -9,6 +9,7 @@ import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-co
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -191,7 +192,7 @@ export default function GroupDetailPage() {
                   <div>
                     <span style={{ fontSize: 14, fontWeight: 500, color: "var(--foreground)" }}>{m.users?.name}</span>
                     <span style={{ fontSize: 12, color: "var(--gs-muted)", marginLeft: 8 }}>{m.users?.email}</span>
-                    {m.role_in_group && <span style={{ fontSize: 12, color: "var(--gs-accent)", marginLeft: 8, padding: "1px 6px", background: "rgba(var(--gs-accent-rgb), 0.08)", borderRadius: 4 }}>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</span>}
+                    {m.role_in_group && <Badge className="ml-2" style={{ color: "var(--gs-accent)", background: "rgba(var(--gs-accent-rgb), 0.08)" }}>{ROLE_LABELS[m.role_in_group] ?? m.role_in_group}</Badge>}
                   </div>
                     <Button
                       variant="ghost"
