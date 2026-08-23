@@ -76,9 +76,9 @@ export default async function VolunteerDashboard() {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          <StatCard label="Tour Assignments" value={assignments?.length ?? 0}  icon={<Plane size={18} />}      accent="emerald" />
-          <StatCard label="Active Tours"      value={activeTours.length}        icon={<Calendar size={18} />}   accent="sky"     sub="currently ongoing" />
-          <StatCard label="Pending Forms"     value={forms?.length ?? 0}        icon={<CheckSquare size={18} />} accent="amber"   sub="need completion" />
+          <StatCard label="Tour Assignments" value={assignments?.length ?? 0}  icon={<Plane size={18} />}      accent="emerald" href="/volunteer/tours" />
+          <StatCard label="Active Tours"      value={activeTours.length}        icon={<Calendar size={18} />}   accent="sky"     sub="currently ongoing" href="/volunteer/tours" />
+          <StatCard label="Pending Forms"     value={forms?.length ?? 0}        icon={<CheckSquare size={18} />} accent="amber"   sub="need completion" href="/volunteer/forms" />
           <StatCard label="Tests Taken"       value={testsTaken}                 icon={<ClipboardList size={18} />} accent="indigo" />
           <StatCard label="Tests Approved"    value={testsApproved}              icon={<ClipboardCheck size={18} />} accent="emerald" />
         </div>

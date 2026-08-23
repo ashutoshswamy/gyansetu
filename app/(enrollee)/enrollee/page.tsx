@@ -88,24 +88,28 @@ export default async function EnrollmentDashboard() {
             value={applications?.length ?? 0}
             icon={<Plane size={18} />}
             accent="indigo"
+            href="/enrollee/tours"
           />
           <StatCard
             label="Shortlisted"
             value={applications?.filter((a: ApplicationRow) => a.status === "shortlisted").length ?? 0}
             icon={<Clock size={18} />}
             accent="sky"
+            href="/enrollee/tours"
           />
           <StatCard
             label="Selected"
             value={applications?.filter((a: ApplicationRow) => a.status === "selected").length ?? 0}
             icon={<CheckCircle size={18} />}
             accent="emerald"
+            href="/enrollee/tours"
           />
           <StatCard
             label="Tests Available"
             value={availableTests?.length ?? 0}
             icon={<ClipboardList size={18} />}
             accent="amber"
+            href="/enrollee/tests"
           />
         </div>
 
