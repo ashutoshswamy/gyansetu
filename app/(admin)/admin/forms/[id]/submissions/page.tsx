@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import type { FormField, FormSubmission } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDateTime } from "@/lib/format-date";
 
 type Submission = Pick<FormSubmission, "id" | "data" | "submitted_at"> & {
   users?: { name: string; email: string };
@@ -40,7 +41,7 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
     const row: Record<string, string> = {
       "Submitter Name": sub.users?.name ?? "Unknown",
       "Submitter Email": sub.users?.email ?? "Unknown",
-      "Submitted At": new Date(sub.submitted_at).toLocaleString(),
+      "Submitted At": formatDateTime(sub.submitted_at),
     };
     for (const field of fields) {
       const val = sub.data?.[field.id];
@@ -103,7 +104,7 @@ export default async function FormSubmissionsPage({ params }: { params: Promise<
                         <div className="text-xs text-[var(--gs-muted)]">{sub.users?.email ?? "Unknown"}</div>
                       </TableCell>
                       <TableCell className="p-4 text-[var(--gs-text-secondary)]">
-                        {new Date(sub.submitted_at).toLocaleString()}
+                        {formatDateTime(sub.submitted_at)}
                       </TableCell>
                       {fields.map((field) => {
                         const val = sub.data?.[field.id];

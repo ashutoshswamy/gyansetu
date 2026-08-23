@@ -8,7 +8,7 @@ import { saveSubjectiveEvaluation, editTestResult } from "@/actions/tests";
 import { useRouter } from "next/navigation";
 import { User, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import type { EligibilityTest, TestQuestion } from "@/types";
-import { formatDate } from "@/lib/format-date";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -106,8 +106,8 @@ export function TestAttemptsViewer({
       "Student Email": attempt.users?.email ?? "Unknown",
       "Status": attempt.status,
       "Score (%)": attempt.score !== undefined && attempt.score !== null ? attempt.score.toFixed(1) + "%" : "N/A",
-      "Started At": new Date(attempt.started_at).toLocaleString(),
-      "Submitted At": attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleString() : "N/A",
+      "Started At": formatDateTime(attempt.started_at),
+      "Submitted At": attempt.submitted_at ? formatDateTime(attempt.submitted_at) : "N/A",
     };
 
     questions.forEach((q, idx) => {

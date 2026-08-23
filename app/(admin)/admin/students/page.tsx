@@ -34,7 +34,7 @@ export default async function AdminEnrollmentsPage() {
   const { data: enrollmentUsers } = await db
     .from("users")
     .select("*, tour_applications(id, status, test_score, submitted_at, tours(title, destination))")
-    .is("role", null)
+    .or("role.is.null,role.eq.enrollee")
     .order("created_at", { ascending: false });
 
   const exportData = ((enrollmentUsers ?? []) as EnrollmentUser[]).map((u) => ({

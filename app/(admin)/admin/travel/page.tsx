@@ -5,6 +5,7 @@ import { ConfirmButton, ApproveItineraryButton } from "./row-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDateTime } from "@/lib/format-date";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   pending:   { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
@@ -63,8 +64,8 @@ export default async function AdminTravelPage() {
                       {t.pnr ? ` · PNR ${t.pnr}` : ""}
                     </p>
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
-                      {t.departure_at ? new Date(t.departure_at).toLocaleString() : "No departure time"}
-                      {t.arrival_at ? ` → ${new Date(t.arrival_at).toLocaleString()}` : ""}
+                      {t.departure_at ? formatDateTime(t.departure_at) : "No departure time"}
+                      {t.arrival_at ? ` → ${formatDateTime(t.arrival_at)}` : ""}
                     </p>
                     {t.note && (
                       <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "6px 0 0", whiteSpace: "pre-wrap" }}>{t.note}</p>

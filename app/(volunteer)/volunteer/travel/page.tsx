@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { getTravelTicketForMyGroup, getLocationUpdatesForGroup } from "@/actions/travel";
 import { Train, MapPin } from "lucide-react";
 import { LocationUpdateForm } from "./location-update-form";
+import { formatDateTime } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -87,8 +88,8 @@ export default async function VolunteerTravelPage() {
                       {t.pnr ? ` · PNR ${t.pnr}` : ""}
                     </p>
                     <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
-                      {t.departure_at ? new Date(t.departure_at).toLocaleString() : "No departure time"}
-                      {t.arrival_at ? ` → ${new Date(t.arrival_at).toLocaleString()}` : ""}
+                      {t.departure_at ? formatDateTime(t.departure_at) : "No departure time"}
+                      {t.arrival_at ? ` → ${formatDateTime(t.arrival_at)}` : ""}
                     </p>
                     {t.note && (
                       <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", margin: "6px 0 0", whiteSpace: "pre-wrap" }}>{t.note}</p>
@@ -122,7 +123,7 @@ export default async function VolunteerTravelPage() {
                           {statusTypeLabels[u.status_type] ?? u.status_type}
                         </Badge>
                       )}
-                      <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{new Date(u.created_at).toLocaleString()}</span>
+                      <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>{formatDateTime(u.created_at)}</span>
                     </div>
                     {u.note && <p style={{ fontSize: 14, color: "var(--foreground)", margin: "2px 0" }}>{u.note}</p>}
                     {(u.from_location || u.to_location) && (

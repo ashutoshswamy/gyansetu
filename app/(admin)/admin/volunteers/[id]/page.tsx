@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Phone, AlertCircle, CheckCircle, MapPin, NotebookPen } from "lucide-react";
 import { getVolunteerObservations } from "@/actions/core-member";
 import { VolunteerObservations } from "@/components/features/core-member/volunteer-observations";
+import { AadhaarToggleButton } from "@/app/(admin)/admin/profiles/aadhaar-toggle-button";
 import type { VolunteerObservation } from "@/types";
 import { Button } from "@/components/ui/button";
 
@@ -72,6 +73,14 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
               <div className="space-y-3">
                 {profile.phone && <Row label="Phone">{profile.phone}</Row>}
                 {profile.date_of_birth && <Row label="Date of Birth">{profile.date_of_birth}</Row>}
+                {profile.aadhaar_number && (
+                  <Row label="Aadhaar Number">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span>{profile.aadhaar_number}</span>
+                      <AadhaarToggleButton userId={id} verified={!!profile.aadhaar_verified} />
+                    </div>
+                  </Row>
+                )}
                 {profile.address && <Row label="Address">{profile.address}</Row>}
                 {profile.bio && <Row label="Bio">{profile.bio}</Row>}
                 {profile.skills?.length > 0 && <Row label="Skills">{profile.skills.join(", ")}</Row>}

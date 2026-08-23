@@ -77,14 +77,22 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // EARC routes: only earc_staff/admin/super_admin pass.
+  // EARC routes: only earc_staff/admin/super_admin pass. Null role bypasses here on
+  // purpose — (earc)/layout.tsx re-verifies against Supabase for users whose Clerk
+  // JWT hasn't synced yet (e.g. right after a role change forces session revocation).
   if (isEarcRoute(req) && role !== "earc_staff" && role !== "admin" && role !== "super_admin") {
-    return NextResponse.redirect(new URL("/sign-in", req.url));
+    if (role !== null && role !== undefined) {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
   }
 
-  // Core member routes: only group_core_member/admin/super_admin pass.
+  // Core member routes: only group_core_member/admin/super_admin pass. Null role bypasses
+  // here on purpose — (core-member)/layout.tsx re-verifies against Supabase for users whose
+  // Clerk JWT hasn't synced yet.
   if (isCoreMemberRoute(req) && role !== "group_core_member" && role !== "admin" && role !== "super_admin") {
-    return NextResponse.redirect(new URL("/sign-in", req.url));
+    if (role !== null && role !== undefined) {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
   }
 });
 

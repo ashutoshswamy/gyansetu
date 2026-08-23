@@ -10,6 +10,7 @@ import {
   fmt, count, sortBy, SectionEyebrow, ChartCard, SingleBar, PieCard, LedgerStat, Ledger, bandSelectStyle,
 } from "@/components/features/analytics/chart-kit";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatDateTime } from "@/lib/format-date";
 
 const MODULE_ORDER = ["Teacher Training", "Facilitator"];
 
@@ -178,7 +179,7 @@ export function EarcAnalytics({
     [studentProfiles]
   );
 
-  const generatedAt = useMemo(() => new Date().toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }), []);
+  const generatedAt = useMemo(() => formatDateTime(new Date()), []);
 
   return (
     <div

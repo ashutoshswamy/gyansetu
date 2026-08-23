@@ -11,3 +11,8 @@ export function formatDateRange(start: string | number | Date, end?: string | nu
   if (!end) return formatDate(start);
   return `${formatDate(start)} - ${formatDate(end)}`;
 }
+
+// "August 26, 2026, 3:45 PM" — for timestamps where the time of day matters too.
+export function formatDateTime(date: string | number | Date): string {
+  return new Date(date).toLocaleString("en-US", { day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
