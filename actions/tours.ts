@@ -5,7 +5,7 @@ import { createNotification } from "@/actions/notifications";
 import { applyRoleUpdate } from "@/actions/users";
 import { isEnrolleeRole } from "@/lib/clerk/roles";
 import { auth } from "@clerk/nextjs/server";
-import { tourSchema, type TourInput } from "@/lib/validations";
+import { tourSchema, withdrawalRequestSchema, type TourInput } from "@/lib/validations";
 import { invalidateCache, CACHE_KEYS, redis } from "@/lib/redis/client";
 import { revalidatePath } from "next/cache";
 import { Ratelimit } from "@upstash/ratelimit";
@@ -239,6 +239,102 @@ export async function updateApplicationStatus(
   revalidatePath("/admin/tours");
   revalidatePath("/admin/students");
   return data;
+}
+
+// Enrollee requests to withdraw their own application, with a reason. Doesn't
+// change status directly to "withdrawn" — sits at "withdrawal_requested" until
+// an admin approves or rejects it. Prior status is saved so a rejected request
+// restores the applicant exactly where they were.
+export async function requestWithdrawal(applicationId: string, reason: string) {
+  const { db, user } = await getAuthenticatedUser();
+  const data = withdrawalRequestSchema.parse({ reason });
+
+  const { data: application, error: fetchError } = await db
+    .from("tour_applications")
+    .select("id, tour_id, student_id, status")
+    .eq("id", applicationId)
+    .single();
+  if (fetchError || !application) throw new Error("Application not found");
+  if (application.student_id !== user.id) throw new Error("Unauthorized");
+  if (!["pending", "shortlisted"].includes(application.status)) {
+    throw new Error("This application can't be withdrawn right now.");
+  }
+
+  const { error } = await db
+    .from("tour_applications")
+    .update({
+      status: "withdrawal_requested",
+      withdrawal_reason: data.reason,
+      withdrawal_requested_at: new Date().toISOString(),
+      withdrawal_prior_status: application.status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", applicationId);
+  if (error) { console.error("[requestWithdrawal]", error); throw new Error("Failed to submit withdrawal request"); }
+
+  revalidatePath(`/enrollee/tours/${application.tour_id}`);
+  revalidatePath("/admin/students");
+  revalidatePath("/admin/withdrawals");
+}
+
+// Admin approves a pending withdrawal request: application status -> withdrawn.
+export async function approveWithdrawal(applicationId: string) {
+  const { db } = await requireAdminUser();
+
+  const { data: application, error } = await db
+    .from("tour_applications")
+    .update({ status: "withdrawn", updated_at: new Date().toISOString() })
+    .eq("id", applicationId)
+    .eq("status", "withdrawal_requested")
+    .select("student_id")
+    .single();
+  if (error || !application) { console.error("[approveWithdrawal]", error); throw new Error("Failed to approve withdrawal"); }
+
+  await createNotification({
+    user_id: application.student_id,
+    title: "Withdrawal approved",
+    message: "Your withdrawal from the tour has been approved.",
+  }).catch(err => console.error("[approveWithdrawal notify]", err));
+
+  revalidatePath("/admin/students");
+  revalidatePath("/admin/withdrawals");
+  revalidatePath("/enrollee/tours");
+}
+
+// Admin declines a withdrawal request: application is restored to its status
+// before the request was made (e.g. back to "shortlisted").
+export async function rejectWithdrawal(applicationId: string) {
+  const { db } = await requireAdminUser();
+
+  const { data: application, error: fetchError } = await db
+    .from("tour_applications")
+    .select("student_id, withdrawal_prior_status")
+    .eq("id", applicationId)
+    .eq("status", "withdrawal_requested")
+    .single();
+  if (fetchError || !application) throw new Error("Withdrawal request not found");
+
+  const { error } = await db
+    .from("tour_applications")
+    .update({
+      status: application.withdrawal_prior_status ?? "pending",
+      withdrawal_reason: null,
+      withdrawal_requested_at: null,
+      withdrawal_prior_status: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", applicationId);
+  if (error) { console.error("[rejectWithdrawal]", error); throw new Error("Failed to reject withdrawal"); }
+
+  await createNotification({
+    user_id: application.student_id,
+    title: "Withdrawal request declined",
+    message: "Your request to withdraw from the tour was declined.",
+  }).catch(err => console.error("[rejectWithdrawal notify]", err));
+
+  revalidatePath("/admin/students");
+  revalidatePath("/admin/withdrawals");
+  revalidatePath("/enrollee/tours");
 }
 
 export async function assignVolunteerToTour(tourId: string, volunteerId: string, roleDescription?: string) {

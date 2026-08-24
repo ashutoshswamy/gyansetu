@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ExportButton } from "@/components/features/export-button";
 import { MarkPaidButton } from "./mark-paid-button";
 import { RejectPaymentButton } from "./reject-payment-button";
+import { RefundFeeButton } from "./refund-fee-button";
 import { PaymentSettingsForm } from "./payment-settings-form";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
@@ -103,6 +104,11 @@ export default async function AdminRegistrationFeesPage() {
                         Rejected: {fee.rejection_reason}
                       </p>
                     )}
+                    {fee.status === "refunded" && fee.refund_reason && (
+                      <p style={{ fontSize: 12, color: "var(--gs-muted)", marginTop: 6, padding: "6px 10px", background: "rgba(var(--gs-muted-rgb), 0.08)", borderRadius: 5 }}>
+                        Refunded: {fee.refund_reason}
+                      </p>
+                    )}
                   </div>
                   {fee.status === "pending" && <MarkPaidButton feeId={fee.id} />}
                   {fee.status === "submitted" && (
@@ -111,6 +117,7 @@ export default async function AdminRegistrationFeesPage() {
                       <RejectPaymentButton feeId={fee.id} />
                     </div>
                   )}
+                  {fee.status === "paid" && <RefundFeeButton feeId={fee.id} />}
                 </CardContent>
               </Card>
             );

@@ -31,10 +31,13 @@ export interface TourApplication {
   id: string;
   tour_id: string;
   student_id: string;
-  status: "pending" | "shortlisted" | "selected" | "rejected";
+  status: "pending" | "shortlisted" | "selected" | "rejected" | "withdrawal_requested" | "withdrawn";
   test_score?: number;
   submitted_at: string;
   updated_at: string;
+  withdrawal_reason?: string;
+  withdrawal_requested_at?: string;
+  withdrawal_prior_status?: string;
   tour?: Tour;
   student?: UserProfile;
 }
@@ -319,6 +322,7 @@ export interface RegistrationFee {
   verified_by?: string;
   notes?: string;
   rejection_reason?: string;
+  refund_reason?: string;
   tour_id?: string;
   group_id?: string;
   created_at: string;

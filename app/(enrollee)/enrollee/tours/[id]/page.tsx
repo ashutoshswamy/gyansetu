@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import { ApplyButton } from "@/components/features/tours/apply-button";
+import { WithdrawButton } from "@/components/features/tours/withdraw-button";
 import { MapPin, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
   if (error || !tour) notFound();
 
   const [{ data: applications }, { data: profile }] = await Promise.all([
-    db.from("tour_applications").select("id, tour_id, status").eq("student_id", user?.id ?? ""),
+    db.from("tour_applications").select("id, tour_id, status, withdrawal_reason").eq("student_id", user?.id ?? ""),
     db.from("volunteer_profiles").select("date_of_birth").eq("user_id", user?.id ?? "").maybeSingle(),
   ]);
 
@@ -112,6 +113,16 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
                   The eligibility test for this tour isn&apos;t open yet — check back soon.
                 </p>
               )
+            )}
+            {application.status === "withdrawal_requested" && (
+              <p style={{ fontSize: 13, color: "var(--gs-accent)", margin: "10px 0 0 0", opacity: 0.8 }}>
+                Withdrawal requested — waiting on admin approval.
+              </p>
+            )}
+            {(application.status === "pending" || application.status === "shortlisted") && (
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(var(--gs-accent-rgb), 0.15)" }}>
+                <WithdrawButton applicationId={application.id} />
+              </div>
             )}
           </div>
         ) : appliedElsewhere ? (

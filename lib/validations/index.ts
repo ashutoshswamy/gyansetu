@@ -115,6 +115,17 @@ export const bulkCertificateSchema = z.object({
 });
 
 const minWords = (n: number) => (val: string) => val.trim().split(/\s+/).filter(Boolean).length >= n;
+const maxWords = (n: number) => (val: string) => val.trim().split(/\s+/).filter(Boolean).length <= n;
+
+export const withdrawalRequestSchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(1, "Reason is required")
+    .refine(minWords(5), "Please provide at least 5 words")
+    .refine(maxWords(100), "Reason must be at most 100 words"),
+});
+export type WithdrawalRequestInput = z.infer<typeof withdrawalRequestSchema>;
 
 export const dailyLogSchema = z.object({
   tour_id: z.string().uuid(),

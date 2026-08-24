@@ -77,6 +77,7 @@ const adminGroups: NavGroup[] = [
     label: "People",
     items: [
       { label: "Enrollments",      href: "/admin/students",   Icon: UserCheck, description: "Review tour applications and move enrollees through shortlist/selection." },
+      { label: "Withdrawals",      href: "/admin/withdrawals", Icon: LogOut, description: "Review and approve/decline enrollee withdrawal requests." },
       { label: "Volunteers",       href: "/admin/volunteers", Icon: Users, description: "Directory of active volunteers and their assignment details." },
       { label: "Profile Data",     href: "/admin/profiles",   Icon: UserCircle, description: "Full volunteer profile records — contact, education, emergency info." },
     ],

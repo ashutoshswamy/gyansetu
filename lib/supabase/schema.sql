@@ -1722,3 +1722,22 @@ create policy "authenticated_read_payment_settings" on public.payment_settings f
 insert into storage.buckets (id, name, public)
   values ('payment-qr', 'payment-qr', true)
   on conflict (id) do nothing;
+
+-- ============================================================
+-- MIGRATION: enrollee-initiated tour withdrawal, gated on admin
+-- approval. Enrollee requests (status -> withdrawal_requested,
+-- prior status saved so a rejected request can be restored);
+-- admin approves (-> withdrawn) or rejects (-> restored).
+-- ============================================================
+alter table public.tour_applications drop constraint if exists tour_applications_status_check;
+alter table public.tour_applications add constraint tour_applications_status_check
+  check (status in ('pending', 'shortlisted', 'selected', 'rejected', 'withdrawal_requested', 'withdrawn'));
+alter table public.tour_applications add column if not exists withdrawal_reason text;
+alter table public.tour_applications add column if not exists withdrawal_requested_at timestamptz;
+alter table public.tour_applications add column if not exists withdrawal_prior_status text;
+
+-- ============================================================
+-- MIGRATION: admin can refund a paid registration fee, with an
+-- optional note for the record.
+-- ============================================================
+alter table public.registration_fees add column if not exists refund_reason text;

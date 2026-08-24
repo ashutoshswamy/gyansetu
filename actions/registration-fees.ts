@@ -89,6 +89,33 @@ export async function rejectRegistrationFee(id: string, reason: string) {
   return { ok: true as const, fee };
 }
 
+// Admin refunds a paid fee, with an optional note for the record.
+export async function refundRegistrationFee(id: string, reason?: string) {
+  const { db, user } = await requireAdminUser();
+
+  const { data: fee, error } = await db
+    .from("registration_fees")
+    .update({ status: "refunded", refund_reason: reason?.trim() || null, verified_by: user.id, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "paid")
+    .select("*, volunteer_id")
+    .single();
+  if (error || !fee) { console.error("[refundRegistrationFee]", error); return { ok: false as const, error: "Failed to refund fee" }; }
+
+  if (fee.volunteer_id) {
+    await createNotification({
+      user_id: fee.volunteer_id,
+      title: "Registration fee refunded",
+      message: reason ? `Your registration fee has been refunded: ${reason}` : "Your registration fee has been refunded.",
+      type: "info",
+    }).catch(err => console.error("[refundRegistrationFee notify]", err));
+  }
+
+  revalidatePath("/admin/registration-fees");
+  revalidatePath("/volunteer/registration-fee");
+  return { ok: true as const, fee };
+}
+
 export async function getAllRegistrationFees() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
