@@ -507,6 +507,7 @@ export const rejectRegistrationFeeSchema = z.object({
 });
 
 export const paymentSettingsSchema = z.object({
+  amount: z.number().min(0).optional(),
   upi_id: z.string().max(100).optional(),
   account_holder_name: z.string().max(200).optional(),
   bank_name: z.string().max(200).optional(),

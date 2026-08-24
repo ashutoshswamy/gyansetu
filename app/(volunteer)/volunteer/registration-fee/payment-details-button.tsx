@@ -6,7 +6,7 @@ import type { PaymentSettings } from "@/types";
 import { Wallet } from "lucide-react";
 
 export function PaymentDetailsButton({ settings }: { settings: PaymentSettings | null }) {
-  const hasDetails = settings && (settings.upi_id || settings.account_number || settings.qr_code_url);
+  const hasDetails = settings && (settings.amount || settings.upi_id || settings.account_number || settings.qr_code_url);
   if (!hasDetails) return null;
 
   return (
@@ -20,6 +20,7 @@ export function PaymentDetailsButton({ settings }: { settings: PaymentSettings |
           <DialogTitle>Where to Send the Registration Fee</DialogTitle>
         </DialogHeader>
         <div className="space-y-2 text-sm">
+          {settings.amount != null && <p><span className="font-medium">Amount to Pay:</span> ₹{settings.amount}</p>}
           {settings.upi_id && <p><span className="font-medium">UPI ID:</span> {settings.upi_id}</p>}
           {settings.account_holder_name && <p><span className="font-medium">Account Holder:</span> {settings.account_holder_name}</p>}
           {settings.bank_name && <p><span className="font-medium">Bank:</span> {settings.bank_name}</p>}

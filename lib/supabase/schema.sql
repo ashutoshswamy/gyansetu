@@ -1741,3 +1741,9 @@ alter table public.tour_applications add column if not exists withdrawal_prior_s
 -- optional note for the record.
 -- ============================================================
 alter table public.registration_fees add column if not exists refund_reason text;
+
+-- ============================================================
+-- MIGRATION: admin sets the registration fee amount to be paid,
+-- alongside where to send it (UPI/bank/QR).
+-- ============================================================
+alter table public.payment_settings add column if not exists amount numeric;

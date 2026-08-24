@@ -50,7 +50,7 @@ export default async function VolunteerRegistrationFeePage() {
               <div className="flex-1">
                 <p style={{ fontSize: 15, color: "var(--gs-text-secondary)", margin: "0 0 4px" }}>You haven&apos;t recorded a registration fee payment yet.</p>
                 <p style={{ fontSize: 13, color: "var(--gs-muted)", margin: 0 }}>Already paid? Fill in the details below.</p>
-                <RecordFeeForm tour={tourGroup?.tour ?? null} group={tourGroup?.group ?? null} />
+                <RecordFeeForm tour={tourGroup?.tour ?? null} group={tourGroup?.group ?? null} presetAmount={paymentSettings?.amount} />
               </div>
             </div>
           </CardContent>

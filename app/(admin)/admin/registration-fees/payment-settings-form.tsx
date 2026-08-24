@@ -15,6 +15,7 @@ export function PaymentSettingsForm({ settings }: { settings: PaymentSettings | 
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [amount, setAmount] = useState(settings?.amount ? String(settings.amount) : "");
   const [upiId, setUpiId] = useState(settings?.upi_id ?? "");
   const [accountHolderName, setAccountHolderName] = useState(settings?.account_holder_name ?? "");
   const [bankName, setBankName] = useState(settings?.bank_name ?? "");
@@ -26,6 +27,7 @@ export function PaymentSettingsForm({ settings }: { settings: PaymentSettings | 
     setSaving(true);
     try {
       await upsertPaymentSettings({
+        amount: amount.trim() ? Number(amount) : undefined,
         upi_id: upiId.trim() || undefined,
         account_holder_name: accountHolderName.trim() || undefined,
         bank_name: bankName.trim() || undefined,
@@ -54,6 +56,10 @@ export function PaymentSettingsForm({ settings }: { settings: PaymentSettings | 
           <DialogTitle>Registration Fee Payment Details</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Amount to be Paid (₹)</label>
+            <Input type="number" min="0" step="0.01" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Enter registration fee amount" />
+          </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">UPI ID</label>
             <Input value={upiId} onChange={e => setUpiId(e.target.value)} placeholder="name@bank" />

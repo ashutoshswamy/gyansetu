@@ -334,6 +334,7 @@ export interface RegistrationFee {
 
 export interface PaymentSettings {
   id: string;
+  amount?: number;
   upi_id?: string;
   account_holder_name?: string;
   bank_name?: string;
