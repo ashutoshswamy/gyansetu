@@ -15,12 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "8px 12px", fontSize: 14,
-  border: "1.5px solid var(--border)", borderRadius: 6, outline: "none",
-  background: "var(--background)", color: "var(--foreground)", boxSizing: "border-box",
-};
-
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Don't Know"];
 const RELATIONS = ["Father", "Mother", "Spouse", "Brother", "Sister", "Friend", "Guardian", "Other"];
 const DIETARY = ["Vegetarian", "Vegan", "Jain", "Eggetarian", "Non-Vegetarian", "Gluten-Free", "Lactose-Free", "Diabetic Diet", "Other"];
@@ -335,7 +329,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Gender" required>
                   <Select required value={gender || undefined} onValueChange={v => setGender(v ?? "")}>
-                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select gender" /></SelectTrigger>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select gender" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Male">Male</SelectItem>
                       <SelectItem value="Female">Female</SelectItem>
@@ -351,7 +345,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Blood Group" required>
                   <Select required value={bloodGroup || undefined} onValueChange={v => setBloodGroup(v ?? "")}>
-                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select blood group" /></SelectTrigger>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select blood group" /></SelectTrigger>
                     <SelectContent>
                       {BLOOD_GROUPS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
                     </SelectContent>
@@ -375,7 +369,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                   <F label="State" required>
                     <Select required value={selectedState || undefined} onValueChange={v => { setSelectedState(v ?? ""); setSelectedCity(""); }}>
-                      <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                      <SelectTrigger className="w-full"><SelectValue placeholder="Select state" /></SelectTrigger>
                       <SelectContent>
                         {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                       </SelectContent>
@@ -386,7 +380,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                   </F>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                  <F label="District" required><DistrictSelect key={selectedState} state={selectedState} value={district} onChange={setDistrict} required style={inputStyle} /></F>
+                  <F label="District" required><DistrictSelect key={selectedState} state={selectedState} value={district} onChange={setDistrict} required /></F>
                   <F label="PIN Code" required hint="6 digits"><Input name="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} defaultValue={profile?.pincode ?? ""} /></F>
                 </div>
                 <F label="Additional Address Notes"><Textarea name="address" rows={2} placeholder="Enter additional address notes" defaultValue={profile?.address ?? ""} style={{ marginTop: 16 }} /></F>
@@ -412,7 +406,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                       <F label="State" required>
                         <Select required value={permState || undefined} onValueChange={v => { setPermState(v ?? ""); setPermCity(""); }}>
-                          <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                          <SelectTrigger className="w-full"><SelectValue placeholder="Select state" /></SelectTrigger>
                           <SelectContent>
                             {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                           </SelectContent>
@@ -423,7 +417,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                       </F>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
-                      <F label="District" required><DistrictSelect key={permState} state={permState} value={permDistrict} onChange={setPermDistrict} required={!sameAddress} style={inputStyle} /></F>
+                      <F label="District" required><DistrictSelect key={permState} state={permState} value={permDistrict} onChange={setPermDistrict} required={!sameAddress} /></F>
                       <F label="PIN Code" required hint="6 digits"><Input name="perm_pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required={!sameAddress} placeholder="Enter pincode" onInput={sanitizeDigitsInput(6)} /></F>
                     </div>
                   </div>
@@ -468,7 +462,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="College State" required>
                   <Select required value={collegeState || undefined} onValueChange={v => { setCollegeState(v ?? ""); setCollegeCity(""); }}>
-                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select state" /></SelectTrigger>
                     <SelectContent>
                       {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                     </SelectContent>
@@ -481,7 +475,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Qualification" required>
                   <Select required value={qualification || undefined} onValueChange={v => setQualification(v ?? "")}>
-                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Diploma">Diploma</SelectItem>
                       <SelectItem value="UG">UG</SelectItem>
@@ -495,7 +489,7 @@ export function VolunteerProfileForm({ variant }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Stream / Specialization" required>
                   <Select required value={stream || undefined} onValueChange={v => setStream(v ?? "")}>
-                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       {STREAMS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                     </SelectContent>
@@ -503,7 +497,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 </F>
                 <F label="Course Status" required>
                   <Select required value={eduCourseStatus || undefined} onValueChange={v => setEduCourseStatus(v ?? "")}>
-                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="pursuing">Pursuing</SelectItem>
                       <SelectItem value="completed">Completed</SelectItem>
@@ -532,7 +526,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginTop: 16 }}>
                     <F label="Work State" required>
                       <Select required={isCurrentlyWorking} value={workState || undefined} onValueChange={v => { setWorkState(v ?? ""); setWorkCity(""); }}>
-                        <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select state" /></SelectTrigger>
+                        <SelectTrigger className="w-full"><SelectValue placeholder="Select state" /></SelectTrigger>
                         <SelectContent>
                           {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                         </SelectContent>
@@ -563,7 +557,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <F label="Emergency Contact Name" required><Input name="emergency_contact_name" required placeholder="Enter contact name" defaultValue={profile?.emergency_contact_name ?? ""} /></F>
                 <F label="Relationship" required>
                   <Select required value={emergencyRelation || undefined} onValueChange={v => setEmergencyRelation(v ?? "")}>
-                    <SelectTrigger className="w-full" style={inputStyle}><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       {RELATIONS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
                     </SelectContent>
