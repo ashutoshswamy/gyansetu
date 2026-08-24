@@ -35,6 +35,14 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
   const application = applications?.find((a) => a.tour_id === id) ?? null;
   const appliedElsewhere = (applications ?? []).some((a) => a.tour_id !== id);
 
+  const { count: activeApplicantCount } = await db
+    .from("tour_applications")
+    .select("id", { count: "exact", head: true })
+    .eq("tour_id", id)
+    .in("status", ["pending", "shortlisted", "selected"]);
+
+  const isFull = (activeApplicantCount ?? 0) >= tour.capacity;
+
   let eligibilityTest: { id: string; status: string } | null = null;
   let hasAttempt = false;
   if (application && tour.eligibility_test_id) {
@@ -137,6 +145,10 @@ export default async function TourDetailPage({ params }: { params: Promise<{ id:
             <a href="/enrollee/profile" style={{ display: "inline-block", marginTop: 10, fontSize: 13, color: "var(--gs-danger-alt)", textDecoration: "underline" }}>
               Go to My Profile →
             </a>
+          </div>
+        ) : isFull ? (
+          <div style={{ background: "var(--gs-card)", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 20px" }}>
+            <p style={{ fontSize: 14, color: "var(--gs-muted)", margin: 0 }}>This tour has reached its member limit. Applications are closed.</p>
           </div>
         ) : tour.status === "open" ? (
           <ApplyButton tourId={tour.id} />

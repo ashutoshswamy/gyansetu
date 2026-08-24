@@ -209,6 +209,24 @@ export async function applyForTour(tourId: string) {
     throw new Error("You must be 18 or older to apply for a tour.");
   }
 
+  const { data: tour } = await db
+    .from("tours")
+    .select("capacity")
+    .eq("id", tourId)
+    .maybeSingle();
+
+  if (tour) {
+    const { count } = await db
+      .from("tour_applications")
+      .select("id", { count: "exact", head: true })
+      .eq("tour_id", tourId)
+      .in("status", ["pending", "shortlisted", "selected"]);
+
+    if ((count ?? 0) >= tour.capacity) {
+      throw new Error("This tour has reached its member limit. Applications are closed.");
+    }
+  }
+
   const { data, error } = await db
     .from("tour_applications")
     .insert({ tour_id: tourId, student_id: user.id })
