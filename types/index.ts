@@ -253,6 +253,7 @@ export interface VolunteerProfile {
   gender?: string;
   blood_group?: string;
   aadhaar_number?: string;
+  aadhaar_doc_url?: string;
   photo_url?: string;
   alternate_phone?: string;
   house_no?: string;

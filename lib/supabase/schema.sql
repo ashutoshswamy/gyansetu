@@ -1025,6 +1025,7 @@ alter table public.dynamic_forms add column if not exists category text not null
 alter table public.volunteer_profiles add column if not exists aadhaar_verified boolean not null default false;
 alter table public.volunteer_profiles add column if not exists aadhaar_verified_at timestamptz;
 alter table public.volunteer_profiles add column if not exists aadhaar_verified_by uuid references public.users(id) on delete set null;
+alter table public.volunteer_profiles add column if not exists aadhaar_doc_url text;
 alter table public.volunteer_profiles add column if not exists parent_consent_url text;
 alter table public.volunteer_profiles add column if not exists indemnity_bond_url text;
 

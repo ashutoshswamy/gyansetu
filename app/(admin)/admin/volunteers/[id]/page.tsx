@@ -77,8 +77,15 @@ export default async function VolunteerDetailPage({ params }: { params: Promise<
                   <Row label="Aadhaar Number">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span>{profile.aadhaar_number}</span>
-                      <AadhaarToggleButton userId={id} verified={!!profile.aadhaar_verified} />
+                      <AadhaarToggleButton userId={id} verified={!!profile.aadhaar_verified} docUploaded={!!profile.aadhaar_doc_url} />
                     </div>
+                  </Row>
+                )}
+                {profile.aadhaar_doc_url && (
+                  <Row label="Aadhaar Document">
+                    <a href={profile.aadhaar_doc_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--gs-accent)", fontWeight: 600 }}>
+                      View document
+                    </a>
                   </Row>
                 )}
                 {profile.address && <Row label="Address">{profile.address}</Row>}

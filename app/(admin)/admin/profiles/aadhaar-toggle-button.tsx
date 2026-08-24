@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { setAadhaarVerified } from "@/actions/profiles";
 import { Button } from "@/components/ui/button";
 
-export function AadhaarToggleButton({ userId, verified }: { userId: string; verified: boolean }) {
+export function AadhaarToggleButton({ userId, verified, docUploaded = true }: { userId: string; verified: boolean; docUploaded?: boolean }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -35,10 +35,11 @@ export function AadhaarToggleButton({ userId, verified }: { userId: string; veri
       </span>
       <Button
         onClick={handleClick}
-        disabled={loading}
+        disabled={loading || (!verified && !docUploaded)}
         variant="outline"
         size="sm"
         style={{ color: "var(--gs-accent)" }}
+        title={!verified && !docUploaded ? "Volunteer has not uploaded an Aadhaar document yet" : undefined}
       >
         {loading ? "..." : verified ? "Unverify" : "Verify"}
       </Button>

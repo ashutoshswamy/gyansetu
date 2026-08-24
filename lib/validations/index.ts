@@ -192,6 +192,7 @@ export const volunteerProfileSchema = z.object({
   gender: z.string().max(30).optional(),
   blood_group: z.string().max(10).optional(),
   aadhaar_number: z.string().max(20).optional(),
+  aadhaar_doc_url: z.string().max(1000).optional(),
   photo_url: z.string().max(1000).min(1, "Profile photograph is required"),
   alternate_phone: phoneSchema.optional(),
   house_no: z.string().max(200).optional(),

@@ -57,6 +57,7 @@ export function VolunteerProfileForm({ variant }: Props) {
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
+  const [aadhaarDocUrl, setAadhaarDocUrl] = useState("");
   const [sameAddress, setSameAddress] = useState(true);
   const [isCurrentlyWorking, setIsCurrentlyWorking] = useState(false);
   const [hasAllergies, setHasAllergies] = useState(false);
@@ -87,6 +88,7 @@ export function VolunteerProfileForm({ variant }: Props) {
       if (d?.city) setSelectedCity(d.city);
       if (d?.district) setDistrict(d.district);
       if (d?.photo_url) setPhotoUrl(d.photo_url);
+      if (d?.aadhaar_doc_url) setAadhaarDocUrl(d.aadhaar_doc_url);
       if (d) setSameAddress(d.permanent_address_same ?? true);
       setIsCurrentlyWorking(!!d?.company_name || d?.current_status === "working_professional" || d?.current_status === "both");
       if (d?.edu_course_status) setEduCourseStatus(d.edu_course_status);
@@ -176,6 +178,7 @@ export function VolunteerProfileForm({ variant }: Props) {
         date_of_birth: str("date_of_birth"),
         blood_group: bloodGroup || undefined,
         aadhaar_number: str("aadhaar_number"),
+        aadhaar_doc_url: aadhaarDocUrl || undefined,
         photo_url: photoUrl || undefined,
         phone: str("phone"),
         alternate_phone: str("alternate_phone"),
@@ -357,6 +360,7 @@ export function VolunteerProfileForm({ variant }: Props) {
                 <F label="Aadhaar Number" hint="12-digit, numbers only, optional"><Input name="aadhaar_number" inputMode="numeric" pattern="[0-9]*" maxLength={12} placeholder="Enter Aadhaar number" onInput={sanitizeDigitsInput(12)} defaultValue={profile?.aadhaar_number ?? ""} /></F>
               </div>
               <FileUploadField label="Profile Photograph" value={photoUrl} onChange={setPhotoUrl} bucket="media" folder="profile-photos" accept="image/*" showImagePreview required hint="Passport-size, JPG/PNG, max 5 MB. Used on your volunteer ID card." />
+              <FileUploadField label="Aadhaar Document" value={aadhaarDocUrl} onChange={setAadhaarDocUrl} bucket="media" folder="aadhaar-docs" accept="image/*,application/pdf" hint="Scan/photo of Aadhaar card (JPG/PNG/PDF, max 5 MB). Required before admin can verify your Aadhaar." />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <F label="Mobile Number (WhatsApp)" required hint="Exactly 10 digits"><Input name="phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="Enter phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.phone ?? ""} /></F>
                 <F label="Alternate Mobile Number" hint="Exactly 10 digits"><Input name="alternate_phone" type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} placeholder="Enter alternate phone number" onInput={sanitizeDigitsInput(10)} defaultValue={profile?.alternate_phone ?? ""} /></F>

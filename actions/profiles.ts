@@ -59,6 +59,18 @@ export async function getAllVolunteerProfiles() {
 
 export async function setAadhaarVerified(userId: string, verified: boolean) {
   const { db, user } = await requireAdmin();
+
+  if (verified) {
+    const { data: existing } = await db
+      .from("volunteer_profiles")
+      .select("aadhaar_doc_url")
+      .eq("user_id", userId)
+      .single();
+    if (!existing?.aadhaar_doc_url) {
+      throw new Error("Cannot verify: no Aadhaar document uploaded for this volunteer");
+    }
+  }
+
   const { data, error } = await db
     .from("volunteer_profiles")
     .update({

@@ -94,7 +94,7 @@ export default async function ProfilesPage() {
                         </td>
                         <td className="p-4">
                           {role === "volunteer" ? (
-                            <AadhaarToggleButton userId={p.user_id} verified={!!p.aadhaar_verified} />
+                            <AadhaarToggleButton userId={p.user_id} verified={!!p.aadhaar_verified} docUploaded={!!p.aadhaar_doc_url} />
                           ) : (
                             <span style={{ fontSize: 12, color: "var(--gs-muted)" }}>-</span>
                           )}
