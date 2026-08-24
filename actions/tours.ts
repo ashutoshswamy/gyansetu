@@ -4,7 +4,8 @@ import { requireAdminUser, getAuthenticatedUser } from "@/lib/clerk/action-auth"
 import { createNotification } from "@/actions/notifications";
 import { applyRoleUpdate } from "@/actions/users";
 import { isEnrolleeRole } from "@/lib/clerk/roles";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { revokeAllUserSessions } from "@/lib/clerk/revoke-sessions";
 import { tourSchema, withdrawalRequestSchema, type TourInput } from "@/lib/validations";
 import { invalidateCache, CACHE_KEYS, redis } from "@/lib/redis/client";
 import { revalidatePath } from "next/cache";
@@ -256,7 +257,7 @@ export async function requestWithdrawal(applicationId: string, reason: string) {
     .single();
   if (fetchError || !application) throw new Error("Application not found");
   if (application.student_id !== user.id) throw new Error("Unauthorized");
-  if (!["pending", "shortlisted"].includes(application.status)) {
+  if (!["pending", "shortlisted", "selected"].includes(application.status)) {
     throw new Error("This application can't be withdrawn right now.");
   }
 
@@ -273,32 +274,69 @@ export async function requestWithdrawal(applicationId: string, reason: string) {
   if (error) { console.error("[requestWithdrawal]", error); throw new Error("Failed to submit withdrawal request"); }
 
   revalidatePath(`/enrollee/tours/${application.tour_id}`);
+  revalidatePath("/volunteer/tours");
   revalidatePath("/admin/students");
   revalidatePath("/admin/withdrawals");
 }
 
 // Admin approves a pending withdrawal request: application status -> withdrawn.
+// If the applicant had already been promoted to volunteer for this tour, also
+// reverts their role back to enrollee and drops the tour assignment — same
+// unwind as demoteVolunteer, just triggered by their own withdrawal request.
 export async function approveWithdrawal(applicationId: string) {
   const { db } = await requireAdminUser();
 
-  const { data: application, error } = await db
+  const { data: application, error: fetchError } = await db
     .from("tour_applications")
-    .update({ status: "withdrawn", updated_at: new Date().toISOString() })
+    .select("id, tour_id, status, student:users!tour_applications_student_id_fkey(id, clerk_id, role)")
     .eq("id", applicationId)
     .eq("status", "withdrawal_requested")
-    .select("student_id")
     .single();
-  if (error || !application) { console.error("[approveWithdrawal]", error); throw new Error("Failed to approve withdrawal"); }
+  if (fetchError || !application) throw new Error("Withdrawal request not found");
+
+  const student = application.student as unknown as { id: string; clerk_id: string; role: string | null };
+
+  const { error } = await db
+    .from("tour_applications")
+    .update({ status: "withdrawn", updated_at: new Date().toISOString() })
+    .eq("id", applicationId);
+  if (error) { console.error("[approveWithdrawal]", error); throw new Error("Failed to approve withdrawal"); }
+
+  if (student.role === "volunteer" && student.clerk_id) {
+    const { error: dbError } = await db.from("users").update({ role: "enrollee" }).eq("id", student.id);
+    if (dbError) {
+      console.error("[approveWithdrawal] failed to demote role", dbError);
+    } else {
+      const clerk = await clerkClient();
+      try {
+        await clerk.users.updateUserMetadata(student.clerk_id, { publicMetadata: { role: "enrollee" } });
+      } catch (err) {
+        console.error("[approveWithdrawal] Clerk role sync failed; rolling back", err);
+        await db.from("users").update({ role: "volunteer" }).eq("id", student.id);
+      }
+
+      await db.from("volunteer_assignments").delete().eq("volunteer_id", student.id).eq("tour_id", application.tour_id);
+
+      try {
+        await revokeAllUserSessions(student.clerk_id);
+      } catch (err) {
+        console.error("[approveWithdrawal] session revoke failed", err);
+      }
+    }
+  }
 
   await createNotification({
-    user_id: application.student_id,
+    user_id: student.id,
     title: "Withdrawal approved",
     message: "Your withdrawal from the tour has been approved.",
   }).catch(err => console.error("[approveWithdrawal notify]", err));
 
   revalidatePath("/admin/students");
   revalidatePath("/admin/withdrawals");
+  revalidatePath("/admin/volunteers");
   revalidatePath("/enrollee/tours");
+  revalidatePath("/volunteer");
+  revalidatePath("/volunteer/tours");
 }
 
 // Admin declines a withdrawal request: application is restored to its status
@@ -335,6 +373,7 @@ export async function rejectWithdrawal(applicationId: string) {
   revalidatePath("/admin/students");
   revalidatePath("/admin/withdrawals");
   revalidatePath("/enrollee/tours");
+  revalidatePath("/volunteer/tours");
 }
 
 export async function assignVolunteerToTour(tourId: string, volunteerId: string, roleDescription?: string) {

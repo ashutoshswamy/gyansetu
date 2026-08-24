@@ -4,11 +4,13 @@ import { Plane, MapPin, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/format-date";
+import { WithdrawButton } from "@/components/features/tours/withdraw-button";
 
 type AssignmentRow = {
   id: string;
   role_description?: string;
   tours?: {
+    id: string;
     title: string;
     destination: string;
     start_date: string;
@@ -37,11 +39,18 @@ export default async function VolunteerToursPage() {
     .eq("clerk_id", userId!)
     .single();
 
-  const { data: assignments } = await db
-    .from("volunteer_assignments")
-    .select("*, tours(id, title, destination, start_date, end_date, capacity, status, participant_visible, description)")
-    .eq("volunteer_id", user?.id ?? "")
-    .order("assigned_at", { ascending: false });
+  const [{ data: assignments }, { data: application }] = await Promise.all([
+    db
+      .from("volunteer_assignments")
+      .select("*, tours(id, title, destination, start_date, end_date, capacity, status, participant_visible, description)")
+      .eq("volunteer_id", user?.id ?? "")
+      .order("assigned_at", { ascending: false }),
+    db
+      .from("tour_applications")
+      .select("id, tour_id, status")
+      .eq("student_id", user?.id ?? "")
+      .maybeSingle(),
+  ]);
 
   const active   = (assignments ?? []).filter((a: AssignmentRow) => a.tours?.status === "open" && a.tours?.participant_visible !== false);
   const past     = (assignments ?? []).filter((a: AssignmentRow) => ["completed", "closed"].includes(a.tours?.status ?? ""));
@@ -69,10 +78,10 @@ export default async function VolunteerToursPage() {
         ) : (
           <div className="space-y-8">
             {active.length > 0 && (
-              <Section title="Active" assignments={active} />
+              <Section title="Active" assignments={active} application={application} />
             )}
             {upcoming.length > 0 && (
-              <Section title="Upcoming" assignments={upcoming} />
+              <Section title="Upcoming" assignments={upcoming} application={application} />
             )}
             {past.length > 0 && (
               <Section title="Past" assignments={past} />
@@ -84,7 +93,9 @@ export default async function VolunteerToursPage() {
   );
 }
 
-function Section({ title, assignments }: { title: string; assignments: AssignmentRow[] }) {
+type ApplicationRow = { id: string; tour_id: string; status: string } | null | undefined;
+
+function Section({ title, assignments, application }: { title: string; assignments: AssignmentRow[]; application?: ApplicationRow }) {
   return (
     <div>
       <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gs-muted)", marginBottom: 12 }}>{title}</p>
@@ -120,6 +131,17 @@ function Section({ title, assignments }: { title: string; assignments: Assignmen
 
               {a.tours?.description && (
                 <p style={{ fontSize: 13, color: "var(--gs-text-secondary)", marginTop: 12, lineHeight: 1.6 }}>{a.tours.description}</p>
+              )}
+
+              {application?.tour_id === a.tours?.id && application?.status === "withdrawal_requested" && (
+                <p style={{ fontSize: 13, color: "var(--gs-accent)", marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+                  Withdrawal requested — waiting on admin approval.
+                </p>
+              )}
+              {application?.tour_id === a.tours?.id && application?.status === "selected" && (
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+                  <WithdrawButton applicationId={application.id} />
+                </div>
               )}
             </CardContent>
 </Card>

@@ -46,7 +46,7 @@ export async function getVolunteerDetailForCoreMember(groupId: string, volunteer
     tourId
       ? db.from("media_gallery").select("*").eq("tour_id", tourId).eq("uploaded_by", volunteerId).order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as unknown[] }),
-    db.from("volunteer_observations").select("*, author:users!volunteer_observations_author_id_fkey(id, name)").eq("volunteer_id", volunteerId).order("created_at", { ascending: false }),
+    db.from("volunteer_observations").select("*").eq("volunteer_id", volunteerId).order("created_at", { ascending: false }),
   ]);
 
   return {
@@ -61,8 +61,23 @@ export async function getVolunteerDetailForCoreMember(groupId: string, volunteer
     expenses: expenses ?? [],
     tourReports: tourReports ?? [],
     media: media ?? [],
-    observations: observations ?? [],
+    observations: await attachObservationAuthors(db, observations ?? []),
   };
+}
+
+// volunteer_observations.author_id -> users.id has no FK constraint in the DB
+// (schema drift from schema.sql), so PostgREST can't auto-embed it — resolve
+// author names with a manual second lookup instead.
+async function attachObservationAuthors(
+  db: Awaited<ReturnType<typeof requireCoreMemberUser>>["db"],
+  observations: { author_id?: string | null }[]
+) {
+  const authorIds = [...new Set(observations.map((o) => o.author_id).filter((id): id is string => !!id))];
+  if (authorIds.length === 0) return observations.map((o) => ({ ...o, author: null }));
+
+  const { data: authors } = await db.from("users").select("id, name").in("id", authorIds);
+  const authorsById = new Map((authors ?? []).map((a) => [a.id, a]));
+  return observations.map((o) => ({ ...o, author: o.author_id ? (authorsById.get(o.author_id) ?? null) : null }));
 }
 
 // Core member notes about a volunteer — never surfaced to the volunteer, only to
@@ -80,13 +95,14 @@ export async function createVolunteerObservation(input: VolunteerObservationInpu
   const { data: observation, error } = await db
     .from("volunteer_observations")
     .insert({ volunteer_id: data.volunteer_id, group_id: data.group_id ?? null, author_id: user.id, note: data.note })
-    .select("*, author:users!volunteer_observations_author_id_fkey(id, name)")
+    .select("*")
     .single();
   if (error) { console.error("[createVolunteerObservation]", error); throw new Error("Failed to add observation"); }
 
   revalidatePath(`/core-member/volunteer/${data.volunteer_id}`);
   revalidatePath(`/admin/volunteers/${data.volunteer_id}`);
-  return observation;
+  const [withAuthor] = await attachObservationAuthors(db, [observation]);
+  return withAuthor;
 }
 
 export async function getVolunteerObservations(volunteerId: string, groupId?: string) {
@@ -99,11 +115,11 @@ export async function getVolunteerObservations(volunteerId: string, groupId?: st
 
   const { data, error } = await db
     .from("volunteer_observations")
-    .select("*, author:users!volunteer_observations_author_id_fkey(id, name)")
+    .select("*")
     .eq("volunteer_id", volunteerId)
     .order("created_at", { ascending: false });
   if (error) { console.error("[getVolunteerObservations]", error); throw new Error("Failed to fetch observations"); }
-  return data ?? [];
+  return attachObservationAuthors(db, data ?? []);
 }
 
 export async function createDemoEvaluationForVolunteer(groupId: string, input: DemoEvaluationInput) {
