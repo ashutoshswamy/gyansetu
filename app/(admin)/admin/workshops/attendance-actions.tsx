@@ -68,7 +68,7 @@ export function MakeupDecisionButtons({ workshopId, volunteerId }: { workshopId:
         disabled={loading !== null}
         className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
       >
-        {loading === "allowed" ? "..." : "Allow Makeup"}
+        {loading === "allowed" ? "..." : "Approve Make-up"}
       </Button>
       <Button
         size="sm"
@@ -77,7 +77,7 @@ export function MakeupDecisionButtons({ workshopId, volunteerId }: { workshopId:
         disabled={loading !== null}
         className="text-destructive border-destructive/30 hover:bg-destructive/10 font-semibold"
       >
-        {loading === "not_allowed" ? "..." : "Deny Makeup"}
+        {loading === "not_allowed" ? "..." : "Reject Make-up"}
       </Button>
     </div>
   );

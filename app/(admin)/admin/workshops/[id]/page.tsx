@@ -4,6 +4,7 @@ import { getWorkshopAttendees } from "@/actions/workshops";
 import { formatDate } from "@/lib/format-date";
 import { ArrowLeft, GraduationCap } from "lucide-react";
 import { MarkAttendanceButtons, MakeupDecisionButtons } from "../attendance-actions";
+import { ExportButton } from "@/components/features/export-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -63,6 +64,17 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
   );
   const marked = counts.present + counts.absent;
   const rate = marked === 0 ? "—" : `${Math.round((counts.present / marked) * 100)}%`;
+  const exportData = allVolunteers.map((v: { id: string; name: string; email: string }) => {
+    const a = attendeeMap.get(v.id);
+    return {
+      Volunteer: v.name,
+      Email: v.email,
+      Status: statusColors[a?.attendance_status ?? "pending"]?.label ?? "Pending",
+      "Make-up": a?.makeup_decision ? (makeupColors[a.makeup_decision]?.label ?? a.makeup_decision) : "",
+      "Missed Summary": a?.missed_summary ?? "",
+    };
+  });
+
   const summaryCards = [
     { label: "Present", value: counts.present, color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
     { label: "Absent", value: counts.absent, color: "var(--gs-danger)", bg: "rgba(var(--gs-danger-rgb), 0.08)" },
@@ -73,9 +85,12 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-5xl mx-auto">
-        <Link href="/admin/workshops" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--gs-text-secondary)", textDecoration: "none", marginBottom: 16 }}>
-          <ArrowLeft size={14} /> Back to Workshops
-        </Link>
+        <div className="flex items-center justify-between gap-3 flex-wrap" style={{ marginBottom: 16 }}>
+          <Link href="/admin/workshops" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--gs-text-secondary)", textDecoration: "none" }}>
+            <ArrowLeft size={14} /> Back to Workshops
+          </Link>
+          <ExportButton data={exportData} filename={`attendance-${workshop.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.csv`} />
+        </div>
 
         <Card>
 <CardContent>
