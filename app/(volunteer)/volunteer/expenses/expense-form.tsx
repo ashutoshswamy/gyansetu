@@ -8,6 +8,7 @@ import { getGroupsForSelect } from "@/actions/groups";
 import { uploadFileToStorage } from "@/actions/upload";
 import type { ExpenseInput } from "@/lib/validations";
 import type { Expense } from "@/types";
+import { istDateKey } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -244,7 +245,7 @@ export function ExpenseForm({ groupId, editExpense, onDone }: { groupId: string 
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-muted-foreground">Date <span className="text-destructive">*</span></Label>
-                <Input name="expense_date" type="date" required defaultValue={editExpense?.expense_date ?? new Date().toISOString().split("T")[0]} />
+                <Input name="expense_date" type="date" required defaultValue={editExpense?.expense_date ?? istDateKey()} />
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 import { getDemoEvaluationById } from "@/actions/demo-evaluations";
 import { formatDate } from "@/lib/format-date";
-import { SCORE_FIELDS } from "@/components/features/demo-evaluations/evaluation-form";
+import { SCORE_FIELDS } from "@/lib/demo-evaluation-utils";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { DemoEvaluation } from "@/types";
@@ -49,7 +49,7 @@ export default async function AdminDemoEvaluationDetailPage({ params }: { params
           <p style={{ fontSize: 12, fontWeight: 700, color: "var(--foreground)", margin: "0 0 12px" }}>Scores (0-10 each)</p>
           <div className="space-y-2">
             {SCORE_FIELDS.map((f) => {
-              const v = evaluation.scores[f.key];
+              const v = evaluation.scores?.[f.key] ?? 0;
               return (
                 <div key={f.key} className="flex items-center justify-between">
                   <span style={{ fontSize: 13, color: "var(--gs-text-secondary)" }}>{f.label}</span>

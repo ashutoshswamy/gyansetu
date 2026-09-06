@@ -2,6 +2,7 @@
 
 import { requireAdminUser, requireVolunteerUser, getAuthenticatedUser } from "@/lib/clerk/action-auth";
 import { dailyLogSchema, type DailyLogInput } from "@/lib/validations";
+import { istDateKey } from "@/lib/format-date";
 import { revalidatePath } from "next/cache";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
@@ -95,9 +96,8 @@ export async function getMediaByTour(tourId: string) {
 
 export async function getTodayUploadCount() {
   const { db, user } = await requireVolunteerUser();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const startOfDay = today.toISOString();
+  // Start of "today" in IST, as a UTC instant for the timestamptz comparison.
+  const startOfDay = new Date(`${istDateKey()}T00:00:00+05:30`).toISOString();
 
   const { count, error } = await db
     .from("media_gallery")

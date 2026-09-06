@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import type { VolunteerLocation } from "./volunteer-map";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatTime } from "@/lib/format-date";
 
 // OpenStreetMap Nominatim reverse geocoding — free, no API key, but its usage
 // policy caps public requests at ~1/sec, so lookups are queued and cached by
@@ -100,7 +101,7 @@ export function VolunteerLocationTable({ locations }: { locations: VolunteerLoca
                     {loc.latitude.toFixed(6)}, {loc.longitude.toFixed(6)}
                   </td>
                   <td style={{ padding: "10px 16px", color: "var(--gs-muted)", whiteSpace: "nowrap" }}>
-                    {new Date(loc.updated_at).toLocaleTimeString()}
+                    {formatTime(loc.updated_at)}
                   </td>
                 </tr>
               );

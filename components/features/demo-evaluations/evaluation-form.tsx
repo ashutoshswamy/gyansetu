@@ -15,20 +15,9 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export const SCORE_FIELDS = [
-  { key: "hindi_english_communication", label: "Hindi / English Communication" },
-  { key: "concept_clarity", label: "Concept Clarity" },
-  { key: "communication_skills", label: "Communication Skills" },
-  { key: "presentation_skills", label: "Presentation Skills" },
-  { key: "confidence_body_language", label: "Confidence & Body Language" },
-  { key: "student_engagement", label: "Student Engagement" },
-  { key: "activity_demonstration", label: "Activity Demonstration" },
-  { key: "team_coordination", label: "Team Coordination" },
-  { key: "time_session_management", label: "Time & Session Management" },
-  { key: "overall_readiness", label: "Overall Readiness" },
-] as const;
-
-type ScoreKey = (typeof SCORE_FIELDS)[number]["key"];
+import { SCORE_FIELDS, type ScoreKey } from "@/lib/demo-evaluation-utils";
+// Re-exported for existing client-component importers.
+export { SCORE_FIELDS, type ScoreKey };
 
 // score 0-10, 10 whole stars, one star = one point
 export function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {

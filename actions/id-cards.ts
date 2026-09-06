@@ -36,7 +36,7 @@ async function generateCardNumber(
   const { count } = await seqQuery;
   const seq = (count ?? 0) + 1;
 
-  const year = String(new Date(tour.start_date).getFullYear()).slice(-2);
+  const year = String(tour.start_date).slice(2, 4);
   return `GS-${destCode(tour.destination)}${year}-${groupCode(groupName)}-${String(seq).padStart(3, "0")}`;
 }
 

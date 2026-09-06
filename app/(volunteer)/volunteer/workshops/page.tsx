@@ -1,5 +1,5 @@
 import { getUpcomingWorkshops, getMyWorkshopAttendance } from "@/actions/workshops";
-import { formatDate } from "@/lib/format-date";
+import { formatDate, istDateKey } from "@/lib/format-date";
 import { GraduationCap, CalendarClock, CheckCircle2, XCircle } from "lucide-react";
 import { MissedSummaryForm } from "./missed-summary-form";
 import { AttendedButton } from "./attended-button";
@@ -38,9 +38,9 @@ export default async function VolunteerWorkshopsPage() {
 
   const attendanceMap = new Map(myAttendance.map(a => [a.workshop_id, a]));
 
-  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const todayIST = istDateKey();
   const totalCount = workshops.length;
-  const upcomingCount = workshops.filter(w => new Date(w.workshop_date) >= today && w.status !== "cancelled").length;
+  const upcomingCount = workshops.filter(w => w.workshop_date >= todayIST && w.status !== "cancelled").length;
   const attendedCount = myAttendance.filter(a => a.attendance_status === "present").length;
   const missedCount = myAttendance.filter(a => a.attendance_status === "absent" || a.attendance_status === "excused").length;
 
@@ -75,7 +75,8 @@ export default async function VolunteerWorkshopsPage() {
             const status = a?.attendance_status ?? "pending";
             const sc = statusColors[status] ?? statusColors.pending;
             const awaitingResponse = status === "pending";
-            const workshopDateTime = new Date(w.workshop_time ? `${w.workshop_date}T${w.workshop_time}` : `${w.workshop_date}T23:59:59`);
+            // workshop_time is IST wall-clock; pin the offset so the server's timezone doesn't shift it.
+            const workshopDateTime = new Date(w.workshop_time ? `${w.workshop_date}T${w.workshop_time}+05:30` : `${w.workshop_date}T23:59:59+05:30`);
             const isPast = workshopDateTime.getTime() < now;
             return (
               <Card key={w.id}>

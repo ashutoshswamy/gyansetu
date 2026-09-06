@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Navigation, MapPin } from "lucide-react";
 import { startSharingLocation, stopSharingLocation, updateMyLocation, getMySharingStatus } from "@/actions/locations";
+import { formatTime } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -123,7 +124,7 @@ export default function VolunteerLocationPage() {
               </p>
               <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
                 {isSharing && lastUpdated
-                  ? `Last updated ${new Date(lastUpdated).toLocaleTimeString()}`
+                  ? `Last updated ${formatTime(lastUpdated)}`
                   : "Admins can only see your location while sharing is on"}
               </p>
             </div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAllWorkshops } from "@/actions/workshops";
 import { formatDate } from "@/lib/format-date";
 import { GraduationCap } from "lucide-react";
+import { ExportButton } from "@/components/features/export-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,18 @@ const statusColors: Record<string, { color: string; bg: string }> = {
 export default async function AdminWorkshopsPage() {
   const workshops = await getAllWorkshops();
 
+  const exportData = workshops.map((w: Awaited<ReturnType<typeof getAllWorkshops>>[number]) => ({
+    Title: w.title,
+    Type: (typeColors[w.workshop_type] ?? typeColors.other).label,
+    Status: w.status,
+    Date: formatDate(w.workshop_date),
+    Time: w.workshop_time ?? "",
+    Location: w.hall_location ?? "",
+    Trainer: w.trainer_name ?? "",
+    "Kit Ready": w.kit_ready ? "Yes" : "No",
+    Groups: w.groups?.map((g: { name: string }) => g.name).join("; ") ?? "",
+  }));
+
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-6xl mx-auto">
@@ -32,9 +45,12 @@ export default async function AdminWorkshopsPage() {
             <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Workshops</h1>
             <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{workshops.length} workshops scheduled</p>
           </div>
-          <Link href="/admin/workshops/new">
-            <Button>+ New Workshop</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <ExportButton data={exportData} filename="workshops.csv" />
+            <Link href="/admin/workshops/new">
+              <Button>+ New Workshop</Button>
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-3">

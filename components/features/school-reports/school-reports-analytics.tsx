@@ -9,7 +9,7 @@ import {
 } from "@/components/features/analytics/chart-kit";
 
 const RATING_ORDER = ["Excellent", "Good", "Satisfactory", "Needs Improvement"];
-const MONTH_FORMAT = new Intl.DateTimeFormat("en-IN", { month: "short", year: "2-digit" });
+const MONTH_FORMAT = new Intl.DateTimeFormat("en-IN", { month: "short", year: "2-digit", timeZone: "Asia/Kolkata" });
 
 interface SessionRow { num_students?: number }
 

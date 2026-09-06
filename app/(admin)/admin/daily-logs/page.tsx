@@ -1,5 +1,5 @@
 import { getAllDailyLogs } from "@/actions/daily-logs";
-import { formatDate } from "@/lib/format-date";
+import { formatDate, istDateKey } from "@/lib/format-date";
 import { BookOpen, AlertTriangle } from "lucide-react";
 import type { DailyLog } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,9 +21,7 @@ const QUESTIONS = [
 // A log is "delayed" when it was submitted (created_at) on a different calendar day than
 // the day it's actually reporting on (log_date).
 function isDelayed(log: DailyLogRow) {
-  const logDate = new Date(log.log_date).toDateString();
-  const submittedDate = new Date(log.created_at).toDateString();
-  return logDate !== submittedDate;
+  return istDateKey(log.log_date) !== istDateKey(log.created_at);
 }
 
 export default async function AdminDailyLogsPage() {

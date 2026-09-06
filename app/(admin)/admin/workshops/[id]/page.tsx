@@ -51,6 +51,25 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
   const attendeeMap = new Map(attendees.map(a => [a.volunteer_id, a]));
   const allVolunteers = volunteersRes.data ?? [];
 
+  const counts = allVolunteers.reduce(
+    (acc: { present: number; absent: number; unmarked: number }, v: { id: string }) => {
+      const s = attendeeMap.get(v.id)?.attendance_status ?? "pending";
+      if (s === "present") acc.present++;
+      else if (s === "absent") acc.absent++;
+      else acc.unmarked++;
+      return acc;
+    },
+    { present: 0, absent: 0, unmarked: 0 },
+  );
+  const marked = counts.present + counts.absent;
+  const rate = marked === 0 ? "—" : `${Math.round((counts.present / marked) * 100)}%`;
+  const summaryCards = [
+    { label: "Present", value: counts.present, color: "var(--gs-success)", bg: "rgba(var(--gs-success-rgb), 0.08)" },
+    { label: "Absent", value: counts.absent, color: "var(--gs-danger)", bg: "rgba(var(--gs-danger-rgb), 0.08)" },
+    { label: "Not Marked", value: counts.unmarked, color: "var(--gs-muted)", bg: "rgba(var(--gs-muted-rgb), 0.1)" },
+    { label: "Attendance Rate", value: rate, color: "var(--gs-accent)", bg: "rgba(var(--gs-accent-rgb), 0.08)" },
+  ];
+
   return (
     <div className="min-h-screen p-4 sm:p-8" style={{ background: "var(--background)" }}>
       <div className="max-w-5xl mx-auto">
@@ -94,6 +113,16 @@ export default async function AdminWorkshopDetailPage({ params }: { params: Prom
 </Card>
 
         <h2 style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)", margin: "24px 0 12px" }}>Attendance</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          {summaryCards.map(c => (
+            <Card key={c.label} style={{ background: c.bg }}>
+              <CardContent>
+                <div style={{ fontSize: 24, fontWeight: 700, color: c.color, lineHeight: 1 }}>{c.value}</div>
+                <div style={{ fontSize: 12, color: "var(--gs-text-secondary)", marginTop: 4 }}>{c.label}</div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
         <div className="space-y-3">
           {allVolunteers.length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "24px 0" }}>No volunteers found.</p>

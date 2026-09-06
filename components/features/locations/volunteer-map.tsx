@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { formatTime } from "@/lib/format-date";
 
 export interface VolunteerLocation {
   user_id: string;
@@ -41,7 +42,7 @@ export function VolunteerMap({ locations }: { locations: VolunteerLocation[] }) 
               <br />
               {loc.email}
               <br />
-              Updated: {new Date(loc.updated_at).toLocaleTimeString()}
+              Updated: {formatTime(loc.updated_at)}
             </div>
           </Popup>
         </Marker>
