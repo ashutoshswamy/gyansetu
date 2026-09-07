@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { approveTestimonial, declineTestimonial, deleteTestimonial } from "@/actions/public-forms";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format-date";
+import { SearchList } from "@/components/features/admin/search-list";
 
 type Status = "pending" | "approved" | "declined";
 
@@ -111,6 +112,7 @@ export default async function AdminTestimonialsPage({
           })}
         </div>
 
+        <SearchList placeholder="Search testimonials by name, role, batch, or message…">
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {visible.length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
@@ -199,6 +201,7 @@ export default async function AdminTestimonialsPage({
             </Card>
           ))}
         </div>
+        </SearchList>
       </div>
     </div>
   );

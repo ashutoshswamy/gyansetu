@@ -7,6 +7,7 @@ import { TestRowActions } from "@/components/features/tests/test-row-actions";
 import Link from "next/link";
 import { ClipboardList, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SearchList } from "@/components/features/admin/search-list";
 
 const testStatusStyles: Record<string, { color: string; background: string }> = {
   active: { color: "var(--gs-success)", background: "rgba(var(--gs-success-rgb), 0.08)" },
@@ -102,6 +103,7 @@ export default async function AdminTestsPage() {
           </div>
         </div>
 
+        <SearchList placeholder="Search tests by title, tour, or candidate…">
         <div className="space-y-4">
           {(tests ?? []).length === 0 && (
             <Card>
@@ -247,6 +249,7 @@ export default async function AdminTestsPage() {
             );
           })}
         </div>
+        </SearchList>
       </div>
     </div>
   );

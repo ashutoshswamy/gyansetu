@@ -5,6 +5,7 @@ import { ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SearchList } from "@/components/features/admin/search-list";
 
 function scoreColor(total: number) {
   if (total >= 80) return "var(--gs-success)"; // 80%+
@@ -29,6 +30,7 @@ export default async function AdminDemoEvaluationsPage() {
           </Link>
         </div>
 
+        <SearchList placeholder="Search by volunteer, tour, or observer…">
         <div className="space-y-3">
           {evaluations.length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No evaluations recorded yet.</p>
@@ -70,6 +72,7 @@ export default async function AdminDemoEvaluationsPage() {
             );
           })}
         </div>
+        </SearchList>
       </div>
     </div>
   );

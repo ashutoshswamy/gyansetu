@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
 import { formatDate } from "@/lib/format-date";
+import { SearchList } from "@/components/features/admin/search-list";
 
 interface InstitutionInquiry {
   id: string;
@@ -52,6 +53,7 @@ export default async function AdminInstitutionsPage() {
           <ExportButton data={exportData} filename="institution-inquiries.csv" />
         </div>
 
+        <SearchList placeholder="Search by institution, contact, email, city, or type…">
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {inquiries.length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
@@ -114,6 +116,7 @@ export default async function AdminInstitutionsPage() {
             </Card>
           ))}
         </div>
+        </SearchList>
       </div>
     </div>
   );

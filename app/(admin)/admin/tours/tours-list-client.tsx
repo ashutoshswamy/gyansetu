@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Tour } from "@/types";
-import { MapPin, Calendar, Users } from "lucide-react";
+import { MapPin, Calendar, Users, Search } from "lucide-react";
 import { DeleteTourButton } from "@/components/features/tours/delete-tour-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { formatDateRange } from "@/lib/format-date";
 
 const statusStyles: Record<Tour["status"], { color: string; background: string }> = {
@@ -21,15 +22,29 @@ const TABS = ["All", "Active", "History"] as const;
 
 export function ToursListClient({ tours }: { tours: Tour[] }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("All");
+  const [query, setQuery] = useState("");
 
+  const q = query.trim().toLowerCase();
   const filtered = tours.filter((tour) => {
-    if (tab === "Active") return tour.status !== "completed";
-    if (tab === "History") return tour.status === "completed";
+    if (tab === "Active" && tour.status === "completed") return false;
+    if (tab === "History" && tour.status !== "completed") return false;
+    if (q && !`${tour.title} ${tour.destination} ${tour.status}`.toLowerCase().includes(q)) return false;
     return true;
   });
 
   return (
     <>
+      <div className="relative mb-4">
+        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--gs-muted)" }} />
+        <Input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search tours by title, destination, or status…"
+          className="pl-9"
+        />
+      </div>
+
       <div className="flex gap-2 mb-4">
         {TABS.map((t) => (
           <Button

@@ -5,6 +5,7 @@ import { ExportButton } from "@/components/features/export-button";
 import { Inbox, CheckCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { AadhaarToggleButton } from "./aadhaar-toggle-button";
+import { SearchList } from "@/components/features/admin/search-list";
 
 export default async function ProfilesPage() {
   const profiles = await getAllVolunteerProfiles();
@@ -40,6 +41,7 @@ export default async function ProfilesPage() {
           )}
         </div>
 
+        <SearchList placeholder="Search by name, email, phone, city, or institution…" rowSelector="tbody tr">
         <Card>
           {profiles.length === 0 ? (
             <CardContent className="text-center py-16">
@@ -115,6 +117,7 @@ export default async function ProfilesPage() {
             </div>
           )}
         </Card>
+        </SearchList>
       </div>
     </div>
   );

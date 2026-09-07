@@ -4,6 +4,7 @@ import type { Tour } from "@/types";
 import { MapPin, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDateRange } from "@/lib/format-date";
+import { SearchList } from "@/components/features/admin/search-list";
 
 export default async function AdminLocationsPage() {
   const db = createServerClient();
@@ -25,6 +26,7 @@ export default async function AdminLocationsPage() {
           </p>
         </div>
 
+        <SearchList placeholder="Search tours by title or destination…">
         <div className="space-y-3">
           {(tours ?? []).length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
@@ -47,6 +49,7 @@ export default async function AdminLocationsPage() {
             </Link>
           ))}
         </div>
+        </SearchList>
       </div>
     </div>
   );

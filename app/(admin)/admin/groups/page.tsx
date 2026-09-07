@@ -5,6 +5,7 @@ import { DeleteGroupButton } from "@/components/features/groups/delete-group-but
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SearchList } from "@/components/features/admin/search-list";
 
 interface GroupMember {
   id: string;
@@ -54,6 +55,8 @@ export default async function AdminGroupsPage() {
           </Link>
         </div>
 
+        <SearchList placeholder="Search groups by name, state, tour, mentor, or member…" rowSelector="[data-search-row]">
+        <div>
         {Object.keys(groupsByTour).length === 0 && (
           <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "48px 0" }}>
             No groups yet. Create groups to organize volunteers by state.
@@ -61,13 +64,13 @@ export default async function AdminGroupsPage() {
         )}
 
         {Object.entries(groupsByTour).map(([tourTitle, tourGroups]) => (
-          <div key={tourTitle} className="mb-8">
+          <div key={tourTitle} className="mb-8" data-search-section>
             <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--gs-text-secondary)", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
               {tourTitle} ({tourGroups.length} groups)
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {tourGroups.map((group) => (
-                <Card key={group.id}>
+                <Card key={group.id} data-search-row>
 <CardContent>
                   <div className="flex items-start justify-between mb-3 flex-wrap gap-4">
                     <div>
@@ -119,6 +122,8 @@ export default async function AdminGroupsPage() {
             </div>
           </div>
         ))}
+        </div>
+        </SearchList>
       </div>
     </div>
   );

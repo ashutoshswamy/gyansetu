@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
+import { SearchList } from "@/components/features/admin/search-list";
 import { Users, MapPin, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -85,6 +86,7 @@ export default async function AdminVolunteersPage() {
           </CardContent>
         </Card>
 
+        <SearchList placeholder="Search volunteers by name, email, tour, or role…">
         <div className="space-y-3">
           {(volunteers ?? []).length === 0 && (
             <Card>
@@ -168,6 +170,7 @@ export default async function AdminVolunteersPage() {
             );
           })}
         </div>
+        </SearchList>
       </div>
     </div>
   );

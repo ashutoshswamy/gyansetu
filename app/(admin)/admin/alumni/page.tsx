@@ -4,6 +4,7 @@ import { ExportButton } from "@/components/features/export-button";
 import { Inbox } from "lucide-react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
+import { SearchList } from "@/components/features/admin/search-list";
 
 type Visit = { year?: string; month?: string; location?: string; role?: string };
 
@@ -42,6 +43,7 @@ export default async function AlumniAdminPage() {
           )}
         </div>
 
+        <SearchList placeholder="Search alumni by name, email, mobile, or company…" rowSelector="tbody tr">
         <Card>
 <CardContent>
           {registrations.length === 0 ? (
@@ -85,6 +87,7 @@ export default async function AlumniAdminPage() {
           )}
         </CardContent>
 </Card>
+        </SearchList>
       </div>
     </div>
   );

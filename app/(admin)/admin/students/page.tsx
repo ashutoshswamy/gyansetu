@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
 import { UserCheck, ClipboardList } from "lucide-react";
+import { SearchList } from "@/components/features/admin/search-list";
 
 const appStatusStyles: Record<string, { color: string; background: string }> = {
   pending:     { color: "var(--gs-warning)", background: "rgba(var(--gs-warning-rgb), 0.08)" },
@@ -117,6 +118,7 @@ export default async function AdminEnrollmentsPage() {
         </Card>
 
         {/* User list */}
+        <SearchList placeholder="Search enrollments by name, email, or tour…">
         <div className="space-y-3">
           {(enrollmentUsers ?? []).length === 0 && (
             <Card>
@@ -235,6 +237,7 @@ export default async function AdminEnrollmentsPage() {
             );
           })}
         </div>
+        </SearchList>
       </div>
     </div>
   );

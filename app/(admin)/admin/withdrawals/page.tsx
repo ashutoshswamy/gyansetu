@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LogOut } from "lucide-react";
 import { WithdrawalActions } from "./withdrawal-actions";
+import { SearchList } from "@/components/features/admin/search-list";
 
 interface WithdrawalRow {
   id: string;
@@ -37,6 +38,7 @@ export default async function AdminWithdrawalsPage() {
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)", marginTop: 4 }}>{pending.length} pending approval</p>
         </div>
 
+        <SearchList placeholder="Search by student, email, or tour…">
         <div className="space-y-3">
           {requests.length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No withdrawal requests yet.</p>
@@ -76,6 +78,7 @@ export default async function AdminWithdrawalsPage() {
             );
           })}
         </div>
+        </SearchList>
       </div>
     </div>
   );

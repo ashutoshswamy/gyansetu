@@ -11,6 +11,7 @@ import { MarkPaidButton } from "./mark-paid-button";
 import { RejectPaymentButton } from "./reject-payment-button";
 import { RefundFeeButton } from "./refund-fee-button";
 import { PaymentSettingsForm } from "./payment-settings-form";
+import { SearchList } from "@/components/features/admin/search-list";
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   pending:   { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
@@ -73,6 +74,7 @@ export default async function AdminRegistrationFeesPage() {
           })}
         </div>
 
+        <SearchList placeholder="Search by volunteer, email, tour, group, or reference…">
         <div className="space-y-3">
           {fees.length === 0 && (
             <p style={{ color: "var(--gs-muted)", fontSize: 14, textAlign: "center", padding: "32px 0" }}>No registration fee records yet.</p>
@@ -123,6 +125,7 @@ export default async function AdminRegistrationFeesPage() {
             );
           })}
         </div>
+        </SearchList>
       </div>
     </div>
   );
