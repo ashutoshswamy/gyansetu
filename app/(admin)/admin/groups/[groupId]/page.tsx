@@ -45,7 +45,7 @@ export default function GroupDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [allGroups, setAllGroups] = useState<{ id: string; name: string; tours?: { title: string } | null }[]>([]);
-  useEffect(() => { getAllGroups().then(g => setAllGroups(g as typeof allGroups)); }, []);
+  useEffect(() => { getAllGroups().then(g => setAllGroups(g as unknown as typeof allGroups)); }, []);
 
   async function handleMove(userId: string, toGroupId: string) {
     setSaving(true);
