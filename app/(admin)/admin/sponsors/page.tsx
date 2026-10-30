@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExportButton } from "@/components/features/export-button";
 import { formatDate } from "@/lib/format-date";
+import { DeleteSponsorInquiryButton } from "@/components/features/admin/delete-sponsor-inquiry-button";
 import { SearchList } from "@/components/features/admin/search-list";
 
 interface SponsorInquiry {
@@ -73,6 +74,7 @@ export default async function AdminSponsorsPage() {
                   </div>
                   <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>Submitted {formatDate(inquiry.created_at)}</p>
                 </div>
+                <DeleteSponsorInquiryButton id={inquiry.id} />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "6px 20px", marginBottom: inquiry.message ? 10 : 0 }}>

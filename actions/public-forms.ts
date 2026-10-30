@@ -100,3 +100,12 @@ export async function deleteTestimonial(id: string) {
     throw new Error("Failed to delete testimonial.");
   }
 }
+
+export async function deleteSponsorInquiry(id: string) {
+  const { db } = await requireAdminUser();
+  const { error } = await db.from("sponsor_inquiries").delete().eq("id", id);
+  if (error) {
+    console.error("deleteSponsorInquiry error:", error);
+    throw new Error("Failed to delete sponsor inquiry.");
+  }
+}

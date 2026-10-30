@@ -226,7 +226,7 @@ export default function GroupDetailPage() {
                     </Button>
                     <Select value="" onValueChange={v => v && handleMove(m.user_id, v)} disabled={saving}>
                       <SelectTrigger className="w-32 h-7 text-xs"><SelectValue placeholder="Move to…" /></SelectTrigger>
-                      <SelectContent>
+                      <SelectContent align="end" className="w-auto min-w-64 max-w-[90vw]">
                         {allGroups.filter(g => g.id !== groupId).map(g => (
                           <SelectItem key={g.id} value={g.id}>{g.name}{g.tours?.title ? ` — ${g.tours.title}` : ""}</SelectItem>
                         ))}
