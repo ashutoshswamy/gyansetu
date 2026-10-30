@@ -5,6 +5,7 @@ import { Users } from "lucide-react";
 import { RoleSelect, DeleteUserButton, SyncDeletedUsersButton } from "./role-select";
 import type { UserRole } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { SearchList } from "@/components/features/admin/search-list";
 
 const ROLE_GROUPS: { key: UserRole; label: string }[] = [
   { key: "super_admin", label: "Super Admin" },
@@ -55,9 +56,10 @@ export default async function SuperAdminPage() {
           </CardContent>
 </Card>
         ) : (
+          <SearchList placeholder="Search users by name, email, or role…" rowSelector="[data-search-row]">
           <div className="space-y-6">
             {grouped.map((g) => (
-              <div key={g.key}>
+              <div key={g.key} data-search-section={g.users.length ? "" : undefined}>
                 <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--gs-text-secondary)", marginBottom: 8 }}>
                   {g.label} <span style={{ color: "var(--gs-muted)", fontWeight: 500 }}>({g.users.length})</span>
                 </h2>
@@ -82,7 +84,7 @@ export default async function SuperAdminPage() {
                         </thead>
                         <tbody>
                           {g.users.map((u) => (
-                            <tr key={u.id} style={{ borderBottom: "1px solid var(--border)" }} className="hover:bg-slate-50/50">
+                            <tr key={u.id} data-search-row style={{ borderBottom: "1px solid var(--border)" }} className="hover:bg-slate-50/50">
                               <td className="p-4">
                                 <div className="font-medium text-[var(--foreground)]">{u.name}</div>
                                 <div className="text-xs text-[var(--gs-muted)]">{u.email}</div>
@@ -112,6 +114,7 @@ export default async function SuperAdminPage() {
               </div>
             ))}
           </div>
+          </SearchList>
         )}
       </div>
     </div>

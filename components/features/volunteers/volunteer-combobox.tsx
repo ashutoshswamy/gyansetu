@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 
 type Volunteer = { id: string; name: string; email: string };
@@ -22,15 +23,31 @@ export function VolunteerCombobox({
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [rect, setRect] = useState<DOMRect | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function onDocMouseDown(e: MouseEvent) {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+      const t = e.target as Node;
+      if (!rootRef.current?.contains(t) && !listRef.current?.contains(t)) setOpen(false);
     }
     document.addEventListener("mousedown", onDocMouseDown);
     return () => document.removeEventListener("mousedown", onDocMouseDown);
   }, []);
+
+  // Portal + fixed position so ancestor `overflow-hidden` (e.g. Card) can't clip the list.
+  useEffect(() => {
+    if (!open) return;
+    const update = () => setRect(rootRef.current?.getBoundingClientRect() ?? null);
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [open]);
 
   const selected = volunteers.find(v => v.id === value);
   const pool = excludeIds ? volunteers.filter(v => !excludeIds.has(v.id)) : volunteers;
@@ -46,8 +63,8 @@ export function VolunteerCombobox({
         onFocus={() => { setOpen(true); setQuery(""); }}
         onChange={e => setQuery(e.target.value)}
       />
-      {open && (
-        <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 20, background: "white", border: "1px solid var(--border)", borderRadius: 6, maxHeight: 220, overflowY: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
+      {open && rect && createPortal(
+        <div ref={listRef} style={{ position: "fixed", top: rect.bottom + 4, left: rect.left, width: rect.width, zIndex: 60, background: "white", border: "1px solid var(--border)", borderRadius: 6, maxHeight: 220, overflowY: "auto", boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
           {filtered.length === 0 && (
             <div style={{ padding: "10px 12px", fontSize: 13, color: "var(--gs-muted)" }}>No matches</div>
           )}
@@ -61,7 +78,8 @@ export function VolunteerCombobox({
               <div style={{ fontSize: 12, color: "var(--gs-muted)" }}>{v.email}</div>
             </div>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
