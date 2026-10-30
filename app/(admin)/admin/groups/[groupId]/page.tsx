@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { addGroupMember, removeGroupMember, setGroupCoreMember } from "@/actions/groups";
+import { addGroupMember, removeGroupMember, moveGroupMember, getAllGroups, setGroupCoreMember } from "@/actions/groups";
 import { Users, MapPin, Trash2, ArrowLeft, ShieldCheck } from "lucide-react";
 import { VolunteerCombobox } from "@/components/features/volunteers/volunteer-combobox";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,6 +43,26 @@ export default function GroupDetailPage() {
   const [volunteers, setVolunteers] = useState<{ id: string; name: string; email: string }[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [allGroups, setAllGroups] = useState<{ id: string; name: string; tours?: { title: string } | null }[]>([]);
+  useEffect(() => { getAllGroups().then(g => setAllGroups(g as typeof allGroups)); }, []);
+
+  async function handleMove(userId: string, toGroupId: string) {
+    setSaving(true);
+    setError(null);
+    try {
+      await moveGroupMember(groupId, toGroupId, userId);
+      toast.success("Member moved");
+      const d = await fetch(`/api/groups/${groupId}`).then(r => r.json());
+      setGroup(d);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to move member";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   useEffect(() => {
     fetch(`/api/groups/${groupId}`)
@@ -204,6 +224,14 @@ export default function GroupDetailPage() {
                       <ShieldCheck size={13} />
                       {m.role_in_group === "group_core_member" ? "Remove Core Member" : "Make Core Member"}
                     </Button>
+                    <Select value="" onValueChange={v => v && handleMove(m.user_id, v)} disabled={saving}>
+                      <SelectTrigger className="w-32 h-7 text-xs"><SelectValue placeholder="Move to…" /></SelectTrigger>
+                      <SelectContent>
+                        {allGroups.filter(g => g.id !== groupId).map(g => (
+                          <SelectItem key={g.id} value={g.id}>{g.name}{g.tours?.title ? ` — ${g.tours.title}` : ""}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <Button
                       variant="ghost"
                       size="icon"

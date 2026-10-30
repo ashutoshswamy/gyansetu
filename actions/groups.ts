@@ -4,6 +4,7 @@ import { requireAdminUser, getAuthenticatedUser, requireCoreMemberUser } from "@
 import { applyRoleUpdate } from "@/actions/users";
 import { createNotification } from "@/actions/notifications";
 import { tourGroupSchema, type TourGroupInput } from "@/lib/validations";
+import { reissueIdCardsForMove } from "@/actions/id-cards";
 import { revalidatePath } from "next/cache";
 
 const requireAdmin = requireAdminUser;
@@ -67,6 +68,31 @@ export async function removeGroupMember(groupId: string, userId: string) {
     .eq("group_id", groupId)
     .eq("user_id", userId);
   if (error) { console.error("[removeGroupMember]", error); throw new Error("Failed to remove group member"); }
+  revalidatePath("/admin/groups");
+}
+
+// Moves a member to another group (any tour, no application needed) and regenerates
+// their ID card number for the new group.
+export async function moveGroupMember(fromGroupId: string, toGroupId: string, userId: string) {
+  const { db } = await requireAdmin();
+  if (fromGroupId === toGroupId) throw new Error("Pick a different group");
+  const { data: existing } = await db.from("tour_group_members").select("id").eq("group_id", toGroupId).eq("user_id", userId).maybeSingle();
+  if (existing) throw new Error("Already a member of that group");
+  const { error } = await db
+    .from("tour_group_members")
+    .update({ group_id: toGroupId, role_in_group: "volunteer" })
+    .eq("group_id", fromGroupId)
+    .eq("user_id", userId);
+  if (error) { console.error("[moveGroupMember]", error); throw new Error("Failed to move member"); }
+  await reissueIdCardsForMove(userId, fromGroupId, toGroupId);
+
+  const { data: group } = await db.from("tour_groups").select("name").eq("id", toGroupId).maybeSingle();
+  await createNotification({
+    user_id: userId,
+    title: "Group changed",
+    message: group?.name ? `You've been moved to the group "${group.name}".` : "You've been moved to a different group.",
+  }).catch(err => console.error("[moveGroupMember notify]", err));
+
   revalidatePath("/admin/groups");
 }
 

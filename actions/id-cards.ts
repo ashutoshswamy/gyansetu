@@ -101,6 +101,21 @@ export async function bulkCreateIdCards(input: BulkIdCardInput) {
   return { issued, skipped: alreadyIssued.size, failed };
 }
 
+// Called when a volunteer is moved between groups: re-points their card(s) for the old
+// group at the new group/tour and regenerates card_number from the new group's sequence.
+export async function reissueIdCardsForMove(volunteerId: string, fromGroupId: string, toGroupId: string) {
+  const { db } = await requireAdminUser();
+  const { data: toGroup } = await db.from("tour_groups").select("tour_id").eq("id", toGroupId).single();
+  if (!toGroup) throw new Error("Target group not found");
+  const { data: cards } = await db.from("id_cards").select("id").eq("volunteer_id", volunteerId).eq("group_id", fromGroupId);
+  for (const card of cards ?? []) {
+    const card_number = await generateCardNumber(db, toGroup.tour_id, toGroupId);
+    const { error } = await db.from("id_cards").update({ group_id: toGroupId, tour_id: toGroup.tour_id, card_number }).eq("id", card.id);
+    if (error) { console.error("[reissueIdCardsForMove]", error); throw new Error("Failed to update ID card"); }
+  }
+  revalidatePath("/admin/id-cards");
+}
+
 export async function deleteIdCard(id: string) {
   const { db } = await requireAdminUser();
   const { error } = await db.from("id_cards").delete().eq("id", id);
