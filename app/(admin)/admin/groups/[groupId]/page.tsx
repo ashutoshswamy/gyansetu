@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { GroupShareCard } from "@/components/features/groups/group-share-card";
 
 const ROLE_LABELS: Record<string, string> = {
   volunteer: "Volunteer",
@@ -163,6 +164,8 @@ export default function GroupDetailPage() {
         )}
 
         {/* Add member */}
+        <GroupShareCard groupId={groupId} />
+
         <Card className="mb-4">
 <CardContent>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 14px" }}>Add Member</h2>

@@ -7,6 +7,6 @@ const Inner = dynamic(() => import("./journey-map-inner").then((m) => m.JourneyM
   loading: () => <div style={{ height: "100%", background: "rgba(90,82,71,0.08)" }} />,
 });
 
-export function JourneyMap({ path }: { path: [number, number][] }) {
-  return <Inner path={path} />;
+export function JourneyMap({ paths }: { paths: [number, number][][] }) {
+  return <Inner paths={paths} />;
 }

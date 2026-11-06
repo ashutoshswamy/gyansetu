@@ -5,27 +5,37 @@ import L from "leaflet";
 import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 
-function Fit({ path }: { path: [number, number][] }) {
+const COLORS = ["#fc4c02", "#2563eb", "#7c3aed", "#0d9488", "#db2777", "#ca8a04"];
+
+function Fit({ all }: { all: [number, number][] }) {
   const map = useMap();
   useEffect(() => {
-    if (path.length > 1) map.fitBounds(L.latLngBounds(path), { padding: [30, 30] });
-  }, [map, path]);
+    if (all.length > 1) map.fitBounds(L.latLngBounds(all), { padding: [30, 30] });
+  }, [map, all]);
   return null;
 }
 
-export function JourneyMapInner({ path }: { path: [number, number][] }) {
-  const start = path[0];
-  const end = path[path.length - 1];
+export function JourneyMapInner({ paths }: { paths: [number, number][][] }) {
+  const all = paths.flat();
+  const last = all[all.length - 1];
   return (
-    <MapContainer center={end ?? [22.3511, 78.6677]} zoom={end ? 12 : 4} style={{ height: "100%", width: "100%" }}>
+    <MapContainer center={last ?? [22.3511, 78.6677]} zoom={last ? 12 : 4} style={{ height: "100%", width: "100%" }}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {path.length > 1 && <Polyline positions={path} pathOptions={{ color: "#fc4c02", weight: 4 }} />}
-      {start && <CircleMarker center={start} radius={7} pathOptions={{ color: "#fff", weight: 2, fillColor: "#2e9e5b", fillOpacity: 1 }} />}
-      {end && path.length > 1 && <CircleMarker center={end} radius={8} pathOptions={{ color: "#fff", weight: 2, fillColor: "#fc4c02", fillOpacity: 1 }} />}
-      <Fit path={path} />
+      {paths.map((path, i) => {
+        const color = COLORS[i % COLORS.length];
+        const end = path[path.length - 1];
+        return (
+          <span key={i}>
+            {path.length > 1 && <Polyline positions={path} pathOptions={{ color, weight: 4 }} />}
+            {path.length > 0 && <CircleMarker center={path[0]} radius={6} pathOptions={{ color: "#fff", weight: 2, fillColor: "#2e9e5b", fillOpacity: 1 }} />}
+            {path.length > 1 && <CircleMarker center={end} radius={8} pathOptions={{ color: "#fff", weight: 2, fillColor: color, fillOpacity: 1 }} />}
+          </span>
+        );
+      })}
+      <Fit all={all} />
     </MapContainer>
   );
 }

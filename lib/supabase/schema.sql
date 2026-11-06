@@ -1767,13 +1767,17 @@ create index if not exists location_points_user_time on public.location_points (
 alter table public.location_points enable row level security;
 
 create table if not exists public.parent_share_links (
-  id           uuid primary key default gen_random_uuid(),
-  volunteer_id uuid not null references public.users(id) on delete cascade,
-  token        text not null unique,
-  revoked_at   timestamptz,
-  created_at   timestamptz default now()
+  id         uuid primary key default gen_random_uuid(),
+  token      text not null unique,
+  revoked_at timestamptz,
+  created_at timestamptz default now()
 );
-create index if not exists parent_share_links_volunteer on public.parent_share_links (volunteer_id);
+-- One link per tour group, created by admins; shows the whole group's journey.
+alter table public.parent_share_links add column if not exists group_id uuid references public.tour_groups(id) on delete cascade;
+-- drop leftovers from the earlier per-volunteer design (safe on a fresh DB)
+delete from public.parent_share_links where group_id is null;
+alter table public.parent_share_links alter column group_id set not null;
+alter table public.parent_share_links drop column if exists volunteer_id;
+alter table public.parent_share_links drop column if exists tour_id;
+create index if not exists parent_share_links_group on public.parent_share_links (group_id);
 alter table public.parent_share_links enable row level security;
--- null = whole history, else only that tour's route/logs/schools/photos/tickets
-alter table public.parent_share_links add column if not exists tour_id uuid references public.tours(id) on delete cascade;
