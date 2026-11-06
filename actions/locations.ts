@@ -3,6 +3,7 @@
 import { requireAdminUser, requireVolunteerUser } from "@/lib/clerk/action-auth";
 import { myLocationSchema, type MyLocationInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+import { haversineKm } from "@/lib/journey";
 
 // Live Volunteer Location Sharing
 
@@ -20,7 +21,7 @@ export async function updateMyLocation(input: MyLocationInput) {
 
   const { data: existing } = await db
     .from("volunteer_locations")
-    .select("is_sharing")
+    .select("is_sharing, latitude, longitude")
     .eq("user_id", user.id)
     .maybeSingle();
   if (!existing?.is_sharing) return;
@@ -30,6 +31,28 @@ export async function updateMyLocation(input: MyLocationInput) {
     .update({ ...data, updated_at: new Date().toISOString() })
     .eq("user_id", user.id);
   if (error) { console.error("[updateMyLocation]", error); throw new Error("Failed to update location"); }
+
+  // Breadcrumb for the parent journey page; best-effort, never blocks live sharing.
+  // Skip if barely moved since the previous fix (GPS jitter / standing still) to keep the table small.
+  const moved =
+    existing.latitude == null || existing.longitude == null ||
+    haversineKm({ latitude: existing.latitude, longitude: existing.longitude }, data) >= 0.02;
+  if (moved) {
+    const { error: pointError } = await db
+      .from("location_points")
+      .insert({ user_id: user.id, latitude: data.latitude, longitude: data.longitude });
+    if (pointError) console.error("[updateMyLocation:point]", pointError);
+  }
+
+  // ponytail: no cron in this stack, so ~2% of updates prune this user's points older than a year.
+  // Swap for a scheduled job if retention needs to be exact.
+  if (Math.random() < 0.02) {
+    await db
+      .from("location_points")
+      .delete()
+      .eq("user_id", user.id)
+      .lt("recorded_at", new Date(Date.now() - 365 * 864e5).toISOString());
+  }
 }
 
 export async function stopSharingLocation() {

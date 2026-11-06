@@ -1748,3 +1748,32 @@ alter table public.registration_fees add column if not exists refund_reason text
 -- alongside where to send it (UPI/bank/QR).
 -- ============================================================
 alter table public.payment_settings add column if not exists amount numeric;
+
+-- ============================================================
+-- MIGRATION: parent journey sharing (Strava-style read-only page).
+-- location_points = breadcrumb history (volunteer_locations only
+-- keeps the latest point). parent_share_links = unguessable token
+-- a volunteer hands to parents. Service-role access only (RLS on,
+-- no policies); the public page reads via the server client.
+-- ============================================================
+create table if not exists public.location_points (
+  id          bigint generated always as identity primary key,
+  user_id     uuid not null references public.users(id) on delete cascade,
+  latitude    double precision not null,
+  longitude   double precision not null,
+  recorded_at timestamptz not null default now()
+);
+create index if not exists location_points_user_time on public.location_points (user_id, recorded_at);
+alter table public.location_points enable row level security;
+
+create table if not exists public.parent_share_links (
+  id           uuid primary key default gen_random_uuid(),
+  volunteer_id uuid not null references public.users(id) on delete cascade,
+  token        text not null unique,
+  revoked_at   timestamptz,
+  created_at   timestamptz default now()
+);
+create index if not exists parent_share_links_volunteer on public.parent_share_links (volunteer_id);
+alter table public.parent_share_links enable row level security;
+-- null = whole history, else only that tour's route/logs/schools/photos/tickets
+alter table public.parent_share_links add column if not exists tour_id uuid references public.tours(id) on delete cascade;

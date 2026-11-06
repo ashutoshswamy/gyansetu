@@ -27,6 +27,7 @@ const isPublicRoute = createRouteMatcher([
   "/sponsor(.*)",
   "/institution(.*)",
   "/alumni(.*)",
+  "/journey(.*)",
 ]);
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);

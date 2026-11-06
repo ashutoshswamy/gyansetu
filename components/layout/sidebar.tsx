@@ -178,6 +178,7 @@ const flatNavItems: Record<"enrollee" | "volunteer", NavItem[]> = {
     { label: "School Details", href: "/volunteer/school-reports", Icon: School, description: "Fill a report for each school visited — details, sessions conducted, and reflections." },
     { label: "Travel",        href: "/volunteer/travel",       Icon: Train, description: "View your group's train tickets and post live location/travel updates." },
     { label: "Location",      href: "/volunteer/location",     Icon: Radio, description: "Share your current location with admins during a tour." },
+    { label: "Parent Link",   href: "/volunteer/share",        Icon: Radio, description: "Share a private link so your parents can follow your tour journey." },
     { label: "Expenses",      href: "/volunteer/expenses",     Icon: Wallet, description: "Submit bills for reimbursement and track their approval status." },
     { label: "Tour Report",   href: "/volunteer/tour-report",  Icon: FileBarChart, description: "File a detailed report per location visited — hosts, logistics ratings, observations." },
     { label: "Media",         href: "/volunteer/media",        Icon: Image, description: "Upload photos/videos from the tour to the shared media library." },
