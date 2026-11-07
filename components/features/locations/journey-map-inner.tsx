@@ -23,8 +23,8 @@ function Fit({ all }: { all: [number, number][] }) {
   return null;
 }
 
-export function JourneyMapInner({ paths, names }: { paths: [number, number][][]; names: string[] }) {
-  const all = paths.flat();
+export function JourneyMapInner({ paths, dots }: { paths: [number, number][][]; dots: { name: string; pos: [number, number] }[] }) {
+  const all = [...paths.flat(), ...dots.map((d) => d.pos)];
   const last = all[all.length - 1];
   return (
     <MapContainer center={last ?? [22.3511, 78.6677]} zoom={last ? 12 : 4} style={{ height: "100%", width: "100%" }}>
@@ -34,15 +34,18 @@ export function JourneyMapInner({ paths, names }: { paths: [number, number][][];
       />
       {paths.map((path, i) => {
         const color = COLORS[i % COLORS.length];
-        const end = path[path.length - 1];
         return (
           <span key={i}>
             {path.length > 1 && <Polyline positions={path} pathOptions={{ color, weight: 4 }} />}
             {path.length > 0 && <CircleMarker center={path[0]} radius={6} pathOptions={{ color: "#fff", weight: 2, fillColor: "#2e9e5b", fillOpacity: 1 }} />}
-            {path.length > 0 && <Marker position={end} icon={dotIcon}><Popup><strong>{names[i]}</strong></Popup></Marker>}
           </span>
         );
       })}
+      {dots.map((d, i) => (
+        <Marker key={i} position={d.pos} icon={dotIcon}>
+          <Popup><strong>{d.name}</strong></Popup>
+        </Marker>
+      ))}
       <Fit all={all} />
     </MapContainer>
   );

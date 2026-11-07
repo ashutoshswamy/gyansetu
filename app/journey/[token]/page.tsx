@@ -6,6 +6,7 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis/client";
 import { getClientIp } from "@/lib/rate-limit";
 import { formatDate, istDateKey } from "@/lib/format-date";
+import { Train, School, Circle } from "lucide-react";
 import { JourneyMap } from "@/components/features/locations/journey-map";
 
 export const dynamic = "force-dynamic";
@@ -51,7 +52,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
 
   const [{ data: points }, { data: lives }, { data: schools }, { data: photos }, { data: tickets }] = await Promise.all([
     pointsQ,
-    db.from("volunteer_locations").select("user_id, is_sharing, updated_at").in("user_id", ids),
+    db.from("volunteer_locations").select("user_id, is_sharing, updated_at, latitude, longitude").in("user_id", ids),
     db.from("school_reports").select("school_name, village_town, district, state, visit_date").eq("group_id", group.id).order("visit_date", { ascending: false }),
     db.from("media_gallery").select("file_url, caption").in("uploaded_by", ids).eq("media_type", "photo").order("created_at", { ascending: false }).limit(24),
     db.from("travel_tickets").select("departure_station, arrival_station, departure_at").eq("group_id", group.id).order("departure_at", { ascending: false }),
@@ -60,7 +61,6 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
   const byUser = new Map<string, NonNullable<typeof points>>();
   for (const p of points ?? []) byUser.set(p.user_id, [...(byUser.get(p.user_id) ?? []), p]);
   const perMember = [...byUser.values()];
-  const names = [...byUser.keys()].map((id) => members.find((m) => m.user_id === id)?.users?.name ?? "Volunteer");
   const km = Math.max(0, ...perMember.map(routeKm)); // group travels together: longest member route
   const paths = perMember.map((pts) => {
     const step = Math.max(1, Math.ceil(pts.length / (MAX_PATH / perMember.length)));
@@ -71,6 +71,13 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
     const l = lives?.find((x) => x.user_id === id);
     return !!l?.is_sharing && Date.now() - new Date(l.updated_at).getTime() < 10 * 60_000;
   };
+  // Dots: members currently sharing, from their live row (works even with no route points).
+  const dots = members.flatMap((m) => {
+    const l = lives?.find((x) => x.user_id === m.user_id);
+    return l?.is_sharing && l.latitude != null && l.longitude != null
+      ? [{ name: m.users?.name ?? "Volunteer", pos: [l.latitude, l.longitude] as [number, number] }]
+      : [];
+  });
   const liveCount = vids.filter(liveFor).length;
 
   const stats = [
@@ -92,12 +99,13 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
             {[tour?.title, group.state_allocated].filter(Boolean).join(" · ")}
           </p>
           <p style={{ fontSize: 14, color: "var(--gs-text-secondary)" }}>
-            {liveCount ? `🟢 ${liveCount} of ${members.length} sharing live` : "No one is sharing live right now"}
+            <Circle size={10} fill={liveCount ? "var(--gs-success)" : "none"} stroke="none" style={{ display: "inline", marginRight: 6 }} />
+            {liveCount ? `${liveCount} of ${members.length} sharing live` : "No one is sharing live right now"}
           </p>
         </header>
 
         <div style={{ ...card, padding: 0, height: 360, overflow: "hidden" }}>
-          <JourneyMap paths={paths} names={names} />
+          <JourneyMap paths={paths} dots={dots} />
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -114,7 +122,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
             <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Travel</h2>
             {tickets.map((t, i) => (
               <p key={i} style={{ fontSize: 14, margin: "4px 0" }}>
-                🚆 {t.departure_station} → {t.arrival_station}
+                <Train size={14} style={{ display: "inline", marginRight: 6 }} />{t.departure_station} → {t.arrival_station}
                 {t.departure_at && <span style={{ color: "var(--gs-muted)" }}> · {formatDate(t.departure_at)}</span>}
               </p>
             ))}
@@ -126,7 +134,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
             <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Schools visited</h2>
             {schools.map((s, i) => (
               <p key={i} style={{ fontSize: 14, margin: "4px 0" }}>
-                🏫 <strong>{s.school_name}</strong>
+                <School size={14} style={{ display: "inline", marginRight: 6 }} /><strong>{s.school_name}</strong>
                 <span style={{ color: "var(--gs-muted)" }}>
                   {" "}· {[s.village_town, s.district, s.state].filter(Boolean).join(", ")}
                   {s.visit_date && ` · ${formatDate(s.visit_date)}`}
@@ -140,7 +148,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
           <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Volunteers</h2>
           {members.map((m) => (
             <p key={m.user_id} style={{ fontSize: 14, margin: "4px 0" }}>
-              {liveFor(m.user_id) ? "🟢" : "⚪"} {m.users?.name}
+              <Circle size={10} fill={liveFor(m.user_id) ? "var(--gs-success)" : "var(--gs-muted)"} stroke="none" style={{ display: "inline", marginRight: 8 }} />{m.users?.name}
             </p>
           ))}
         </section>
