@@ -60,6 +60,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
   const byUser = new Map<string, NonNullable<typeof points>>();
   for (const p of points ?? []) byUser.set(p.user_id, [...(byUser.get(p.user_id) ?? []), p]);
   const perMember = [...byUser.values()];
+  const names = [...byUser.keys()].map((id) => members.find((m) => m.user_id === id)?.users?.name ?? "Volunteer");
   const km = Math.max(0, ...perMember.map(routeKm)); // group travels together: longest member route
   const paths = perMember.map((pts) => {
     const step = Math.max(1, Math.ceil(pts.length / (MAX_PATH / perMember.length)));
@@ -96,7 +97,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ token:
         </header>
 
         <div style={{ ...card, padding: 0, height: 360, overflow: "hidden" }}>
-          <JourneyMap paths={paths} />
+          <JourneyMap paths={paths} names={names} />
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

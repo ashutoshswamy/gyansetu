@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Polyline, CircleMarker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline, CircleMarker, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
@@ -15,7 +15,7 @@ function Fit({ all }: { all: [number, number][] }) {
   return null;
 }
 
-export function JourneyMapInner({ paths }: { paths: [number, number][][] }) {
+export function JourneyMapInner({ paths, names }: { paths: [number, number][][]; names: string[] }) {
   const all = paths.flat();
   const last = all[all.length - 1];
   return (
@@ -31,7 +31,11 @@ export function JourneyMapInner({ paths }: { paths: [number, number][][] }) {
           <span key={i}>
             {path.length > 1 && <Polyline positions={path} pathOptions={{ color, weight: 4 }} />}
             {path.length > 0 && <CircleMarker center={path[0]} radius={6} pathOptions={{ color: "#fff", weight: 2, fillColor: "#2e9e5b", fillOpacity: 1 }} />}
-            {path.length > 1 && <CircleMarker center={end} radius={8} pathOptions={{ color: "#fff", weight: 2, fillColor: color, fillOpacity: 1 }} />}
+            {path.length > 0 && (
+              <CircleMarker center={end} radius={8} pathOptions={{ color: "#fff", weight: 2, fillColor: color, fillOpacity: 1 }}>
+                <Tooltip permanent direction="top" offset={[0, -8]}>{names[i]}</Tooltip>
+              </CircleMarker>
+            )}
           </span>
         );
       })}
