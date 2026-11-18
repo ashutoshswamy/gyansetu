@@ -6,6 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime } from "@/lib/format-date";
+import { SearchList } from "@/components/features/admin/search-list";
+
+type TravelTicket = Awaited<ReturnType<typeof getAllTravelTickets>>[number];
+type TravelGroup = NonNullable<TravelTicket["group"]> & {
+  tours?: { id: string; title: string } | null;
+};
 
 const statusColors: Record<string, { color: string; bg: string }> = {
   pending:   { color: "var(--gs-warning)", bg: "rgba(var(--gs-warning-rgb), 0.08)" },
@@ -30,24 +36,26 @@ export default async function AdminTravelPage() {
           </Link>
         </div>
 
-        <div className="space-y-3">
-          {tickets.length === 0 && (
-            <Card>
-<CardContent className="text-center">
-              <Train className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
-              <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No travel tickets yet.</p>
-            </CardContent>
-</Card>
-          )}
-          {tickets.map((t) => {
+        <SearchList placeholder="Search by tour, group, station, train, PNR, note, or uploader…" rowSelector="[data-search-row]">
+          <div className="space-y-3">
+            {tickets.length === 0 && (
+              <Card>
+                <CardContent className="text-center">
+                  <Train className="w-10 h-10 mx-auto mb-3" style={{ color: "var(--border)" }} />
+                  <p style={{ fontSize: 15, color: "var(--gs-text-secondary)" }}>No travel tickets yet.</p>
+                </CardContent>
+              </Card>
+            )}
+            {tickets.map((t) => {
+            const group = t.group as TravelGroup | null;
             const s = statusColors[t.confirmation_status] ?? statusColors.pending;
             return (
-              <Card key={t.id}>
+              <Card key={t.id} data-search-row>
 <CardContent>
                 <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{t.group?.name ?? "Unknown group"}</span>
+                      <span style={{ fontSize: 15, fontWeight: 600, color: "var(--foreground)" }}>{group?.name ?? "Unknown group"}</span>
                       <Badge style={{color: s.color, background: s.bg, textTransform: "capitalize"}}>
                         {t.confirmation_status}
                       </Badge>
@@ -57,6 +65,9 @@ export default async function AdminTravelPage() {
                         </Badge>
                       )}
                     </div>
+                    <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: 0 }}>
+                      Tour: {group?.tours?.title ?? "Unassigned Tour"}
+                    </p>
                     <p style={{ fontSize: 14, color: "var(--foreground)", margin: "6px 0 2px" }}>
                       {t.departure_station || "?"} &rarr; {t.arrival_station || "?"}
                       {t.train_number ? ` · Train ${t.train_number}` : ""}
@@ -88,7 +99,8 @@ export default async function AdminTravelPage() {
 </Card>
             );
           })}
-        </div>
+          </div>
+        </SearchList>
       </div>
     </div>
   );

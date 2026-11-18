@@ -65,7 +65,7 @@ export async function getAllTravelTickets() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("travel_tickets")
-    .select("*, group:tour_groups(id, name, tour_id), uploader:users!travel_tickets_created_by_fkey(id, name, email, role)")
+    .select("*, group:tour_groups(id, name, tour_id, tours(id, title)), uploader:users!travel_tickets_created_by_fkey(id, name, email, role)")
     .order("departure_at", { ascending: true });
   if (error) { console.error("[getAllTravelTickets]", error); throw new Error("Failed to fetch travel tickets"); }
   return data ?? [];
