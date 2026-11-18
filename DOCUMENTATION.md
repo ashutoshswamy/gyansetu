@@ -366,7 +366,7 @@ Supabase Storage is partitioned into 4 dedicated public buckets, all routed thro
 | `gallery-images` | Admin only | High-resolution photographs for public photo gallery |
 | `newsletter-files` | Admin only | Published PDF newsletters |
 
-`documents` and `earc-files` storage buckets are created by `schema.sql` (`insert into storage.buckets ...`) but are dead — no allow-listed helper writes to either. The `earc_files` table exists in the schema but is unused legacy. Expense receipts (`bill_url`), travel tickets (`ticket_file_url`), and ID card files (`card_file_url`) are not uploaded to Supabase Storage at all — they're plain external-URL text fields (or, for ID cards, generated client-side and downloaded directly); profile photos are the one exception, uploaded through the `media` bucket.
+`earc-files` remains unused legacy. Volunteer travel tickets upload PDFs/images to the public `documents` bucket; expense receipts (`bill_url`) and ID card files (`card_file_url`) remain external-URL/client-generated fields. Profile photos use the `media` bucket.
 
 ---
 

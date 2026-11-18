@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { getTravelTicketForMyGroup, getLocationUpdatesForGroup } from "@/actions/travel";
 import { Train, MapPin } from "lucide-react";
 import { LocationUpdateForm } from "./location-update-form";
+import { TicketUploadForm } from "./ticket-upload-form";
 import { formatDateTime } from "@/lib/format-date";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -61,6 +62,7 @@ export default async function VolunteerTravelPage() {
         ) : (
           <>
             <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--foreground)", margin: "0 0 12px" }}>Travel Tickets</h2>
+            <TicketUploadForm groupId={group.id} />
             <div className="space-y-3 mb-8">
               {tickets.length === 0 && (
                 <p style={{ fontSize: 13, color: "var(--gs-muted)" }}>No travel tickets have been issued yet.</p>

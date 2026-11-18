@@ -75,6 +75,9 @@ export default async function AdminTravelPage() {
                         View ticket file
                       </a>
                     )}
+                    <p style={{ fontSize: 12, color: "var(--gs-muted)", margin: "6px 0 0" }}>
+                      Uploaded by {t.uploader?.name ?? "Unknown user"}{t.uploader?.email ? ` · ${t.uploader.email}` : ""}
+                    </p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <ConfirmButton id={t.id} disabled={t.confirmation_status === "confirmed"} />

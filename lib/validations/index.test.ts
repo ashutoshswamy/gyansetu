@@ -6,6 +6,7 @@ import {
   testAttemptSchema,
   certificateSchema,
   visitSchema,
+  travelTicketSchema,
 } from "./index";
 
 describe("tourSchema", () => {
@@ -151,5 +152,15 @@ describe("visitSchema", () => {
 
   it("rejects a non-empty, non-URL timetable_url", () => {
     expect(() => visitSchema.parse({ ...valid, timetable_url: "not a url" })).toThrow();
+  });
+});
+
+describe("travelTicketSchema", () => {
+  it("accepts volunteer-uploaded ticket links", () => {
+    const parsed = travelTicketSchema.parse({
+      group_id: "123e4567-e89b-12d3-a456-426614174000",
+      ticket_file_url: "https://example.com/ticket.pdf",
+    });
+    expect(parsed.ticket_file_url).toContain("ticket.pdf");
   });
 });

@@ -24,6 +24,21 @@ export async function createTravelTicket(input: TravelTicketInput) {
   return ticket;
 }
 
+export async function submitTravelTicket(input: Pick<TravelTicketInput, "group_id" | "ticket_file_url" | "note">) {
+  const { db, user } = await requireVolunteerUser();
+  const data = travelTicketSchema.pick({ group_id: true, ticket_file_url: true, note: true }).parse(input);
+  await assertGroupAccess(db, user, data.group_id);
+  const { data: ticket, error } = await db
+    .from("travel_tickets")
+    .insert({ ...data, created_by: user.id })
+    .select()
+    .single();
+  if (error) { console.error("[submitTravelTicket]", error); throw new Error("Failed to upload travel ticket"); }
+  revalidatePath("/admin/travel");
+  revalidatePath("/volunteer/travel");
+  return ticket;
+}
+
 export async function updateTravelTicket(id: string, input: Partial<TravelTicketInput>) {
   const { db } = await requireAdminUser();
   const data = travelTicketSchema.partial().parse(input);
@@ -50,7 +65,7 @@ export async function getAllTravelTickets() {
   const { db } = await requireAdminUser();
   const { data, error } = await db
     .from("travel_tickets")
-    .select("*, group:tour_groups(id, name, tour_id)")
+    .select("*, group:tour_groups(id, name, tour_id), uploader:users!travel_tickets_created_by_fkey(id, name, email, role)")
     .order("departure_at", { ascending: true });
   if (error) { console.error("[getAllTravelTickets]", error); throw new Error("Failed to fetch travel tickets"); }
   return data ?? [];

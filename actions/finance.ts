@@ -43,6 +43,13 @@ export async function getAllExpenseAdvances() {
   return data ?? [];
 }
 
+export async function deleteExpenseAdvance(id: string) {
+  const { db } = await requireAdminUser();
+  const { error } = await db.from("expense_advances").delete().eq("id", id);
+  if (error) { console.error("[deleteExpenseAdvance]", error); throw new Error("Failed to delete advance"); }
+  revalidatePath("/admin/finance");
+}
+
 // Expenses / bills
 
 export async function submitExpense(input: ExpenseInput) {

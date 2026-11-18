@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/format-date";
+import { deleteExpenseAdvance } from "@/actions/finance";
 import { ExpenseActions } from "./expense-actions";
 import { ReceiptButton } from "@/components/features/expenses/receipt-button";
 import { Label } from "@/components/ui/label";
@@ -22,6 +24,7 @@ import {
 import type { GroupLedger, ExpenseRow, AdvanceRow } from "./page";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const ALL = "all";
 
@@ -58,6 +61,22 @@ const statusLabels: Record<string, string> = {
 function GroupSection({ g }: { g: GroupLedger }) {
   const over = g.remaining < 0;
   const [selectedAdvance, setSelectedAdvance] = useState<AdvanceRow | null>(null);
+  const [deletingAdvance, setDeletingAdvance] = useState(false);
+  const router = useRouter();
+
+  async function handleDeleteAdvance() {
+    if (!selectedAdvance || !window.confirm("Delete this advance? This cannot be undone.")) return;
+    setDeletingAdvance(true);
+    try {
+      await deleteExpenseAdvance(selectedAdvance.id);
+      setSelectedAdvance(null);
+      router.refresh();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete advance");
+    } finally {
+      setDeletingAdvance(false);
+    }
+  }
 
   return (
     <section style={{ marginBottom: 36 }}>
@@ -188,6 +207,9 @@ function GroupSection({ g }: { g: GroupLedger }) {
                   <p style={{ fontSize: 14, color: "var(--foreground)", margin: 0 }}>{selectedAdvance.notes}</p>
                 </div>
               )}
+              <Button variant="destructive" onClick={handleDeleteAdvance} disabled={deletingAdvance}>
+                {deletingAdvance ? "Deleting..." : "Delete Advance"}
+              </Button>
             </div>
           )}
         </DialogContent>
